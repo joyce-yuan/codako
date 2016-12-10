@@ -1,7 +1,7 @@
 {
     "jizye5ng66r": {
         "__v": 0,
-        "_id": "53418ce7eb74a9fff0000038",
+        "id": "jizye5ng66r",
         "name": "Flag",
         "rules": [],
         "spritesheet": {
@@ -23,24 +23,24 @@
     "aamlcui8uxr": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
-        "_id": "53418ce7eb74a9fff0000030",
+        "id": "aamlcui8uxr",
         "variableDefaults": {
             "_2045001": {
                 "y": 0,
                 "x": 0,
                 "value": 0,
                 "name": "Age",
-                "_id": "_2045001"
+                "id": "_2045001"
             }
         },
         "rules": [
             {
-                "_id": "_2225041",
+                "id": "_2225041",
                 "name": "",
                 "type": "group-event",
                 "rules": [
                     {
-                        "_id": "_2034444",
+                        "id": "_2034444",
                         "name": "Move Right",
                         "scenario": [
                             {
@@ -58,9 +58,9 @@
                             "_2042130": {
                                 "mainActor": true,
                                 "appearance_ignored": false,
-                                "actor_id_during_recording": "_1413514",
+                                "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "definition_id": "aamlcui8uxr"
+                                "definitionid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -72,7 +72,7 @@
                         ]
                     },
                     {
-                        "_id": "_2243540",
+                        "id": "_2243540",
                         "name": "Turn Right",
                         "scenario": [
                             {
@@ -86,9 +86,9 @@
                             "_1503101": {
                                 "mainActor": true,
                                 "appearance_ignored": false,
-                                "actor_id_during_recording": "_1413514",
+                                "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definition_id": "aamlcui8uxr"
+                                "definitionid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -104,12 +104,12 @@
                 "code": 39
             },
             {
-                "_id": "_2105500",
+                "id": "_2105500",
                 "name": "",
                 "type": "group-event",
                 "rules": [
                     {
-                        "_id": "_1313113",
+                        "id": "_1313113",
                         "name": "Move Left",
                         "scenario": [
                             {
@@ -127,9 +127,9 @@
                             "_2434313": {
                                 "mainActor": true,
                                 "appearance_ignored": false,
-                                "actor_id_during_recording": "_1413514",
+                                "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definition_id": "aamlcui8uxr"
+                                "definitionid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -141,7 +141,7 @@
                         ]
                     },
                     {
-                        "_id": "_1513454",
+                        "id": "_1513454",
                         "name": "Turn Left",
                         "scenario": [
                             {
@@ -155,9 +155,9 @@
                             "_1334414": {
                                 "mainActor": true,
                                 "appearance_ignored": false,
-                                "actor_id_during_recording": "_1413514",
+                                "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "definition_id": "aamlcui8uxr"
+                                "definitionid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -173,12 +173,12 @@
                 "code": 37
             },
             {
-                "_id": "_2224240",
+                "id": "_2224240",
                 "name": "",
                 "type": "group-event",
                 "rules": [
                     {
-                        "_id": "_2230052",
+                        "id": "_2230052",
                         "name": "Gravity",
                         "scenario": [
                             {
@@ -196,9 +196,9 @@
                             "_2310541": {
                                 "mainActor": true,
                                 "appearance_ignored": true,
-                                "actor_id_during_recording": "_1413514",
+                                "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definition_id": "aamlcui8uxr"
+                                "definitionid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -235,7 +235,7 @@
     "q9h78ccjtt9": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
-        "_id": "53418ce7eb74a9fff0000032",
+        "id": "q9h78ccjtt9",
         "rules": [],
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABQCAYAAABrjzfBAAACZ0lEQVRoQ+2ZzXEDIQyF7crSQIpID24gDaSTHHPPpDJn2BkYLQjpCVjQejanjFewn59+wffPj9vz7f1xs/79/XwVS1r24d5L977/fj+e0Yh7aQ28BmPZg9ub7hv22gB7N7Wqj9gH0AQYFniDTIAxBt0Cxhg8GjAqgrg32MRYnBaDVsAIeQ7AGUmSKxhdKIVWsLnPShIKhMAlF88CjMmBwi0DRLPYPWAqM7NdjCrY3eq0yaW38O8ArZtpga49R1Ts6iRoV+hVeauDXset6a0OcWtucynYohpdcyk4TcGjTnDaF4BcXKt5I4pxNyBakLUXtT6HFGzdfMS6qRN1C/AF2KJaUai9Dqy7YaH12CmNU9YZk1O7O4ulMjSiTnYDajFGFW5R9HDA/CxMQwlReBogB4rGvf+R332Z6QGUkoArQbVEqdkWrU47JnJZG16Kzoto3aQJdNdKhfRc+41Fgpf23f1OYgG0/KaClJFa96CfQwpSpVoKrkWEYljQFltU0/ayPt+SRFo06yeKGgMEONOlOagIuFq9NA/W5PVw61VV0IN6ooIe1BsKaOm7llLDuniUe3PolmpQBWzZzKIMans+wJ7ZEFXFYlcoOCr+LBCSLQvoJf6KMuPNvecD9BZ/hYIr25t0PNgG1pXqafc3CdBT9haHppXuhergywOOmFxqZ+RDYlALfLQVpla3MouhGPTY5naF+gJEgy6zO08MvnwdbPSguiy5eNX9n0a4G/nz61wvwwN7P8jdPa8AVu8Hgws4ZUe1MpOLNWM62Ib/tRt8qrj17obaQ5foCDy1offa8cvQ5zUPcJ//A5+aYp1b/aRoAAAAAElFTkSuQmCC",
@@ -259,7 +259,7 @@
     "us3zr9c0udi": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
-        "_id": "53418ce7eb74a9fff000002f",
+        "id": "us3zr9c0udi",
         "rules": [],
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABf0lEQVRYR+2XsXaCMBSGw2N4XHwId2Vnk8XNrQ9A98ZdHsCp3brULbtl70N06xM4U240nAA3AULU65GMYMKX/7//jQkY8REQ52NWwONXkmerFN3D5Dvxsre/Zcp4YOboBMi3My8w2CL87Xc4oC+16oAv2YE5A0p7RWHvO2MA+JnhVrtKu14kbDjgpf5IA16r/sBaNZxCAhaHcSpDtD8m+VUsDs/r24bxB6QBVUD4x7k/kVPQBgjp82G3TLGrxSNgUTaDFVQJrtfg3S2u2zsC9u2Do4IXxZxDQlrB8i9WsUt1ipAKCabeCNgnxaQVNNUfGYsfAhDOX75huZ5gUgqSB4RrZl09Egra6u+pAaensOyCURShFzj58B4Kvs5Fo0VjkCWgKSA+LcagdEovgG0Xbdv7NkAMNtCPN6wH+rwX9wGE74KiNwXUFeoCWwGEyVgP9KkgrNUFTN9IebSZ7BVC5GrC7icaUoJybh9AqaACowgIG6oAzuNmb9Ilu7WC8O1/ur0emClLsBQAAAAASUVORK5CYII=",
@@ -279,7 +279,7 @@
     "oou4u6jemi": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
-        "_id": "53418ce7eb74a9fff0000039",
+        "id": "oou4u6jemi",
         "rules": [],
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABlElEQVRYR+3YWxKDIAwF0LpDF+GyXIQ7tOIIE2PCTXionWk/q8DxBkQdPi//DbW+aZpW1Mc8z8XjFDW0oDS0F+sC1sA42Ao1AVvCvFAI9ODGcUzjL8uCpmY6nkszCyzBeWD0CjSkCvTiSmEIKQK9uDBIC2Dohyd5AXpw5knmPJEiHwPSBcUroAJ7pGdd2eE8Ok0i8pRgDyCtLkfkjl2AvXER40WmBO8CBqiGlMpsBuYmtXORqkCOD2XegSi9XFm8OHQ+H8sERJ22PN4dyKcC2mU4qBswwviWh6aHdJz+93iJ/8DaBVKdIJpDPYC0TzgHXwE8xOt2w74E0hOI+k47SQ3Quq+WTIUL8Nj2xBTpn9K9jjdq8QrAgWEMscwlV1/bRnxg/QXg4yluycXw9zuM9Nq5f62SVnRt2Wh76fmS4zTgYykewFNouU8ftyQZU5XSyyUY292C1HAW4F5u75xEDwBCaqoFfn6Lu0zs1LJ40FM1SQyGZAU2Lbm0GLQ7hBeYSu4pO0sMpkaxJUDaHn7hP04uHucLIm4Vu7le3n8AAAAASUVORK5CYII=",
@@ -299,10 +299,10 @@
     "e1izcd9ggb9": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
-        "_id": "53418ce7eb74a9fff0000031",
+        "id": "e1izcd9ggb9",
         "rules": [
             {
-                "_id": "_2143201",
+                "id": "_2143201",
                 "name": "Boil 1",
                 "scenario": [
                     {
@@ -314,9 +314,9 @@
                 ],
                 "descriptors": {
                     "_2301121": {
-                        "definition_id": "e1izcd9ggb9",
+                        "definitionid": "e1izcd9ggb9",
                         "appearance": "_2350352",
-                        "actor_id_during_recording": "_2443155",
+                        "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
                         "mainActor": true
                     }
@@ -330,7 +330,7 @@
                 ]
             },
             {
-                "_id": "_2033553",
+                "id": "_2033553",
                 "name": "Boil 2",
                 "scenario": [
                     {
@@ -342,9 +342,9 @@
                 ],
                 "descriptors": {
                     "_2203110": {
-                        "definition_id": "e1izcd9ggb9",
+                        "definitionid": "e1izcd9ggb9",
                         "appearance": "idle",
-                        "actor_id_during_recording": "_2443155",
+                        "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
                         "mainActor": true
                     }

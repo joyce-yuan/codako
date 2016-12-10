@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
+import objectAssign from 'object-assign';
 
 import Sprite from './sprite';
 import * as actions from '../actions/stage-actions';
@@ -14,9 +15,9 @@ class StageSprite extends React.Component {
 
   _onDragStart = (event) => {
     const {top, left} = event.target.getBoundingClientRect();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.effectAllowed = 'copyMove';
     event.dataTransfer.setData('sprite', JSON.stringify({
-      descriptorId: this.props.descriptor._id,
+      descriptorId: this.props.descriptor.id,
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
     }));
@@ -65,17 +66,27 @@ class Stage extends React.Component {
   }
 
   _onDrop = (event) => {
-    const {descriptorId, dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('sprite'));
+    const {descriptorId, definitionId, dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('sprite'));
     const stageOffset = event.target.getBoundingClientRect();
 
-    if (!descriptorId) {
-      return;
-    }
     const position = {
       x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
       y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
     };
-    this.props.dispatch(actions.changeActorDescriptor(descriptorId, {position}));
+
+    if (descriptorId) {
+      if (event.altKey) {
+        const descriptor = this.props.actorDescriptors[descriptorId];
+        const definition = this.props.actors[descriptor.definitionId];
+        const newDescriptor = objectAssign({}, descriptor, {position});
+        this.props.dispatch(actions.createActorDescriptor(definition, newDescriptor));
+      } else {
+        this.props.dispatch(actions.changeActorDescriptor(descriptorId, {position}));
+      }
+    } else if (definitionId) {
+      const definition = this.props.actors[definitionId];
+      this.props.dispatch(actions.createActorDescriptor(definition, {position}));
+    }
   }
 
   render() {

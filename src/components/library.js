@@ -8,11 +8,22 @@ class LibraryActor extends React.Component {
     actor: PropTypes.object,
   };
 
+  _onDragStart = (event) => {
+    const {top, left} = event.target.getBoundingClientRect();
+    event.dataTransfer.dropEffect = 'copy';
+    event.dataTransfer.effectAllowed = 'copy';
+    event.dataTransfer.setData('sprite', JSON.stringify({
+      definitionId: this.props.actor.id,
+      dragLeft: event.clientX - left,
+      dragTop: event.clientY - top,
+    }));
+  }
+
   render() {
     const {name, spritesheet} = this.props.actor;
 
     return (
-      <div className="actor">
+      <div className="actor" draggable onDragStart={this._onDragStart}>
         <Sprite spritesheet={spritesheet} frame={0} />
         {name}
       </div>

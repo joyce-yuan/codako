@@ -13,6 +13,13 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
+export function createActorDescriptor(definition, initialValues) {
+  return {
+    type: types.CREATE_ACTOR_DESCRIPTOR,
+    definition,
+    initialValues,
+  };
+}
 export function changeActorDescriptor(descriptorId, changes) {
   return {
     type: types.CHANGE_ACTOR_DESCRIPTOR,
