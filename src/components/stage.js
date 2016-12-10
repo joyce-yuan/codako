@@ -1,19 +1,99 @@
 import React, {PropTypes} from 'react';
+import {connect} from 'react-redux';
 
-export default class Stage extends React.Component {
+import Sprite from './sprite';
+import * as actions from '../actions/stage-actions';
+
+const STAGE_CELL_SIZE = 40;
+
+class StageSprite extends React.Component {
   static propTypes = {
-    tool: PropTypes.string,
-    onToolChange: PropTypes.func,
+    actors: PropTypes.object,
+    descriptor: PropTypes.object,
+  }
+
+  _onDragStart = (event) => {
+    const {top, left} = event.target.getBoundingClientRect();
+    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.setData('sprite', JSON.stringify({
+      descriptorId: this.props.descriptor._id,
+      dragLeft: event.clientX - left,
+      dragTop: event.clientY - top,
+    }));
+  }
+
+  render() {
+    const {descriptor, actors} = this.props;
+    const definition = actors[descriptor.definitionId];
+
+    return (
+      <div
+        draggable
+        onDragStart={this._onDragStart}
+        style={{
+          position: 'absolute',
+          left: descriptor.position.x * STAGE_CELL_SIZE,
+          top: descriptor.position.y * STAGE_CELL_SIZE,
+        }}
+      >
+        <Sprite
+          appearance={descriptor.appearance}
+          spritesheet={definition.spritesheet}
+        />
+      </div>
+    );
+  }
+}
+
+class Stage extends React.Component {
+  static propTypes = {
+    dispatch: PropTypes.func,
+
+    actors: PropTypes.object,
+    actorDescriptors: PropTypes.object,
+    width: PropTypes.number,
+    wrapX: PropTypes.bool,
+    wrapY: PropTypes.bool,
   };
 
   constructor(props, context) {
     super(props, context);
   }
 
+  _onDragOver = (event) => {
+    event.preventDefault();
+  }
+
+  _onDrop = (event) => {
+    const {descriptorId, dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('sprite'));
+    const stageOffset = event.target.getBoundingClientRect();
+
+    if (!descriptorId) {
+      return;
+    }
+    const position = {
+      x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
+      y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
+    };
+    this.props.dispatch(actions.changeActorDescriptor(descriptorId, {position}));
+  }
+
   render() {
+    const {actors, actorDescriptors} = this.props;
     return (
-      <div className="stage">
+      <div className="stage" onDragOver={this._onDragOver} onDrop={this._onDrop}>
+        {Object.keys(actorDescriptors).map((id) =>
+          <StageSprite key={id} actors={actors} descriptor={actorDescriptors[id]} /> )
+        }
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return Object.assign({}, state.stage, {actors: state.actors});
+}
+
+export default connect(
+  mapStateToProps,
+)(Stage);
