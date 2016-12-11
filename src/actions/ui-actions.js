@@ -26,3 +26,11 @@ export function selectCharacterId(characterId) {
     characterId,
   };
 }
+
+export function paintCharacterAnimation(characterId, animationId) {
+  return {
+    type: types.UPDATE_PAINTING_STATE,
+    characterId,
+    animationId,
+  }
+}

@@ -6,6 +6,10 @@ export default {
   ui: {
     selectedToolId: 'a',
     selectedCharacterId: null,
+    paint: {
+      characterId: null,
+      animationId: null,
+    }
   },
   characters: characters,
   stage: stage,

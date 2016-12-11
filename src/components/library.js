@@ -7,7 +7,10 @@ import {
   changeCharacterAnimationName,
   createCharacterAnimation,
 } from '../actions/characters-actions';
-import {selectCharacterId} from '../actions/ui-actions';
+import {
+  selectCharacterId,
+  paintCharacterAnimation,
+} from '../actions/ui-actions';
 
 import Sprite from './sprite';
 
@@ -47,6 +50,7 @@ class LibraryItem extends React.Component {
     onChangeLabel: PropTypes.func,
     selected: PropTypes.bool,
     onSelect: PropTypes.func,
+    onDoubleClick: PropTypes.func,
   };
 
   _onDragStart = (event) => {
@@ -61,7 +65,7 @@ class LibraryItem extends React.Component {
   }
 
   render() {
-    const {selected, onSelect, character, label, appearance} = this.props;
+    const {selected, onSelect, character, label, appearance, onDoubleClick} = this.props;
     const {spritesheet} = character;
 
     return (
@@ -70,6 +74,7 @@ class LibraryItem extends React.Component {
         draggable
         onDragStart={this._onDragStart}
         onClick={onSelect}
+        onDoubleClick={onDoubleClick}
       >
         <Sprite spritesheet={spritesheet} frame={0} animationId={appearance} />
         <TapToEditLabel className="name" value={label} onChange={this.props.onChangeLabel}/>
@@ -132,6 +137,9 @@ class Library extends React.Component {
             character={character}
             appearance={animationId}
             label={character.spritesheet.animationNames[animationId]}
+            onDoubleClick={() =>
+              dispatch(paintCharacterAnimation(character.id, animationId))
+            }
             onChangeLabel={(event) =>
               dispatch(changeCharacterAnimationName(character.id, animationId, event.target.value))
             }
@@ -163,7 +171,8 @@ class Library extends React.Component {
             <h2>Appearances</h2>
             <button
               disabled={!ui.selectedCharacterId}
-              onClick={() => dispatch(createCharacterAnimation(ui.selectedCharacterId))}>
+              onClick={() => dispatch(createCharacterAnimation(ui.selectedCharacterId))}
+            >
               +
             </button>
           </div>
