@@ -21,7 +21,7 @@ export default class Sprite extends React.Component {
     }
 
     const x = 0;
-    const y = _frame * width;
+    const y = -1 * _frame * width;
 
     const style = objectAssign({
       width: width,

@@ -13,9 +13,16 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
-export function changeTool(tool) {
+export function selectToolId(toolId) {
   return {
-    type: types.CHANGE_TOOL,
-    tool,
+    type: types.SELECT_TOOL_ID,
+    toolId,
+  };
+}
+
+export function selectDefinitionId(definitionId) {
+  return {
+    type: types.SELECT_DEFINITION_ID,
+    definitionId,
   };
 }

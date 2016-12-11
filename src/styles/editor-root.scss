@@ -1,3 +1,23 @@
+$highlight-color: rgba(140,180,255, 0.4);
+
+body {
+  background: url(../img/background.png) top left repeat;
+}
+
+.panel {
+  background-color: white;
+  box-shadow: 0 2px 2px rgba(0,0,0, 0.2);
+  margin: 5px;
+  padding: 5px;
+
+  h2 {
+    margin: 3px;
+    margin-right: 4px;
+    margin-left: 4px;
+    font-size: 17.5px;
+  }
+}
+
 .editor {
   width: 100%;
   display: flex;
@@ -32,17 +52,72 @@
 
     .stage-controls {
       height: 40px;
-    }
-
-    .library {
-      height:200px;
       display: flex;
       flex-direction: row;
+
+      .stage-playback-controls {
+        flex: 1;
+        text-align: center;
+      }
+      .stage-initial-state-controls {
+        flex: 1;
+        text-align: left;
+      }
+      .stage-speed-controls {
+        flex: 1;
+        text-align: right;
+      }
+    }
+
+    .library-container {
+      display: flex;
+      flex-direction: row;
+      min-height:200px;
+
+      .appearances {
+        flex: 1;
+      }
+
+      .library {
+        flex: 2;
+      }
+
+      .actor-grid {
+        display: flex;
+        flex-direction: row;
+        .actor {
+          padding:10px;
+          .name {
+            text-align: center;
+          }
+          &.selected {
+            background-color: $highlight-color;
+          }
+        }
+      }
     }
   }
 
   .inspector-panel-container {
     order: 2;
     width: 300px;
+  }
+}
+
+.segmented-control {
+  button {
+    border: 1px solid gray;
+    border-radius: 0;
+  }
+  button:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-right: 0;
+  }
+
+  button:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-left: 0;
   }
 }

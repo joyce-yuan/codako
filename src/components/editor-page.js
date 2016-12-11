@@ -17,8 +17,10 @@ export default class EditorPage extends React.Component {
       <div className="editor">
         <Toolbar />
         <div className="stage-container">
-          <Stage />
-          <StageControls />
+          <div className="panel">
+            <Stage />
+            <StageControls />
+          </div>
           <Library />
         </div>
         <InspectorPanelContainer />

@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
-import toolbarReducer from './toolbar-reducer';
+import uiReducer from './ui-reducer';
 import actorsReducer from './actors-reducer';
 import stageReducer from './stage-reducer';
 import {routerReducer} from 'react-router-redux';
 
 const rootReducer = combineReducers({
   actors: actorsReducer,
-  toolbar: toolbarReducer,
   stage: stageReducer,
+  ui: uiReducer,
   routing: routerReducer
 });
 

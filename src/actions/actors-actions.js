@@ -13,9 +13,62 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
-export function changeTool(tool) {
+export function changeActorDefinition(definitionId, values) {
   return {
-    type: types.CHANGE_TOOL,
-    tool,
+    type: types.UPSERT_ACTOR_DEFINITION,
+    definitionId,
+    values,
   };
+}
+
+export function createActorDefinition() {
+  const id = `${Date.now()}`;
+
+  return {
+    type: types.UPSERT_ACTOR_DEFINITION,
+    definitionId: id,
+    values: {
+      id: id,
+      name: 'Untitled',
+      rules: [],
+      spritesheet: {
+        data: 'data:image/png;base64',
+        width: 40,
+        animations: {
+          'idle': [0, 0],
+        },
+        animationNames:{
+          'idle': 'Idle',
+        },
+      },
+      variableDefaults: {},
+      world: 'x',
+    }
+  };
+}
+
+export function createActorAnimation(definitionId) {
+  const newAnimationId = `${Date.now()}`;
+  const animations = {};
+  const animationNames = {};
+
+  animations[newAnimationId] = [];
+  animationNames[newAnimationId] = 'Untitled';
+
+  return {
+    type: types.UPSERT_ACTOR_DEFINITION,
+    definitionId: definitionId,
+    values: {
+      spritesheet: {
+        animations,
+        animationNames
+      },
+    },
+  };
+}
+
+export function changeActorAnimationName(definitionId, animationId, name) {
+  const values = {spritesheet: {animationNames: {}}};
+  values.spritesheet.animationNames[animationId] = name;
+  return changeActorDefinition(definitionId, values);
 }

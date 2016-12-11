@@ -12,7 +12,7 @@ export default class InspectorPanelContainer extends React.Component {
 
   render() {
     return (
-      <div className="inspector-panel-container">
+      <div className="panel inspector-panel-container">
       </div>
     );
   }

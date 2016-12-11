@@ -13,17 +13,26 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
-export function createActorDescriptor(definition, initialValues) {
+// Actor
+// Cast
+
+export function createActorDescriptor(definition, values) {
   return {
-    type: types.CREATE_ACTOR_DESCRIPTOR,
+    type: types.UPSERT_ACTOR_DESCRIPTOR,
     definition,
-    initialValues,
+    values,
   };
 }
-export function changeActorDescriptor(descriptorId, changes) {
+export function changeActorDescriptor(descriptorId, values) {
   return {
-    type: types.CHANGE_ACTOR_DESCRIPTOR,
+    type: types.UPSERT_ACTOR_DESCRIPTOR,
     descriptorId,
-    changes,
+    values,
+  };
+}
+export function deleteActorDescriptor(descriptorId) {
+  return {
+    type: types.DELETE_ACTOR_DESCRIPTOR,
+    descriptorId,
   };
 }

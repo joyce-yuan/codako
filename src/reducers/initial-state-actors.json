@@ -13,7 +13,7 @@
                     0
                 ]
             },
-            "animation_names": {
+            "animationNames": {
                 "idle": "Idle"
             }
         },
@@ -216,7 +216,7 @@
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABQCAYAAABrjzfBAAAEVklEQVRoQ+2aO44TQRCGxxnSHoHcJERIm5CwE+NsOQAJ8gHMAfYA+AAWCQdgMxPbJCQrEZHgnCOsRGam2lPt6nJ3VXVP+yG0IyRj9+ubvx7T07Wj5sKv0aXyLbbb7XTUXbUAt6tmC3ON2qbKnAC4Wa/rTObgXix29/p76j6GgDr1ujlmGmAniVPFLej+hReq5uGweSAkqjdv27SJEQ7B4Lv/f29Ojwvq9VDuN6JmiZIqIIWB9UApWMgrujJ4LoHOgaTmFRV0YMTEAZIFsNAPqXq9a8lqOEgK1Hb9LYCbXdCMplNzVHP1VEA0tQ8GGKEB9mA+uE4OmBKcgZUCQu4D3/PjU+uJUUsHJcBoF4uZY+ZVTYyLBCY2wH14eGg+X1/7nucBNCiXY2YevaqJqVBcQZcTFwv/lNGyoqZgyrxmE8cALh7QJXKDipp6MA8oCJ88ggcp6ANIgLTC4c5lfHPTwB4wyACa//D21deZ97323TyYjLa5nM7aY2tJ6hUrCCDtr/tm9fL2YE34HS9o1yCPCqiprwFqcIMVpEpxWFRYUvCkgDevx55x/WMTFZfCYu6DPU8serMSdSxQuK9RwBgdhQZQi3rVTAwTgb9pkNAPQTe3n9x9SOpVBURI+NRAv/18vo/0q6tge8XVN+926UBMMzFT0tQDoNS0CE4BJ5OJyFAdMLgRlgcxkT8+g2357roowGhoKz+eVMEnQFRAChLJBy9OQUw92oZBAi/2wdik/OmCfc4C+H05DxjfTGbBd9oObaWQxQrGAAEC/DPVdhIfjAHAwlSlmpDZCv4XgKDo3fv96SwqXBI0WQris5T7GDcxB+QBlBMwWYAlTj50jAfEusTQCWuPd4Cz1Wobe2kuXaxmzcQDzru3eniB4W/2OZAHZYnu5D/nAD22ljfxUBVLaiZaHQaAqwDGKk1ODV4/gQX7UllwgttXE2LFogCwxMyBcrSYk/KNfrcPMFh/wa68PhMoODRYksfEHHT/OhK0xNSLAhapiEdw410hUbx4GaP7noKrD4hkEigDxBKbScFSMydPWg2KFgHmmNlyDNwIoLGopi5y8CyGfFgKyOsjgS8mILVEHt0s5CRtk4KCbxYDWlXMAYRD9VjNRYr6pILHAtSyEG8XTQydLZsHi4qWkoS4WaCNvm6WscORIEvhDhI1hcRAsaqo1Uik+kq2D9KEbQHkZzWp+olWljCbGDtaVTzmYZL40pQLWKPyZIpiriDsUfjrAPc5HMPrJbmlsSzAmC9SMO00Hw7QTwo4vv/oblADgz4cDn6rHiSoYPv46JV/++qP+DDAsgNVDgccBRAmXy6XvkaMgLz+EZS6SEmW3s1JAK/+7v4uip6vnC3NiLYkjU+AVqVS/Z4UHKKgVb2j5UENPthGsb/4iI3NOV2F8YNOWPmBulQrgcVK6iVVASlErVJEMaAGYClXaO4zyMQXC0iDgpcj7r7sffpsCvKNKoW0AvJnuWTqf3sFhF5bUtU6AAAAAElFTkSuQmCC",
             "width": 40,
-            "animation_names": {
+            "animationNames": {
                 "_2220533": "Left",
                 "idle": "Right"
             },
@@ -249,7 +249,7 @@
                     0
                 ]
             },
-            "animation_names": {
+            "animationNames": {
                 "_1431310": "Untitled",
                 "idle": "Idle"
             }
@@ -264,7 +264,7 @@
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABf0lEQVRYR+2XsXaCMBSGw2N4XHwId2Vnk8XNrQ9A98ZdHsCp3brULbtl70N06xM4U240nAA3AULU65GMYMKX/7//jQkY8REQ52NWwONXkmerFN3D5Dvxsre/Zcp4YOboBMi3My8w2CL87Xc4oC+16oAv2YE5A0p7RWHvO2MA+JnhVrtKu14kbDjgpf5IA16r/sBaNZxCAhaHcSpDtD8m+VUsDs/r24bxB6QBVUD4x7k/kVPQBgjp82G3TLGrxSNgUTaDFVQJrtfg3S2u2zsC9u2Do4IXxZxDQlrB8i9WsUt1ipAKCabeCNgnxaQVNNUfGYsfAhDOX75huZ5gUgqSB4RrZl09Egra6u+pAaensOyCURShFzj58B4Kvs5Fo0VjkCWgKSA+LcagdEovgG0Xbdv7NkAMNtCPN6wH+rwX9wGE74KiNwXUFeoCWwGEyVgP9KkgrNUFTN9IebSZ7BVC5GrC7icaUoJybh9AqaACowgIG6oAzuNmb9Ilu7WC8O1/ur0emClLsBQAAAAASUVORK5CYII=",
             "width": 40,
-            "animation_names": {
+            "animationNames": {
                 "idle": "Idle"
             },
             "animations": {
@@ -284,7 +284,7 @@
         "spritesheet": {
             "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABlElEQVRYR+3YWxKDIAwF0LpDF+GyXIQ7tOIIE2PCTXionWk/q8DxBkQdPi//DbW+aZpW1Mc8z8XjFDW0oDS0F+sC1sA42Ao1AVvCvFAI9ODGcUzjL8uCpmY6nkszCyzBeWD0CjSkCvTiSmEIKQK9uDBIC2Dohyd5AXpw5knmPJEiHwPSBcUroAJ7pGdd2eE8Ok0i8pRgDyCtLkfkjl2AvXER40WmBO8CBqiGlMpsBuYmtXORqkCOD2XegSi9XFm8OHQ+H8sERJ22PN4dyKcC2mU4qBswwviWh6aHdJz+93iJ/8DaBVKdIJpDPYC0TzgHXwE8xOt2w74E0hOI+k47SQ3Quq+WTIUL8Nj2xBTpn9K9jjdq8QrAgWEMscwlV1/bRnxg/QXg4yluycXw9zuM9Nq5f62SVnRt2Wh76fmS4zTgYykewFNouU8ftyQZU5XSyyUY292C1HAW4F5u75xEDwBCaqoFfn6Lu0zs1LJ40FM1SQyGZAU2Lbm0GLQ7hBeYSu4pO0sMpkaxJUDaHn7hP04uHucLIm4Vu7le3n8AAAAASUVORK5CYII=",
             "width": 40,
-            "animation_names": {
+            "animationNames": {
                 "idle": "Idle"
             },
             "animations": {
@@ -373,7 +373,7 @@
                     0
                 ]
             },
-            "animation_names": {
+            "animationNames": {
                 "_2350352": "Surface2",
                 "_2011220": "Underwater",
                 "idle": "Surface1"

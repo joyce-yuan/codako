@@ -5,15 +5,12 @@ $vin-red: #ff0000;
 
 /* Styles */
 body {
-  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
+  font-size: 14px;
   line-height: 1.4em;
   color: #4d4d4d;
   margin: 0;
   padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-  font-weight: 300;
 }
 
 td {

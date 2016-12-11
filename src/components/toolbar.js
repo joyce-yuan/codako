@@ -2,11 +2,11 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
 
-import * as actions from '../actions/toolbar-actions';
+import * as actions from '../actions/ui-actions';
 
 class Toolbar extends React.Component {
   static propTypes = {
-    tool: PropTypes.string.isRequired,
+    selectedToolId: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
   };
 
@@ -15,17 +15,18 @@ class Toolbar extends React.Component {
   }
 
   _renderTool(tool) {
+    const {selectedToolId, dispatch} = this.props;
     const classes = classNames({
       'tool-option': true,
       'enabled': true,
-      'active': this.props.tool === tool,
+      'active': selectedToolId === tool,
     });
 
     return (
       <button
         key={tool}
         className={classes}
-        onClick={() => this.props.dispatch(actions.changeTool(tool))}
+        onClick={() => dispatch(actions.selectToolId(tool))}
       >
         {tool}
       </button>
@@ -34,7 +35,7 @@ class Toolbar extends React.Component {
 
   render() {
     return (
-      <div className="toolbar">
+      <div className="panel toolbar">
         {[
           this._renderTool('a'),
           this._renderTool('b'),
@@ -45,7 +46,7 @@ class Toolbar extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return state.toolbar;
+  return state.ui;
 }
 
 export default connect(

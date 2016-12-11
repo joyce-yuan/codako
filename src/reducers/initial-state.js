@@ -3,8 +3,9 @@ import stage from './initial-state-stage';
 import world from './initial-state-world';
 
 export default {
-  toolbar: {
-    tool: 'a',
+  ui: {
+    selectedToolId: 'a',
+    selectedDefinitionId: null,
   },
   actors: actors,
   stage: stage,
