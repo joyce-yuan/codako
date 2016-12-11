@@ -2,12 +2,12 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
 import {
-  createActorDefinition,
-  changeActorDefinition,
-  changeActorAnimationName,
-  createActorAnimation,
-} from '../actions/actors-actions';
-import {selectDefinitionId} from '../actions/ui-actions';
+  createCharacter,
+  changeCharacter,
+  changeCharacterAnimationName,
+  createCharacterAnimation,
+} from '../actions/characters-actions';
+import {selectCharacterId} from '../actions/ui-actions';
 
 import Sprite from './sprite';
 
@@ -41,7 +41,7 @@ class TapToEditLabel extends React.Component {
 
 class LibraryItem extends React.Component {
   static propTypes = {
-    actor: PropTypes.object,
+    character: PropTypes.object,
     appearance: PropTypes.string,
     label: PropTypes.string,
     onChangeLabel: PropTypes.func,
@@ -54,19 +54,19 @@ class LibraryItem extends React.Component {
     event.dataTransfer.dropEffect = 'copy';
     event.dataTransfer.effectAllowed = 'copy';
     event.dataTransfer.setData('sprite', JSON.stringify({
-      definitionId: this.props.actor.id,
+      characterId: this.props.character.id,
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
     }));
   }
 
   render() {
-    const {selected, onSelect, actor, label, appearance} = this.props;
-    const {spritesheet} = actor;
+    const {selected, onSelect, character, label, appearance} = this.props;
+    const {spritesheet} = character;
 
     return (
       <div
-        className={classNames({"actor": true, "selected": selected})}
+        className={classNames({"item": true, "selected": selected})}
         draggable
         onDragStart={this._onDragStart}
         onClick={onSelect}
@@ -81,7 +81,7 @@ class LibraryItem extends React.Component {
 class Library extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    actors: PropTypes.object,
+    characters: PropTypes.object,
     ui: PropTypes.object,
   };
 
@@ -89,22 +89,22 @@ class Library extends React.Component {
     super(props, context);
   }
 
-  renderActorsPanel() {
-    const {actors, dispatch, ui} = this.props;
+  renderCharactersPanel() {
+    const {characters, dispatch, ui} = this.props;
 
     return (
-      <div className="actor-grid">
-        {Object.keys(actors).map(id =>
+      <div className="item-grid">
+        {Object.keys(characters).map(id =>
           <LibraryItem
             key={id}
-            actor={actors[id]}
-            label={actors[id].name}
+            character={characters[id]}
+            label={characters[id].name}
             onChangeLabel={(event) =>
-              dispatch(changeActorDefinition(id, {name: event.target.value}))
+              dispatch(changeCharacter(id, {name: event.target.value}))
             }
-            selected={id === ui.selectedDefinitionId}
+            selected={id === ui.selectedCharacterId}
             onSelect={() =>
-              dispatch(selectDefinitionId(id))
+              dispatch(selectCharacterId(id))
             }
           />
         )}
@@ -113,10 +113,10 @@ class Library extends React.Component {
   }
 
   renderAppearancesPanel() {
-    const {actors, ui, dispatch} = this.props;
-    const actor = actors[ui.selectedDefinitionId];
+    const {characters, ui, dispatch} = this.props;
+    const character = characters[ui.selectedCharacterId];
 
-    if (!actor) {
+    if (!character) {
       return(
         <div>
           Select an actor in your library to view it's appearances.
@@ -125,15 +125,15 @@ class Library extends React.Component {
     }
 
     return(
-      <div className="actor-grid">
-        {Object.keys(actor.spritesheet.animations).map(animationId =>
+      <div className="item-grid">
+        {Object.keys(character.spritesheet.animations).map(animationId =>
           <LibraryItem
             key={animationId}
-            actor={actor}
+            character={character}
             appearance={animationId}
-            label={actor.spritesheet.animationNames[animationId]}
+            label={character.spritesheet.animationNames[animationId]}
             onChangeLabel={(event) =>
-              dispatch(changeActorAnimationName(actor.id, animationId, event.target.value))
+              dispatch(changeCharacterAnimationName(character.id, animationId, event.target.value))
             }
           />
         )}
@@ -151,19 +151,19 @@ class Library extends React.Component {
             <h2>Library</h2>
             <button
               disabled={false}
-              onClick={() => dispatch(createActorDefinition())}
+              onClick={() => dispatch(createCharacter())}
             >
               +
             </button>
           </div>
-          {this.renderActorsPanel()}
+          {this.renderCharactersPanel()}
         </div>
         <div className="panel appearances">
           <div style={{display: 'flex'}}>
             <h2>Appearances</h2>
             <button
-              disabled={!ui.selectedDefinitionId}
-              onClick={() => dispatch(createActorAnimation(ui.selectedDefinitionId))}>
+              disabled={!ui.selectedCharacterId}
+              onClick={() => dispatch(createCharacterAnimation(ui.selectedCharacterId))}>
               +
             </button>
           </div>
@@ -176,7 +176,7 @@ class Library extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    actors: state.actors,
+    characters: state.characters,
     ui: state.ui,
   };
 }

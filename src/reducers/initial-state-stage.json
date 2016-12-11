@@ -2,7 +2,7 @@
   "__v": 13,
   "id": "5233a60cfd685f755e000002" ,
   "uidnext": "2",
-  "actorDescriptors": {
+  "actors": {
     "1": {
       "id": "1",
       "variableValues": {
@@ -13,7 +13,7 @@
         "y": 12,
         "x": 0
       },
-      "definitionId": "q9h78ccjtt9"
+      "characterId": "q9h78ccjtt9"
     }
   },
   "actorLibrary": [

@@ -20,9 +20,9 @@ export function selectToolId(toolId) {
   };
 }
 
-export function selectDefinitionId(definitionId) {
+export function selectCharacterId(characterId) {
   return {
     type: types.SELECT_DEFINITION_ID,
-    definitionId,
+    characterId,
   };
 }

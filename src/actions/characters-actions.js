@@ -13,20 +13,20 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
-export function changeActorDefinition(definitionId, values) {
+export function changeCharacter(characterId, values) {
   return {
-    type: types.UPSERT_ACTOR_DEFINITION,
-    definitionId,
+    type: types.UPSERT_CHARACTER,
+    characterId,
     values,
   };
 }
 
-export function createActorDefinition() {
+export function createCharacter() {
   const id = `${Date.now()}`;
 
   return {
-    type: types.UPSERT_ACTOR_DEFINITION,
-    definitionId: id,
+    type: types.UPSERT_CHARACTER,
+    characterId: id,
     values: {
       id: id,
       name: 'Untitled',
@@ -47,7 +47,7 @@ export function createActorDefinition() {
   };
 }
 
-export function createActorAnimation(definitionId) {
+export function createCharacterAnimation(characterId) {
   const newAnimationId = `${Date.now()}`;
   const animations = {};
   const animationNames = {};
@@ -56,8 +56,8 @@ export function createActorAnimation(definitionId) {
   animationNames[newAnimationId] = 'Untitled';
 
   return {
-    type: types.UPSERT_ACTOR_DEFINITION,
-    definitionId: definitionId,
+    type: types.UPSERT_CHARACTER,
+    characterId: characterId,
     values: {
       spritesheet: {
         animations,
@@ -67,8 +67,8 @@ export function createActorAnimation(definitionId) {
   };
 }
 
-export function changeActorAnimationName(definitionId, animationId, name) {
+export function changeCharacterAnimationName(characterId, animationId, name) {
   const values = {spritesheet: {animationNames: {}}};
   values.spritesheet.animationNames[animationId] = name;
-  return changeActorDefinition(definitionId, values);
+  return changeCharacter(characterId, values);
 }

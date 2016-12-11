@@ -8,7 +8,7 @@ export default function toolbarReducer(state = initialState.ui, action) {
     case SELECT_TOOL_ID:
       return objectAssign({}, state, {selectedToolId: action.toolId});
     case SELECT_DEFINITION_ID:
-      return objectAssign({}, state, {selectedDefinitionId: action.definitionId});
+      return objectAssign({}, state, {selectedCharacterId: action.characterId});
     default:
       return state;
   }

@@ -1,4 +1,5 @@
 import * as types from '../constants/action-types';
+import objectAssign from 'object-assign';
 
 // example of a thunk using the redux-thunk middleware
 // export function saveFuelSavings(settings) {
@@ -13,26 +14,29 @@ import * as types from '../constants/action-types';
 //   };
 // }
 
-// Actor
-// Cast
+export function createActor(character, initialValues) {
+  const newID = `${Date.now()}`;
+  const newActor = objectAssign({}, initialValues, {
+    characterId: character.id,
+    id: newID,
+  });
 
-export function createActorDescriptor(definition, values) {
   return {
-    type: types.UPSERT_ACTOR_DESCRIPTOR,
-    definition,
+    type: types.UPSERT_ACTOR,
+    id: newID,
+    values: newActor,
+  };
+}
+export function changeActor(id, values) {
+  return {
+    type: types.UPSERT_ACTOR,
+    id,
     values,
   };
 }
-export function changeActorDescriptor(descriptorId, values) {
+export function deleteActor(id) {
   return {
-    type: types.UPSERT_ACTOR_DESCRIPTOR,
-    descriptorId,
-    values,
-  };
-}
-export function deleteActorDescriptor(descriptorId) {
-  return {
-    type: types.DELETE_ACTOR_DESCRIPTOR,
-    descriptorId,
+    type: types.DELETE_ACTOR,
+    id,
   };
 }

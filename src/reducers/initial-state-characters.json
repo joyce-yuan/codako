@@ -60,7 +60,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "definitionid": "aamlcui8uxr"
+                                "characterid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -88,7 +88,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definitionid": "aamlcui8uxr"
+                                "characterid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -129,7 +129,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definitionid": "aamlcui8uxr"
+                                "characterid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -157,7 +157,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "definitionid": "aamlcui8uxr"
+                                "characterid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -198,7 +198,7 @@
                                 "appearance_ignored": true,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "definitionid": "aamlcui8uxr"
+                                "characterid": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -314,7 +314,7 @@
                 ],
                 "descriptors": {
                     "_2301121": {
-                        "definitionid": "e1izcd9ggb9",
+                        "characterid": "e1izcd9ggb9",
                         "appearance": "_2350352",
                         "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
@@ -342,7 +342,7 @@
                 ],
                 "descriptors": {
                     "_2203110": {
-                        "definitionid": "e1izcd9ggb9",
+                        "characterid": "e1izcd9ggb9",
                         "appearance": "idle",
                         "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
