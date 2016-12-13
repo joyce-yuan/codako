@@ -48,6 +48,7 @@ body {
       height: 520px;
       background-color: gray;
       position: relative;
+      margin-bottom: 6px;
     }
 
     .stage-controls {
@@ -82,6 +83,10 @@ body {
         flex: 2;
       }
 
+      h2 {
+        flex: 1;
+      }
+
       .item-grid {
         display: flex;
         flex-direction: row;
@@ -104,34 +109,68 @@ body {
   }
 }
 
-.segmented-control {
-  button {
-    border: 1px solid gray;
-    border-radius: 0;
+canvas {
+  cursor: crosshair;
+}
+
+.paint-sidebar {
+  width: 120px;
+  .active-swatch {
+    width: 114px;
+    height: 42px;
+    margin-bottom: 3px;
+    margin-right: 2px;
   }
-  button:first-child {
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    border-right: 0;
+  .colors {
+    .color {
+      padding: 3px;
+      margin-right: 2px;
+      margin-bottom: 3px;
+      width: 27px;
+      height: 25px;
+      border: 1px solid rgba(0,0,0,0.2);
+      cursor: pointer;
+      outline: 0;
+    }
   }
 
-  button:last-child {
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    border-left: 0;
+  .tools {
+    .tool {
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.2);
+      padding: 2px;
+      margin-right: 3px;
+      margin-bottom: 3px;
+      outline: 0;
+      cursor: pointer;
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+    .tool.selected {
+      background-color: red;
+    }
   }
 }
 
-.modal-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.2);
+.flex-horizontal {
+  display: flex;
 }
-.modal {
-  background-color: white;
-  margin: auto;
-  width: 750px;
+
+.btn-secondary {
+  background-image: linear-gradient(#fcfcfc, #eee);
+}
+.btn-secondary.icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin-right: 4px;
+  &:last-child {
+    margin-right: 0;
+  }
+  img {
+    width: 28px;
+    height: 28px;
+  }
 }

@@ -27,8 +27,8 @@ export default class Sprite extends React.Component {
       width: width,
       height: width,
       display: 'inline-block',
-      background: `url(${data}) top left no-repeat`,
-      backgroundPosition: `${x}px ${y}px`
+      backgroundImage: `url(${data})`,
+      backgroundPosition: `${x}px ${y}px`,
     }, this.props.style);
 
     return (

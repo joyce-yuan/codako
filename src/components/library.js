@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
+import {Button} from 'reactstrap';
+
 import {
   createCharacter,
   changeCharacter,
@@ -157,24 +159,26 @@ class Library extends React.Component {
         <div className="panel library">
           <div style={{display: 'flex'}}>
             <h2>Library</h2>
-            <button
+            <Button
+              size="sm"
               disabled={false}
               onClick={() => dispatch(createCharacter())}
             >
-              +
-            </button>
+            +
+            </Button>
           </div>
           {this.renderCharactersPanel()}
         </div>
         <div className="panel appearances">
           <div style={{display: 'flex'}}>
             <h2>Appearances</h2>
-            <button
+            <Button
+              size="sm"
               disabled={!ui.selectedCharacterId}
               onClick={() => dispatch(createCharacterAnimation(ui.selectedCharacterId))}
             >
-              +
-            </button>
+            +
+            </Button>
           </div>
           {this.renderAppearancesPanel()}
         </div>
