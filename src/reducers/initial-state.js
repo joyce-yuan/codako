@@ -6,6 +6,7 @@ export default {
   ui: {
     selectedToolId: 'a',
     selectedCharacterId: null,
+    selectedActorId: null,
     paint: {
       characterId: null,
       animationId: null,

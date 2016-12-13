@@ -3,14 +3,17 @@ import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
 import Sprite from './sprite';
-import * as actions from '../actions/stage-actions';
+import {createActor, changeActor} from '../actions/stage-actions';
+import {select} from '../actions/ui-actions';
 
 const STAGE_CELL_SIZE = 40;
 
 class StageActor extends React.Component {
   static propTypes = {
-    characters: PropTypes.object,
+    character: PropTypes.object,
     actor: PropTypes.object,
+    selected: PropTypes.bool,
+    onSelectCharacter: PropTypes.func,
   }
 
   _onDragStart = (event) => {
@@ -24,13 +27,12 @@ class StageActor extends React.Component {
   }
 
   render() {
-    const {actor, characters} = this.props;
-    const character = characters[actor.characterId];
-
+    const {actor, character, selected} = this.props;
     return (
       <div
         draggable
         onDragStart={this._onDragStart}
+        onDoubleClick={this.props.onSelectCharacter}
         style={{
           position: 'absolute',
           left: actor.position.x * STAGE_CELL_SIZE,
@@ -38,6 +40,7 @@ class StageActor extends React.Component {
         }}
       >
         <Sprite
+          className={selected ? 'outlined' : ''}
           appearance={actor.appearance}
           spritesheet={character.spritesheet}
         />
@@ -51,6 +54,7 @@ class Stage extends React.Component {
     dispatch: PropTypes.func,
 
     actors: PropTypes.object,
+    selectedActorId: PropTypes.string,
     characters: PropTypes.object,
     width: PropTypes.number,
     wrapX: PropTypes.bool,
@@ -79,30 +83,42 @@ class Stage extends React.Component {
         const actor = this.props.actors[actorId];
         const clonedActor = objectAssign({}, actor, {position});
         const character = this.props.characters[actor.characterId];
-        this.props.dispatch(actions.createActor(character, clonedActor));
+        this.props.dispatch(createActor(character, clonedActor));
       } else {
-        this.props.dispatch(actions.changeActor(actorId, {position}));
+        this.props.dispatch(changeActor(actorId, {position}));
       }
     } else if (characterId) {
       const character = this.props.characters[characterId];
-      this.props.dispatch(actions.createActor(character, {position}));
+      this.props.dispatch(createActor(character, {position}));
     }
   }
 
   render() {
-    const {actors, characters} = this.props;
+    const {actors, characters, dispatch, selectedActorId} = this.props;
     return (
       <div className="stage" onDragOver={this._onDragOver} onDrop={this._onDrop}>
-        {Object.keys(actors).map((id) =>
-          <StageActor key={id} characters={characters} actor={actors[id]} /> )
-        }
+        {Object.keys(actors).map((id) => {
+          const character = characters[actors[id].characterId];
+          return (
+            <StageActor
+              key={id}
+              selected={selectedActorId === id}
+              onSelectCharacter={() => dispatch(select(actors[id].characterId, id))}
+              character={character}
+              actor={actors[id]}
+            />
+          );
+        })}
       </div>
     );
   }
 }
 
 function mapStateToProps(state) {
-  return Object.assign({}, state.stage, {characters: state.characters});
+  return Object.assign({}, state.stage, {
+    selectedActorId: state.ui.selectedActorId,
+    characters: state.characters,
+  });
 }
 
 export default connect(

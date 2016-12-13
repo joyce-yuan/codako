@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
+import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
 import * as Tools from './tools';
 
@@ -56,10 +56,11 @@ class PaintContainer extends React.Component {
   }
 
   setImageDataFromProps(props = this.props) {
-    const {characterId, characters} = props;
+    const {characterId, characters, animationId} = props;
     if (characterId) {
       const {spritesheet} = characters[characterId];
-      getImageDataFromDataURL(spritesheet.data, (imageData) => {
+      const frameDataURL = spritesheet.animations[animationId][0];
+      getImageDataFromDataURL(frameDataURL, (imageData) => {
         CreatePixelImageData.call(imageData);
         this.setState({imageData});
       });
@@ -97,9 +98,9 @@ class PaintContainer extends React.Component {
   }
 
   _onCloseAndSave = () => {
-    const {dispatch, characterId} = this.props;
+    const {dispatch, characterId, animationId} = this.props;
     getDataURLFromImageData(this.state.imageData, (imageDataURL) => {
-      dispatch(changeCharacter(characterId, {spritesheet: {data: imageDataURL}}));
+      dispatch(changeCharacter(characterId, {spritesheet: {animations: {[animationId]: [imageDataURL]}}}));
       dispatch(paintCharacterAnimation(null));
     });
   }

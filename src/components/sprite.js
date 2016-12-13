@@ -4,35 +4,31 @@ import objectAssign from 'object-assign';
 export default class Sprite extends React.Component {
   static propTypes = {
     style: PropTypes.object,
+    className: PropTypes.string,
     spritesheet: PropTypes.object.isRequired,
     animationId: PropTypes.string,
     frame: PropTypes.number,
   }
 
   render() {
-    const {data, width, animations} = this.props.spritesheet;
+    const {animationId, frame, spritesheet, className} = this.props;
+    const {width, animations} = spritesheet;
 
-    let _frame = this.props.frame;
-    if (this.props.animationId) {
-      _frame = animations[this.props.animationId][0];
+    let data = null;
+    if (animationId) {
+      data = animations[animationId][frame || 0];
+    } else {
+      data = animations[Object.keys(animations)[0]][0];
     }
-    if (!_frame) {
-      _frame = 0;
-    }
-
-    const x = 0;
-    const y = -1 * _frame * width;
 
     const style = objectAssign({
       width: width,
       height: width,
       display: 'inline-block',
-      backgroundImage: `url(${data})`,
-      backgroundPosition: `${x}px ${y}px`,
     }, this.props.style);
 
     return (
-      <div style={style} />
+      <img src={data} className={`sprite ${className}`} style={style} />
     );
   }
 }

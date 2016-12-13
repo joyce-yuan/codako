@@ -20,10 +20,11 @@ export function selectToolId(toolId) {
   };
 }
 
-export function selectCharacterId(characterId) {
+export function select(characterId, actorId) {
   return {
     type: types.SELECT_DEFINITION_ID,
     characterId,
+    actorId,
   };
 }
 
@@ -32,5 +33,5 @@ export function paintCharacterAnimation(characterId, animationId) {
     type: types.UPDATE_PAINTING_STATE,
     characterId,
     animationId,
-  }
+  };
 }

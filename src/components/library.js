@@ -10,7 +10,7 @@ import {
   createCharacterAnimation,
 } from '../actions/characters-actions';
 import {
-  selectCharacterId,
+  select,
   paintCharacterAnimation,
 } from '../actions/ui-actions';
 
@@ -111,7 +111,7 @@ class Library extends React.Component {
             }
             selected={id === ui.selectedCharacterId}
             onSelect={() =>
-              dispatch(selectCharacterId(id))
+              dispatch(select(id, null))
             }
           />
         )}
