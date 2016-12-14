@@ -14,6 +14,12 @@ import objectAssign from 'object-assign';
 //   };
 // }
 
+export function advanceGameState() {
+  return {
+    type: types.ADVANCE_GAME_STATE,
+  };
+}
+
 export function createActor(character, initialValues) {
   const newID = `${Date.now()}`;
   const newActor = objectAssign({}, initialValues, {

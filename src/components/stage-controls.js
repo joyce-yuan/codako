@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 
 import {Button, ButtonGroup} from 'reactstrap';
 import {updatePlaybackState} from '../actions/ui-actions';
+import {advanceGameState} from '../actions/stage-actions';
 import {SPEED_OPTIONS} from '../constants/constants';
 
 class StageControls extends React.Component {
@@ -26,20 +27,29 @@ class StageControls extends React.Component {
         </div>
 
         <div className="stage-playback-controls">
-          <Button size="sm"><i className="fa fa-step-backward"></i>  Back</Button>{' '}
+          <Button
+            size="sm"
+          >
+            <i className="fa fa-step-backward" /> Back
+          </Button>{' '}
           <Button
             className={classNames({'selected': running === false})}
             onClick={() => dispatch(updatePlaybackState({running: false}))}
           >
-            <i className="fa fa-stop"></i> Stop
+            <i className="fa fa-stop" /> Stop
           </Button>{' '}
           <Button
             className={classNames({'selected': running === true})}
             onClick={() => dispatch(updatePlaybackState({running: true}))}
           >
-            <i className="fa fa-play"></i> Run
+            <i className="fa fa-play" /> Run
           </Button>{' '}
-          <Button size="sm"><i className="fa fa-step-forward"></i> Forward</Button>
+          <Button
+            size="sm"
+            onClick={() => dispatch(advanceGameState())}
+          >
+            <i className="fa fa-step-forward" /> Forward
+          </Button>
         </div>
 
         <div className="stage-speed-controls">
