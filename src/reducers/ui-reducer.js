@@ -18,7 +18,7 @@ export default function toolbarReducer(state = initialState.ui, action) {
       return objectAssign({}, state, {
         paint: {
           characterId: action.characterId,
-          animationId: action.animationId,
+          appearanceId: action.appearanceId,
         },
       });
     default:

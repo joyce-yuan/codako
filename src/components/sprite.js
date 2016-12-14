@@ -6,19 +6,19 @@ export default class Sprite extends React.Component {
     style: PropTypes.object,
     className: PropTypes.string,
     spritesheet: PropTypes.object.isRequired,
-    animationId: PropTypes.string,
+    appearance: PropTypes.string,
     frame: PropTypes.number,
   }
 
   render() {
-    const {animationId, frame, spritesheet, className} = this.props;
-    const {width, animations} = spritesheet;
+    const {appearance, frame, spritesheet, className} = this.props;
+    const {width, appearances} = spritesheet;
 
     let data = null;
-    if (animationId) {
-      data = animations[animationId][frame || 0];
+    if (appearance) {
+      data = appearances[appearance][frame || 0];
     } else {
-      data = animations[Object.keys(animations)[0]][0];
+      data = appearances[Object.keys(appearances)[0]][0];
     }
 
     const style = objectAssign({

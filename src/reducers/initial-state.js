@@ -9,7 +9,7 @@ export default {
     selectedActorId: null,
     paint: {
       characterId: null,
-      animationId: null,
+      appearanceId: null,
     }
   },
   characters: characters,

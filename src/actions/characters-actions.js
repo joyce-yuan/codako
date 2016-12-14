@@ -34,10 +34,10 @@ export function createCharacter() {
       spritesheet: {
         data: 'data:image/png;base64',
         width: 40,
-        animations: {
+        appearances: {
           'idle': [0, 0],
         },
-        animationNames:{
+        appearanceNames:{
           'idle': 'Idle',
         },
       },
@@ -47,28 +47,28 @@ export function createCharacter() {
   };
 }
 
-export function createCharacterAnimation(characterId) {
+export function createCharacterAppearance(characterId) {
   const newAnimationId = `${Date.now()}`;
-  const animations = {};
-  const animationNames = {};
+  const appearances = {};
+  const appearanceNames = {};
 
-  animations[newAnimationId] = [];
-  animationNames[newAnimationId] = 'Untitled';
+  appearances[newAnimationId] = [];
+  appearanceNames[newAnimationId] = 'Untitled';
 
   return {
     type: types.UPSERT_CHARACTER,
     characterId: characterId,
     values: {
       spritesheet: {
-        animations,
-        animationNames
+        appearances,
+        appearanceNames
       },
     },
   };
 }
 
-export function changeCharacterAnimationName(characterId, animationId, name) {
-  const values = {spritesheet: {animationNames: {}}};
-  values.spritesheet.animationNames[animationId] = name;
+export function changeCharacterAppearanceName(characterId, appearanceId, name) {
+  const values = {spritesheet: {appearanceNames: {}}};
+  values.spritesheet.appearanceNames[appearanceId] = name;
   return changeCharacter(characterId, values);
 }

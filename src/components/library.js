@@ -6,43 +6,17 @@ import {Button} from 'reactstrap';
 import {
   createCharacter,
   changeCharacter,
-  changeCharacterAnimationName,
-  createCharacterAnimation,
+  changeCharacterAppearanceName,
+  createCharacterAppearance,
 } from '../actions/characters-actions';
 import {
   select,
-  paintCharacterAnimation,
+  paintCharacterAppearance,
 } from '../actions/ui-actions';
 
 import Sprite from './sprite';
+import TapToEditLabel from './tap-to-edit-label';
 
-class TapToEditLabel extends React.Component {
-  static propTypes = {
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-  };
-
-  _onChange = (event) => {
-    const nextValue = event.target.innerText.trim();
-    if (nextValue != this.props.value) {
-      event.target = {value: nextValue.trim()};
-      this.props.onChange(event);
-    }
-  }
-
-  render() {
-    const {value, ...props} = this.props;
-    return (
-      <div
-        contentEditable
-        onChange={this._onChange}
-        onBlur={this._onChange}
-        dangerouslySetInnerHTML={{__html: value}}
-        {...props}
-      />
-  );
-  }
-}
 
 class LibraryItem extends React.Component {
   static propTypes = {
@@ -78,7 +52,7 @@ class LibraryItem extends React.Component {
         onClick={onSelect}
         onDoubleClick={onDoubleClick}
       >
-        <Sprite spritesheet={spritesheet} frame={0} animationId={appearance} />
+        <Sprite spritesheet={spritesheet} frame={0} appearanceId={appearance} />
         <TapToEditLabel className="name" value={label} onChange={this.props.onChangeLabel}/>
       </div>
     );
@@ -133,17 +107,17 @@ class Library extends React.Component {
 
     return(
       <div className="item-grid">
-        {Object.keys(character.spritesheet.animations).map(animationId =>
+        {Object.keys(character.spritesheet.appearances).map(appearanceId =>
           <LibraryItem
-            key={animationId}
+            key={appearanceId}
             character={character}
-            appearance={animationId}
-            label={character.spritesheet.animationNames[animationId]}
+            appearance={appearanceId}
+            label={character.spritesheet.appearanceNames[appearanceId]}
             onDoubleClick={() =>
-              dispatch(paintCharacterAnimation(character.id, animationId))
+              dispatch(paintCharacterAppearance(character.id, appearanceId))
             }
             onChangeLabel={(event) =>
-              dispatch(changeCharacterAnimationName(character.id, animationId, event.target.value))
+              dispatch(changeCharacterAppearanceName(character.id, appearanceId, event.target.value))
             }
           />
         )}
@@ -175,7 +149,7 @@ class Library extends React.Component {
             <Button
               size="sm"
               disabled={!ui.selectedCharacterId}
-              onClick={() => dispatch(createCharacterAnimation(ui.selectedCharacterId))}
+              onClick={() => dispatch(createCharacterAppearance(ui.selectedCharacterId))}
             >
             +
             </Button>

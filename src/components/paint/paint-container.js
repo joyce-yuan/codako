@@ -4,7 +4,7 @@ import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
 import * as Tools from './tools';
 
-import {paintCharacterAnimation} from '../../actions/ui-actions';
+import {paintCharacterAppearance} from '../../actions/ui-actions';
 import {changeCharacter} from '../../actions/characters-actions';
 
 import {getImageDataFromDataURL, getDataURLFromImageData} from './helpers';
@@ -19,7 +19,7 @@ class PaintContainer extends React.Component {
 
     characters: PropTypes.object,
     characterId: PropTypes.string,
-    animationId: PropTypes.string,
+    appearanceId: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -56,10 +56,10 @@ class PaintContainer extends React.Component {
   }
 
   setImageDataFromProps(props = this.props) {
-    const {characterId, characters, animationId} = props;
+    const {characterId, characters, appearanceId} = props;
     if (characterId) {
       const {spritesheet} = characters[characterId];
-      const frameDataURL = spritesheet.animations[animationId][0];
+      const frameDataURL = spritesheet.appearances[appearanceId][0];
       getImageDataFromDataURL(frameDataURL, (imageData) => {
         CreatePixelImageData.call(imageData);
         this.setState({imageData});
@@ -94,14 +94,14 @@ class PaintContainer extends React.Component {
   }
 
   _onClose = () => {
-    this.props.dispatch(paintCharacterAnimation(null));
+    this.props.dispatch(paintCharacterAppearance(null));
   }
 
   _onCloseAndSave = () => {
-    const {dispatch, characterId, animationId} = this.props;
+    const {dispatch, characterId, appearanceId} = this.props;
     getDataURLFromImageData(this.state.imageData, (imageDataURL) => {
-      dispatch(changeCharacter(characterId, {spritesheet: {animations: {[animationId]: [imageDataURL]}}}));
-      dispatch(paintCharacterAnimation(null));
+      dispatch(changeCharacter(characterId, {spritesheet: {appearances: {[appearanceId]: [imageDataURL]}}}));
+      dispatch(paintCharacterAppearance(null));
     });
   }
 

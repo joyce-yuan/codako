@@ -28,10 +28,10 @@ export function select(characterId, actorId) {
   };
 }
 
-export function paintCharacterAnimation(characterId, animationId) {
+export function paintCharacterAppearance(characterId, appearanceId) {
   return {
     type: types.UPDATE_PAINTING_STATE,
     characterId,
-    animationId,
+    appearanceId,
   };
 }

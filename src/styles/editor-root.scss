@@ -305,7 +305,8 @@ canvas {
     .scenario {
       display: block;
       text-align: center;
-      margin-bottom:3px;
+      margin-bottom: 3px;
+      pointer-events: none;
 
       .arrow {
         display:inline-block;
@@ -314,12 +315,13 @@ canvas {
         color:#555;
       }
 
-      img {
+      .scenario-stage {
+        user-select: none;
+        position: relative;
+        display: inline-block;
         background:url(../img/checker.png);
         border:1px solid #bbb;
-        max-width:45%;
-        max-height:75px;
-        padding-top:4px;
+        box-sizing:content-box;
       }
     }
   }

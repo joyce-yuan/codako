@@ -6,12 +6,12 @@
         "rules": [],
         "spritesheet": {
             "width": 40,
-            "animations": {
+            "appearances": {
                 "ax1": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABE0lEQVRYR+2Y2xGEIAxFtbTtZEuxlO1kS2PxgYMZsnkZ5CN+OoQcLpcEnSe/J1VTz9o06kAsYabawMDE6jzqQAhYwMr7YQAh2DCAGNijgBRUve1li9M3+/EFLck/MiwPSsBqBQ+4xpm5CVADdqbelUN23AhoAjtyu5ziO8CgZC4evAN0VdDdg6saalhPD1JtjGNxFw9yEpcxlLJd6yAF3oLt5kEKDr00POFBIeyY98FqERugSx0UKoUe+i51UAub4ZJbL9ZCgbjwoFXIFB40ShgeNAo4hQfNClYTsL4eWwnVgQz66MUMkfAh0YtN8u3BUaitIkahFim4vC+eu8QuH+f/gy3Sf0DUyiTA4k5iAYPgHNAfkPFqKStkGYEAAAAASUVORK5CYII="
                 ]
             },
-            "animationNames": {
+            "appearanceNames": {
                 "ax1": "Idle"
             }
         },
@@ -58,7 +58,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "characterid": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -86,7 +86,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "characterid": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -127,7 +127,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "characterid": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -155,7 +155,7 @@
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
-                                "characterid": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -196,7 +196,7 @@
                                 "appearance_ignored": true,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
-                                "characterid": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr"
                             }
                         },
                         "actions": [
@@ -213,11 +213,11 @@
         ],
         "spritesheet": {
             "width": 40,
-            "animationNames": {
+            "appearanceNames": {
                 "_2220533": "Left",
                 "idle": "Right"
             },
-            "animations": {
+            "appearances": {
                 "_2220533": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABE0lEQVRYR+2Y2xGEIAxFtbTtZEuxlO1kS2PxgYMZsnkZ5CN+OoQcLpcEnSe/J1VTz9o06kAsYabawMDE6jzqQAhYwMr7YQAh2DCAGNijgBRUve1li9M3+/EFLck/MiwPSsBqBQ+4xpm5CVADdqbelUN23AhoAjtyu5ziO8CgZC4evAN0VdDdg6saalhPD1JtjGNxFw9yEpcxlLJd6yAF3oLt5kEKDr00POFBIeyY98FqERugSx0UKoUe+i51UAub4ZJbL9ZCgbjwoFXIFB40ShgeNAo4hQfNClYTsL4eWwnVgQz66MUMkfAh0YtN8u3BUaitIkahFim4vC+eu8QuH+f/gy3Sf0DUyiTA4k5iAYPgHNAfkPFqKStkGYEAAAAASUVORK5CYII="
                 ],
@@ -235,7 +235,7 @@
         "rules": [],
         "spritesheet": {
             "width": 40,
-            "animations": {
+            "appearances": {
                 "_1431310": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABE0lEQVRYR+2Y2xGEIAxFtbTtZEuxlO1kS2PxgYMZsnkZ5CN+OoQcLpcEnSe/J1VTz9o06kAsYabawMDE6jzqQAhYwMr7YQAh2DCAGNijgBRUve1li9M3+/EFLck/MiwPSsBqBQ+4xpm5CVADdqbelUN23AhoAjtyu5ziO8CgZC4evAN0VdDdg6saalhPD1JtjGNxFw9yEpcxlLJd6yAF3oLt5kEKDr00POFBIeyY98FqERugSx0UKoUe+i51UAub4ZJbL9ZCgbjwoFXIFB40ShgeNAo4hQfNClYTsL4eWwnVgQz66MUMkfAh0YtN8u3BUaitIkahFim4vC+eu8QuH+f/gy3Sf0DUyiTA4k5iAYPgHNAfkPFqKStkGYEAAAAASUVORK5CYII="
                 ],
@@ -243,7 +243,7 @@
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABQCAYAAABrjzfBAAACZ0lEQVRoQ+2ZzXEDIQyF7crSQIpID24gDaSTHHPPpDJn2BkYLQjpCVjQejanjFewn59+wffPj9vz7f1xs/79/XwVS1r24d5L977/fj+e0Yh7aQ28BmPZg9ub7hv22gB7N7Wqj9gH0AQYFniDTIAxBt0Cxhg8GjAqgrg32MRYnBaDVsAIeQ7AGUmSKxhdKIVWsLnPShIKhMAlF88CjMmBwi0DRLPYPWAqM7NdjCrY3eq0yaW38O8ArZtpga49R1Ts6iRoV+hVeauDXset6a0OcWtucynYohpdcyk4TcGjTnDaF4BcXKt5I4pxNyBakLUXtT6HFGzdfMS6qRN1C/AF2KJaUai9Dqy7YaH12CmNU9YZk1O7O4ulMjSiTnYDajFGFW5R9HDA/CxMQwlReBogB4rGvf+R332Z6QGUkoArQbVEqdkWrU47JnJZG16Kzoto3aQJdNdKhfRc+41Fgpf23f1OYgG0/KaClJFa96CfQwpSpVoKrkWEYljQFltU0/ayPt+SRFo06yeKGgMEONOlOagIuFq9NA/W5PVw61VV0IN6ooIe1BsKaOm7llLDuniUe3PolmpQBWzZzKIMans+wJ7ZEFXFYlcoOCr+LBCSLQvoJf6KMuPNvecD9BZ/hYIr25t0PNgG1pXqafc3CdBT9haHppXuhergywOOmFxqZ+RDYlALfLQVpla3MouhGPTY5naF+gJEgy6zO08MvnwdbPSguiy5eNX9n0a4G/nz61wvwwN7P8jdPa8AVu8Hgws4ZUe1MpOLNWM62Ib/tRt8qrj17obaQ5foCDy1offa8cvQ5zUPcJ//A5+aYp1b/aRoAAAAAElFTkSuQmCC"
                 ]
             },
-            "animationNames": {
+            "appearanceNames": {
                 "_1431310": "Untitled",
                 "idle": "Idle"
             }
@@ -257,10 +257,10 @@
         "rules": [],
         "spritesheet": {
             "width": 40,
-            "animationNames": {
+            "appearanceNames": {
                 "idle": "Idle"
             },
-            "animations": {
+            "appearances": {
                 "idle": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABf0lEQVRYR+2XsXaCMBSGw2N4XHwId2Vnk8XNrQ9A98ZdHsCp3brULbtl70N06xM4U240nAA3AULU65GMYMKX/7//jQkY8REQ52NWwONXkmerFN3D5Dvxsre/Zcp4YOboBMi3My8w2CL87Xc4oC+16oAv2YE5A0p7RWHvO2MA+JnhVrtKu14kbDjgpf5IA16r/sBaNZxCAhaHcSpDtD8m+VUsDs/r24bxB6QBVUD4x7k/kVPQBgjp82G3TLGrxSNgUTaDFVQJrtfg3S2u2zsC9u2Do4IXxZxDQlrB8i9WsUt1ipAKCabeCNgnxaQVNNUfGYsfAhDOX75huZ5gUgqSB4RrZl09Egra6u+pAaensOyCURShFzj58B4Kvs5Fo0VjkCWgKSA+LcagdEovgG0Xbdv7NkAMNtCPN6wH+rwX9wGE74KiNwXUFeoCWwGEyVgP9KkgrNUFTN9IebSZ7BVC5GrC7icaUoJybh9AqaACowgIG6oAzuNmb9Ilu7WC8O1/ur0emClLsBQAAAAASUVORK5CYII="
                 ]
@@ -275,10 +275,10 @@
         "rules": [],
         "spritesheet": {
             "width": 40,
-            "animationNames": {
+            "appearanceNames": {
                 "idle": "Idle"
             },
-            "animations": {
+            "appearances": {
                 "idle": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABlElEQVRYR+3YWxKDIAwF0LpDF+GyXIQ7tOIIE2PCTXionWk/q8DxBkQdPi//DbW+aZpW1Mc8z8XjFDW0oDS0F+sC1sA42Ao1AVvCvFAI9ODGcUzjL8uCpmY6nkszCyzBeWD0CjSkCvTiSmEIKQK9uDBIC2Dohyd5AXpw5knmPJEiHwPSBcUroAJ7pGdd2eE8Ok0i8pRgDyCtLkfkjl2AvXER40WmBO8CBqiGlMpsBuYmtXORqkCOD2XegSi9XFm8OHQ+H8sERJ22PN4dyKcC2mU4qBswwviWh6aHdJz+93iJ/8DaBVKdIJpDPYC0TzgHXwE8xOt2w74E0hOI+k47SQ3Quq+WTIUL8Nj2xBTpn9K9jjdq8QrAgWEMscwlV1/bRnxg/QXg4yluycXw9zuM9Nq5f62SVnRt2Wh76fmS4zTgYykewFNouU8ftyQZU5XSyyUY292C1HAW4F5u75xEDwBCaqoFfn6Lu0zs1LJ40FM1SQyGZAU2Lbm0GLQ7hBeYSu4pO0sMpkaxJUDaHn7hP04uHucLIm4Vu7le3n8AAAAASUVORK5CYII="
                 ]
@@ -304,7 +304,7 @@
                 ],
                 "descriptors": {
                     "_2301121": {
-                        "characterid": "e1izcd9ggb9",
+                        "characterId": "e1izcd9ggb9",
                         "appearance": "_2350352",
                         "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
@@ -332,7 +332,7 @@
                 ],
                 "descriptors": {
                     "_2203110": {
-                        "characterid": "e1izcd9ggb9",
+                        "characterId": "e1izcd9ggb9",
                         "appearance": "idle",
                         "actorid_during_recording": "_2443155",
                         "appearance_ignored": false,
@@ -350,7 +350,7 @@
         ],
         "spritesheet": {
             "width": 40,
-            "animations": {
+            "appearances": {
                 "_2350352": [
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABE0lEQVRYR+2Y2xGEIAxFtbTtZEuxlO1kS2PxgYMZsnkZ5CN+OoQcLpcEnSe/J1VTz9o06kAsYabawMDE6jzqQAhYwMr7YQAh2DCAGNijgBRUve1li9M3+/EFLck/MiwPSsBqBQ+4xpm5CVADdqbelUN23AhoAjtyu5ziO8CgZC4evAN0VdDdg6saalhPD1JtjGNxFw9yEpcxlLJd6yAF3oLt5kEKDr00POFBIeyY98FqERugSx0UKoUe+i51UAub4ZJbL9ZCgbjwoFXIFB40ShgeNAo4hQfNClYTsL4eWwnVgQz66MUMkfAh0YtN8u3BUaitIkahFim4vC+eu8QuH+f/gy3Sf0DUyiTA4k5iAYPgHNAfkPFqKStkGYEAAAAASUVORK5CYII="
                 ],
@@ -358,7 +358,7 @@
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAB4CAYAAACAcLCaAAADYUlEQVR4Xu2bvXnbMBCGyRnceQBnhnTWDu6TjgNoAD8eQAOwi3uX7sUqO8QDuPMMCg4kGBAEcQccCIrKoTNxP9+9OIKSaNTVFYzLubrUh6r2SZldBGMwXHLIXQ+Wz6s6RYRJFFMcJk7HShGTyye0tCbHpgIphc4Eno9H3YOhcTid5n5vuJ8d8/A0j+G9SS5tqwV1dx9BUY9Pp6p7O442dgIV4AJzYBMcZ5XnfYjxfWrpCj4PBdcgsG6aGpJg5Nx5hXH0e/k5937+ZV1r26pqGn2hO/4rdLRwBMP1x68HlQAIDo6zFKricXyoBDAsW1vU84+p98tr/7e+fogtfbBX+Wt9q5sAUOXSeOirh8QTMnYRHl8jlCrRjd0LdIehBdctYSMR296lgwjGhLoF+QViUQrOi0AubCEoBA0Bvf85mzGXDsVfepBCKWQjBIUglwDXf9MepGxdSQIpgbnkjH+SwFDy3OKzC8xFbjWCInD8YrTBBwMffelBbk8KweIEuRtxrP9VLbFP/FUJlG2Ge0MIQSG4BgFuTNlm9k3wm/rR/k//4/zSiF7i7ku9sLlDXthwsVn+0QJnuQkUOHr5AjnZCb43InDlZcx6kxBWZWLCvaluZIljsWW0nxHkLkmytoU+lyVOJjo45iG44jaURyAXU84PCytq8YYWglziQnCJIPWBECa44vZBXfpyS5xYbDmBVGSO3f4EUpvXFBprHwtyfwRjK1zbXghyCW9GkHpz/T8CqURil3wzglShIpBKavEHTG6Atf2LHzagHNGwi2YJvHz25wBg1PcNKRbliEZQICQlJ4uwNUmvXiDWs+7Jnsmy2PRSlg9LnjI/EzgGuUfeX1jHjeCoBxzdsAWkHP9wC4CYOuhIaxBlH2zxVQ2HU5YEYL6xFPsniTnR8NlW3e/wyRwsAbzkgecyDPSEjrIxBY22SgMMo2N81JmgOjDxTZLtYwsP+sPXT8/wgYE48izGWgKbF4IYIWx+vwRj/8dKk0j8gShEcb8Esd4oNZ9O0FnOlJag+KQLLIRQBHJB75sgpYm5hDD/7Qkim/v2AhGEOxa4gL50X+6YIHZ7ufMrfJKBFEUJprRHUYGxi1KcoAhMIcD1IfVgSnNzhRl/ksBcydw4lMI3FUgpPJ/AW9ioKcRcm7/WnBuLinkzfwAAAABJRU5ErkJggg=="
                 ]
             },
-            "animationNames": {
+            "appearanceNames": {
                 "_2350352": "Surface2",
                 "idle": "Surface1"
             }
