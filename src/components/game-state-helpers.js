@@ -49,22 +49,21 @@ export function applyRuleAction(actor, character, action) {
     const current = getVariableValue(actor, character, action.variable);
     const next = applyVariableOperation(current, action.operation, action.value);
     return u({variableValues: {[action.variable]: next}}, actor);
-  } else {
-    throw new Error("Not sure how to apply action", action);
   }
+  throw new Error("Not sure how to apply action", action);
 }
 
 export function nameForKey(code) {
-  if (code == 32) {
+  if (code === 32) {
     return "Space Bar";
   }
-  if (code == 38) {
+  if (code === 38) {
     return "Up Arrow";
   }
-  if (code == 37) {
+  if (code === 37) {
     return "Left Arrow";
   }
-  if (code == 39) {
+  if (code === 39) {
     return "Right Arrow";
   }
   return String.fromEventKeyCode(code);
@@ -73,7 +72,7 @@ export function nameForKey(code) {
 export function advanceFrame(stage) {
   // if we create new actors during the frame, we don't want to advance
   // those ones. Existing actors only!
-  let nextStage = JSON.parse(JSON.stringify(stage));
+  const nextStage = JSON.parse(JSON.stringify(stage));
   nextStage.applied = [];
   nextStage.input = {
     keys: [],
@@ -90,7 +89,7 @@ function advanceActor(stage, actor) {
   const {characters} = window.store.getState();
 
   const actorMatchesDescriptor = (actor, descriptor) => {
-    if (descriptor.characterId != actor.characterId) {
+    if (descriptor.characterId !== actor.characterId) {
       return false;
     }
     if (!descriptor.appearance_ignored && (actor.appearance !== descriptor.appearance)) {
@@ -117,22 +116,22 @@ function advanceActor(stage, actor) {
     }
     return true;
   };
-
-  const actorWithID = (id, set = Object.values(stage.actors)) => {
-    const matches = set.filter(a => a.id === id);
-    if (matches.length > 1) {
-      throw new Error("There are multiple actors with the same ID!", matches);
-    }
-    return matches[0];
-  };
-
-  const actorMatchingDescriptor = (descriptor, set = Object.values(stage.actors)) => {
-    return set.find(a => actorMatchesDescriptor(a, descriptor));
-  };
-
-  const actorsMatchingDescriptor = (descriptor, set = Object.values(stage.actors)) => {
-    return set.filter(a => actorMatchesDescriptor(a, descriptor));
-  };
+  //
+  // const actorWithID = (id, set = Object.values(stage.actors)) => {
+  //   const matches = set.filter(a => a.id === id);
+  //   if (matches.length > 1) {
+  //     throw new Error("There are multiple actors with the same ID!", matches);
+  //   }
+  //   return matches[0];
+  // };
+  //
+  // const actorMatchingDescriptor = (descriptor, set = Object.values(stage.actors)) => {
+  //   return set.find(a => actorMatchesDescriptor(a, descriptor));
+  // };
+  //
+  // const actorsMatchingDescriptor = (descriptor, set = Object.values(stage.actors)) => {
+  //   return set.filter(a => actorMatchesDescriptor(a, descriptor));
+  // };
 
   const actorsAtPositionMatchDescriptors = (position, descriptors) => {
     const searchSet = actorsAtPosition(position);
@@ -193,6 +192,7 @@ function advanceActor(stage, actor) {
         return true;
       }
     }
+    return false;
   };
 
   const tickRule = (rule) => {
@@ -206,6 +206,7 @@ function advanceActor(stage, actor) {
       applyRule(rule);
       return true;
     }
+    return false;
   };
 
   const checkRuleScenario = (rule) => {
@@ -222,7 +223,7 @@ function advanceActor(stage, actor) {
   };
 
   const scenarioOffsetOf = (scenario, ref) => {
-    const block = scenario.find(block => block.refs.includes(ref));
+    const block = scenario.find(b => b.refs.includes(ref));
     return block ? block.coord : null;
   };
 
@@ -257,7 +258,8 @@ function advanceActor(stage, actor) {
         // actor = @stage.addActor(descriptor, pos)
         // actor._id = Math.createUUID() unless rule.editing
       } else {
-        let actionActor = actorsForRefs[action.ref] || actorMatchingDescriptor(descriptor, actorsAtPosition(pos));
+        const candidateActors = actorsAtPosition(pos);
+        const actionActor = candidateActors.find(a => actorMatchesDescriptor(a, descriptor));
         if (!actionActor) {
           throw new Error(`Couldn't find the actor for performing rule: ${rule}`);
         }
