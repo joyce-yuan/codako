@@ -28,6 +28,14 @@ export function select(characterId, actorId) {
   };
 }
 
+export function updatePlaybackState(values) {
+  return {
+    type: types.UPDATE_PLAYBACK_STATE,
+    values,
+  };
+}
+
+
 export function paintCharacterAppearance(characterId, appearanceId) {
   return {
     type: types.UPDATE_PAINTING_STATE,

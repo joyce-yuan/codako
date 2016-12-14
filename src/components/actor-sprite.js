@@ -9,7 +9,8 @@ export default class ActorSprite extends React.Component {
     actor: PropTypes.object,
     selected: PropTypes.bool,
     draggable: PropTypes.bool,
-    onSelectCharacter: PropTypes.func,
+    onClick: PropTypes.func,
+    onDoubleClick: PropTypes.func,
   }
 
   _onDragStart = (event) => {
@@ -28,7 +29,8 @@ export default class ActorSprite extends React.Component {
       <div
         draggable={draggable}
         onDragStart={this._onDragStart}
-        onDoubleClick={this.props.onSelectCharacter}
+        onClick={this.props.onClick}
+        onDoubleClick={this.props.onDoubleClick}
         style={{
           position: 'absolute',
           left: actor.position.x * STAGE_CELL_SIZE,

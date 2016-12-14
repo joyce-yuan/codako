@@ -8,6 +8,7 @@ import PaintContainer from './paint/paint-container';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/editor-root.scss';
+import '../styles/font-awesome.min.css';
 
 export default class EditorPage extends React.Component {
   constructor(props, context) {

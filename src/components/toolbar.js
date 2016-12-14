@@ -1,8 +1,10 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
+import {Button} from 'reactstrap';
 
 import * as actions from '../actions/ui-actions';
+import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
 
 class Toolbar extends React.Component {
   static propTypes = {
@@ -14,32 +16,29 @@ class Toolbar extends React.Component {
     super(props, context);
   }
 
-  _renderTool(tool) {
+  _renderTool = (toolId) => {
     const {selectedToolId, dispatch} = this.props;
     const classes = classNames({
       'tool-option': true,
       'enabled': true,
-      'active': selectedToolId === tool,
+      'selected': selectedToolId === toolId,
     });
 
     return (
-      <button
-        key={tool}
+      <Button
+        key={toolId}
         className={classes}
-        onClick={() => dispatch(actions.selectToolId(tool))}
+        onClick={() => dispatch(actions.selectToolId(toolId))}
       >
-        {tool}
-      </button>
+        <img src={`/img/sidebar_${toolId}.png`} />
+      </Button>
     );
   }
 
   render() {
     return (
       <div className="panel toolbar">
-        {[
-          this._renderTool('a'),
-          this._renderTool('b'),
-        ]}
+        {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
       </div>
     );
   }

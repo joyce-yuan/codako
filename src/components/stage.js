@@ -3,16 +3,17 @@ import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
 import ActorSprite from './actor-sprite';
-import {createActor, changeActor} from '../actions/stage-actions';
-import {select} from '../actions/ui-actions';
+import {createActor, changeActor, deleteActor} from '../actions/stage-actions';
+import {select, paintCharacterAppearance, selectToolId} from '../actions/ui-actions';
 
-import {STAGE_CELL_SIZE} from '../constants/constants';
+import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
 
 class Stage extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
 
     actors: PropTypes.object,
+    selectedToolId: PropTypes.string,
     selectedActorId: PropTypes.string,
     characters: PropTypes.object,
     width: PropTypes.number,
@@ -52,10 +53,42 @@ class Stage extends React.Component {
     }
   }
 
+  _onClickActor = (actor, event) => {
+    const {selectedToolId, dispatch} = this.props;
+    if (selectedToolId === TOOL_PAINT) {
+      dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
+    }
+    if (selectedToolId === TOOL_TRASH) {
+      dispatch(deleteActor(actor.id));
+    }
+
+    if ((selectedToolId !== TOOL_POINTER) && (!event.shiftKey)) {
+      dispatch(selectToolId(TOOL_POINTER));
+    }
+  }
+
+  _onSelectActor = (actor) => {
+    const {selectedToolId, dispatch} = this.props;
+    if (selectedToolId === TOOL_POINTER) {
+      dispatch(select(actor.characterId, actor.id));
+    }
+  }
+
   render() {
-    const {actors, characters, dispatch, selectedActorId} = this.props;
+    const {actors, characters, selectedActorId, selectedToolId} = this.props;
+    const cursor = {
+      [TOOL_TRASH]: '-webkit-image-set(url(/img/cursor_trashcan.png) 2x),url(/img/cursor_trashcan.png),auto',
+      [TOOL_PAINT]: '-webkit-image-set(url(/img/cursor_paint.png) 2x),url(/img/cursor_paint.png),auto',
+      [TOOL_RECORD]: '-webkit-image-set(url(/img/cursor_camera.png) 2x),url(/img/cursor_camera.png),auto',
+    }[selectedToolId] || 'default';
+
     return (
-      <div className="stage" onDragOver={this._onDragOver} onDrop={this._onDrop}>
+      <div
+        className="stage"
+        onDragOver={this._onDragOver}
+        onDrop={this._onDrop}
+        style={{cursor: cursor}}
+      >
         {Object.keys(actors).map((id) => {
           const character = characters[actors[id].characterId];
           return (
@@ -63,7 +96,8 @@ class Stage extends React.Component {
               key={id}
               draggable
               selected={selectedActorId === id}
-              onSelectCharacter={() => dispatch(select(actors[id].characterId, id))}
+              onClick={(event) => this._onClickActor(actors[id], event)}
+              onDoubleClick={() => this._onSelectActor(actors[id])}
               character={character}
               actor={actors[id]}
             />
@@ -77,6 +111,7 @@ class Stage extends React.Component {
 function mapStateToProps(state) {
   return Object.assign({}, state.stage, {
     selectedActorId: state.ui.selectedActorId,
+    selectedToolId: state.ui.selectedToolId,
     characters: state.characters,
   });
 }

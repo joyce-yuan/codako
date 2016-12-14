@@ -1,10 +1,12 @@
-import {SELECT_TOOL_ID, SELECT_DEFINITION_ID, UPDATE_PAINTING_STATE} from '../constants/action-types';
+import {SELECT_TOOL_ID, SELECT_DEFINITION_ID, UPDATE_PAINTING_STATE, UPDATE_PLAYBACK_STATE} from '../constants/action-types';
 import objectAssign from 'object-assign';
 import initialState from './initial-state';
-
+import u from 'updeep';
 
 export default function toolbarReducer(state = initialState.ui, action) {
   switch (action.type) {
+    case UPDATE_PLAYBACK_STATE:
+      return u({playback: action.values}, state);
     case SELECT_TOOL_ID:
       return objectAssign({}, state, {
         selectedToolId: action.toolId,

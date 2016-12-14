@@ -4,9 +4,13 @@ import world from './initial-state-world';
 
 export default {
   ui: {
-    selectedToolId: 'a',
+    selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorId: null,
+    playback: {
+      speed: 1,
+      running: false,
+    },
     paint: {
       characterId: null,
       appearanceId: null,
