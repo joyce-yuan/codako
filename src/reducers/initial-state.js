@@ -8,7 +8,7 @@ export default {
     selectedCharacterId: null,
     selectedActorId: null,
     playback: {
-      speed: 1,
+      speed: 500,
       running: false,
     },
     paint: {

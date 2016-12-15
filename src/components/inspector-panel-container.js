@@ -426,11 +426,13 @@ class InspectorPanelContainer extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     characters: PropTypes.object,
+    appliedRuleIds: PropTypes.object,
     selectedCharacterId: PropTypes.string,
   };
 
   static childContextTypes = {
     characters: PropTypes.object,
+    appliedRuleIds: PropTypes.object,
   };
 
   constructor(props, context) {
@@ -441,7 +443,10 @@ class InspectorPanelContainer extends React.Component {
   }
 
   getChildContext() {
-    return {characters: this.props.characters};
+    return {
+      characters: this.props.characters,
+      appliedRuleIds: this.props.appliedRuleIds,
+    };
   }
 
   _onChangeTab = (activeTab) => {
@@ -491,7 +496,10 @@ class InspectorPanelContainer extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return Object.assign({}, state.ui, {characters: state.characters});
+  return Object.assign({}, state.ui, {
+    characters: state.characters,
+    appliedRuleIds: state.stage.applied,
+});
 }
 
 export default connect(

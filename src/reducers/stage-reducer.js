@@ -2,7 +2,7 @@ import u from 'updeep';
 
 import {UPSERT_ACTOR, DELETE_ACTOR, ADVANCE_GAME_STATE} from '../constants/action-types';
 import initialState from './initial-state';
-import {advanceFrame} from '../components/game-state-helpers';
+import {StageOperator} from '../components/game-state-helpers';
 
 export default function stageReducer(state = initialState.stage, action) {
   switch (action.type) {
@@ -17,8 +17,12 @@ export default function stageReducer(state = initialState.stage, action) {
       }, state);
     }
     case ADVANCE_GAME_STATE: {
-      const nextState = advanceFrame(state);
-      console.log(nextState);
+      const nextState = JSON.parse(JSON.stringify(state));
+      nextState.input = {
+        keys: [],
+        clicked: [],
+      };
+      StageOperator(nextState).tick();
       return nextState;
     }
     default:

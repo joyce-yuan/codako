@@ -10,12 +10,37 @@ import {SPEED_OPTIONS} from '../constants/constants';
 class StageControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    speed: PropTypes.string,
+    speed: PropTypes.number,
     running: PropTypes.bool,
   };
 
   constructor(props, context) {
     super(props, context);
+    this._timerSpeed = null;
+    this._timer = null;
+  }
+
+  componentDidMount() {
+    this._ensureTimer();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._ensureTimer(nextProps);
+  }
+
+  _ensureTimer(props = this.props) {
+    if (props.running && (!this._timer || this._timerSpeed !== props.speed)) {
+      clearTimeout(this._timer);
+      this._timerSpeed = props.speed;
+      this._timer = setInterval(this._onTick, this._timerSpeed);
+    } else if (!props.running && this._timer) {
+      clearTimeout(this._timer);
+      this._timer = null;
+    }
+  }
+
+  _onTick = () => {
+    this.props.dispatch(advanceGameState());
   }
 
   render() {

@@ -6,9 +6,9 @@ export const FLOW_GROUP_TYPES = {
 };
 
 export const SPEED_OPTIONS = {
-  'Slow': 100,
-  'Normal': 200,
-  'Fast': 300,
+  'Slow': 1000,
+  'Normal': 500,
+  'Fast': 250,
 };
 
 export const TOOL_POINTER = 'pointer';
