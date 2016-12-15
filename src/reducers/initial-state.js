@@ -7,13 +7,18 @@ export default {
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorId: null,
+    recording: {
+      characterId: null,
+      phase: null,
+      rule: null,
+    },
     playback: {
       speed: 500,
       running: false,
     },
     keypicker: {
-      initialKeyCode: null,
       characterId: null,
+      initialKeyCode: null,
       ruleId: null,
     },
     paint: {
