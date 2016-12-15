@@ -1,4 +1,5 @@
-$highlight-color: rgba(140,180,255, 0.4);
+$tint-color: #5bc0de;
+$highlight-color: rgba($tint-color, 0.35);
 $outline-color: rgba(255, 255, 255, 0.78);
 
 body {
@@ -26,6 +27,13 @@ body {
     margin-left: 4px;
     font-size: 17.5px;
   }
+
+  .empty {
+    text-align: center;
+    color: #bbb;
+    padding:20px;
+    padding-top:40px;
+  }
 }
 
 .editor {
@@ -52,6 +60,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    width: 820px;
 
     .stage {
       width: 800px;
@@ -100,10 +109,13 @@ body {
       .item-grid {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         .item {
           padding:10px;
+          text-align: center;
           .name {
-            text-align: center;
+            padding-top:2px;
+            font-size: 0.9em;
           }
           &.selected {
             background-color: $highlight-color;
@@ -349,6 +361,23 @@ canvas {
 }
 
 button.btn.selected {
-  background-image: linear-gradient(#5bc0de, #2f96b4);
+  background-image: linear-gradient($tint-color, darken($tint-color, 22%));
   color: white;
+}
+
+.badge {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+
+  &.rule {
+    background-color: gray;
+  }
+  &.rule-flow {
+    background-color: blue;
+  }
+  &.rule-event {
+    background-color: red;
+  }
 }

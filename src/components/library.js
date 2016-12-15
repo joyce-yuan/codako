@@ -52,8 +52,16 @@ class LibraryItem extends React.Component {
         onClick={onSelect}
         onDoubleClick={onDoubleClick}
       >
-        <Sprite spritesheet={spritesheet} frame={0} appearanceId={appearance} />
-        <TapToEditLabel className="name" value={label} onChange={this.props.onChangeLabel}/>
+        <Sprite
+          spritesheet={spritesheet}
+          frame={0}
+          appearance={appearance || Object.keys(spritesheet.appearances)[0]}
+        />
+        <TapToEditLabel
+          className="name"
+          value={label}
+          onChange={this.props.onChangeLabel}
+        />
       </div>
     );
   }
@@ -99,7 +107,7 @@ class Library extends React.Component {
 
     if (!character) {
       return(
-        <div>
+        <div className="empty">
           Select an actor in your library to view it's appearances.
         </div>
       );

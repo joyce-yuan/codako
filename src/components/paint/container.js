@@ -13,7 +13,7 @@ import PixelCanvas from './pixel-canvas';
 import PixelToolbar from './pixel-toolbar';
 import PixelColorPicker, {ColorOptions} from './pixel-color-picker';
 
-class PaintContainer extends React.Component {
+class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
 
@@ -166,4 +166,4 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-)(PaintContainer);
+)(Container);

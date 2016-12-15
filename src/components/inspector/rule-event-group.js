@@ -1,0 +1,74 @@
+import React, {PropTypes} from 'react';
+import RuleStateCircle from './rule-state-circle';
+import DisclosureTriangle from './disclosure-triangle';
+import RuleList from './rule-list';
+
+import {nameForKey} from '../game-state-helpers';
+
+export default class RuleEventGroup extends React.Component {
+  static propTypes = {
+    rule: PropTypes.object,
+    onClick: PropTypes.func,
+    onRuleMoved: PropTypes.func,
+    onRuleChanged: PropTypes.func,
+  };
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      disclosed: false,
+    };
+  }
+
+  _name() {
+    const {event, code} = this.props.rule;
+
+    if (event === 'key') {
+      return (
+        <span>
+          When the
+          <span className="keycode">{nameForKey(code)} Key</span>
+          is Pressed
+        </span>
+      );
+    }
+    if (event === 'click') {
+      return "When I'm Clicked";
+    }
+    return "When I'm Idle";
+  }
+
+  _onEditKey = () => {
+    this.props.onRuleChanged(this.props.rule.id, {
+      code: 49,
+    });
+  }
+
+  render() {
+    const {rule, onRuleMoved, onRuleChanged} = this.props;
+    const {disclosed} = this.state;
+
+    return (
+      <div className="rule-container event">
+        <div className="header">
+          <div style={{float:'left', width: 20, lineHeight:'1.15em'}}>
+            <RuleStateCircle rule={rule} />
+            <DisclosureTriangle
+              onClick={() => this.setState({disclosed: !disclosed})}
+              disclosed={disclosed}
+            />
+          </div>
+          <img className="icon" src={`/img/icon_event_${rule.event}.png`} />
+          <div className="name" onDoubleClick={this._onEditKey}>{this._name()}</div>
+        </div>
+        <RuleList
+          rules={rule.rules}
+          parentId={rule.id}
+          hidden={disclosed}
+          onRuleMoved={onRuleMoved}
+          onRuleChanged={onRuleChanged}
+        />
+      </div>
+    );
+  }
+}

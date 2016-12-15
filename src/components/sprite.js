@@ -18,7 +18,7 @@ export default class Sprite extends React.Component {
     if (appearance) {
       data = appearances[appearance][frame || 0];
     } else {
-      data = appearances[Object.keys(appearances)[0]][0];
+      data = '/img/splat.png';
     }
 
     const style = objectAssign({

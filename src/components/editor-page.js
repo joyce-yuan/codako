@@ -3,8 +3,8 @@ import Toolbar from './toolbar';
 import Stage from './stage';
 import StageControls from './stage-controls';
 import Library from './library';
-import InspectorPanelContainer from './inspector-panel-container';
-import PaintContainer from './paint/paint-container';
+import InspectorContainer from './inspector/container';
+import PaintContainer from './paint/container';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/editor-root.scss';
@@ -26,7 +26,7 @@ export default class EditorPage extends React.Component {
           </div>
           <Library />
         </div>
-        <InspectorPanelContainer />
+        <InspectorContainer />
         <PaintContainer />
       </div>
 

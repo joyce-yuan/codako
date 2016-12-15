@@ -47,6 +47,20 @@ export function createCharacter() {
   };
 }
 
+export function createCharacterRule(characterId) {
+  return {
+    type: types.UPSERT_CHARACTER,
+    characterId: characterId,
+    values: {rules},
+  };
+}
+
+export function createCharacterFlowContainer(characterId) {
+}
+
+export function createCharacterEventContainer(characterId, type) {
+}
+
 export function createCharacterAppearance(characterId) {
   const newAnimationId = `${Date.now()}`;
   const appearances = {};

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
 import ActorSprite from './actor-sprite';
-import {createActor, changeActor, deleteActor} from '../actions/stage-actions';
+import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../actions/stage-actions';
 import {select, paintCharacterAppearance, selectToolId} from '../actions/ui-actions';
 
 import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
@@ -23,6 +23,18 @@ class Stage extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+  }
+
+  _onKeyDown = (event) => {
+    const {dispatch, selectedActorId} = this.props;
+
+    if (event.keyCode === 127 || event.keyCode === 8) {
+      if (selectedActorId) {
+        dispatch(deleteActor(selectedActorId));
+      }
+      return;
+    }
+    dispatch(recordKeyForGameState(event.keyCode));
   }
 
   _onDragOver = (event) => {
@@ -62,8 +74,12 @@ class Stage extends React.Component {
       dispatch(deleteActor(actor.id));
     }
 
-    if ((selectedToolId !== TOOL_POINTER) && (!event.shiftKey)) {
-      dispatch(selectToolId(TOOL_POINTER));
+    if (selectedToolId !== TOOL_POINTER) {
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOL_POINTER));
+      }
+    } else {
+      dispatch(recordClickForGameState(actor.id));
     }
   }
 
@@ -87,6 +103,8 @@ class Stage extends React.Component {
         className="stage"
         onDragOver={this._onDragOver}
         onDrop={this._onDrop}
+        onKeyDown={this._onKeyDown}
+        tabIndex={0}
         style={{cursor: cursor}}
       >
         {Object.keys(actors).map((id) => {

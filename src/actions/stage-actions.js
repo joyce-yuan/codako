@@ -20,9 +20,29 @@ export function advanceGameState() {
   };
 }
 
+export function recordKeyForGameState(key) {
+  return {
+    type: types.INPUT_FOR_GAME_STATE,
+    keys: {[key]: true},
+    clicks: {},
+  };
+}
+
+export function recordClickForGameState(actorId) {
+  return {
+    type: types.INPUT_FOR_GAME_STATE,
+    keys: {},
+    clicks: {[actorId]: true},
+  };
+}
+
 export function createActor(character, initialValues) {
   const newID = `${Date.now()}`;
-  const newActor = objectAssign({}, initialValues, {
+
+  const newActor = objectAssign({
+    variableValues: {},
+    appearance: Object.keys(character.spritesheet.appearances)[0],
+  }, initialValues, {
     characterId: character.id,
     id: newID,
   });

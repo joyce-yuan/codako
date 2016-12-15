@@ -3,6 +3,10 @@
   "id": "5233a60cfd685f755e000002" ,
   "uidnext": "2",
   "applied": {},
+  "input": {
+    "keys":{},
+    "clicks":{}
+  },
   "actors": {
     "1": {
       "id": "1",

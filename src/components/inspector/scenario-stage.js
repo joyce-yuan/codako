@@ -1,9 +1,9 @@
 import React, {PropTypes} from 'react';
 import objectAssign from 'object-assign';
 
-import {STAGE_CELL_SIZE} from '../constants/constants';
-import {applyRuleAction} from './game-state-helpers';
-import ActorSprite from './actor-sprite';
+import {STAGE_CELL_SIZE} from '../../constants/constants';
+import {applyRuleAction} from '../game-state-helpers';
+import ActorSprite from '../actor-sprite';
 
 
 export default class ScenarioStage extends React.Component {
@@ -27,7 +27,7 @@ export default class ScenarioStage extends React.Component {
     let xmax = 0;
     let ymin = 0;
     let ymax = 0;
-    let actors = {};
+    const actors = {};
 
     for (const block of scenario) {
       const [x, y] = block.coord.split(',').map(s => s / 1);

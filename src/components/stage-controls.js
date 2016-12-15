@@ -58,13 +58,13 @@ class StageControls extends React.Component {
             <i className="fa fa-step-backward" /> Back
           </Button>{' '}
           <Button
-            className={classNames({'selected': running === false})}
+            className={classNames({'selected': !running})}
             onClick={() => dispatch(updatePlaybackState({running: false}))}
           >
             <i className="fa fa-stop" /> Stop
           </Button>{' '}
           <Button
-            className={classNames({'selected': running === true})}
+            className={classNames({'selected': running})}
             onClick={() => dispatch(updatePlaybackState({running: true}))}
           >
             <i className="fa fa-play" /> Run

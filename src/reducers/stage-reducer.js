@@ -1,6 +1,6 @@
 import u from 'updeep';
 
-import {UPSERT_ACTOR, DELETE_ACTOR, ADVANCE_GAME_STATE} from '../constants/action-types';
+import {UPSERT_ACTOR, DELETE_ACTOR, ADVANCE_GAME_STATE, INPUT_FOR_GAME_STATE} from '../constants/action-types';
 import initialState from './initial-state';
 import {StageOperator} from '../components/game-state-helpers';
 
@@ -16,12 +16,13 @@ export default function stageReducer(state = initialState.stage, action) {
         actors: u.omit(action.id),
       }, state);
     }
+    case INPUT_FOR_GAME_STATE: {
+      return u({
+        input:{ keys: action.keys, clicks: action.clicks }
+      }, state);
+    }
     case ADVANCE_GAME_STATE: {
       const nextState = JSON.parse(JSON.stringify(state));
-      nextState.input = {
-        keys: [],
-        clicked: [],
-      };
       StageOperator(nextState).tick();
       return nextState;
     }
