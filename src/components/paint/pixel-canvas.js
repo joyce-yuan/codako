@@ -64,7 +64,7 @@ export default class PixelCanvas extends React.Component {
     c.strokeStyle = "rgba(70,70,70,.90)";
     c.beginPath();
     imageData.getBorderPixels(selectedPixels, (x,y, left, right, top, bot) => {
-      if ((Math.floor( Date.now() / 250 ) + x + y * (imageData.width + 1)) % 2 == 0) {
+      if ((Math.floor( Date.now() / 250 ) + x + y * (imageData.width + 1)) % 2 === 0) {
         const topY = (y) * pixelSize;
         const botY = (y+1) * pixelSize;
         const leftX = (x) * pixelSize;

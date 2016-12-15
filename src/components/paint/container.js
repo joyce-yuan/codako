@@ -62,10 +62,10 @@ class Container extends React.Component {
       const frameDataURL = spritesheet.appearances[appearanceId][0];
       getImageDataFromDataURL(frameDataURL, (imageData) => {
         CreatePixelImageData.call(imageData);
-        this.setState({imageData});
+        this.setState({imageData, undoStack: [], redoStack: []});
       });
     } else {
-      this.setState({imageData: null});
+      this.setState({imageData: null, undoStack: [], redoStack: []});
     }
   }
 

@@ -32,10 +32,9 @@ export function createCharacter() {
       name: 'Untitled',
       rules: [],
       spritesheet: {
-        data: 'data:image/png;base64',
         width: 40,
         appearances: {
-          'idle': [0, 0],
+          'idle': ['/img/splat.png'],
         },
         appearanceNames:{
           'idle': 'Idle',
@@ -47,35 +46,15 @@ export function createCharacter() {
   };
 }
 
-export function createCharacterRule(characterId) {
-  return {
-    type: types.UPSERT_CHARACTER,
-    characterId: characterId,
-    values: {rules},
-  };
-}
-
-export function createCharacterFlowContainer(characterId) {
-}
-
-export function createCharacterEventContainer(characterId, type) {
-}
-
 export function createCharacterAppearance(characterId) {
   const newAnimationId = `${Date.now()}`;
-  const appearances = {};
-  const appearanceNames = {};
-
-  appearances[newAnimationId] = [];
-  appearanceNames[newAnimationId] = 'Untitled';
-
   return {
     type: types.UPSERT_CHARACTER,
     characterId: characterId,
     values: {
       spritesheet: {
-        appearances,
-        appearanceNames
+        appearances: {[newAnimationId]: ['/img/splat.png']},
+        appearanceNames: {[newAnimationId]: 'Untitled'},
       },
     },
   };

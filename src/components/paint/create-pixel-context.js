@@ -55,6 +55,13 @@ export default function CreatePixelContext(PixelSize) {
       this.moveTo(0, y * PixelSize + 0.5);
       this.lineTo(xMax * PixelSize + 0.5, y * PixelSize + 0.5);
     }
+
+    // draw final bottom right edge
+    this.moveTo(xMax * PixelSize - 0.5, 0);
+    this.lineTo(xMax * PixelSize - 0.5, yMax * PixelSize - 0.5);
+    this.moveTo(0, yMax * PixelSize - 0.5);
+    this.lineTo(xMax * PixelSize - 0.5, yMax * PixelSize - 0.5);
+
     this.stroke();
   };
 }

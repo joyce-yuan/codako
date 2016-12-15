@@ -146,6 +146,7 @@ body {
         margin-top:4px;
         flex: 1;
         overflow-y: scroll;
+        align-items: flex-start;
         background-color: #eee;
         .item {
           padding:10px;
@@ -427,6 +428,10 @@ canvas {
 
 button.btn.selected {
   background-image: linear-gradient($tint-color, darken($tint-color, 22%));
+  color: white;
+}
+button.btn.selected:active {
+  background-image: linear-gradient(darken($tint-color, 30%), darken($tint-color, 22%));
   color: white;
 }
 
