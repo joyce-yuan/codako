@@ -71,7 +71,6 @@ export default class RuleAddButton extends React.Component {
 
     return (
       <ButtonDropdown
-        size="sm"
         isOpen={this.state.open}
         toggle={() => this.setState({open: !this.state.open})}
       >

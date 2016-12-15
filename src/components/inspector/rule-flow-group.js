@@ -30,7 +30,7 @@ export default class RuleFlowGroup extends React.Component {
 
     return (
       <div
-        className="rule-container group"
+        className="rule-container flow"
         draggable
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}

@@ -139,27 +139,27 @@ class Library extends React.Component {
     return (
       <div className="library-container">
         <div className="panel library">
-          <div style={{display: 'flex'}}>
+          <div className="header">
             <h2>Library</h2>
             <Button
               size="sm"
               disabled={false}
               onClick={() => dispatch(createCharacter())}
             >
-            +
+              <i className="fa fa-plus" />
             </Button>
           </div>
           {this.renderCharactersPanel()}
         </div>
         <div className="panel appearances">
-          <div style={{display: 'flex'}}>
+          <div className="header">
             <h2>Appearances</h2>
             <Button
               size="sm"
               disabled={!ui.selectedCharacterId}
               onClick={() => dispatch(createCharacterAppearance(ui.selectedCharacterId))}
             >
-            +
+              <i className="fa fa-plus" />
             </Button>
           </div>
           {this.renderAppearancesPanel()}

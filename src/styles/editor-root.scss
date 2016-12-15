@@ -2,6 +2,9 @@ $tint-color: #5bc0de;
 $highlight-color: rgba($tint-color, 0.35);
 $outline-color: rgba(255, 255, 255, 0.78);
 
+$rule-event-color: #5BC15C;
+$rule-flow-color: #5BA4CD;
+
 body {
   background: url(../img/background.png) top left repeat;
 }
@@ -54,6 +57,8 @@ body {
 
 .editor {
   width: 100%;
+  min-height: 760px;
+  max-height: 90vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -84,6 +89,11 @@ body {
       background-color: gray;
       position: relative;
       margin-bottom: 4px;
+      outline: 0;
+      transition: box-shadow 200ms;
+      &.running-true {
+        box-shadow:0 0 0 4px $tint-color;
+      }
     }
 
     .stage-controls {
@@ -108,24 +118,35 @@ body {
     .library-container {
       display: flex;
       flex-direction: row;
-      min-height:200px;
+      flex-grow: 1;
+      min-height:130px;
 
-      .appearances {
-        flex: 1;
-      }
-
-      .library {
-        flex: 2;
-      }
-
-      h2 {
-        flex: 1;
+      .panel {
+        display: flex;
+        flex-direction: column;
+        &.appearances {
+          flex: 1;
+        }
+        &.library {
+          flex: 2;
+        }
+        .header {
+          display: flex;
+          flex-shrink: 0;
+          h2 {
+            flex: 1;
+          }
+        }
       }
 
       .item-grid {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        margin-top:4px;
+        flex: 1;
+        overflow-y: scroll;
+        background-color: #eee;
         .item {
           padding:10px;
           text-align: center;
@@ -144,6 +165,12 @@ body {
   .inspector-panel-container {
     order: 2;
     width: 300px;
+
+    display: flex;
+    flex-direction: column;
+    .scroll-container {
+      overflow-y: scroll;
+    }
   }
 }
 
@@ -229,13 +256,13 @@ canvas {
     box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
 
     &.event {
-      background-color:#5BC15C;
-      .header { height:36px; }
+      background-color: $rule-event-color;
+      .header { user-select: none; height:36px; }
     }
 
-    &.group {
-      background-color:#5BA4CD;
-      .header { height:50px; }
+    &.flow {
+      background-color: $rule-flow-color;
+      .header { user-select: none; height:50px; }
     }
 
     .keycode {
@@ -357,7 +384,7 @@ canvas {
     &.event {
       cursor: pointer;
     }
-    &.group {
+    &.flow {
       cursor: move;
       cursor: ns-resize;
     }
@@ -370,7 +397,7 @@ canvas {
 .rules-list.tool-trash {
   .rule-container {
     &.event:hover,
-    &.group:hover,
+    &.flow:hover,
     &.rule:hover {
       background-color:#d05959;
     }
@@ -404,18 +431,19 @@ button.btn.selected {
 }
 
 .badge {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  vertical-align: middle;
   display: inline-block;
 
   &.rule {
     background-color: gray;
   }
   &.rule-flow {
-    background-color: blue;
+    background-color: $rule-flow-color;
   }
   &.rule-event {
-    background-color: red;
+    background-color: $rule-event-color;
   }
 }

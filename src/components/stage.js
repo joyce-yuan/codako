@@ -13,6 +13,7 @@ class Stage extends React.Component {
     dispatch: PropTypes.func,
 
     actors: PropTypes.object,
+    running: PropTypes.bool,
     selectedToolId: PropTypes.string,
     selectedActorId: PropTypes.string,
     characters: PropTypes.object,
@@ -23,6 +24,18 @@ class Stage extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+  }
+
+  componentDidUpdate() {
+    if (this.props.running) {
+      this._el.focus();
+    }
+  }
+
+  _onBlur = () => {
+    if (this.props.running) {
+      this._el.focus();
+    }
   }
 
   _onKeyDown = (event) => {
@@ -91,14 +104,16 @@ class Stage extends React.Component {
   }
 
   render() {
-    const {actors, characters, selectedActorId, selectedToolId} = this.props;
+    const {actors, characters, selectedActorId, selectedToolId, running} = this.props;
 
     return (
       <div
-        className={`stage tool-${selectedToolId}`}
+        ref={(el) => this._el = el}
+        className={`stage tool-${selectedToolId} running-${running}`}
         onDragOver={this._onDragOver}
         onDrop={this._onDrop}
         onKeyDown={this._onKeyDown}
+        onBlur={this._onBlur}
         tabIndex={0}
       >
         {Object.keys(actors).map((id) => {
@@ -124,6 +139,7 @@ function mapStateToProps(state) {
   return Object.assign({}, state.stage, {
     selectedActorId: state.ui.selectedActorId,
     selectedToolId: state.ui.selectedToolId,
+    running: state.ui.playback.running,
     characters: state.characters,
   });
 }
