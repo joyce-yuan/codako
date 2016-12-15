@@ -35,11 +35,19 @@ export function updatePlaybackState(values) {
   };
 }
 
-
 export function paintCharacterAppearance(characterId, appearanceId) {
   return {
     type: types.UPDATE_PAINTING_STATE,
     characterId,
     appearanceId,
+  };
+}
+
+export function pickCharacterRuleEventKey(characterId, ruleId, initialKeyCode) {
+  return {
+    type: types.UPDATE_KEYPICKER_STATE,
+    characterId,
+    ruleId,
+    initialKeyCode,
   };
 }

@@ -5,6 +5,7 @@ import StageControls from './stage-controls';
 import Library from './library';
 import InspectorContainer from './inspector/container';
 import PaintContainer from './paint/container';
+import KeypickerContainer from './keypicker/container';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/editor-root.scss';
@@ -27,7 +28,9 @@ export default class EditorPage extends React.Component {
           <Library />
         </div>
         <InspectorContainer />
+
         <PaintContainer />
+        <KeypickerContainer />
       </div>
 
     );

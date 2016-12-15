@@ -9,8 +9,10 @@ export default class RuleEventGroup extends React.Component {
   static propTypes = {
     rule: PropTypes.object,
     onClick: PropTypes.func,
-    onRuleMoved: PropTypes.func,
-    onRuleChanged: PropTypes.func,
+  };
+
+  static contextTypes = {
+    onRulePickKey: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -38,14 +40,8 @@ export default class RuleEventGroup extends React.Component {
     return "When I'm Idle";
   }
 
-  _onEditKey = () => {
-    this.props.onRuleChanged(this.props.rule.id, {
-      code: 49,
-    });
-  }
-
   render() {
-    const {rule, onRuleMoved, onRuleChanged} = this.props;
+    const {rule} = this.props;
     const {disclosed} = this.state;
 
     return (
@@ -59,14 +55,17 @@ export default class RuleEventGroup extends React.Component {
             />
           </div>
           <img className="icon" src={`/img/icon_event_${rule.event}.png`} />
-          <div className="name" onDoubleClick={this._onEditKey}>{this._name()}</div>
+          <div
+            className="name"
+            onDoubleClick={() => this.context.onRulePickKey(rule.id)}
+          >
+            {this._name()}
+          </div>
         </div>
         <RuleList
           rules={rule.rules}
           parentId={rule.id}
           hidden={disclosed}
-          onRuleMoved={onRuleMoved}
-          onRuleChanged={onRuleChanged}
         />
       </div>
     );

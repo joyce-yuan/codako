@@ -11,6 +11,11 @@ export default {
       speed: 500,
       running: false,
     },
+    keypicker: {
+      initialKeyCode: null,
+      characterId: null,
+      ruleId: null,
+    },
     paint: {
       characterId: null,
       appearanceId: null,

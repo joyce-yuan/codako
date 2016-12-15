@@ -14,11 +14,13 @@ class Container extends React.Component {
     characters: PropTypes.object,
     appliedRuleIds: PropTypes.object,
     selectedCharacterId: PropTypes.string,
+    selectedToolId: PropTypes.string,
   };
 
   static childContextTypes = {
     characters: PropTypes.object,
     appliedRuleIds: PropTypes.object,
+    selectedToolId: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -31,6 +33,7 @@ class Container extends React.Component {
   getChildContext() {
     return {
       characters: this.props.characters,
+      selectedToolId: this.props.selectedToolId,
       appliedRuleIds: this.props.appliedRuleIds,
     };
   }
@@ -43,7 +46,7 @@ class Container extends React.Component {
     if (character.rules.length === 0) {
       return (
         <div className="empty">
-          This character doesn&quot;t have any rules. Create a new rule by clicking the &quot;Record&quot; icon.
+          This character doesn&#39;t have any rules. Create a new rule by clicking the &#39;Record&#39; icon.
         </div>
       );
     }

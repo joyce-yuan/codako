@@ -92,20 +92,14 @@ class Stage extends React.Component {
 
   render() {
     const {actors, characters, selectedActorId, selectedToolId} = this.props;
-    const cursor = {
-      [TOOL_TRASH]: '-webkit-image-set(url(/img/cursor_trashcan.png) 2x),url(/img/cursor_trashcan.png),auto',
-      [TOOL_PAINT]: '-webkit-image-set(url(/img/cursor_paint.png) 2x),url(/img/cursor_paint.png),auto',
-      [TOOL_RECORD]: '-webkit-image-set(url(/img/cursor_camera.png) 2x),url(/img/cursor_camera.png),auto',
-    }[selectedToolId] || 'default';
 
     return (
       <div
-        className="stage"
+        className={`stage tool-${selectedToolId}`}
         onDragOver={this._onDragOver}
         onDrop={this._onDrop}
         onKeyDown={this._onKeyDown}
         tabIndex={0}
-        style={{cursor: cursor}}
       >
         {Object.keys(actors).map((id) => {
           const character = characters[actors[id].characterId];

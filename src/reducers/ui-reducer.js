@@ -1,4 +1,4 @@
-import {SELECT_TOOL_ID, SELECT_DEFINITION_ID, UPDATE_PAINTING_STATE, UPDATE_PLAYBACK_STATE} from '../constants/action-types';
+import {SELECT_TOOL_ID, SELECT_DEFINITION_ID, UPDATE_PAINTING_STATE, UPDATE_PLAYBACK_STATE, UPDATE_KEYPICKER_STATE} from '../constants/action-types';
 import objectAssign from 'object-assign';
 import initialState from './initial-state';
 import u from 'updeep';
@@ -21,6 +21,14 @@ export default function toolbarReducer(state = initialState.ui, action) {
         paint: {
           characterId: action.characterId,
           appearanceId: action.appearanceId,
+        },
+      });
+    case UPDATE_KEYPICKER_STATE:
+      return objectAssign({}, state, {
+        keypicker: {
+          initialKeyCode: action.initialKeyCode,
+          characterId: action.characterId,
+          ruleId: action.ruleId,
         },
       });
     default:

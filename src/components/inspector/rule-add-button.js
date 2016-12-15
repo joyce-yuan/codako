@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 
 import {ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import {changeCharacter} from '../../actions/characters-actions';
+import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
 import {FLOW_GROUP_TYPES} from '../../constants/constants';
 
 export default class RuleAddButton extends React.Component {
@@ -30,10 +31,10 @@ export default class RuleAddButton extends React.Component {
     dispatch(changeCharacter(character.id, {rules: nextRules}));
   }
 
-  _onCreateEventContainer = (eventType, code) => {
+  _onCreateEventContainer = (eventType, code = null) => {
     const {dispatch, character} = this.props;
     let nextRules = JSON.parse(JSON.stringify(character.rules));
-
+    const nextId = Date.now();
     const hasSameAlready = nextRules.some(r => r.event === eventType && r.code === code);
     if (hasSameAlready) {
       return;
@@ -42,7 +43,7 @@ export default class RuleAddButton extends React.Component {
     const hasEvents = nextRules.some(r => !!r.event);
     if (!hasEvents) {
       nextRules = [{
-        id: Date.now() + 1,
+        id: nextId + 1,
         name: "",
         type: "group-event",
         rules: nextRules,
@@ -51,7 +52,7 @@ export default class RuleAddButton extends React.Component {
     }
 
     nextRules.push({
-      id: Date.now(),
+      id: nextId,
       name: "",
       type: "group-event",
       rules: [],
@@ -60,6 +61,9 @@ export default class RuleAddButton extends React.Component {
     });
 
     dispatch(changeCharacter(character.id, {rules: nextRules}));
+    if (eventType === 'key' && !code) {
+      dispatch(pickCharacterRuleEventKey(character.id, nextId, null));
+    }
   }
 
   render() {
@@ -87,7 +91,7 @@ export default class RuleAddButton extends React.Component {
             <span className="badge rule-event" /> When a Key is Pressed...
           </DropdownItem>
           <DropdownItem onClick={() => this._onCreateEventContainer('click')}>
-            <span className="badge rule-event" /> When I'm Clicked...
+            <span className="badge rule-event" /> When I&#39;m Clicked...
           </DropdownItem>
         </DropdownMenu>
       </ButtonDropdown>

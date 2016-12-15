@@ -1,4 +1,5 @@
 import u from 'updeep';
+import {TOOL_TRASH, TOOL_PAINT, TOOL_RECORD} from '../constants/constants';
 
 Object.values = function(obj) {
   const results = [];
@@ -56,21 +57,40 @@ export function applyRuleAction(actor, character, action) {
 }
 
 export function nameForKey(code) {
-  if (code === 32) {
-    return "Space Bar";
+  if (!code) {
+    return "";
   }
-  if (code === 38) {
-    return "Up Arrow";
-  }
-  if (code === 37) {
-    return "Left Arrow";
-  }
-  if (code === 39) {
-    return "Right Arrow";
-  }
-  return String.fromEventKeyCode(code);
+  return {
+    9: 'Tab',
+    13: 'Enter',
+    32: "Space Bar",
+    37: "Left Arrow",
+    38: "Up Arrow",
+    39: "Right Arrow",
+    40: "Down Arrow",
+    187: '+',
+    189: '-',
+    192: '`',
+    188: '<',
+    190: '>',
+    191: '?',
+    186: ',',
+    222: '"',
+    220: '\\',
+    221: ']',
+    219: '[',
+  }[code] || String.fromCharCode(code);
 }
 
+export function findRule(node, id, callback) {
+  node.rules.forEach((n, idx) => {
+    if (n.id === id) {
+      callback(n, node, idx);
+    } else if (n.rules) {
+      findRule(n, id, callback);
+    }
+  });
+}
 
 export function StageOperator(stage) {
   const {characters} = window.store.getState();

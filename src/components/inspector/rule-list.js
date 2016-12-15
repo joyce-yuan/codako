@@ -4,6 +4,8 @@ import Rule from './rule';
 import RuleEventGroup from './rule-event-group';
 import RuleFlowGroup from './rule-flow-group';
 
+import {TOOL_TRASH} from '../../constants/constants';
+
 class RuleDropPlaceholder extends React.Component {
   render() {
     return (<div style={{height: 30}} />);
@@ -15,8 +17,14 @@ export default class RuleList extends React.Component {
     parentId: PropTypes.string,
     rules: PropTypes.array,
     hidden: PropTypes.bool,
+  };
+
+  static contextTypes = {
     onRuleMoved: PropTypes.func,
     onRuleChanged: PropTypes.func,
+    onRuleDeleted: PropTypes.func,
+    onRulePickKey: PropTypes.func,
+    selectedToolId: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -64,8 +72,10 @@ export default class RuleList extends React.Component {
     return all.length;
   }
 
-  _onRuleClicked = () => {
-
+  _onRuleClicked = (event, rule) => {
+    if (this.context.selectedToolId === TOOL_TRASH) {
+      this.context.onRuleDeleted(rule.id);
+    }
   }
 
   _onDragStart = (event, rule) => {
@@ -108,12 +118,12 @@ export default class RuleList extends React.Component {
       return;
     }
 
-    this.props.onRuleMoved(ruleId, this.props.parentId, dropIndex);
+    this.context.onRuleMoved(ruleId, this.props.parentId, dropIndex);
     this.setState({dragIndex: -1, dropIndex: -1});
   }
 
   render() {
-    const {hidden, rules, onRuleMoved, onRuleChanged} = this.props;
+    const {hidden, rules} = this.props;
     const {dropIndex, dragIndex} = this.state;
 
     if (hidden || !rules) {
@@ -124,8 +134,6 @@ export default class RuleList extends React.Component {
       const Component = this._componentForRule(r);
       return (
         <Component
-          onRuleMoved={onRuleMoved}
-          onRuleChanged={onRuleChanged}
           onClick={(event) => this._onRuleClicked(event, r)}
           onDragStart={(event) => this._onDragStart(event, r)}
           onDragEnd={(event) => this._onDragEnd(event, r)}
@@ -141,7 +149,7 @@ export default class RuleList extends React.Component {
 
     return (
       <ul
-        className="rules-list"
+        className={`rules-list tool-${this.context.selectedToolId}`}
         ref={(el) => this._el = el}
         onDragOver={this._onDragOver}
         onDragLeave={this._onDragLeave}

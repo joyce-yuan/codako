@@ -11,8 +11,6 @@ export default class RuleFlowGroup extends React.Component {
     onClick: PropTypes.func,
     onDragStart: PropTypes.func,
     onDragEnd: PropTypes.func,
-    onRuleMoved: PropTypes.func,
-    onRuleChanged: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -27,7 +25,7 @@ export default class RuleFlowGroup extends React.Component {
   }
 
   render() {
-    const {rule, onDragStart, onDragEnd, onRuleMoved, onRuleChanged} = this.props;
+    const {rule, onDragStart, onDragEnd} = this.props;
     const {disclosed} = this.state;
 
     return (
@@ -60,8 +58,6 @@ export default class RuleFlowGroup extends React.Component {
           rules={rule.rules}
           parentId={rule.id}
           hidden={disclosed}
-          onRuleMoved={onRuleMoved}
-          onRuleChanged={onRuleChanged}
         />
       </div>
     );

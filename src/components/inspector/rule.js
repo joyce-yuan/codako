@@ -7,9 +7,9 @@ import DisclosureTriangle from './disclosure-triangle';
 export default class Rule extends React.Component {
   static propTypes = {
     rule: PropTypes.object,
+    onClick: PropTypes.func,
     onDragStart: PropTypes.func,
     onDragEnd: PropTypes.func,
-    onRuleChanged: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -28,7 +28,7 @@ export default class Rule extends React.Component {
   }
 
   render() {
-    const {rule, onDragStart, onDragEnd} = this.props;
+    const {rule, onDragStart, onDragEnd, onClick} = this.props;
     const {disclosed} = this.state;
 
     return (
@@ -37,8 +37,9 @@ export default class Rule extends React.Component {
         draggable
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onClick={onClick}
         onDoubleClick={this._onDoubleClick}
-      >
+>
         <div className="zerospace">
           <RuleStateCircle rule={rule} />
         </div>
