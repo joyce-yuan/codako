@@ -89,16 +89,18 @@ body {
       height: 575px;
 
       .stage-scroll-container {
-        overflow: scroll;
         flex: 1;
-        transition: flex 300ms ease-out;
+        overflow: hidden;
+        margin-bottom: 4px;
+        position: relative;
+        background-color: #222;
+        transition: flex 400ms ease-out;
 
         .stage {
           background-color: gray;
           position: relative;
-          margin-bottom: 4px;
           outline: 0;
-          transition: box-shadow 200ms;
+          transition: box-shadow 200ms, top 400ms ease-out, left 400ms ease-out;
           &.running-true {
             box-shadow:0 0 0 4px $tint-color;
           }
@@ -129,16 +131,21 @@ body {
       flex-direction: row;
       align-items: center;
 
-      .stage-playback-controls {
+      .center {
         text-align: center;
       }
-      .stage-initial-state-controls {
+      .left {
         flex: 1;
         text-align: left;
       }
-      .stage-speed-controls {
+      .right {
         flex: 1;
         text-align: right;
+      }
+      .message {
+        white-space: nowrap;
+        padding-left: 12px;
+        color: #aaa;
       }
     }
 

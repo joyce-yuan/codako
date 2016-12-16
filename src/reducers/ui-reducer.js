@@ -3,7 +3,7 @@ import objectAssign from 'object-assign';
 import initialState from './initial-state';
 import u from 'updeep';
 
-export default function toolbarReducer(state = initialState.ui, action) {
+export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case Types.UPDATE_PLAYBACK_STATE:
       return u({playback: action.values}, state);

@@ -7,14 +7,6 @@ export default {
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorId: null,
-    recording: {
-      characterId: null,
-      actorId: null,
-      phase: null,
-      ruleId: null,
-      scenario: null,
-      actions: [],
-    },
     playback: {
       speed: 500,
       running: false,
@@ -32,4 +24,24 @@ export default {
   characters: characters,
   stage: stage,
   world: world,
+  recording: {
+    phase: null,
+    characterId: null,
+    actorId: null,
+    ruleId: null,
+    descriptors: {
+    },
+    extent: {
+      xmin: 0,
+      xmax: 0,
+      ymin: 0,
+      ymax: 0,
+    },
+    beforeStage: {
+      uid: 'before',
+    },
+    afterStage: {
+      uid: 'after',
+    },
+  },
 };

@@ -1,88 +1,73 @@
 import React, {PropTypes} from 'react';
+import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
-import ActorSprite from './actor-sprite';
+import ActorSprite from './sprites/actor-sprite';
+import RecordingMaskSprite from './sprites/recording-mask-sprite';
+import RecordingHandle from './sprites/recording-handle';
+
 import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../actions/stage-actions';
-import {select, selectToolId, paintCharacterAppearance, updateRecordingState} from '../actions/ui-actions';
-import {getScenarioExtent} from './game-state-helpers';
+import {select, selectToolId, paintCharacterAppearance} from '../actions/ui-actions';
+import {setRecordingExtent, startRecording} from '../actions/recording-actions';
 
 import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
 
-class RecordingMaskSprite extends React.Component {
-  static propTypes = {
-    position: PropTypes.object,
-  };
-
-  render() {
-    return (
-      <div style={{
-        position: 'absolute',
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        width: STAGE_CELL_SIZE - 1,
-        height: STAGE_CELL_SIZE - 1,
-        left: this.props.position.x * STAGE_CELL_SIZE + 0.5,
-        top: this.props.position.y * STAGE_CELL_SIZE + 0.5,
-      }} />
-    );
-  }
-}
-
-class RecordingHandle extends React.Component {
-  static propTypes = {
-    side: PropTypes.string,
-    position: PropTypes.object,
-  };
-
-  _onDragStart = (event) => {
-    event.dataTransfer.setData(`handle`, 'true');
-    event.dataTransfer.setData(`handle:${this.props.side}`, 'true');
-  }
-
-  render() {
-    const {position, side} = this.props;
-    return (
-      <img
-        draggable
-        onDragStart={this._onDragStart}
-        className={`handle-${side}`}
-        src={`/img/tiles/handle_${side}.png`}
-        style={{
-          position: 'absolute',
-          width: STAGE_CELL_SIZE,
-          height: STAGE_CELL_SIZE,
-          left: position.x * STAGE_CELL_SIZE,
-          top: position.y * STAGE_CELL_SIZE,
-        }}
-      />
-    );
-  }
-}
-
-export default class Stage extends React.Component {
+class Stage extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     style: PropTypes.object,
-
-    actors: PropTypes.object,
     running: PropTypes.bool,
-    recording: PropTypes.object,
+    recordingCentered: PropTypes.bool,
+    recordingExtent: PropTypes.shape({
+      xmin: PropTypes.number,
+      xmax: PropTypes.number,
+      ymin: PropTypes.number,
+      ymax: PropTypes.number,
+    }),
     selectedToolId: PropTypes.string,
     selectedActorId: PropTypes.string,
     characters: PropTypes.object,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    wrapX: PropTypes.bool,
-    wrapY: PropTypes.bool,
+    stage: PropTypes.shape({
+      uid: PropTypes.string,
+      actors: PropTypes.object,
+      width: PropTypes.number,
+      height: PropTypes.number,
+      wrapX: PropTypes.bool,
+      wrapY: PropTypes.bool,
+    }),
   };
 
   constructor(props, context) {
     super(props, context);
+    this.state = {
+      top: 0,
+      left: 0,
+    };
   }
 
   componentDidUpdate() {
     if (this.props.running) {
       this._el.focus();
     }
+
+    let offset = {top: 0, left: 0};
+    if (this.props.recordingExtent && this.props.recordingCentered) {
+      offset = this._centerOnExtent();
+    }
+
+    if ((this.state.top !== offset.top) || (this.state.left !== offset.left)) {
+      this.setState(offset);
+    }
+  }
+
+  _centerOnExtent() {
+    const {xmin, ymin, xmax, ymax} = this.props.recordingExtent;
+    const xCenter = (xmin + 0.5 + (xmax - xmin) / 2.0);
+    const yCenter = (ymin + 0.5 + (ymax - ymin) / 2.0);
+    return {
+      left: `calc(-${xCenter * STAGE_CELL_SIZE}px + 50%)`,
+      top: `calc(-${yCenter * STAGE_CELL_SIZE}px + 50%)`,
+    };
   }
 
   _onBlur = () => {
@@ -92,15 +77,15 @@ export default class Stage extends React.Component {
   }
 
   _onKeyDown = (event) => {
-    const {dispatch, selectedActorId} = this.props;
+    const {dispatch, selectedActorId, stage} = this.props;
 
     if (event.keyCode === 127 || event.keyCode === 8) {
       if (selectedActorId) {
-        dispatch(deleteActor(selectedActorId));
+        dispatch(deleteActor(stage.uid, selectedActorId));
       }
       return;
     }
-    dispatch(recordKeyForGameState(event.keyCode));
+    dispatch(recordKeyForGameState(stage.uid, event.keyCode));
   }
 
   _onDragOver = (event) => {
@@ -128,41 +113,22 @@ export default class Stage extends React.Component {
     };
 
     // expand the extent of the recording rule to reflect this new extent
-    const {recording, actors, dispatch} = this.props;
-    const root = actors[recording.actorId].position;
+    const nextExtent = objectAssign({}, this.props.recordingExtent);
+    if (side === 'left') { nextExtent.xmin = Math.min(nextExtent.xmax, Math.max(0, Math.round(position.x + 0.25))); }
+    if (side === 'right') { nextExtent.xmax = Math.max(nextExtent.xmin, Math.min(this.props.stage.width, Math.round(position.x - 1))); }
+    if (side === 'top') { nextExtent.ymin = Math.min(nextExtent.ymax, Math.max(0, Math.round(position.y + 0.25))); }
+    if (side === 'bottom') { nextExtent.ymax = Math.max(nextExtent.ymin, Math.min(this.props.stage.height, Math.round(position.y - 1))); }
 
-    const extent = getScenarioExtent(recording.scenario);
-    const nextExtent = objectAssign({}, extent);
-    if (side === 'left') { nextExtent.xmin = Math.min(0, Math.round(position.x - root.x + 0.5)); }
-    if (side === 'right') { nextExtent.xmax = Math.max(0, Math.round(position.x - root.x - 1)); }
-    if (side === 'top') { nextExtent.ymin = Math.min(0, Math.round(position.y - root.y + 0.5)); }
-    if (side === 'bottom') { nextExtent.ymax = Math.max(0, Math.round(position.y - root.y - 1)); }
-
-    if (JSON.stringify(extent) === JSON.stringify(nextExtent)) {
+    if (JSON.stringify(this.props.recordingExtent) === JSON.stringify(nextExtent)) {
       return;
     }
-
-    const nextScenario = [];
-    for (let x = nextExtent.xmin; x <= nextExtent.xmax; x ++) {
-      for (let y = nextExtent.ymin; y <= nextExtent.ymax; y ++) {
-        const coord = `${x},${y}`;
-        let block = recording.scenario.find(b => b.coord === coord);
-        if (!block) {
-          block = {
-            coord,
-            refs: Object.values(actors).filter(a =>
-              a.position.x === x + root.x && a.position.y === y + root.y
-            ).map(a => a.id),
-          };
-        }
-        nextScenario.push(block);
-      }
-    }
-    dispatch(updateRecordingState({scenario: nextScenario}));
+    this.props.dispatch(setRecordingExtent(nextExtent));
   }
 
   _onDropSprite = (event) => {
     const {actorId, characterId, dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('sprite'));
+    const {stage, stage: {actors}, characters, dispatch} = this.props;
+
     const stageOffset = this._el.getBoundingClientRect();
 
     const position = {
@@ -172,37 +138,32 @@ export default class Stage extends React.Component {
 
     if (actorId) {
       if (event.altKey) {
-        const actor = this.props.actors[actorId];
+        const actor = actors[actorId];
         const clonedActor = objectAssign({}, actor, {position});
-        const character = this.props.characters[actor.characterId];
-        this.props.dispatch(createActor(character, clonedActor));
+        const character = characters[actor.characterId];
+        dispatch(createActor(stage.uid, character, clonedActor));
       } else {
-        this.props.dispatch(changeActor(actorId, {position}));
+        dispatch(changeActor(stage.uid, actorId, {position}));
       }
     } else if (characterId) {
-      const character = this.props.characters[characterId];
-      this.props.dispatch(createActor(character, {position}));
+      const character = characters[characterId];
+      dispatch(createActor(stage.uid, character, {position}));
     }
   }
 
   _onClickActor = (actor, event) => {
-    const {selectedToolId, dispatch} = this.props;
+    const {selectedToolId, dispatch, stage} = this.props;
     if (selectedToolId === TOOL_PAINT) {
       dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
     }
     if (selectedToolId === TOOL_TRASH) {
-      dispatch(deleteActor(actor.id));
+      dispatch(deleteActor(stage.uid, actor.id));
     }
     if (selectedToolId === TOOL_RECORD) {
-      dispatch(updateRecordingState({
+      dispatch(startRecording({
         characterId: actor.characterId,
-        actorId: actor.id,
+        actor: actor,
         ruleId: null,
-        phase: 'setup',
-        scenario: [{
-          "coord": "0,0",
-          "refs": [actor.id,]
-        }],
       }));
     }
     if (selectedToolId !== TOOL_POINTER) {
@@ -210,7 +171,7 @@ export default class Stage extends React.Component {
         dispatch(selectToolId(TOOL_POINTER));
       }
     } else {
-      dispatch(recordClickForGameState(actor.id));
+      dispatch(recordClickForGameState(stage.uid, actor.id));
     }
   }
 
@@ -222,7 +183,7 @@ export default class Stage extends React.Component {
   }
 
   _renderActors() {
-    const {actors, characters, selectedActorId} = this.props;
+    const {stage: {actors}, characters, selectedActorId} = this.props;
 
     return Object.keys(actors).map((id) => {
       const character = characters[actors[id].characterId];
@@ -240,11 +201,9 @@ export default class Stage extends React.Component {
     });
   }
 
-  _renderRecordingElements() {
-    const {width, height, recording, actors} = this.props;
-    const {xmin, xmax, ymin, ymax} = getScenarioExtent(recording.scenario, {
-      root: actors[recording.actorId].position,
-    });
+  _renderRecordingExtent() {
+    const {stage: {width, height}, recordingExtent} = this.props;
+    const {xmin, xmax, ymin, ymax} = recordingExtent;
 
     const components = [];
 
@@ -277,19 +236,33 @@ export default class Stage extends React.Component {
   }
 
   render() {
-    const {selectedToolId, running, recording, width, height, style} = this.props;
+    const {selectedToolId, running, recordingExtent, style, stage} = this.props;
 
-    if (!width) {
+    if (!stage) {
       return (
-        <div style={style} className="stage-scroll-container" />
+        <div
+          style={style}
+          ref={(el) => this._scrollEl = el}
+          className="stage-scroll-container"
+        />
       );
     }
 
     return (
-      <div style={style} className="stage-scroll-container">
+      <div
+        style={style}
+        ref={(el) => this._scrollEl = el}
+        className="stage-scroll-container"
+      >
         <div
           ref={(el) => this._el = el}
-          style={{width: width * STAGE_CELL_SIZE, height: height * STAGE_CELL_SIZE}}
+          style={{
+            top: this.state.top,
+            left: this.state.left,
+            width: stage.width * STAGE_CELL_SIZE,
+            height: stage.height * STAGE_CELL_SIZE,
+            overflow: 'hidden',
+          }}
           className={`stage tool-${selectedToolId} running-${running}`}
           onDragOver={this._onDragOver}
           onDrop={this._onDrop}
@@ -298,9 +271,22 @@ export default class Stage extends React.Component {
           tabIndex={0}
         >
           {this._renderActors()}
-          {recording ? this._renderRecordingElements() : []}
+          {recordingExtent ? this._renderRecordingExtent() : []}
         </div>
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return Object.assign({}, {
+    selectedActorId: state.ui.selectedActorId,
+    selectedToolId: state.ui.selectedToolId,
+    running: state.ui.playback.running,
+    characters: state.characters,
+  });
+}
+
+export default connect(
+  mapStateToProps,
+)(Stage);

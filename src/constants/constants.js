@@ -15,3 +15,6 @@ export const TOOL_POINTER = 'pointer';
 export const TOOL_TRASH = 'trash';
 export const TOOL_RECORD = 'record';
 export const TOOL_PAINT = 'paint';
+
+export const RECORDING_PHASE_SETUP = 'setup';
+export const RECORDING_PHASE_RECORD = 'record';

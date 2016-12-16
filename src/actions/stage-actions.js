@@ -20,23 +20,25 @@ export function advanceGameState() {
   };
 }
 
-export function recordKeyForGameState(key) {
+export function recordKeyForGameState(stageUid, key) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
+    stageUid,
     keys: {[key]: true},
     clicks: {},
   };
 }
 
-export function recordClickForGameState(actorId) {
+export function recordClickForGameState(stageUid, actorId) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
+    stageUid,
     keys: {},
     clicks: {[actorId]: true},
   };
 }
 
-export function createActor(character, initialValues) {
+export function createActor(stageUid, character, initialValues) {
   const newID = `${Date.now()}`;
 
   const newActor = objectAssign({
@@ -49,20 +51,23 @@ export function createActor(character, initialValues) {
 
   return {
     type: types.UPSERT_ACTOR,
+    stageUid,
     id: newID,
     values: newActor,
   };
 }
-export function changeActor(id, values) {
+export function changeActor(stageUid, id, values) {
   return {
     type: types.UPSERT_ACTOR,
+    stageUid,
     id,
     values,
   };
 }
-export function deleteActor(id) {
+export function deleteActor(stageUid, id) {
   return {
     type: types.DELETE_ACTOR,
+    stageUid,
     id,
   };
 }

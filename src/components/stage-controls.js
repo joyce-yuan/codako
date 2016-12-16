@@ -47,10 +47,10 @@ export default class StageControls extends React.Component {
 
     return (
       <div className="stage-controls">
-        <div className="stage-initial-state-controls">
+        <div className="left">
         </div>
 
-        <div className="stage-playback-controls">
+        <div className="center">
           <Button
             size="sm"
           >
@@ -76,7 +76,7 @@ export default class StageControls extends React.Component {
           </Button>
         </div>
 
-        <div className="stage-speed-controls">
+        <div className="right">
           <ButtonGroup>
             {Object.keys(SPEED_OPTIONS).map((name) =>
               <Button

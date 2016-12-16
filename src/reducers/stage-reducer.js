@@ -5,6 +5,10 @@ import initialState from './initial-state';
 import {StageOperator} from '../components/game-state-helpers';
 
 export default function stageReducer(state = initialState.stage, action) {
+  if (action.stageUid !== state.uid) {
+    return state;
+  }
+
   switch (action.type) {
     case UPSERT_ACTOR: {
       return u({

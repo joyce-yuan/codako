@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import Sprite from './sprite';
 
-import {STAGE_CELL_SIZE} from '../constants/constants';
+import {STAGE_CELL_SIZE} from '../../constants/constants';
 
 export default class ActorSprite extends React.Component {
   static propTypes = {

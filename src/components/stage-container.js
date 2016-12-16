@@ -4,15 +4,18 @@ import Stage from './stage';
 import StageControls from './stage-controls';
 import StageRecordingControls from './stage-recording-controls';
 
+import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
+
 class StageContainer extends React.Component {
   static propTypes = {
-
+    stage: PropTypes.object,
+    recording: PropTypes.object,
+    playback: PropTypes.object,
+    dispatch: PropTypes.func,
   };
-
   render() {
-    const {selectedToolId, selectedActorId, characters, running, stage, recording, dispatch} = this.props;
+    const {stage, recording, playback, dispatch} = this.props;
 
-    const baseStageProps = {selectedToolId, selectedActorId, characters, running, dispatch};
     let stageA = null;
     let stageB = null;
     let actions = null;
@@ -21,44 +24,50 @@ class StageContainer extends React.Component {
     console.log(recording);
     
     if (recording.characterId) {
-      if (recording.phase === 'setup') {
+      if (recording.phase === RECORDING_PHASE_SETUP) {
         stageA = (
-          <Stage key="before" {...baseStageProps} {...stage} recording={recording} />
+          <Stage
+            stage={recording.beforeStage}
+            recordingExtent={recording.extent}
+          />
         );
         controls = (
-          <StageRecordingControls {...this.props.recording} dispatch={dispatch} />
+          <StageRecordingControls {...recording} dispatch={dispatch} />
         );
-      } else if (recording.phase === 'record') {
+      } else if (recording.phase === RECORDING_PHASE_RECORD) {
         stageA = (
-          <Stage key="before" {...baseStageProps} {...stage} recording={recording} />
+          <Stage
+            stage={recording.beforeStage}
+            recordingExtent={recording.extent}
+            recordingCentered={true}
+            style={{marginRight: 2}}
+          />
         );
         stageB = (
-          <Stage key="after" {...baseStageProps} {...stage} recording={recording} />
+          <Stage
+            stage={recording.afterStage}
+            recordingExtent={recording.extent}
+            recordingCentered={true}
+            style={{marginLeft: 2}}
+          />
         );
         actions = (
-          <div key="actions" className="actions" style={{height: 200}} />
-        )
+          <div className="actions" style={{height: 0}} />
+        );
         controls = (
-          <StageRecordingControls key="controls" {...this.props.recording} dispatch={dispatch} />
+          <StageRecordingControls {...recording} dispatch={dispatch} />
         );
       }
-    } else {
-      stageA = (
-        <Stage key="before" {...baseStageProps} {...stage} recording={null} />
-      );
-      controls = (
-        <StageControls {...this.props.playback} dispatch={dispatch} />
-      );
     }
 
     return ( 
       <div className="panel stages">
         <div style={{display: 'flex'}}>
-          {stageA}
-          {stageB || <Stage key="after" style={{flex: 0}} />}
+          {stageA || <Stage stage={stage} recording={null} />}
+          {stageB || <Stage style={{flex: 0}} />}
         </div>
-        {actions || <div key="actions" className="actions" style={{height: 0}} />}
-        {controls}
+        {actions || <div className="actions" style={{height: 0}} />}
+        {controls || <StageControls {...playback} dispatch={dispatch} />}
       </div>
     );
   }
@@ -67,12 +76,9 @@ class StageContainer extends React.Component {
 
 function mapStateToProps(state) {
   return Object.assign({}, {
+    recording: state.recording,
+    playback: state.ui.playback,
     stage: state.stage,
-    selectedActorId: state.ui.selectedActorId,
-    selectedToolId: state.ui.selectedToolId,
-    running: state.ui.playback.running,
-    recording: state.ui.recording,
-    characters: state.characters,
   });
 }
 

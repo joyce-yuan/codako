@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 
 import {Button} from 'reactstrap';
-import {updateRecordingState} from '../actions/ui-actions';
+import {cancelRecording, setRecordingPhase} from '../actions/recording-actions';
+import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default class StageRecordingControls extends React.Component {
   static propTypes = {
@@ -14,12 +15,12 @@ export default class StageRecordingControls extends React.Component {
   }
 
   _onCancel = () => {
-    this.props.dispatch(updateRecordingState({characterId: null}));
+    this.props.dispatch(cancelRecording());
   }
 
   _onNext = () => {
-    if (this.props.phase === 'setup') {
-      this.props.dispatch(updateRecordingState({phase: 'record'}));
+    if (this.props.phase === RECORDING_PHASE_SETUP) {
+      this.props.dispatch(setRecordingPhase(RECORDING_PHASE_RECORD));
     }
   }
 
@@ -27,13 +28,13 @@ export default class StageRecordingControls extends React.Component {
     const {phase} = this.props;
 
     const message = {
-      'setup': "Set the stage! Select the area around the XXX you want to record in.",
-      'record': "Act out what you want to happen in the picture on the right.",
+      [RECORDING_PHASE_SETUP]: "Set the stage! Select the area around the XXX you want to record in.",
+      [RECORDING_PHASE_RECORD]: "Act out what you want to happen in the picture on the right.",
     }[phase];
 
     const next = {
-      'setup': <span><i className="fa fa-video-camera" /> Start Recording</span>,
-      'record': <span><i className="fa fa-checkmark" /> Save Recording</span>
+      [RECORDING_PHASE_SETUP]: <span><i className="fa fa-video-camera" /> Start Recording</span>,
+      [RECORDING_PHASE_RECORD]: <span><i className="fa fa-checkmark" /> Save Recording</span>
     }[phase];
 
     return (

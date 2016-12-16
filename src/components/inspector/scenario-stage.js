@@ -3,7 +3,7 @@ import objectAssign from 'object-assign';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
 import {applyRuleAction, getScenarioExtent} from '../game-state-helpers';
-import ActorSprite from '../actor-sprite';
+import ActorSprite from '../sprites/actor-sprite';
 
 
 export default class ScenarioStage extends React.Component {

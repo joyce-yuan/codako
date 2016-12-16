@@ -14,7 +14,7 @@ import {
   paintCharacterAppearance,
 } from '../actions/ui-actions';
 
-import Sprite from './sprite';
+import Sprite from './sprites/sprite';
 import TapToEditLabel from './tap-to-edit-label';
 
 
