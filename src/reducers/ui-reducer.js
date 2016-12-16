@@ -24,13 +24,7 @@ export default function toolbarReducer(state = initialState.ui, action) {
         },
       });
     case Types.UPDATE_RECORDING_STATE:
-      return u({
-        recording: {
-          phase: action.phase,
-          characterId: action.characterId,
-          rule: action.rule,
-        },
-      }, state);
+      return u({recording: action.values}, state);
     case Types.UPDATE_KEYPICKER_STATE:
       return objectAssign({}, state, {
         keypicker: {

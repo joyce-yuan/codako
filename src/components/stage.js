@@ -1,10 +1,10 @@
 import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
 import ActorSprite from './actor-sprite';
 import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../actions/stage-actions';
-import {select, paintCharacterAppearance, selectToolId} from '../actions/ui-actions';
+import {select, selectToolId, paintCharacterAppearance, updateRecordingState} from '../actions/ui-actions';
+import {getScenarioExtent} from './game-state-helpers';
 
 import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
 
@@ -44,6 +44,7 @@ class RecordingHandle extends React.Component {
       <img
         draggable
         onDragStart={this._onDragStart}
+        className={`handle-${side}`}
         src={`/img/tiles/handle_${side}.png`}
         style={{
           position: 'absolute',
@@ -57,12 +58,14 @@ class RecordingHandle extends React.Component {
   }
 }
 
-class Stage extends React.Component {
+export default class Stage extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
+    style: PropTypes.object,
 
     actors: PropTypes.object,
     running: PropTypes.bool,
+    recording: PropTypes.object,
     selectedToolId: PropTypes.string,
     selectedActorId: PropTypes.string,
     characters: PropTypes.object,
@@ -120,10 +123,42 @@ class Stage extends React.Component {
     const side = event.dataTransfer.types.find(t => t.startsWith('handle:')).split(':').pop();
     const stageOffset = this._el.getBoundingClientRect();
     const position = {
-      x: Math.round((event.clientX - stageOffset.left) / STAGE_CELL_SIZE),
-      y: Math.round((event.clientY - stageOffset.top) / STAGE_CELL_SIZE),
+      x: (event.clientX - stageOffset.left) / STAGE_CELL_SIZE,
+      y: (event.clientY - stageOffset.top) / STAGE_CELL_SIZE,
     };
-    console.log(event.clientX, side, position);
+
+    // expand the extent of the recording rule to reflect this new extent
+    const {recording, actors, dispatch} = this.props;
+    const root = actors[recording.actorId].position;
+
+    const extent = getScenarioExtent(recording.scenario);
+    const nextExtent = objectAssign({}, extent);
+    if (side === 'left') { nextExtent.xmin = Math.min(0, Math.round(position.x - root.x + 0.5)); }
+    if (side === 'right') { nextExtent.xmax = Math.max(0, Math.round(position.x - root.x - 1)); }
+    if (side === 'top') { nextExtent.ymin = Math.min(0, Math.round(position.y - root.y + 0.5)); }
+    if (side === 'bottom') { nextExtent.ymax = Math.max(0, Math.round(position.y - root.y - 1)); }
+
+    if (JSON.stringify(extent) === JSON.stringify(nextExtent)) {
+      return;
+    }
+
+    const nextScenario = [];
+    for (let x = nextExtent.xmin; x <= nextExtent.xmax; x ++) {
+      for (let y = nextExtent.ymin; y <= nextExtent.ymax; y ++) {
+        const coord = `${x},${y}`;
+        let block = recording.scenario.find(b => b.coord === coord);
+        if (!block) {
+          block = {
+            coord,
+            refs: Object.values(actors).filter(a =>
+              a.position.x === x + root.x && a.position.y === y + root.y
+            ).map(a => a.id),
+          };
+        }
+        nextScenario.push(block);
+      }
+    }
+    dispatch(updateRecordingState({scenario: nextScenario}));
   }
 
   _onDropSprite = (event) => {
@@ -158,7 +193,18 @@ class Stage extends React.Component {
     if (selectedToolId === TOOL_TRASH) {
       dispatch(deleteActor(actor.id));
     }
-
+    if (selectedToolId === TOOL_RECORD) {
+      dispatch(updateRecordingState({
+        characterId: actor.characterId,
+        actorId: actor.id,
+        ruleId: null,
+        phase: 'setup',
+        scenario: [{
+          "coord": "0,0",
+          "refs": [actor.id,]
+        }],
+      }));
+    }
     if (selectedToolId !== TOOL_POINTER) {
       if (!event.shiftKey) {
         dispatch(selectToolId(TOOL_POINTER));
@@ -195,14 +241,17 @@ class Stage extends React.Component {
   }
 
   _renderRecordingElements() {
-    const {width, height} = this.props;
-    const {top, left, bottom, right} = {top: 3, left: 3, bottom: 8, right: 5};
+    const {width, height, recording, actors} = this.props;
+    const {xmin, xmax, ymin, ymax} = getScenarioExtent(recording.scenario, {
+      root: actors[recording.actorId].position,
+    });
+
     const components = [];
 
     // add the dark squares
     for (let x = 0; x < width; x ++) {
       for (let y = 0; y < height; y ++) {
-        if (x < left || x > right || y < top || y > bottom) {
+        if (x < xmin || x > xmax || y < ymin || y > ymax) {
           components.push(
             <RecordingMaskSprite key={`${x}-${y}`} position={{x, y}} />
           );
@@ -212,15 +261,15 @@ class Stage extends React.Component {
 
     // add the handles
     const handles = {
-      top: [left + (right - left) / 2.0, top - 1],
-      bottom: [left + (right - left) / 2.0, bottom + 1],
-      left: [left - 1, top + (bottom - top) / 2.0],
-      right: [right + 1, top + (bottom - top) / 2.0],
+      top: [xmin + (xmax - xmin) / 2.0, ymin - 1],
+      bottom: [xmin + (xmax - xmin) / 2.0, ymax + 1],
+      left: [xmin - 1, ymin + (ymax - ymin) / 2.0],
+      right: [xmax + 1, ymin + (ymax - ymin) / 2.0],
     };
     for (const side of Object.keys(handles)) {
       const [x, y] = handles[side];
       components.push(
-        <RecordingHandle side={side} position={{x, y}} />
+        <RecordingHandle key={side} side={side} position={{x, y}} />
       );
     }
 
@@ -228,34 +277,30 @@ class Stage extends React.Component {
   }
 
   render() {
-    const {selectedToolId, running} = this.props;
+    const {selectedToolId, running, recording, width, height, style} = this.props;
+
+    if (!width) {
+      return (
+        <div style={style} className="stage-scroll-container" />
+      );
+    }
 
     return (
-      <div
-        ref={(el) => this._el = el}
-        className={`stage tool-${selectedToolId} running-${running}`}
-        onDragOver={this._onDragOver}
-        onDrop={this._onDrop}
-        onKeyDown={this._onKeyDown}
-        onBlur={this._onBlur}
-        tabIndex={0}
-      >
-        {this._renderActors()}
-        {this._renderRecordingElements()}
+      <div style={style} className="stage-scroll-container">
+        <div
+          ref={(el) => this._el = el}
+          style={{width: width * STAGE_CELL_SIZE, height: height * STAGE_CELL_SIZE}}
+          className={`stage tool-${selectedToolId} running-${running}`}
+          onDragOver={this._onDragOver}
+          onDrop={this._onDrop}
+          onKeyDown={this._onKeyDown}
+          onBlur={this._onBlur}
+          tabIndex={0}
+        >
+          {this._renderActors()}
+          {recording ? this._renderRecordingElements() : []}
+        </div>
       </div>
     );
   }
 }
-
-function mapStateToProps(state) {
-  return Object.assign({}, state.stage, {
-    selectedActorId: state.ui.selectedActorId,
-    selectedToolId: state.ui.selectedToolId,
-    running: state.ui.playback.running,
-    characters: state.characters,
-  });
-}
-
-export default connect(
-  mapStateToProps,
-)(Stage);

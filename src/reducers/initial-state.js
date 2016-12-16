@@ -9,8 +9,11 @@ export default {
     selectedActorId: null,
     recording: {
       characterId: null,
+      actorId: null,
       phase: null,
-      rule: null,
+      ruleId: null,
+      scenario: null,
+      actions: [],
     },
     playback: {
       speed: 500,

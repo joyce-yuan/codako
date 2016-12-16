@@ -35,6 +35,13 @@ export function updatePlaybackState(values) {
   };
 }
 
+export function updateRecordingState(values) {
+  return {
+    type: types.UPDATE_RECORDING_STATE,
+    values,
+  };
+}
+
 export function paintCharacterAppearance(characterId, appearanceId) {
   return {
     type: types.UPDATE_PAINTING_STATE,

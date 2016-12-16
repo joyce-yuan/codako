@@ -1,13 +1,12 @@
 import React, {PropTypes} from 'react';
 import classNames from 'classnames';
-import {connect} from 'react-redux';
 
 import {Button, ButtonGroup} from 'reactstrap';
 import {updatePlaybackState} from '../actions/ui-actions';
 import {advanceGameState} from '../actions/stage-actions';
 import {SPEED_OPTIONS} from '../constants/constants';
 
-class StageControls extends React.Component {
+export default class StageControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     speed: PropTypes.number,
@@ -96,11 +95,3 @@ class StageControls extends React.Component {
     );
   }
 }
-
-function mapStateToProps(state) {
-  return Object.assign({}, state.ui.playback);
-}
-
-export default connect(
-  mapStateToProps,
-)(StageControls);

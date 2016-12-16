@@ -83,22 +83,49 @@ body {
     flex-shrink: 0;
     width: 820px;
 
-    .stage {
-      width: 800px;
-      height: 520px;
-      background-color: gray;
-      position: relative;
-      margin-bottom: 4px;
-      outline: 0;
-      transition: box-shadow 200ms;
-      &.running-true {
-        box-shadow:0 0 0 4px $tint-color;
+    .panel.stages {
+      display: flex;
+      flex-direction: column;
+      height: 575px;
+
+      .stage-scroll-container {
+        overflow: scroll;
+        flex: 1;
+        transition: flex 300ms ease-out;
+
+        .stage {
+          background-color: gray;
+          position: relative;
+          margin-bottom: 4px;
+          outline: 0;
+          transition: box-shadow 200ms;
+          &.running-true {
+            box-shadow:0 0 0 4px $tint-color;
+          }
+        }
       }
+
+      .actions {
+        transition: height 200ms ease-out;
+      }
+    }
+
+    .handle-top,
+    .handle-bottom {
+      cursor: move;
+      cursor: ns-resize;
+    }
+
+    .handle-left,
+    .handle-right {
+      cursor: move;
+      cursor: ew-resize;
     }
 
     .stage-controls {
       height: 40px;
       display: flex;
+      flex-shrink: 0;
       flex-direction: row;
       align-items: center;
 

@@ -16,6 +16,26 @@ Object.values = function(obj) {
 // - actor position, appearnce, etc.
 // - create new actors
 
+export function getScenarioExtent(scenario, {root} = {root: {x: 0, y: 0}}) {
+    let xmin = 0;
+    let xmax = 0;
+    let ymin = 0;
+    let ymax = 0;
+    for (const block of scenario) {
+      const [x, y] = block.coord.split(',').map(s => s / 1);
+      xmin = Math.min(xmin, x);
+      ymin = Math.min(ymin, y);
+      xmax = Math.max(xmax, x);
+      ymax = Math.max(ymax, y);
+    }
+    return {
+      xmin: xmin + root.x,
+      xmax: xmax + root.x,
+      ymin: ymin + root.y,
+      ymax: ymax + root.y,
+    };
+}
+
 export function getVariableValue(actor, character, id) {
   if (actor.variableValues[id]) {
     return actor.variableValues[id] / 1;

@@ -1,7 +1,6 @@
 import React from 'react';
 import Toolbar from './toolbar';
-import Stage from './stage';
-import StageControls from './stage-controls';
+import StageContainer from './stage-container';
 import Library from './library';
 import InspectorContainer from './inspector/container';
 import PaintContainer from './paint/container';
@@ -21,10 +20,7 @@ export default class EditorPage extends React.Component {
       <div className="editor">
         <Toolbar />
         <div className="stage-container">
-          <div className="panel">
-            <Stage />
-            <StageControls />
-          </div>
+          <StageContainer />
           <Library />
         </div>
         <InspectorContainer />

@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import objectAssign from 'object-assign';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
-import {applyRuleAction} from '../game-state-helpers';
+import {applyRuleAction, getScenarioExtent} from '../game-state-helpers';
 import ActorSprite from '../actor-sprite';
 
 
@@ -23,19 +23,11 @@ export default class ScenarioStage extends React.Component {
     const {scenario, descriptors, actions} = rule;
     const {characters} = this.context;
 
-    let xmin = 0;
-    let xmax = 0;
-    let ymin = 0;
-    let ymax = 0;
+    const {xmin, xmax, ymin, ymax} = getScenarioExtent(scenario);
     const actors = {};
 
     for (const block of scenario) {
       const [x, y] = block.coord.split(',').map(s => s / 1);
-      xmin = Math.min(xmin, x);
-      ymin = Math.min(ymin, y);
-      xmax = Math.max(xmax, x);
-      ymax = Math.max(ymax, y);
-
       for (const ref of block.refs) {
         actors[ref] = objectAssign({}, descriptors[ref], {position: {x: -xmin + x, y: -ymin + y}});
       }
