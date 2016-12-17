@@ -1,5 +1,5 @@
 import u from 'updeep';
-import {TOOL_TRASH, TOOL_PAINT, TOOL_RECORD} from '../constants/constants';
+import objectAssign from 'object-assign';
 
 Object.values = function(obj) {
   const results = [];
@@ -15,6 +15,56 @@ Object.values = function(obj) {
 // set:
 // - actor position, appearnce, etc.
 // - create new actors
+
+export function pointIsOutside({x, y}, {xmin, xmax, ymin, ymax}) {
+  return (x < xmin || x > xmax || y < ymin || y > ymax);
+}
+
+export function pointIsInside(...args) {
+  return !pointIsOutside(...args);
+}
+
+export function buildActorsFromRule(rule, characters, {applyActions = false, offsetX = 0, offsetY = 0}) {
+  const {scenario, descriptors, actions} = rule;
+  const {xmin, ymin} = getScenarioExtent(scenario);
+  const actors = {};
+
+  for (const block of scenario) {
+    const [x, y] = block.coord.split(',').map(s => s / 1);
+    for (const ref of block.refs) {
+      actors[ref] = objectAssign({}, descriptors[ref], {
+        id: ref,
+        position: {
+          x: -xmin + x + offsetX,
+          y: -ymin + y + offsetY,
+        },
+        variableValues: {},
+      });
+    }
+  }
+
+  // lay out the before state and apply any rules that apply to
+  // the actors currently on the board
+  if (applyActions && actions) {
+    for (const action of actions) {
+      if (action.type === 'create') {
+        const [x, y] = action.offset.split(',').map(s => s / 1);
+        actors[action.ref] = objectAssign({}, descriptors[action.ref], {
+          id: action.ref,
+          position: {
+            x: x + offsetX,
+            y: y + offsetY,
+          },
+          variableValues: {},
+        });
+      } else {
+        const character = characters[actors[action.ref].characterId];
+        actors[action.ref] = applyRuleAction(actors[action.ref], character, action);
+      }
+    }
+  }
+  return actors;
+}
 
 export function getScenarioExtent(scenario, {root} = {root: {x: 0, y: 0}}) {
     let xmin = 0;

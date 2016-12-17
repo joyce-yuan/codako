@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import objectAssign from 'object-assign';
 import {changeCharacter} from '../../actions/characters-actions';
 import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
+import {editRuleRecording} from '../../actions/recording-actions';
 import {findRule} from '../game-state-helpers';
 import RuleList from './rule-list';
 
@@ -16,6 +17,7 @@ export default class ContainerPaneRules extends React.Component {
     onRuleDeleted: PropTypes.func,
     onRuleChanged: PropTypes.func,
     onRulePickKey: PropTypes.func,
+    onRuleReRecord: PropTypes.func,
   }
 
   getChildContext() {
@@ -24,7 +26,15 @@ export default class ContainerPaneRules extends React.Component {
       onRuleDeleted: this._onRuleDeleted,
       onRuleChanged: this._onRuleChanged,
       onRulePickKey: this._onRulePickKey,
+      onRuleReRecord: this._onRuleReRecord,
     };
+  }
+
+  _onRuleReRecord = (rule) => {
+    this.props.dispatch(editRuleRecording({
+      characterId: this.props.character.id,
+      rule: rule,
+    }));
   }
 
   _onRuleMoved = (movingRuleId, newParentId, newParentIdx) => {

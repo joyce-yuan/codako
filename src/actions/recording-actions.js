@@ -1,8 +1,14 @@
 import * as types from '../constants/action-types';
 
-export function startRecording({characterId, actor, rule}) {
+export function startRecording({characterId, actor}) {
   return {
-    type: types.START_RECORDING, characterId, actor, rule,
+    type: types.START_RECORDING, characterId, actor,
+  };
+}
+
+export function editRuleRecording({characterId, rule}) {
+  return {
+    type: types.EDIT_RULE_RECORDING, characterId, rule,
   };
 }
 

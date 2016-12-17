@@ -52,9 +52,9 @@
                                 "refs": []
                             }
                         ],
+                        "actorDescriptorId": "_2042130",
                         "descriptors": {
                             "_2042130": {
-                                "mainActor": true,
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
@@ -80,9 +80,9 @@
                                 "coord": "0,0"
                             }
                         ],
+                        "actorDescriptorId": "_1503101",
                         "descriptors": {
                             "_1503101": {
-                                "mainActor": true,
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
@@ -121,9 +121,9 @@
                                 "coord": "0,0"
                             }
                         ],
+                        "actorDescriptorId": "_2434313",
                         "descriptors": {
                             "_2434313": {
-                                "mainActor": true,
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
@@ -149,9 +149,9 @@
                                 "coord": "0,0"
                             }
                         ],
+                        "actorDescriptorId": "_1334414",
                         "descriptors": {
                             "_1334414": {
-                                "mainActor": true,
                                 "appearance_ignored": false,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "idle",
@@ -190,9 +190,9 @@
                                 "coord": "0,1"
                             }
                         ],
+                        "actorDescriptorId": "_2310541",
                         "descriptors": {
                             "_2310541": {
-                                "mainActor": true,
                                 "appearance_ignored": true,
                                 "actorid_during_recording": "_1413514",
                                 "appearance": "_2220533",
@@ -302,13 +302,13 @@
                         ]
                     }
                 ],
+                "actorDescriptorId": "_2301121",
                 "descriptors": {
                     "_2301121": {
                         "characterId": "e1izcd9ggb9",
                         "appearance": "_2350352",
                         "actorid_during_recording": "_2443155",
-                        "appearance_ignored": false,
-                        "mainActor": true
+                        "appearance_ignored": false
                     }
                 },
                 "actions": [
@@ -330,13 +330,13 @@
                         ]
                     }
                 ],
+                "actorDescriptorId": "_2203110",
                 "descriptors": {
                     "_2203110": {
                         "characterId": "e1izcd9ggb9",
                         "appearance": "idle",
                         "actorid_during_recording": "_2443155",
-                        "appearance_ignored": false,
-                        "mainActor": true
+                        "appearance_ignored": false
                     }
                 },
                 "actions": [

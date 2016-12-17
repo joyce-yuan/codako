@@ -11,6 +11,7 @@ import {select, selectToolId, paintCharacterAppearance} from '../actions/ui-acti
 import {setRecordingExtent, startRecording} from '../actions/recording-actions';
 
 import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
+import {pointIsOutside} from './game-state-helpers';
 
 class Stage extends React.Component {
   static propTypes = {
@@ -141,10 +142,12 @@ class Stage extends React.Component {
   }
 
   _onDropAppearance = (event) => {
-    const {stage, dispatch} = this.props;
+    const {stage, dispatch, recordingExtent} = this.props;
     const {appearance, characterId} = JSON.parse(event.dataTransfer.getData('appearance'));
     const position = this._getDropPositionForEvent(event);
-
+    if (recordingExtent && pointIsOutside(position, recordingExtent)) {
+      return;
+    }
     const actor = Object.values(stage.actors).find(a => 
       a.position.x === position.x && a.position.y === position.y && a.characterId === characterId
     );
@@ -154,9 +157,13 @@ class Stage extends React.Component {
   }
 
   _onDropSprite = (event) => {
-    const {stage, stage: {actors}, characters, dispatch} = this.props;
+    const {stage, stage: {actors}, characters, dispatch, recordingExtent} = this.props;
     const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
     const position = this._getDropPositionForEvent(event);
+
+    if (recordingExtent && pointIsOutside(position, recordingExtent)) {
+      return;
+    }
 
     if (actorId) {
       if (event.altKey) {
@@ -232,7 +239,7 @@ class Stage extends React.Component {
     // add the dark squares
     for (let x = 0; x < width; x ++) {
       for (let y = 0; y < height; y ++) {
-        if (x < xmin || x > xmax || y < ymin || y > ymax) {
+        if (pointIsOutside({x, y}, recordingExtent)) {
           components.push(
             <RecordingMaskSprite key={`${x}-${y}`} position={{x, y}} />
           );

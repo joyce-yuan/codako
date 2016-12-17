@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {updateRecordingCondition} from '../actions/recording-actions';
 import Sprite from './sprites/sprite';
+import {pointIsInside} from './game-state-helpers';
 
 class ConditionToggle extends React.Component {
   static propTypes = {
@@ -101,10 +102,9 @@ export default class RecordingConditions extends React.Component {
 
     const rows = [];
     Object.values(stage.actors).forEach((a) => {
-      const {x, y} = a.position;
       const saved = conditions[a.id] || {};
 
-      if (x >= extent.xmin && x <= extent.xmax && y >= extent.ymin && y <= extent.ymax) {
+      if (pointIsInside(a.position, extent)) {
         const key = 'appearance';
         rows.push(
           <AppearanceRow
@@ -119,18 +119,18 @@ export default class RecordingConditions extends React.Component {
           />
         )
 
-        for (const key of Object.keys(a.variableValues)) {
+        for (const vkey of Object.keys(a.variableValues)) {
           rows.push(
             <VariableRow
-              key={`${a.id}-var-${key}`}
+              key={`${a.id}-var-${vkey}`}
               character={characters[a.characterId]}
               actor={a}
-              variableId={key}
-              variableValue={a.variableValues[key]}
+              variableId={vkey}
+              variableValue={a.variableValues[vkey]}
               onChange={(enabled, comparator) =>
-                dispatch(updateRecordingCondition(a.id, key, {enabled, comparator}))
+                dispatch(updateRecordingCondition(a.id, vkey, {enabled, comparator}))
               }
-              {...saved[key]}
+              {...saved[vkey]}
             />
           )
         }

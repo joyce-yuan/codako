@@ -8,6 +8,7 @@ export default class Rule extends React.Component {
   static propTypes = {
     rule: PropTypes.object,
     onClick: PropTypes.func,
+    onDoubleClick: PropTypes.func,
     onDragStart: PropTypes.func,
     onDragEnd: PropTypes.func,
   };
@@ -23,12 +24,8 @@ export default class Rule extends React.Component {
 
   }
 
-  _onDoubleClick = () => {
-
-  }
-
   render() {
-    const {rule, onDragStart, onDragEnd, onClick} = this.props;
+    const {rule, onDragStart, onDragEnd, onClick, onDoubleClick} = this.props;
     const {disclosed} = this.state;
 
     return (
@@ -38,8 +35,8 @@ export default class Rule extends React.Component {
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
         onClick={onClick}
-        onDoubleClick={this._onDoubleClick}
->
+        onDoubleClick={onDoubleClick}
+      >
         <div className="zerospace">
           <RuleStateCircle rule={rule} />
         </div>

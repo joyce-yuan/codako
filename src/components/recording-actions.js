@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import Sprite from './sprites/sprite';
+import {pointIsOutside} from './game-state-helpers';
 
 const DELTA_SQUARE_SIZE = 10;
 
@@ -104,10 +105,10 @@ function actionsBetweenStages({beforeStage, afterStage, extent}) {
   const actions = [];
 
   Object.values(beforeStage.actors).forEach((beforeActor) => {
-    const {x: bx, y: by} = beforeActor.position;
-    if (bx < extent.xmin || bx > extent.xmax || by < extent.ymin || by > extent.ymax) {
+    if (pointIsOutside(beforeActor.position, extent)) {
       return;
     }
+    const {x: bx, y: by} = beforeActor.position;
     const afterActor = afterStage.actors[beforeActor.id];
     if (afterActor) {
       const {x: ax, y: ay} = afterActor.position;
@@ -140,7 +141,7 @@ function actionsBetweenStages({beforeStage, afterStage, extent}) {
 
   createdIds.forEach((id) => {
     const actor = afterStage.actors[id];
-    if (actor.x < extent.xmin || actor.x > extent.xmax || actor.y < extent.ymin || actor.y > extent.ymax) {
+    if (pointIsOutside(actor.position, extent)) {
       return;
     }
     actions.push({

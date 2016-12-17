@@ -24,6 +24,7 @@ export default class RuleList extends React.Component {
     onRuleChanged: PropTypes.func,
     onRuleDeleted: PropTypes.func,
     onRulePickKey: PropTypes.func,
+    onRuleReRecord: PropTypes.func,
     selectedToolId: PropTypes.string,
   };
 
@@ -137,6 +138,7 @@ export default class RuleList extends React.Component {
           onClick={(event) => this._onRuleClicked(event, r)}
           onDragStart={(event) => this._onDragStart(event, r)}
           onDragEnd={(event) => this._onDragEnd(event, r)}
+          onDoubleClick={() => this.context.onRuleReRecord(r)}
           rule={r}
           key={r.id}
         />

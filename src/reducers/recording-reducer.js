@@ -5,6 +5,7 @@ import stageReducer from './stage-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
+import {buildActorsFromRule, getScenarioExtent} from '../components/game-state-helpers';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default function recordingReducer(state = initialState.recording, action) {
@@ -17,34 +18,49 @@ export default function recordingReducer(state = initialState.recording, action)
   switch (action.type) {
     case Types.START_RECORDING: {
       const {stage} = window.store.getState();
-      const {characterId, actor, rule} = action;
-
-      let beforeStage = null;
-      let conditions = null;
-      let extent = null;
-      if (rule) {
-        // populate with existing rule 
-      } else {
-        beforeStage = objectAssign(JSON.parse(JSON.stringify(stage)), {
-          uid: 'before',
-        });
-        extent = {
-          xmin: actor.position.x,
-          xmax: actor.position.x,
-          ymin: actor.position.y,
-          ymax: actor.position.y,
-        };
-        conditions = {};
-      }
-
+      const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
         actorId: actor.id,
         characterId,
-        beforeStage,
-        extent,
-        afterStage: {uid: 'after'},
-        conditions,
+        conditions: u.constant({}),
+        afterStage: u.constant({uid: 'after'}),
+        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
+          uid: 'before',
+        })),
+        extent: {
+          xmin: actor.position.x,
+          xmax: actor.position.x,
+          ymin: actor.position.y,
+          ymax: actor.position.y,
+        },
+      }, state);
+    }
+    case Types.EDIT_RULE_RECORDING: {
+      const {characters, stage} = window.store.getState();
+      const {characterId, rule} = action;
+      const extent = getScenarioExtent(rule.scenario);
+      const offsetX = Math.round((stage.width / 2 - (extent.xmax - extent.xmin) / 2));
+      const offsetY = Math.round((stage.height / 2 - (extent.ymax - extent.ymin) / 2));
+      extent.xmin += offsetX;
+      extent.xmax += offsetX;
+      extent.ymin += offsetY;
+      extent.ymax += offsetY;
+
+      return u({
+        phase: RECORDING_PHASE_RECORD,
+        actorId: rule.actorDescriptorId,
+        characterId,
+        conditions: u.constant({}),
+        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
+          actors: buildActorsFromRule(rule, characters, {applyActions: false, offsetX, offsetY}),
+          uid: 'before',
+        })),
+        afterStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
+          actors: buildActorsFromRule(rule, characters, {applyActions: true, offsetX, offsetY}),
+          uid: 'after',
+        })),
+        extent: extent,
       }, state);
     }
     case Types.CANCEL_RECORDING: {
