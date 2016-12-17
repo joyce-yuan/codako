@@ -14,6 +14,10 @@ export default class ActorSprite extends React.Component {
   }
 
   _onDragStart = (event) => {
+    if (!this.props.draggable) {
+      event.preventDefault();
+      return;
+    }
     const {top, left} = event.target.getBoundingClientRect();
     event.dataTransfer.effectAllowed = 'copyMove';
     event.dataTransfer.setData('sprite', JSON.stringify({

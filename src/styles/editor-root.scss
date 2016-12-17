@@ -63,6 +63,13 @@ body {
   flex-direction: row;
   justify-content: center;
 
+  h2 {
+    color: #555;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 2px 0;
+  }
+
   .toolbar {
     order: 0;
     width:56px;
@@ -88,7 +95,7 @@ body {
       flex-direction: column;
       height: 575px;
 
-      .stage-scroll-container {
+      .stage-scroll-wrap {
         flex: 1;
         overflow: hidden;
         margin-bottom: 4px;
@@ -124,6 +131,45 @@ body {
       cursor: ew-resize;
     }
 
+    .actions {
+      & > div {
+        background-color: #eee;
+        padding: 3px 6px;
+        margin-bottom: 4px;
+      }
+      ul {
+        margin: 0; 
+        padding: 0;
+        overflow-y: scroll;
+        border-top: 1px solid rgba(0,0,0,0.2);
+
+        li {
+          padding: 6px 0;
+          border-bottom: 1px solid rgba(0,0,0,0.2);
+          list-style-type: none;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          .left {
+            flex: 1;
+          }
+          .sprite {
+            zoom: 0.6;
+          }
+          .condition-toggle {
+            float: right;
+            width: 25px;
+            height: 13px;
+            display: inline-block;
+            background: url(../img/visible.png) top left no-repeat;
+            &.enabled-false {
+              opacity: 0.4;
+              background: url(../img/visible.png) top right no-repeat;
+            }
+          }
+        }
+      }
+    }
     .stage-controls {
       height: 40px;
       display: flex;

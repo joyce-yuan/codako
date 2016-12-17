@@ -24,3 +24,8 @@ export function setRecordingExtent(extent) {
   };
 }
 
+export function updateRecordingCondition(actorId, key, values) {
+  return {
+    type: types.UPDATE_RECORDING_EXTENT, actorId, key, values
+  };
+}

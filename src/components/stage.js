@@ -39,6 +39,7 @@ class Stage extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+    this._lastFiredExtent = null;
     this.state = {
       top: 0,
       left: 0,
@@ -119,9 +120,11 @@ class Stage extends React.Component {
     if (side === 'top') { nextExtent.ymin = Math.min(nextExtent.ymax, Math.max(0, Math.round(position.y + 0.25))); }
     if (side === 'bottom') { nextExtent.ymax = Math.max(nextExtent.ymin, Math.min(this.props.stage.height, Math.round(position.y - 1))); }
 
-    if (JSON.stringify(this.props.recordingExtent) === JSON.stringify(nextExtent)) {
+    const str = JSON.stringify(nextExtent);
+    if (this._lastFiredExtent === str) {
       return;
     }
+    this._lastFiredExtent = str;
     this.props.dispatch(setRecordingExtent(nextExtent));
   }
 
@@ -243,7 +246,7 @@ class Stage extends React.Component {
         <div
           style={style}
           ref={(el) => this._scrollEl = el}
-          className="stage-scroll-container"
+          className="stage-scroll-wrap"
         />
       );
     }
@@ -252,7 +255,7 @@ class Stage extends React.Component {
       <div
         style={style}
         ref={(el) => this._scrollEl = el}
-        className="stage-scroll-container"
+        className="stage-scroll-wrap"
       >
         <div
           ref={(el) => this._el = el}

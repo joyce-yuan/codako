@@ -8,6 +8,7 @@ import u from 'updeep';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default function recordingReducer(state = initialState.recording, action) {
+
   state = objectAssign({}, state, {
     beforeStage: stageReducer(state.beforeStage, action),
     afterStage: stageReducer(state.afterStage, action),
@@ -19,7 +20,7 @@ export default function recordingReducer(state = initialState.recording, action)
       const {characterId, actor, rule} = action;
 
       let beforeStage = null;
-      let descriptors = null;
+      let conditions = null;
       let extent = null;
       if (rule) {
         // populate with existing rule 
@@ -33,7 +34,7 @@ export default function recordingReducer(state = initialState.recording, action)
           ymin: actor.position.y,
           ymax: actor.position.y,
         };
-        descriptors = [];
+        conditions = {};
       }
 
       return u({
@@ -43,7 +44,7 @@ export default function recordingReducer(state = initialState.recording, action)
         beforeStage,
         extent,
         afterStage: {uid: 'after'},
-        descriptors,
+        conditions,
       }, state);
     }
     case Types.CANCEL_RECORDING: {
@@ -60,8 +61,30 @@ export default function recordingReducer(state = initialState.recording, action)
       }
       return u(changes, state);
     }
-    case Types.SET_RECORDING_EXTENT:
-      return u({ extent: action.extent }, state);
+    case Types.UPDATE_RECORDING_EXTENT: {
+      const {actorId, key, values} = action;
+      return u({
+        conditions: {
+          [actorId]: {
+            [key]: values,
+          },
+        },
+      }, state);
+    }
+    case Types.SET_RECORDING_EXTENT: {
+      // find the primary actor, make sure the extent still includes it
+      const extent = objectAssign({}, action.extent);
+      for (const stage of [state.beforeStage, state.afterStage]) {
+        const actor = Object.values(stage.actors || {}).find(a => a.id === state.actorId);
+        if (actor) {
+          extent.xmin = Math.min(extent.xmin, actor.position.x);
+          extent.ymin = Math.min(extent.ymin, actor.position.y);
+          extent.xmax = Math.max(extent.xmax, actor.position.x);
+          extent.ymax = Math.max(extent.ymax, actor.position.y);
+        }
+      }
+      return u({ extent }, state);
+    }
     default:
       return state;
   }

@@ -34,6 +34,7 @@
     "no-shadow": 1,
     "prefer-const": 1,
     "consistent-return": 1,
+    "array-callback-return": 2,
     "eqeqeq": 1,
     "no-var": 1,
     "semi": [1, "always"],
