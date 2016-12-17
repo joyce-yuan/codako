@@ -16,6 +16,7 @@ class StageContainer extends React.Component {
     playback: PropTypes.object,
     dispatch: PropTypes.func,
   };
+
   render() {
     const {stage, recording, playback, dispatch, characters} = this.props;
 
@@ -27,15 +28,20 @@ class StageContainer extends React.Component {
     console.log(recording);
     
     if (recording.characterId) {
+      controls = (
+        <StageRecordingControls
+          characters={characters}
+          dispatch={dispatch}
+          {...recording}
+        />
+      );
+
       if (recording.phase === RECORDING_PHASE_SETUP) {
         stageA = (
           <Stage
             stage={recording.beforeStage}
             recordingExtent={recording.extent}
           />
-        );
-        controls = (
-          <StageRecordingControls {...recording} dispatch={dispatch} />
         );
       } else if (recording.phase === RECORDING_PHASE_RECORD) {
         stageA = (
@@ -63,11 +69,8 @@ class StageContainer extends React.Component {
               extent={recording.extent}
               dispatch={dispatch}
             />
-            <RecordingActions {...recording} />
+            <RecordingActions {...recording} characters={characters} />
           </div>
-        );
-        controls = (
-          <StageRecordingControls {...recording} dispatch={dispatch} />
         );
       }
     }

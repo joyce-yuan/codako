@@ -34,11 +34,13 @@ class AppearanceRow extends React.Component {
       <li>
         <div className="left">
           <code>
-            <Sprite spritesheet={character.spritesheet} appearance={appearance} /> {character.name}'s
+            <Sprite spritesheet={character.spritesheet} appearance={appearance} />
+            {character.name}'s
           </code>
           appearance is
           <code>
-            <Sprite spritesheet={character.spritesheet} appearance={appearance} /> {character.spritesheet.appearanceNames[appearance]}
+            <Sprite spritesheet={character.spritesheet} appearance={appearance} />
+            {character.spritesheet.appearanceNames[appearance]}
           </code>
         </div>
         <ConditionToggle enabled={enabled} onClick={() => onChange(!enabled)} />

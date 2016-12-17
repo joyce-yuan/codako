@@ -147,15 +147,15 @@ class Stage extends React.Component {
 
     const actor = Object.values(stage.actors).find(a => 
       a.position.x === position.x && a.position.y === position.y && a.characterId === characterId
-    )
+    );
     if (actor) {
       dispatch(changeActor(stage.uid, actor.id, {appearance}));
     }
   }
 
   _onDropSprite = (event) => {
-    const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
     const {stage, stage: {actors}, characters, dispatch} = this.props;
+    const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
     const position = this._getDropPositionForEvent(event);
 
     if (actorId) {

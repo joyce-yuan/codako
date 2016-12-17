@@ -8,6 +8,8 @@ export default class StageRecordingControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     phase: PropTypes.string,
+    characters: PropTypes.object,
+    characterId: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -25,10 +27,10 @@ export default class StageRecordingControls extends React.Component {
   }
 
   render() {
-    const {phase} = this.props;
+    const {phase, characters, characterId} = this.props;
 
     const message = {
-      [RECORDING_PHASE_SETUP]: "Set the stage! Select the area around the XXX you want to record in.",
+      [RECORDING_PHASE_SETUP]: `Set the stage! Select the area around the ${characters[characterId].name} you want to record in.`,
       [RECORDING_PHASE_RECORD]: "Act out what you want to happen in the picture on the right.",
     }[phase];
 
