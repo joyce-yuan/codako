@@ -20,10 +20,12 @@ export default class ActorSprite extends React.Component {
     }
     const {top, left} = event.target.getBoundingClientRect();
     event.dataTransfer.effectAllowed = 'copyMove';
-    event.dataTransfer.setData('sprite', JSON.stringify({
-      actorId: this.props.actor.id,
+    event.dataTransfer.setData('drag-offset', JSON.stringify({
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
+    }));
+    event.dataTransfer.setData('sprite', JSON.stringify({
+      actorId: this.props.actor.id,
     }));
   }
 

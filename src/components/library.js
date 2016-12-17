@@ -20,23 +20,27 @@ import TapToEditLabel from './tap-to-edit-label';
 
 class LibraryItem extends React.Component {
   static propTypes = {
-    character: PropTypes.object,
-    appearance: PropTypes.string,
-    label: PropTypes.string,
-    onChangeLabel: PropTypes.func,
+    character: PropTypes.object.isRequired,
+    label: PropTypes.string.isRequired,
+    onChangeLabel: PropTypes.func.isRequired,
     selected: PropTypes.bool,
     onSelect: PropTypes.func,
     onDoubleClick: PropTypes.func,
+    dragType: PropTypes.string,
+    appearance: PropTypes.string,
   };
 
   _onDragStart = (event) => {
     const {top, left} = event.target.getBoundingClientRect();
     event.dataTransfer.dropEffect = 'copy';
     event.dataTransfer.effectAllowed = 'copy';
-    event.dataTransfer.setData('sprite', JSON.stringify({
-      characterId: this.props.character.id,
+    event.dataTransfer.setData('drag-offset', JSON.stringify({
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
+    }));
+    event.dataTransfer.setData(this.props.dragType, JSON.stringify({
+      characterId: this.props.character.id,
+      appearance: this.props.appearance,
     }));
   }
 
@@ -88,6 +92,7 @@ class Library extends React.Component {
             key={id}
             character={characters[id]}
             label={characters[id].name}
+            dragType="sprite"
             onChangeLabel={(event) =>
               dispatch(changeCharacter(id, {name: event.target.value}))
             }
@@ -120,6 +125,7 @@ class Library extends React.Component {
             key={appearanceId}
             character={character}
             appearance={appearanceId}
+            dragType="appearance"
             label={character.spritesheet.appearanceNames[appearanceId]}
             onDoubleClick={() =>
               dispatch(paintCharacterAppearance(character.id, appearanceId))

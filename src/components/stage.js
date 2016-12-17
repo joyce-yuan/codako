@@ -100,6 +100,9 @@ class Stage extends React.Component {
     if (event.dataTransfer.types.includes('sprite')) {
       this._onDropSprite(event);
     }
+    if (event.dataTransfer.types.includes('appearance')) {
+      this._onDropAppearance(event);
+    }
     if (event.dataTransfer.types.includes('handle')) {
       this._onUpdateHandle(event);
     }
@@ -128,16 +131,32 @@ class Stage extends React.Component {
     this.props.dispatch(setRecordingExtent(nextExtent));
   }
 
-  _onDropSprite = (event) => {
-    const {actorId, characterId, dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('sprite'));
-    const {stage, stage: {actors}, characters, dispatch} = this.props;
-
+  _getDropPositionForEvent(event) {
+    const {dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('drag-offset'));
     const stageOffset = this._el.getBoundingClientRect();
-
-    const position = {
+    return {
       x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
       y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
     };
+  }
+
+  _onDropAppearance = (event) => {
+    const {stage, dispatch} = this.props;
+    const {appearance, characterId} = JSON.parse(event.dataTransfer.getData('appearance'));
+    const position = this._getDropPositionForEvent(event);
+
+    const actor = Object.values(stage.actors).find(a => 
+      a.position.x === position.x && a.position.y === position.y && a.characterId === characterId
+    )
+    if (actor) {
+      dispatch(changeActor(stage.uid, actor.id, {appearance}));
+    }
+  }
+
+  _onDropSprite = (event) => {
+    const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
+    const {stage, stage: {actors}, characters, dispatch} = this.props;
+    const position = this._getDropPositionForEvent(event);
 
     if (actorId) {
       if (event.altKey) {
