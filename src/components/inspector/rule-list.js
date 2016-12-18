@@ -75,7 +75,7 @@ export default class RuleList extends React.Component {
 
   _onRuleClicked = (event, rule) => {
     if (this.context.selectedToolId === TOOL_TRASH) {
-      this.context.onRuleDeleted(rule.id);
+      this.context.onRuleDeleted(rule.id, event);
     }
   }
 

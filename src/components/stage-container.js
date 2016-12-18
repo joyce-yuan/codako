@@ -25,8 +25,6 @@ class StageContainer extends React.Component {
     let actions = null;
     let controls = null;
 
-    console.log(recording);
-    
     if (recording.characterId) {
       controls = (
         <StageRecordingControls
@@ -48,7 +46,7 @@ class StageContainer extends React.Component {
           <Stage
             stage={recording.beforeStage}
             recordingExtent={recording.extent}
-            recordingCentered={true}
+            recordingCentered
             style={{marginRight: 2}}
           />
         );
@@ -56,7 +54,7 @@ class StageContainer extends React.Component {
           <Stage
             stage={recording.afterStage}
             recordingExtent={recording.extent}
-            recordingCentered={true}
+            recordingCentered
             style={{marginLeft: 2}}
           />
         );

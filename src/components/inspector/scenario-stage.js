@@ -26,10 +26,10 @@ export default class ScenarioStage extends React.Component {
 
     const width = (xmax - xmin + 1) * STAGE_CELL_SIZE;
     const height = (ymax - ymin + 1) * STAGE_CELL_SIZE;
-    const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+    const zoom = Math.min(maxWidth / width, maxHeight / height, 1);
 
     return (
-      <div className="scenario-stage" style={{width, height, transform:`scale(${scale}, ${scale})`}}>
+      <div className="scenario-stage" style={{width, height, zoom}}>
         {Object.keys(actors).map((id) =>
           <ActorSprite
             key={id}

@@ -1,8 +1,14 @@
 import * as types from '../constants/action-types';
 
-export function startRecording({characterId, actor}) {
+export function setupRecordingForActor({characterId, actor}) {
   return {
-    type: types.START_RECORDING, characterId, actor,
+    type: types.SETUP_RECORDING_FOR_ACTOR, characterId, actor,
+  };
+}
+
+export function setupRecordingForCharacter({characterId}) {
+  return {
+    type: types.SETUP_RECORDING_FOR_CHARACTER, characterId,
   };
 }
 
@@ -24,9 +30,9 @@ export function finishRecording() {
   };
 }
 
-export function setRecordingPhase(phase) {
+export function startRecording() {
   return {
-    type: types.SET_RECORDING_PHASE, phase,
+    type: types.START_RECORDING,
   };
 }
 
@@ -38,6 +44,6 @@ export function setRecordingExtent(extent) {
 
 export function updateRecordingCondition(actorId, key, values) {
   return {
-    type: types.UPDATE_RECORDING_EXTENT, actorId, key, values
+    type: types.UPDATE_RECORDING_CONDITION, actorId, key, values
   };
 }

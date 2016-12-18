@@ -91,6 +91,7 @@ class VariableRow extends React.Component {
 
 export default class RecordingConditions extends React.Component {
   static propTypes = {
+    dispatch: PropTypes.func,
     conditions: PropTypes.object,
     characters: PropTypes.object,
     stage: PropTypes.object,
@@ -117,7 +118,7 @@ export default class RecordingConditions extends React.Component {
             }
             {...saved[key]}
           />
-        )
+        );
 
         for (const vkey of Object.keys(a.variableValues)) {
           rows.push(
@@ -132,7 +133,7 @@ export default class RecordingConditions extends React.Component {
               }
               {...saved[vkey]}
             />
-          )
+          );
         }
       }
     });

@@ -10,7 +10,7 @@ export default class RecordingMaskSprite extends React.Component {
     return (
       <div style={{
         position: 'absolute',
-        backgroundColor: 'rgba(0,0,0,0.4)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         width: STAGE_CELL_SIZE - 1,
         height: STAGE_CELL_SIZE - 1,
         left: this.props.position.x * STAGE_CELL_SIZE + 0.5,

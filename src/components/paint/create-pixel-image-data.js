@@ -73,13 +73,14 @@ export default function CreatePixelImageData() {
   };
 
   // this function calls a callback on every pixel on the border of a group of pixels
-  this.getBorderPixels = (pixels, callback) => {
-    for (const p of pixels) {
+  this.getEdgePixels = (selectionPixels) => {
+    const results = [];
+    for (const p of selectionPixels) {
       let left = false;
       let right = false;
       let top = false;
       let bot = false;
-      for (const other of pixels) {
+      for (const other of selectionPixels) {
         if (other.x === p.x - 1 && other.y === p.y) {
           left = true;
         }
@@ -95,8 +96,9 @@ export default function CreatePixelImageData() {
       }
 
       if (!left || !right || !top || !bot) {
-        callback(p.x, p.y, left, right, top, bot);
+        results.push([p.x, p.y, left, right, top, bot]);
       }
     }
+    return results;
   };
 }

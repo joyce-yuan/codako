@@ -287,17 +287,12 @@ export function StageOperator(stage) {
           if (rule.extent.ignored.includes(`${x},${y}`)) {
             continue;
           }
-          const pos = {x: actor.position.x + x, y: actor.position.y + y};
           const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
-          const stageActors = actorsAtPosition(pos);
+          const stagePosition = {x: actor.position.x + x, y: actor.position.y + y};
+          const stageActors = actorsAtPosition(stagePosition);
 
           if (stageActors === null) {
             return false; // offscreen?
-          }
-
-          // if the descriptor is empty and no actors are present, we've got a match
-          if (stageActors.length === 0 && ((ruleActors || []).length === 0)) {
-            continue;
           }
 
           // if we don't have a descriptor for each item in the search set, no match

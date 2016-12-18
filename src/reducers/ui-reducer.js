@@ -23,8 +23,6 @@ export default function uiReducer(state = initialState.ui, action) {
           appearanceId: action.appearanceId,
         },
       });
-    case Types.UPDATE_RECORDING_STATE:
-      return u({recording: action.values}, state);
     case Types.UPDATE_KEYPICKER_STATE:
       return objectAssign({}, state, {
         keypicker: {

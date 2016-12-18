@@ -1,13 +1,14 @@
 import React, {PropTypes} from 'react';
 
 import {ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
-import {changeCharacter} from '../../actions/characters-actions';
+import {createCharacterEventContainer, createCharacterFlowContainer} from '../../actions/characters-actions';
+import {setupRecordingForCharacter, setupRecordingForActor} from '../../actions/recording-actions';
 import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
-import {FLOW_GROUP_TYPES} from '../../constants/constants';
 
 export default class RuleAddButton extends React.Component {
   static propTypes = {
     character: PropTypes.object,
+    actor: PropTypes.object,
     dispatch: PropTypes.func,
   };
 
@@ -16,53 +17,28 @@ export default class RuleAddButton extends React.Component {
     this.state = {open: false};
   }
 
-  _onCreateFlowContainer = () => {
-    const {dispatch, character} = this.props;
-    const nextRules = JSON.parse(JSON.stringify(character.rules));
-
-    const idleContainer = nextRules.find(r => r.event === 'idle') || {rules: nextRules};
-    idleContainer.rules.push({
-      id: Date.now(),
-      name: "",
-      type: "group-flow",
-      rules: [],
-      behavior: Object.keys(FLOW_GROUP_TYPES)[0],
-    });
-    dispatch(changeCharacter(character.id, {rules: nextRules}));
+  _onCreateRule = () => {
+    const {dispatch, character, actor} = this.props;
+    if (actor) {
+      dispatch(setupRecordingForActor({characterId: character.id, actor}));
+    } else {
+      dispatch(setupRecordingForCharacter({characterId: character.id}));
+    }
   }
 
-  _onCreateEventContainer = (eventType, code = null) => {
+  _onCreateFlowContainer = () => {
     const {dispatch, character} = this.props;
-    let nextRules = JSON.parse(JSON.stringify(character.rules));
-    const nextId = Date.now();
-    const hasSameAlready = nextRules.some(r => r.event === eventType && r.code === code);
-    if (hasSameAlready) {
-      return;
-    }
+    const id = `${Date.now()}`;
+    dispatch(createCharacterFlowContainer(character.id, {id}));
+  }
 
-    const hasEvents = nextRules.some(r => !!r.event);
-    if (!hasEvents) {
-      nextRules = [{
-        id: nextId + 1,
-        name: "",
-        type: "group-event",
-        rules: nextRules,
-        event: "idle",
-      }];
-    }
+  _onCreateEventContainer = (eventType, eventCode = null) => {
+    const {dispatch, character} = this.props;
+    const id = `${Date.now()}`;
 
-    nextRules.push({
-      id: nextId,
-      name: "",
-      type: "group-event",
-      rules: [],
-      event: eventType,
-      code: code,
-    });
-
-    dispatch(changeCharacter(character.id, {rules: nextRules}));
-    if (eventType === 'key' && !code) {
-      dispatch(pickCharacterRuleEventKey(character.id, nextId, null));
+    dispatch(createCharacterEventContainer(character.id, {id, eventCode, eventType}));
+    if (eventType === 'key' && !eventCode) {
+      dispatch(pickCharacterRuleEventKey(character.id, id, null));
     }
   }
 
@@ -78,7 +54,7 @@ export default class RuleAddButton extends React.Component {
           <i className="fa fa-tasks" /> Add
         </DropdownToggle>
         <DropdownMenu right>
-          <DropdownItem onClick={() => {}}>
+          <DropdownItem onClick={this._onCreateRule}>
             <span className="badge rule" /> Add New Rule
           </DropdownItem>
           <DropdownItem divider />

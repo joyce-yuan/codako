@@ -19,13 +19,15 @@ export function forEachInLine(x0, y0, x1, y1, pixelCallback) {
   const dy = Math.abs(y1 - y0);
   const sx = (x0 < x1) ? 1 : -1;
   const sy = (y0 < y1) ? 1 : -1;
+  let x = x0;
+  let y = y0;
   let err = dx - dy;
   let arrived = false;
 
   while (arrived === false) {
-    pixelCallback(x0, y0);
+    pixelCallback(x, y);
 
-    if ((x0 === x1) && (y0 === y1)) {
+    if ((x === x1) && (y === y1)) {
       arrived = true;
       break;
     }
@@ -33,24 +35,24 @@ export function forEachInLine(x0, y0, x1, y1, pixelCallback) {
     const e2 = 2 * err;
     if (e2 > -dy) {
       err = err - dy;
-      x0 = x0 + sx;
+      x = x + sx;
     }
 
     if (e2 < dx) {
       err = err + dx;
-      y0 = y0 + sy;
+      y = y + sy;
     }
   }
 }
 
 export function hsvToRgb(h, s, v) {
-  let b, f, g, i, p, q, r, t;
+  let r, g, b;
   r = g = b = 0;
-  i = Math.floor(h * 6);
-  f = h * 6 - i;
-  p = v * (1 - s);
-  q = v * (1 - f * s);
-  t = v * (1 - (1 - f) * s);
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
   switch (i % 6) {
     case 0:
       r = v;

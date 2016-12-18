@@ -36,10 +36,6 @@ export class PixelTool {
     });
   }
 
-  previewRender(context, props, state) {
-    this.render(context, props, state);
-  }
-
   render(context, props, state) {
     return state;
   }
@@ -76,7 +72,7 @@ export class PixelPaintbucketTool extends PixelTool {
       return;
     }
 
-    imageData.getContiguousPixels(e, state.selectedPixels, (p) => {
+    imageData.getContiguousPixels(e, state.selectionPixels, (p) => {
       context.fillPixel(p.x, p.y, color);
     });
   }
@@ -132,12 +128,26 @@ export class PixelLineTool extends PixelTool {
     this.name = 'line';
   }
 
-  render(context, {color}, {interaction}) {
+  render(context, {color, pixelSize}, {interaction}, isPreview) {
     const {s, e} = interaction;
     if (!s || !e) {
       return;
     }
     forEachInLine(s.x, s.y, e.x, e.y, (x, y) => context.fillPixel(x, y, color));
+    if (isPreview) {
+      context.beginPath();
+      context.moveTo((s.x + 0.5) * pixelSize, (s.y + 0.5) * pixelSize);
+      context.lineTo((e.x + 0.5) * pixelSize, (e.y + 0.5) * pixelSize);
+      context.translate(0.5, 0.5);
+      context.strokeWidth = 0.5;
+      context.strokeStyle = 'rgba(0,0,0,1)';
+      context.stroke();
+      context.translate(1, 1);
+      context.strokeStyle = 'rgba(255,255,255,1)';
+      context.stroke();
+      context.translate(-1.5, -1.5);
+      context.closePath();
+    }
   }
 }
 
@@ -147,24 +157,17 @@ export class PixelEraserTool extends PixelTool {
     this.name = 'eraser';
   }
 
-  previewRender(context, {color}, {interaction}) {
+  render(context, {color}, {interaction}, isPreview) {
     if (!interaction.points || !interaction.points.length) {
       return;
     }
     let prev = interaction.points[0];
     for (const point of interaction.points) {
-      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.clearPixel(x, y));
-      prev = point;
-    }
-  }
-
-  render(context, {color}, {interaction}) {
-    if (!interaction.points || !interaction.points.length) {
-      return;
-    }
-    let prev = interaction.points[0];
-    for (const point of interaction.points) {
-      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y, "rgba(0,0,0,0)"));
+      if (isPreview) {
+        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.clearPixel(x, y));
+      } else {
+        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y, "rgba(0,0,0,0)"));
+      }
       prev = point;
     }
   }
@@ -176,7 +179,7 @@ export class PixelRectSelectionTool extends PixelTool {
     this.name = 'select';
   }
 
-  selectedPixelsForState(state) {
+  selectionPixelsForState(state) {
     const results = [];
     forEachInRect(state.interaction.s, state.interaction.e, (x, y) =>
       results.push({x, y})
@@ -185,20 +188,20 @@ export class PixelRectSelectionTool extends PixelTool {
   }
 
   mousedown(point, props, state) {
-    return objectAssign(super.mousedown(point, state), {
-      selectedPixels: [],
+    return objectAssign(super.mousedown(point, props, state), {
+      selectionPixels: [],
     });
   }
 
   mousemove(point, props, state) {
-    return objectAssign(super.mousemove(point, state), {
-      selectedPixels: this.selectedPixelsForState(state),
+    return objectAssign(super.mousemove(point, props, state), {
+      selectionPixels: this.selectionPixelsForState(state),
     });
   }
 
   mouseup(point, props, state) {
-    return objectAssign(super.mouseup(point, state), {
-      selectedPixels: this.selectedPixelsForState(state),
+    return objectAssign(super.mouseup(point, props, state), {
+      selectionPixels: this.selectionPixelsForState(state),
     });
   }
 }
@@ -210,11 +213,11 @@ export class PixelMagicSelectionTool extends PixelTool {
   }
 
   mousemove(point, {imageData}, state) {
-    const selectedPixels = [];
+    const selectionPixels = [];
     imageData.getContiguousPixels(point, null, (p) => {
-      selectedPixels.push(p);
+      selectionPixels.push(p);
     });
-    return objectAssign({}, state, {selectedPixels});
+    return objectAssign({}, state, {selectionPixels});
   }
 }
 
@@ -226,7 +229,7 @@ export class PixelTranslateTool extends PixelTool {
 
   mousedown(point, props, state) {
     // this.down = true;
-    // if (!canvas.selectedPixels.length) {
+    // if (!canvas.selectionPixels.length) {
     //   return;
     // }
     // canvas.cut()

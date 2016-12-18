@@ -67,6 +67,7 @@ body {
     font-size: 17px;
     margin: 6px 0;
     margin-top: 3px;
+    user-select: none;
   }
 
   .toolbar {
@@ -93,6 +94,7 @@ body {
       display: flex;
       flex-direction: column;
       height: 575px;
+      user-select: none;
 
       .stage-scroll-wrap {
         flex: 1;
@@ -100,7 +102,7 @@ body {
         margin-bottom: 4px;
         position: relative;
         background-color: #222;
-        transition: flex 400ms ease-out;
+        transition: box-shadow 200ms, flex 400ms ease-out;
         &.running-true {
           box-shadow:0 0 0 4px $tint-color;
         }
@@ -109,7 +111,7 @@ body {
           background-color: gray;
           position: relative;
           outline: 0;
-          transition: box-shadow 200ms, top 400ms ease-out, left 400ms ease-out;
+          transition: top 400ms ease-out, left 400ms ease-out;
         }
       }
 
@@ -258,47 +260,57 @@ body {
   }
 }
 
-canvas {
-  cursor: crosshair;
-}
-
-.paint-sidebar {
-  width: 120px;
-  .active-swatch {
-    width: 114px;
-    height: 42px;
-    margin-bottom: 3px;
-    margin-right: 2px;
+.modal-dialog.paint {
+  user-select: none;
+  canvas {
+    cursor: crosshair;
   }
-  .colors {
-    .color {
-      padding: 3px;
+
+  .paint-sidebar {
+    width: 120px;
+
+    .active-swatch {
+      width: 114px;
+      height: 42px;
+      margin-bottom: 3px;
       margin-right: 2px;
-      margin-bottom: 3px;
-      width: 27px;
-      height: 25px;
       border: 1px solid rgba(0,0,0,0.2);
-      cursor: pointer;
-      outline: 0;
     }
-  }
-
-  .tools {
-    .tool {
-      display: inline-block;
-      border: 1px solid rgba(0,0,0,0.2);
-      padding: 2px;
-      margin-right: 3px;
-      margin-bottom: 3px;
-      outline: 0;
-      cursor: pointer;
-      img {
-        width: 30px;
-        height: 30px;
+    .colors {
+      .color {
+        padding: 3px;
+        margin-right: 2px;
+        margin-bottom: 3px;
+        width: 27px;
+        height: 25px;
+        border: 1px solid rgba(0,0,0,0.2);
+        cursor: pointer;
+        outline: 0;
       }
     }
-    .tool.selected {
-      background-color: red;
+
+    .tools {
+      .tool {
+        display: inline-block;
+        border: 1px solid rgba(0,0,0,0.2);
+        padding: 2px;
+        margin-right: 3px;
+        margin-bottom: 3px;
+        outline: 0;
+        cursor: pointer;
+        img {
+          width: 30px;
+          height: 30px;
+          padding: 2px;
+        }
+      }
+      .tool.selected {
+        background-color: $tint-color;
+        img {
+          filter: invert(100%) brightness(130%);
+          -webkit-filter: invert(100%) brightness(130%);
+        }
+      }
     }
   }
 }

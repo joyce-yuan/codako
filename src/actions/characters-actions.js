@@ -1,18 +1,5 @@
 import * as types from '../constants/action-types';
 
-// example of a thunk using the redux-thunk middleware
-// export function saveFuelSavings(settings) {
-//   return function (dispatch) {
-//     // thunks allow for pre-processing actions, calling apis, and dispatching multiple actions
-//     // in this case at this point we could call a service that would persist the fuel savings
-//     return dispatch({
-//       type: types.SAVE_FUEL_SAVINGS,
-//       dateModified: dateHelper.getFormattedDateTime(),
-//       settings
-//     });
-//   };
-// }
-
 export function changeCharacter(characterId, values) {
   return {
     type: types.UPSERT_CHARACTER,
@@ -43,6 +30,23 @@ export function createCharacter() {
       variableDefaults: {},
       world: 'x',
     }
+  };
+}
+
+export function createCharacterFlowContainer(characterId, {id}) {
+  return {
+    type: types.CREATE_CHARACTER_FLOW_CONTAINER,
+    characterId,
+    id,
+  };
+}
+export function createCharacterEventContainer(characterId, {id, eventCode, eventType}) {
+  return {
+    type: types.CREATE_CHARACTER_EVENT_CONTAINER,
+    characterId,
+    eventCode,
+    eventType,
+    id,
   };
 }
 

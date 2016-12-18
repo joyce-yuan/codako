@@ -16,14 +16,16 @@ export default function recordingReducer(state = initialState.recording, action)
   });
   
   switch (action.type) {
-    case Types.START_RECORDING: {
+    case Types.SETUP_RECORDING_FOR_ACTOR: {
       const {stage} = window.store.getState();
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
         actorId: actor.id,
         characterId,
-        conditions: u.constant({}),
+        conditions: u.constant({
+          [actor.id]: {},
+        }),
         afterStage: u.constant({uid: 'after'}),
         beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
           uid: 'before',
@@ -36,6 +38,40 @@ export default function recordingReducer(state = initialState.recording, action)
         },
       }, state);
     }
+
+    case Types.SETUP_RECORDING_FOR_CHARACTER: {
+      const {characters, stage} = window.store.getState();
+      const character = characters[action.characterId];
+      const cx = Math.floor(stage.width / 2);
+      const cy = Math.floor(stage.height / 2);
+      return u({
+        ruleId: null,
+        actorId: 'dude',
+        phase: RECORDING_PHASE_SETUP,
+        characterId: action.characterId,
+        conditions: u.constant({}),
+        afterStage: u.constant({uid: 'after'}),
+        beforeStage: u.constant(objectAssign({}, stage, {
+          actors: {
+            dude: {
+              id: 'dude',
+              variableValues: {},
+              appearance: Object.keys(character.spritesheet.appearances)[0],
+              characterId: action.characterId,
+              position: {x: cx, y: cy},
+            },
+          },
+          uid: 'before',
+        })),
+        extent: {
+          xmin: cx,
+          xmax: cx,
+          ymin: cy,
+          ymax: cy,
+        },
+      }, state);
+    }
+
     case Types.EDIT_RULE_RECORDING: {
       const {characters, stage} = window.store.getState();
       const {characterId, rule} = action;
@@ -70,18 +106,15 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.CANCEL_RECORDING: {
       return objectAssign({}, initialState.recording);
     }
-    case Types.SET_RECORDING_PHASE: {
-      const changes = {
-        phase: action.phase,
-      };
-      if (action.phase === RECORDING_PHASE_RECORD) {
-        changes.afterStage = objectAssign(JSON.parse(JSON.stringify(state.beforeStage)), {
+    case Types.START_RECORDING: {
+      return u({
+        phase: RECORDING_PHASE_RECORD,
+        afterStage: objectAssign(JSON.parse(JSON.stringify(state.beforeStage)), {
           uid: 'after',
-        });
-      }
-      return u(changes, state);
+        }),
+      }, state);
     }
-    case Types.UPDATE_RECORDING_EXTENT: {
+    case Types.UPDATE_RECORDING_CONDITION: {
       const {actorId, key, values} = action;
       return u({
         conditions: {
@@ -95,12 +128,12 @@ export default function recordingReducer(state = initialState.recording, action)
       // find the primary actor, make sure the extent still includes it
       const extent = objectAssign({}, action.extent);
       for (const stage of [state.beforeStage, state.afterStage]) {
-        const actor = Object.values(stage.actors || {}).find(a => a.id === state.actorId);
-        if (actor) {
-          extent.xmin = Math.min(extent.xmin, actor.position.x);
-          extent.ymin = Math.min(extent.ymin, actor.position.y);
-          extent.xmax = Math.max(extent.xmax, actor.position.x);
-          extent.ymax = Math.max(extent.ymax, actor.position.y);
+        const mainActor = Object.values(stage.actors || {}).find(a => a.id === state.actorId);
+        if (mainActor) {
+          extent.xmin = Math.min(extent.xmin, mainActor.position.x);
+          extent.ymin = Math.min(extent.ymin, mainActor.position.y);
+          extent.xmax = Math.max(extent.xmax, mainActor.position.x);
+          extent.ymax = Math.max(extent.ymax, mainActor.position.y);
         }
       }
       return u({ extent }, state);

@@ -8,7 +8,7 @@ import RecordingHandle from './sprites/recording-handle';
 
 import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../actions/stage-actions';
 import {select, selectToolId, paintCharacterAppearance} from '../actions/ui-actions';
-import {setRecordingExtent, startRecording} from '../actions/recording-actions';
+import {setRecordingExtent, setupRecordingForActor} from '../actions/recording-actions';
 
 import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
 import {pointIsOutside} from './game-state-helpers';
@@ -189,7 +189,7 @@ class Stage extends React.Component {
       dispatch(deleteActor(stage.uid, actor.id));
     }
     if (selectedToolId === TOOL_RECORD) {
-      dispatch(startRecording({
+      dispatch(setupRecordingForActor({
         characterId: actor.characterId,
         actor: actor,
         ruleId: null,

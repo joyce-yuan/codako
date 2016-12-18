@@ -13,6 +13,8 @@ import PixelCanvas from './pixel-canvas';
 import PixelToolbar from './pixel-toolbar';
 import PixelColorPicker, {ColorOptions} from './pixel-color-picker';
 
+const MAX_UNDO_STEPS = 30;
+
 class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -72,7 +74,9 @@ class Container extends React.Component {
   _onChangeImageData = (nextImageData) => {
     this.setState({
       imageData: nextImageData,
-      undoStack: [].concat(this.state.undoStack, [this.state.imageData]),
+      undoStack: this.state.undoStack
+        .slice(Math.max(0, this.state.undoStack.length - MAX_UNDO_STEPS))
+        .concat([this.state.imageData]),
       redoStack: [],
     });
   }
@@ -105,56 +109,74 @@ class Container extends React.Component {
     });
   }
 
+  _onKeyDown = (event) => {
+    if (event.which === 89 && (event.ctrlKey || event.metaKey)){
+      this._onRedo();
+      event.preventDefault();
+    }
+    else if (event.which === 90 && (event.ctrlKey || event.metaKey)){
+      event.shiftKey ? this._onRedo() : this._onUndo();
+      event.preventDefault();
+    }
+  }
+
   render() {
     const {imageData, tools, selectedTool, selectedColor, undoStack, redoStack} = this.state;
 
     return (
-      <Modal isOpen={imageData !== null} backdrop="static" toggle={() => {}}>
-        <div className="modal-header" style={{display: 'flex'}}>
-          <h4 style={{flex: 1}}>Edit Appearance</h4>
-          <Button
-            className="icon"
-            onClick={this._onUndo}
-            disabled={undoStack.length === 0}
-          >
-            <img src="/img/icon_undo.png" />
-          </Button>
-          <Button
-            className="icon"
-            onClick={this._onRedo}
-            disabled={redoStack.length === 0}
-          >
-            <img src="/img/icon_redo.png" />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className="flex-horizontal">
-            <div className="paint-sidebar">
-              <PixelColorPicker
+      <Modal
+        isOpen={imageData !== null}
+        backdrop="static"
+        toggle={() => {}}
+        className="paint"
+      >
+        <div tabIndex={0} onKeyDown={this._onKeyDown}>
+          <div className="modal-header" style={{display: 'flex'}}>
+            <h4 style={{flex: 1}}>Edit Appearance</h4>
+            <Button
+              className="icon"
+              onClick={this._onUndo}
+              disabled={undoStack.length === 0}
+            >
+              <img src="/img/icon_undo.png" />
+            </Button>
+            <Button
+              className="icon"
+              onClick={this._onRedo}
+              disabled={redoStack.length === 0}
+            >
+              <img src="/img/icon_redo.png" />
+            </Button>
+          </div>
+          <ModalBody>
+            <div className="flex-horizontal">
+              <div className="paint-sidebar">
+                <PixelColorPicker
+                  color={selectedColor}
+                  onColorChange={(color) => this.setState({selectedColor: color})}
+                />
+                <PixelToolbar
+                  tools={tools}
+                  tool={selectedTool}
+                  onToolChange={(tool) => this.setState({selectedTool: tool})}
+                />
+              </div>
+              <PixelCanvas
                 color={selectedColor}
-                onColorChange={(selectedColor) => this.setState({selectedColor})}
-              />
-              <PixelToolbar
-                tools={tools}
                 tool={selectedTool}
-                onToolChange={(selectedTool) => this.setState({selectedTool})}
+                imageData={imageData}
+                offsetX={0}
+                offsetY={0}
+                pixelSize={10}
+                onChangeImageData={this._onChangeImageData}
               />
             </div>
-            <PixelCanvas
-              color={selectedColor}
-              tool={selectedTool}
-              imageData={imageData}
-              offsetX={0}
-              offsetY={0}
-              pixelSize={10}
-              onChangeImageData={this._onChangeImageData}
-            />
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button key="cancel" onClick={this._onClose}>Close without Saving</Button>{' '}
-          <Button key="save" onClick={this._onCloseAndSave}>Save Changes</Button>
-        </ModalFooter>
+          </ModalBody>
+          <ModalFooter>
+            <Button key="cancel" onClick={this._onClose}>Close without Saving</Button>{' '}
+            <Button key="save" onClick={this._onCloseAndSave}>Save Changes</Button>
+          </ModalFooter>
+        </div>
       </Modal>
     );
   }

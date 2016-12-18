@@ -11,6 +11,7 @@ import VariablesAddButton from './variables-add-button';
 class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
+    actor: PropTypes.object,
     characters: PropTypes.object,
     appliedRuleIds: PropTypes.object,
     selectedCharacterId: PropTypes.string,
@@ -46,7 +47,8 @@ class Container extends React.Component {
     if (character.rules.length === 0) {
       return (
         <div className="empty">
-          This character doesn&#39;t have any rules. Create a new rule by clicking the &#39;Record&#39; icon.
+          This character doesn&#39;t have any rules.
+          Create a new rule by clicking the &#39;Record&#39; icon.
         </div>
       );
     }
@@ -62,7 +64,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {characters, selectedCharacterId, dispatch} = this.props;
+    const {characters, selectedCharacterId, actor, dispatch} = this.props;
     const {activeTab} = this.state;
     const character = characters[selectedCharacterId];
 
@@ -100,6 +102,7 @@ class Container extends React.Component {
           <div style={{float: 'right'}}>
             <AddButton
               character={character}
+              actor={actor}
               dispatch={dispatch}
             />
           </div>
@@ -113,6 +116,7 @@ class Container extends React.Component {
 function mapStateToProps(state) {
   return Object.assign({}, state.ui, {
     characters: state.characters,
+    actor: state.stage.actors[state.ui.selectedActorId],
     appliedRuleIds: state.stage.applied,
 });
 }

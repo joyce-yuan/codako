@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import {Button} from 'reactstrap';
-import {cancelRecording, setRecordingPhase, finishRecording} from '../actions/recording-actions';
+import {cancelRecording, startRecording, finishRecording} from '../actions/recording-actions';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default class StageRecordingControls extends React.Component {
@@ -22,7 +22,7 @@ export default class StageRecordingControls extends React.Component {
 
   _onNext = () => {
     if (this.props.phase === RECORDING_PHASE_SETUP) {
-      this.props.dispatch(setRecordingPhase(RECORDING_PHASE_RECORD));
+      this.props.dispatch(startRecording());
     }
     if (this.props.phase === RECORDING_PHASE_RECORD) {
       this.props.dispatch(finishRecording());

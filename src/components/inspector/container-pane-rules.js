@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 import objectAssign from 'object-assign';
+import {TOOL_POINTER} from '../../constants/constants';
 import {changeCharacter} from '../../actions/characters-actions';
-import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
+import {pickCharacterRuleEventKey, selectToolId} from '../../actions/ui-actions';
 import {editRuleRecording} from '../../actions/recording-actions';
 import {findRule} from '../game-state-helpers';
 import RuleList from './rule-list';
@@ -50,11 +51,15 @@ export default class ContainerPaneRules extends React.Component {
     this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
   }
 
-  _onRuleDeleted = (ruleId) => {
-    const rules = JSON.parse(JSON.stringify(this.props.character.rules));
+  _onRuleDeleted = (ruleId, event) => {
+    const {character, dispatch} = this.props;
+    const rules = JSON.parse(JSON.stringify(character.rules));
     const [_, parentRule, parentIdx] = findRule({rules}, ruleId);
     parentRule.rules.splice(parentIdx, 1);
-    this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
+    dispatch(changeCharacter(character.id, {rules}));
+    if (!event.shiftKey) {
+      dispatch(selectToolId(TOOL_POINTER));
+    }
   }
 
   _onRuleChanged = (ruleId, changes) => {

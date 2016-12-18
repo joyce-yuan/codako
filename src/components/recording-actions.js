@@ -120,7 +120,7 @@ export default class RecordingActions extends React.Component {
     if (a.type === 'move') {
       return (
         <li key={idx}>Move {spriteComponent} to <ActorDeltaCanvas delta={a.delta} /></li>
-      )
+      );
     }
     if (a.type === 'create') {
       return (
@@ -128,12 +128,12 @@ export default class RecordingActions extends React.Component {
           Create a {spriteComponent} at
           <ActorPositionCanvas position={actor.position} extent={extent} />
         </li>
-      )
+      );
     }
     if (a.type === 'delete') {
       return (
         <li key={idx}>Remove {spriteComponent} from the stage</li>
-      )
+      );
     }
     if (a.type === 'appearance') {
       return (
@@ -144,8 +144,9 @@ export default class RecordingActions extends React.Component {
             {character.spritesheet.appearanceNames[a.to]}
           </code>
         </li>
-      )
+      );
     }
+    throw new Error(`Unknown action type: ${a.type}`);
   }
 
   render() {

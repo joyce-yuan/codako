@@ -34,6 +34,7 @@ class Container extends React.Component {
   _onCloseAndSave = () => {
     const {dispatch, characterId, ruleId, characters} = this.props;
     const rules = JSON.parse(JSON.stringify(characters[characterId].rules));
+
     const [rule] = findRule({rules}, ruleId);
     rule.code = this.state.keyCode;
 

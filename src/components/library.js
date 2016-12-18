@@ -150,7 +150,9 @@ class Library extends React.Component {
             <Button
               size="sm"
               disabled={false}
-              onClick={() => dispatch(createCharacter())}
+              onClick={() =>
+                dispatch(createCharacter())
+              }
             >
               <i className="fa fa-plus" />
             </Button>
@@ -163,7 +165,9 @@ class Library extends React.Component {
             <Button
               size="sm"
               disabled={!ui.selectedCharacterId}
-              onClick={() => dispatch(createCharacterAppearance(ui.selectedCharacterId))}
+              onClick={() =>
+                dispatch(createCharacterAppearance(ui.selectedCharacterId))
+              }
             >
               <i className="fa fa-plus" />
             </Button>
