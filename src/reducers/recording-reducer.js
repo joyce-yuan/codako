@@ -5,7 +5,7 @@ import stageReducer from './stage-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
-import {buildActorsFromRule, getScenarioExtent} from '../components/game-state-helpers';
+import {buildActorsFromRule} from '../components/game-state-helpers';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default function recordingReducer(state = initialState.recording, action) {
@@ -39,17 +39,13 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.EDIT_RULE_RECORDING: {
       const {characters, stage} = window.store.getState();
       const {characterId, rule} = action;
-      const extent = getScenarioExtent(rule.scenario);
-      const offsetX = Math.round((stage.width / 2 - (extent.xmax - extent.xmin) / 2));
-      const offsetY = Math.round((stage.height / 2 - (extent.ymax - extent.ymin) / 2));
-      extent.xmin += offsetX;
-      extent.xmax += offsetX;
-      extent.ymin += offsetY;
-      extent.ymax += offsetY;
+      const offsetX = Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2));
+      const offsetY = Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2));
 
       return u({
+        ruleId: rule.id,
         phase: RECORDING_PHASE_RECORD,
-        actorId: rule.actorDescriptorId,
+        actorId: rule.mainActorId,
         characterId,
         conditions: u.constant({}),
         beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
@@ -60,8 +56,16 @@ export default function recordingReducer(state = initialState.recording, action)
           actors: buildActorsFromRule(rule, characters, {applyActions: true, offsetX, offsetY}),
           uid: 'after',
         })),
-        extent: extent,
+        extent: {
+          xmin: rule.extent.xmin + offsetX,
+          xmax: rule.extent.xmax + offsetX,
+          ymin: rule.extent.ymin + offsetY,
+          ymax: rule.extent.ymax + offsetY,
+        },
       }, state);
+    }
+    case Types.FINISH_RECORDING: {
+      return objectAssign({}, initialState.recording);
     }
     case Types.CANCEL_RECORDING: {
       return objectAssign({}, initialState.recording);

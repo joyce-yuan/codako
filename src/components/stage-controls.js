@@ -8,6 +8,7 @@ import {SPEED_OPTIONS} from '../constants/constants';
 
 export default class StageControls extends React.Component {
   static propTypes = {
+    stageUid: PropTypes.string,
     dispatch: PropTypes.func,
     speed: PropTypes.number,
     running: PropTypes.bool,
@@ -39,11 +40,11 @@ export default class StageControls extends React.Component {
   }
 
   _onTick = () => {
-    this.props.dispatch(advanceGameState());
+    this.props.dispatch(advanceGameState(this.props.stageUid));
   }
 
   render() {
-    const {speed, dispatch, running} = this.props;
+    const {speed, dispatch, running, stageUid} = this.props;
 
     return (
       <div className="stage-controls">
@@ -70,7 +71,7 @@ export default class StageControls extends React.Component {
           </Button>{' '}
           <Button
             size="sm"
-            onClick={() => dispatch(advanceGameState())}
+            onClick={() => dispatch(advanceGameState(stageUid))}
           >
             <i className="fa fa-step-forward" /> Forward
           </Button>

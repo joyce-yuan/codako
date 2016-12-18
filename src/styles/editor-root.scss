@@ -101,15 +101,15 @@ body {
         position: relative;
         background-color: #222;
         transition: flex 400ms ease-out;
+        &.running-true {
+          box-shadow:0 0 0 4px $tint-color;
+        }
 
         .stage {
           background-color: gray;
           position: relative;
           outline: 0;
           transition: box-shadow 200ms, top 400ms ease-out, left 400ms ease-out;
-          &.running-true {
-            box-shadow:0 0 0 4px $tint-color;
-          }
         }
       }
 

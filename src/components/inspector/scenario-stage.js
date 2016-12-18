@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
-import {buildActorsFromRule, getScenarioExtent} from '../game-state-helpers';
+import {buildActorsFromRule} from '../game-state-helpers';
 import ActorSprite from '../sprites/actor-sprite';
 
 
@@ -21,9 +21,9 @@ export default class ScenarioStage extends React.Component {
     const {rule, applyActions, maxWidth, maxHeight} = this.props;
     const {characters} = this.context;
 
-    const actors = buildActorsFromRule(rule, characters, {applyActions});
+    const {xmin, xmax, ymin, ymax} = rule.extent;
+    const actors = buildActorsFromRule(rule, characters, {applyActions, offsetX: -xmin, offsetY: -ymin});
 
-    const {xmin, xmax, ymin, ymax} = getScenarioExtent(rule. scenario);
     const width = (xmax - xmin + 1) * STAGE_CELL_SIZE;
     const height = (ymax - ymin + 1) * STAGE_CELL_SIZE;
     const scale = Math.min(maxWidth / width, maxHeight / height, 1);

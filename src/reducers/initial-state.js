@@ -29,8 +29,7 @@ export default {
     characterId: null,
     actorId: null,
     ruleId: null,
-    descriptors: {
-    },
+    conditions: {},
     extent: {
       xmin: 0,
       xmax: 0,

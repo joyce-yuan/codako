@@ -39,40 +39,35 @@ export default class ContainerPaneRules extends React.Component {
 
   _onRuleMoved = (movingRuleId, newParentId, newParentIdx) => {
     const rules = JSON.parse(JSON.stringify(this.props.character.rules));
-    findRule({rules}, newParentId, (newParentRule) => {
-      findRule({rules}, movingRuleId, (rule, oldParentRule, oldIdx) => {
-        let newIdx = newParentIdx;
-        if ((oldParentRule === newParentRule) && (newIdx > oldIdx)) {
-          newIdx -= 1;
-        }
-        oldParentRule.rules.splice(oldIdx, 1);
-        newParentRule.rules.splice(newIdx, 0, rule);
-      });
-    });
+    const [newParentRule] = findRule({rules}, newParentId);
+    const [movingRule, oldParentRule, oldIdx] = findRule({rules}, movingRuleId);
+    let newIdx = newParentIdx;
+    if ((oldParentRule === newParentRule) && (newIdx > oldIdx)) {
+      newIdx -= 1;
+    }
+    oldParentRule.rules.splice(oldIdx, 1);
+    newParentRule.rules.splice(newIdx, 0, movingRule);
     this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
   }
 
   _onRuleDeleted = (ruleId) => {
     const rules = JSON.parse(JSON.stringify(this.props.character.rules));
-    findRule({rules}, ruleId, (rule, parentRule, parentIdx) => {
-      parentRule.rules.splice(parentIdx, 1);
-    });
+    const [_, parentRule, parentIdx] = findRule({rules}, ruleId);
+    parentRule.rules.splice(parentIdx, 1);
     this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
   }
 
   _onRuleChanged = (ruleId, changes) => {
     const rules = JSON.parse(JSON.stringify(this.props.character.rules));
-    findRule({rules}, ruleId, (rule) => {
-      objectAssign(rule, changes);
-    });
+    const [rule] = findRule({rules}, ruleId);
+    objectAssign(rule, changes);
     this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
   }
 
   _onRulePickKey = (ruleId) => {
     const {character, dispatch} = this.props;
-    findRule(character, ruleId, (rule) => {
-      dispatch(pickCharacterRuleEventKey(character.id, ruleId, rule.code));
-    });
+    const [rule] = findRule(character, ruleId);
+    dispatch(pickCharacterRuleEventKey(character.id, ruleId, rule.code));
   }
 
   render() {

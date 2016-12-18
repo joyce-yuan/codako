@@ -7,15 +7,6 @@ Object.values = function(obj) {
   return results;
 };
 
-// state required to evaluate rule
-// - actor position, appearance, etc.
-// - character rules
-// - entire stage
-// - accumulated click events, key events
-// set:
-// - actor position, appearnce, etc.
-// - create new actors
-
 export function pointIsOutside({x, y}, {xmin, xmax, ymin, ymax}) {
   return (x < xmin || x > xmax || y < ymin || y > ymax);
 }
@@ -25,73 +16,45 @@ export function pointIsInside(...args) {
 }
 
 export function buildActorsFromRule(rule, characters, {applyActions = false, offsetX = 0, offsetY = 0}) {
-  const {scenario, descriptors, actions} = rule;
-  const {xmin, ymin} = getScenarioExtent(scenario);
   const actors = {};
-
-  for (const block of scenario) {
-    const [x, y] = block.coord.split(',').map(s => s / 1);
-    for (const ref of block.refs) {
-      actors[ref] = objectAssign({}, descriptors[ref], {
-        id: ref,
-        position: {
-          x: -xmin + x + offsetX,
-          y: -ymin + y + offsetY,
-        },
-        variableValues: {},
-      });
-    }
+  
+  for (const actor of Object.values(rule.actors)) {
+    actors[actor.id] = objectAssign({}, actor, {
+      position: {
+        x: actor.position.x + offsetX,
+        y: actor.position.y + offsetY,
+      },
+    });
   }
 
   // lay out the before state and apply any rules that apply to
   // the actors currently on the board
-  if (applyActions && actions) {
-    for (const action of actions) {
+  if (applyActions && rule.actions) {
+    for (const action of rule.actions) {
       if (action.type === 'create') {
-        const [x, y] = action.offset.split(',').map(s => s / 1);
-        actors[action.ref] = objectAssign({}, descriptors[action.ref], {
-          id: action.ref,
-          position: {
-            x: x + offsetX,
-            y: y + offsetY,
-          },
+        actors[action.actor.id] = objectAssign({}, action.actor, {
           variableValues: {},
+          position: {
+            x: action.offset.x + offsetX,
+            y: action.offset.y + offsetY,
+          },
         });
       } else {
-        const character = characters[actors[action.ref].characterId];
-        actors[action.ref] = applyRuleAction(actors[action.ref], character, action);
+        const {actorId, characterId} = action;
+        actors[actorId] = applyRuleAction(actors[actorId], characters[characterId], action);
       }
     }
   }
-  return actors;
-}
 
-export function getScenarioExtent(scenario, {root} = {root: {x: 0, y: 0}}) {
-    let xmin = 0;
-    let xmax = 0;
-    let ymin = 0;
-    let ymax = 0;
-    for (const block of scenario) {
-      const [x, y] = block.coord.split(',').map(s => s / 1);
-      xmin = Math.min(xmin, x);
-      ymin = Math.min(ymin, y);
-      xmax = Math.max(xmax, x);
-      ymax = Math.max(ymax, y);
-    }
-    return {
-      xmin: xmin + root.x,
-      xmax: xmax + root.x,
-      ymin: ymin + root.y,
-      ymax: ymax + root.y,
-    };
+  return actors;
 }
 
 export function getVariableValue(actor, character, id) {
   if (actor.variableValues[id]) {
     return actor.variableValues[id] / 1;
   }
-  if (character.variables[id].value) {
-    return character.variables[id].value / 1;
+  if (character.variableDefaults[id].value) {
+    return character.variableDefaults[id].value / 1;
   }
   return null;
 }
@@ -112,8 +75,7 @@ export function applyVariableOperation(existing, operation, value) {
 
 export function applyRuleAction(actor, character, action) {
   if (action.type === 'move') {
-    const [dx, dy] = action.delta.split(',').map(s => s / 1);
-    return u({position: {x: actor.position.x + dx, y: actor.position.y + dy}}, actor);
+    return u({position: {x: actor.position.x + action.delta.x, y: actor.position.y + action.delta.y}}, actor);
   } else if (action.type === 'delete') {
     return undefined;
   } else if (action.type === 'appearance') {
@@ -152,69 +114,113 @@ export function nameForKey(code) {
   }[code] || String.fromCharCode(code);
 }
 
-export function findRule(node, id, callback) {
-  node.rules.forEach((n, idx) => {
+export function findRule(node, id) {
+  for (let idx = 0; idx < node.rules.length; idx ++) {
+    const n = node.rules[idx];
     if (n.id === id) {
-      callback(n, node, idx);
+      return [n, node, idx];
     } else if (n.rules) {
-      findRule(n, id, callback);
+      const rval = findRule(n, id);
+      if (rval) {
+        return rval;
+      }
+    }
+  }
+  return null;
+}
+
+export function actionsBetweenStages({beforeStage, afterStage, extent}) {
+  if (!beforeStage.actors || !afterStage.actors) {
+    return [];
+  }
+
+  const actions = [];
+
+  Object.values(beforeStage.actors).forEach((beforeActor) => {
+    if (pointIsOutside(beforeActor.position, extent)) {
+      return;
+    }
+    const {x: bx, y: by} = beforeActor.position;
+    const afterActor = afterStage.actors[beforeActor.id];
+    if (afterActor) {
+      const {x: ax, y: ay} = afterActor.position;
+      if (ax !== bx || ay !== by) {
+        actions.push({
+          actorId: beforeActor.id,
+          type: 'move',
+          delta: {
+            x: ax - bx,
+            y: ay - by,
+          },
+        });
+      }
+      if (beforeActor.appearance !== afterActor.appearance) {
+        actions.push({
+          actorId: beforeActor.id,
+          type: 'appearance',
+          to: afterActor.appearance,
+        });
+      }
+    } else {
+      actions.push({
+        actorId: beforeActor.id,
+        type: 'delete',
+      });
     }
   });
+
+  // find created actors
+  const beforeIds = Object.keys(beforeStage.actors);
+  const afterIds = Object.keys(afterStage.actors);
+  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
+
+  createdIds.forEach((id) => {
+    const actor = afterStage.actors[id];
+    if (pointIsOutside(actor.position, extent)) {
+      return;
+    }
+    actions.push({
+      actorId: actor.id,
+      type: 'create',
+    });
+  });
+  
+  return actions;
 }
+
 
 export function StageOperator(stage) {
   const {characters} = window.store.getState();
 
-  function actorMatchesDescriptor(actor, descriptor) {
-    if (descriptor.characterId !== actor.characterId) {
-      return false;
-    }
-    if (!descriptor.appearance_ignored && (actor.appearance !== descriptor.appearance)) {
+  function actorsMatch(actor, other, conditions = {}) {
+    if (other.characterId !== actor.characterId) {
       return false;
     }
 
-    if (descriptor.variableConstraints) {
-      for (const id of Object.keys(descriptor.variableConstraints)) {
-        const constraint = descriptor.variableConstraints[id];
-        if (constraint.ignored === true) {
-          continue;
+    for (const id of Object.keys(conditions)) {
+      const condition = conditions[id];
+      if (!condition.enabled) {
+        continue;
+      }
+
+      if (id === 'appearance') {
+        if (actor.appearance !== other.appearance) {
+          return false;
         }
+      } else {
         const value = getVariableValue(actor, characters[actor.characterId], id);
-        if ((constraint.comparator === '=') && (value / 1 !== constraint.value / 1)) {
+        if ((condition.comparator === '=') && (value / 1 !== condition.value / 1)) {
           return false;
         }
-        if ((constraint.comparator === '>') && (value / 1 <= constraint.value / 1)) {
+        if ((condition.comparator === '>') && (value / 1 <= condition.value / 1)) {
           return false;
         }
-        if ((constraint.comparator === '<') && (value / 1 >= constraint.value / 1)) {
+        if ((condition.comparator === '<') && (value / 1 >= condition.value / 1)) {
           return false;
         }
       }
     }
     return true;
-  }
-
-  function actorsAtPositionMatchDescriptors(position, descriptors) {
-    const searchSet = actorsAtPosition(position);
-    if (searchSet === null) {
-      return null;
-    }
-    // if the descriptor is empty and no actors are present, we've got a match
-    if (searchSet.length === 0 && (!descriptors || descriptors.length === 0)) {
-      return true;
-    }
-
-    // if we don't have a descriptor for each item in the search set, no match
-    if (searchSet.length !== descriptors.length) {
-      return false;
-    }
-
-    // make sure the descriptors and actors all match
-    return searchSet.every(searchSetActor =>
-      descriptors.some(descriptor =>
-        actorMatchesDescriptor(searchSetActor, descriptor)
-      )
-    );
   }
 
   function actorsAtPosition(position) {
@@ -276,42 +282,69 @@ export function StageOperator(stage) {
     }
 
     function checkRuleScenario(rule) {
-      for (const block of rule.scenario) {
-        const [px, py] = block.coord.split(',').map(s => s / 1);
-        const pos = {x: actor.position.x + px, y: actor.position.y + py};
-        const descriptors = block.refs.map(ref => rule.descriptors[ref]);
+      for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
+        for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
+          if (rule.extent.ignored.includes(`${x},${y}`)) {
+            continue;
+          }
+          const pos = {x: actor.position.x + x, y: actor.position.y + y};
+          const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
+          const stageActors = actorsAtPosition(pos);
 
-        if (!actorsAtPositionMatchDescriptors(pos, descriptors)) {
-          return false;
+          if (stageActors === null) {
+            return false; // offscreen?
+          }
+
+          // if the descriptor is empty and no actors are present, we've got a match
+          if (stageActors.length === 0 && ((ruleActors || []).length === 0)) {
+            continue;
+          }
+
+          // if we don't have a descriptor for each item in the search set, no match
+          if (stageActors.length !== ruleActors.length) {
+            return false;
+          }
+
+          // make sure the descriptors and actors all match, one to one
+          const stageRemaining = [].concat(stageActors);
+          const ruleRemaining = [].concat(ruleActors);
+          for (const s of stageRemaining) {
+            const idx = ruleRemaining.findIndex(r => actorsMatch(s, r, rule.conditions[r.id]));
+            if (idx === -1) {
+              return false;
+            }
+            ruleRemaining.splice(idx, 1);
+          }
         }
       }
       return true;
     }
 
     function applyRule(rule) {
-      // cache actors once they're found
-      const actorsForRefs = {};
-
       for (const action of rule.actions) {
-        const descriptor = rule.descriptors[action.ref];
-        const scenarioBlock = rule.scenario.find(b => b.refs.includes(action.ref));
-        const offset = action.offset || (scenarioBlock ? scenarioBlock.coord : null);
-
-        const [ox, oy] = offset.split(',').map(s => s / 1);
-        const pos = {x: actor.position.x + ox, y: actor.position.y + oy};
         // pos = @stage.wrappedPosition(pos) if @stage
 
         if (action.type === 'create') {
           // actor = @stage.addActor(descriptor, pos)
           // actor._id = Math.createUUID() unless rule.editing
         } else {
-          const candidateActors = actorsAtPosition(pos);
-          const actionActor = candidateActors.find(a => actorMatchesDescriptor(a, descriptor));
-          if (!actionActor) {
+          // find the actor on the stage that matches
+          const ruleActor = rule.actors[action.actorId];
+          const ruleActorConditions = rule.conditions[action.actorId];
+
+          const stagePosition = {
+            x: actor.position.x + ruleActor.position.x,
+            y: actor.position.y + ruleActor.position.y,
+          };
+          const stageCandidates = actorsAtPosition(stagePosition);
+          if (!stageCandidates) {
+            throw new Error(`Couldn't apply action because the position is not valid.`);
+          }
+          const stageActor = stageCandidates.find(a => actorsMatch(a, ruleActor, ruleActorConditions));
+          if (!stageActor) {
             throw new Error(`Couldn't find the actor for performing rule: ${rule}`);
           }
-          actorsForRefs[action.ref] = actionActor;
-          stage.actors[actionActor.id] = applyRuleAction(actionActor, characters[actionActor.characterId], action);
+          stage.actors[stageActor.id] = applyRuleAction(stageActor, characters[stageActor.characterId], action);
         }
       }
     }

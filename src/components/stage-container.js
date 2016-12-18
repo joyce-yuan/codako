@@ -82,7 +82,7 @@ class StageContainer extends React.Component {
           {stageB || <Stage style={{flex: 0}} />}
         </div>
         {actions || <div className="actions" style={{height: 0}} />}
-        {controls || <StageControls {...playback} dispatch={dispatch} />}
+        {controls || <StageControls {...playback} dispatch={dispatch} stageUid={stage.uid} />}
       </div>
     );
   }

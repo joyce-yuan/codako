@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import Sprite from './sprites/sprite';
-import {pointIsOutside} from './game-state-helpers';
+import {actionsBetweenStages} from './game-state-helpers';
 
 const DELTA_SQUARE_SIZE = 10;
 
@@ -66,11 +66,11 @@ class ActorPositionCanvas extends React.Component {
 
 class ActorDeltaCanvas extends React.Component {
   static propTypes = {
-    delta: PropTypes.string,
+    delta: PropTypes.object,
   }
 
   _draw = (el, c, squareSize) => {
-    const [dx, dy] = this.props.delta.split(',').map(s => s / 1);
+    const {x: dx, y: dy} = this.props.delta;
     let [sx, sy] = [0, 0];
 
     if (dx < 0) { sx = Math.abs(dx); }
@@ -89,68 +89,12 @@ class ActorDeltaCanvas extends React.Component {
   }
 
   render() {
-    const [dx, dy] = this.props.delta.split(',').map(s => s / 1);
+    const {x: dx, y: dy} = this.props.delta;
     const [width, height] = [(Math.abs(dx) + 1), (Math.abs(dy) + 1)];
     return (
       <SquaresCanvas width={width} height={height} onDraw={this._draw} />
     );
   }
-}
-
-function actionsBetweenStages({beforeStage, afterStage, extent}) {
-  if (!beforeStage.actors || !afterStage.actors) {
-    return [];
-  }
-
-  const actions = [];
-
-  Object.values(beforeStage.actors).forEach((beforeActor) => {
-    if (pointIsOutside(beforeActor.position, extent)) {
-      return;
-    }
-    const {x: bx, y: by} = beforeActor.position;
-    const afterActor = afterStage.actors[beforeActor.id];
-    if (afterActor) {
-      const {x: ax, y: ay} = afterActor.position;
-      if (ax !== bx || ay !== by) {
-        actions.push({
-          ref: beforeActor.id,
-          type: 'move',
-          delta: `${ax - bx},${ay - by}`,
-        });
-      }
-      if (beforeActor.appearance !== afterActor.appearance) {
-        actions.push({
-          ref: beforeActor.id,
-          type: 'appearance',
-          to: afterActor.appearance,
-        });
-      }
-    } else {
-      actions.push({
-        ref: beforeActor.id,
-        type: 'delete',
-      });
-    }
-  });
-
-  // find created actors
-  const beforeIds = Object.keys(beforeStage.actors);
-  const afterIds = Object.keys(afterStage.actors);
-  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
-
-  createdIds.forEach((id) => {
-    const actor = afterStage.actors[id];
-    if (pointIsOutside(actor.position, extent)) {
-      return;
-    }
-    actions.push({
-      ref: actor.id,
-      type: 'create',
-    });
-  });
-  
-  return actions;
 }
 
 export default class RecordingActions extends React.Component {
@@ -163,7 +107,7 @@ export default class RecordingActions extends React.Component {
 
   _renderAction = (a, idx) => {
     const {characters, beforeStage, afterStage, extent} = this.props;
-    const actor = beforeStage.actors[a.ref] || afterStage.actors[a.ref];
+    const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
     const character = characters[actor.characterId];
 
     const spriteComponent = (

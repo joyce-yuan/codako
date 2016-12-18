@@ -40,175 +40,41 @@
                     {
                         "id": "_2034444",
                         "name": "Move Right",
-                        "scenario": [
-                            {
-                                "coord": "0,0",
-                                "refs": [
-                                    "_2042130"
-                                ]
-                            },
-                            {
-                                "coord": "1,0",
-                                "refs": []
-                            }
-                        ],
-                        "actorDescriptorId": "_2042130",
-                        "descriptors": {
+                        "extent": {
+                            "xmin": 0,
+                            "xmax": 1,
+                            "ymin": 0,
+                            "ymax": 0,
+                            "ignored": []
+                        },
+                        "actors": {
                             "_2042130": {
-                                "appearance_ignored": false,
-                                "actorid_during_recording": "_1413514",
+                                "id":"_2042130",
                                 "appearance": "idle",
-                                "characterId": "aamlcui8uxr"
+                                "characterId": "aamlcui8uxr",
+                                "variableValues": {},
+                                "position": {"x": 0, "y": 0}
                             }
                         },
+                        "conditions": {
+                            "_2042130": {
+                                "appearance": {
+                                    "enabled": false
+                                }
+                            }
+                        },
+                        "mainActorId": "_2042130",
                         "actions": [
                             {
-                                "ref": "_2042130",
+                                "actorId": "_2042130",
                                 "type": "move",
-                                "delta": "1,0"
-                            }
-                        ]
-                    },
-                    {
-                        "id": "_2243540",
-                        "name": "Turn Right",
-                        "scenario": [
-                            {
-                                "refs": [
-                                    "_1503101"
-                                ],
-                                "coord": "0,0"
-                            }
-                        ],
-                        "actorDescriptorId": "_1503101",
-                        "descriptors": {
-                            "_1503101": {
-                                "appearance_ignored": false,
-                                "actorid_during_recording": "_1413514",
-                                "appearance": "_2220533",
-                                "characterId": "aamlcui8uxr"
-                            }
-                        },
-                        "actions": [
-                            {
-                                "to": "idle",
-                                "type": "appearance",
-                                "ref": "_1503101"
+                                "delta": {"x": 1, "y": 0}
                             }
                         ]
                     }
                 ],
                 "event": "key",
                 "code": 39
-            },
-            {
-                "id": "_2105500",
-                "name": "",
-                "type": "group-event",
-                "rules": [
-                    {
-                        "id": "_1313113",
-                        "name": "Move Left",
-                        "scenario": [
-                            {
-                                "refs": [],
-                                "coord": "-1,0"
-                            },
-                            {
-                                "refs": [
-                                    "_2434313"
-                                ],
-                                "coord": "0,0"
-                            }
-                        ],
-                        "actorDescriptorId": "_2434313",
-                        "descriptors": {
-                            "_2434313": {
-                                "appearance_ignored": false,
-                                "actorid_during_recording": "_1413514",
-                                "appearance": "_2220533",
-                                "characterId": "aamlcui8uxr"
-                            }
-                        },
-                        "actions": [
-                            {
-                                "delta": "-1,0",
-                                "type": "move",
-                                "ref": "_2434313"
-                            }
-                        ]
-                    },
-                    {
-                        "id": "_1513454",
-                        "name": "Turn Left",
-                        "scenario": [
-                            {
-                                "refs": [
-                                    "_1334414"
-                                ],
-                                "coord": "0,0"
-                            }
-                        ],
-                        "actorDescriptorId": "_1334414",
-                        "descriptors": {
-                            "_1334414": {
-                                "appearance_ignored": false,
-                                "actorid_during_recording": "_1413514",
-                                "appearance": "idle",
-                                "characterId": "aamlcui8uxr"
-                            }
-                        },
-                        "actions": [
-                            {
-                                "to": "_2220533",
-                                "type": "appearance",
-                                "ref": "_1334414"
-                            }
-                        ]
-                    }
-                ],
-                "event": "key",
-                "code": 37
-            },
-            {
-                "id": "_2224240",
-                "name": "",
-                "type": "group-event",
-                "rules": [
-                    {
-                        "id": "_2230052",
-                        "name": "Gravity",
-                        "scenario": [
-                            {
-                                "refs": [
-                                    "_2310541"
-                                ],
-                                "coord": "0,0"
-                            },
-                            {
-                                "refs": [],
-                                "coord": "0,1"
-                            }
-                        ],
-                        "actorDescriptorId": "_2310541",
-                        "descriptors": {
-                            "_2310541": {
-                                "appearance_ignored": true,
-                                "actorid_during_recording": "_1413514",
-                                "appearance": "_2220533",
-                                "characterId": "aamlcui8uxr"
-                            }
-                        },
-                        "actions": [
-                            {
-                                "delta": "0,1",
-                                "type": "move",
-                                "ref": "_2310541"
-                            }
-                        ]
-                    }
-                ],
-                "event": "idle"
             }
         ],
         "spritesheet": {
@@ -290,64 +156,7 @@
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
         "id": "e1izcd9ggb9",
-        "rules": [
-            {
-                "id": "_2143201",
-                "name": "Boil 1",
-                "scenario": [
-                    {
-                        "coord": "0,0",
-                        "refs": [
-                            "_2301121"
-                        ]
-                    }
-                ],
-                "actorDescriptorId": "_2301121",
-                "descriptors": {
-                    "_2301121": {
-                        "characterId": "e1izcd9ggb9",
-                        "appearance": "_2350352",
-                        "actorid_during_recording": "_2443155",
-                        "appearance_ignored": false
-                    }
-                },
-                "actions": [
-                    {
-                        "ref": "_2301121",
-                        "type": "appearance",
-                        "to": "idle"
-                    }
-                ]
-            },
-            {
-                "id": "_2033553",
-                "name": "Boil 2",
-                "scenario": [
-                    {
-                        "coord": "0,0",
-                        "refs": [
-                            "_2203110"
-                        ]
-                    }
-                ],
-                "actorDescriptorId": "_2203110",
-                "descriptors": {
-                    "_2203110": {
-                        "characterId": "e1izcd9ggb9",
-                        "appearance": "idle",
-                        "actorid_during_recording": "_2443155",
-                        "appearance_ignored": false
-                    }
-                },
-                "actions": [
-                    {
-                        "ref": "_2203110",
-                        "type": "appearance",
-                        "to": "_2350352"
-                    }
-                ]
-            }
-        ],
+        "rules": [],
         "spritesheet": {
             "width": 40,
             "appearances": {

@@ -48,7 +48,7 @@ class Stage extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.running) {
+    if (this.props.running && this._el) {
       this._el.focus();
     }
 
@@ -281,7 +281,7 @@ class Stage extends React.Component {
       <div
         style={style}
         ref={(el) => this._scrollEl = el}
-        className="stage-scroll-wrap"
+        className={`stage-scroll-wrap tool-${selectedToolId} running-${running}`}
       >
         <div
           ref={(el) => this._el = el}
@@ -292,7 +292,7 @@ class Stage extends React.Component {
             height: stage.height * STAGE_CELL_SIZE,
             overflow: 'hidden',
           }}
-          className={`stage tool-${selectedToolId} running-${running}`}
+          className="stage"
           onDragOver={this._onDragOver}
           onDrop={this._onDrop}
           onKeyDown={this._onKeyDown}

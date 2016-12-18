@@ -14,9 +14,10 @@ import objectAssign from 'object-assign';
 //   };
 // }
 
-export function advanceGameState() {
+export function advanceGameState(stageUid) {
   return {
     type: types.ADVANCE_GAME_STATE,
+    stageUid,
   };
 }
 

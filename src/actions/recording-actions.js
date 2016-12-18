@@ -18,6 +18,12 @@ export function cancelRecording() {
   };
 }
 
+export function finishRecording() {
+  return {
+    type: types.FINISH_RECORDING,
+  };
+}
+
 export function setRecordingPhase(phase) {
   return {
     type: types.SET_RECORDING_PHASE, phase,
