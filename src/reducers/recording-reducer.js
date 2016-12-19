@@ -5,7 +5,7 @@ import stageReducer from './stage-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
-import {buildActorsFromRule} from '../components/game-state-helpers';
+import {buildActorsFromRule} from '../utils/stage-helpers';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default function recordingReducer(state = initialState.recording, action) {

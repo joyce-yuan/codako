@@ -2,9 +2,9 @@ import React, {PropTypes} from 'react';
 import classNames from 'classnames';
 
 import {Button, ButtonGroup} from 'reactstrap';
-import {updatePlaybackState} from '../actions/ui-actions';
-import {advanceGameState} from '../actions/stage-actions';
-import {SPEED_OPTIONS} from '../constants/constants';
+import {updatePlaybackState} from '../../actions/ui-actions';
+import {advanceGameState} from '../../actions/stage-actions';
+import {SPEED_OPTIONS} from '../../constants/constants';
 
 export default class StageControls extends React.Component {
   static propTypes = {

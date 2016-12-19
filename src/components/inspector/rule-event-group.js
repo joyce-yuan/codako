@@ -3,7 +3,7 @@ import RuleStateCircle from './rule-state-circle';
 import DisclosureTriangle from './disclosure-triangle';
 import RuleList from './rule-list';
 
-import {nameForKey} from '../game-state-helpers';
+import {nameForKey} from '../../utils/event-helpers';
 
 export default class RuleEventGroup extends React.Component {
   static propTypes = {

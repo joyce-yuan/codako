@@ -33,6 +33,7 @@
     "bootstrap": "4.0.0-alpha.5",
     "classnames": "2.2.5",
     "object-assign": "4.1.0",
+    "object.values": "1.0.4",
     "react": "15.4.1",
     "react-addons-css-transition-group": "15.4.1",
     "react-addons-transition-group": "15.4.1",

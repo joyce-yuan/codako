@@ -6,7 +6,7 @@ import StageRecordingControls from './stage-recording-controls';
 import RecordingActions from './recording-actions';
 import RecordingConditions from './recording-conditions';
 
-import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
+import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
 
 class StageContainer extends React.Component {
   static propTypes = {

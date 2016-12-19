@@ -4,7 +4,7 @@ import {TOOL_POINTER} from '../../constants/constants';
 import {changeCharacter} from '../../actions/characters-actions';
 import {pickCharacterRuleEventKey, selectToolId} from '../../actions/ui-actions';
 import {editRuleRecording} from '../../actions/recording-actions';
-import {findRule} from '../game-state-helpers';
+import {findRule} from '../../utils/stage-helpers';
 import RuleList from './rule-list';
 
 export default class ContainerPaneRules extends React.Component {

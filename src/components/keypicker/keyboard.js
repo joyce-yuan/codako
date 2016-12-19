@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {nameForKey} from '../game-state-helpers';
+import {nameForKey} from '../../utils/event-helpers';
 
 export default class Keyboard extends React.Component {
   static propTypes = {

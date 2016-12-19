@@ -47,9 +47,7 @@ export default class Rule extends React.Component {
             maxWidth={75}
             maxHeight={75}
           />
-          <div className="arrow">
-            <i className="icon-arrow-right" />
-          </div>
+          <i className="fa fa-arrow-right" aria-hidden="true" />
           <ScenarioStage
             rule={rule}
             applyActions={true}

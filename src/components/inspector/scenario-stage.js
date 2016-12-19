@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
-import {buildActorsFromRule} from '../game-state-helpers';
+import {buildActorsFromRule} from '../../utils/stage-helpers';
 import ActorSprite from '../sprites/actor-sprite';
 
 

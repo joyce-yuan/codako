@@ -167,7 +167,7 @@ class Container extends React.Component {
                 imageData={imageData}
                 offsetX={0}
                 offsetY={0}
-                pixelSize={10}
+                pixelSize={11}
                 onChangeImageData={this._onChangeImageData}
               />
             </div>

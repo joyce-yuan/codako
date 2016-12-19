@@ -1,8 +1,15 @@
 import React, { PropTypes } from 'react';
 import { Link, IndexLink } from 'react-router';
+import objectValues from 'object.values';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
+
+// Apply various polyfills
+if (!Object.values) {
+  objectValues.shim();
+}
+
 
 // This is a class-based component because the current
 // version of hot reloading won't hot reload a stateless

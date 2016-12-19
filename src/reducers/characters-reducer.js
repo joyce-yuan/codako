@@ -4,7 +4,7 @@ import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
 import {FLOW_GROUP_TYPES} from '../constants/constants';
 import initialState from './initial-state';
-import {findRule, pointIsInside, actionsBetweenStages} from '../components/game-state-helpers';
+import {findRule, pointIsInside, actionsBetweenStages} from '../utils/stage-helpers';
 
 export default function charactersReducer(state = initialState.characters, action) {
   switch (action.type) {

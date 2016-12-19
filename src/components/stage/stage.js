@@ -2,16 +2,16 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import objectAssign from 'object-assign';
 
-import ActorSprite from './sprites/actor-sprite';
-import RecordingMaskSprite from './sprites/recording-mask-sprite';
-import RecordingHandle from './sprites/recording-handle';
+import ActorSprite from '../sprites/actor-sprite';
+import RecordingMaskSprite from '../sprites/recording-mask-sprite';
+import RecordingHandle from '../sprites/recording-handle';
 
-import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../actions/stage-actions';
-import {select, selectToolId, paintCharacterAppearance} from '../actions/ui-actions';
-import {setRecordingExtent, setupRecordingForActor} from '../actions/recording-actions';
+import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../../actions/stage-actions';
+import {select, selectToolId, paintCharacterAppearance} from '../../actions/ui-actions';
+import {setRecordingExtent, setupRecordingForActor} from '../../actions/recording-actions';
 
-import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
-import {pointIsOutside} from './game-state-helpers';
+import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../../constants/constants';
+import {pointIsOutside} from '../../utils/stage-helpers';
 
 class Stage extends React.Component {
   static propTypes = {

@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react';
 
 import {Button} from 'reactstrap';
-import {cancelRecording, startRecording, finishRecording} from '../actions/recording-actions';
-import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
+import {cancelRecording, startRecording, finishRecording} from '../../actions/recording-actions';
+import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
 
 export default class StageRecordingControls extends React.Component {
   static propTypes = {

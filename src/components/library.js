@@ -31,13 +31,21 @@ class LibraryItem extends React.Component {
   };
 
   _onDragStart = (event) => {
-    const {top, left} = event.target.getBoundingClientRect();
     event.dataTransfer.dropEffect = 'copy';
     event.dataTransfer.effectAllowed = 'copy';
-    event.dataTransfer.setData('drag-offset', JSON.stringify({
+
+    const el = event.target;
+    const {top, left} = el.getBoundingClientRect();
+    const offset = {
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
-    }));
+    };
+
+    const img = new Image();
+    img.src = ((el.tagName === 'IMG') ? el : el.querySelector('img')).src;
+    event.dataTransfer.setDragImage(img, offset.dragLeft, offset.dragTop);
+
+    event.dataTransfer.setData('drag-offset', JSON.stringify(offset));
     event.dataTransfer.setData(this.props.dragType, JSON.stringify({
       characterId: this.props.character.id,
       appearance: this.props.appearance,

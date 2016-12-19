@@ -155,8 +155,8 @@ export default class PixelCanvas extends React.Component {
   render() {
     return (
       <canvas
-        width="400"
-        height="400"
+        width="440"
+        height="440"
         onMouseDown={this._onMouseDown}
         ref={(el) => this._pixelCanvas = el}
       />

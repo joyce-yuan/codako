@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
-import Sprite from './sprites/sprite';
-import {actionsBetweenStages} from './game-state-helpers';
+import Sprite from '../sprites/sprite';
+import {actionsBetweenStages} from '../../utils/stage-helpers';
 
 const DELTA_SQUARE_SIZE = 10;
 

@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
-import {findRule} from '../game-state-helpers';
+import {findRule} from '../../utils/stage-helpers';
 import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
 import {changeCharacter} from '../../actions/characters-actions';
 import Keyboard from './keyboard';

@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
-import {updateRecordingCondition} from '../actions/recording-actions';
-import Sprite from './sprites/sprite';
-import {pointIsInside} from './game-state-helpers';
+import {updateRecordingCondition} from '../../actions/recording-actions';
+import Sprite from '../sprites/sprite';
+import {pointIsInside} from '../../utils/stage-helpers';
 
 class ConditionToggle extends React.Component {
   static propTypes = {
