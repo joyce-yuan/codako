@@ -5,16 +5,17 @@ import {connect} from 'react-redux';
 
 import ContainerPaneRules from './container-pane-rules';
 import ContainerPaneVariables from './container-pane-variables';
-import RuleAddButton from './rule-add-button';
-import VariablesAddButton from './variables-add-button';
+import AddRuleButton from './add-rule-button';
+import AddVariableButton from './add-variable-button';
 
 class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     actor: PropTypes.object,
     characters: PropTypes.object,
+    character: PropTypes.object,
     appliedRuleIds: PropTypes.object,
-    selectedCharacterId: PropTypes.string,
+    stageUid: PropTypes.string,
     selectedToolId: PropTypes.string,
   };
 
@@ -43,41 +44,18 @@ class Container extends React.Component {
     this.setState({activeTab});
   }
 
-  _renderRulesContent = (character) => {
-    if (character.rules.length === 0) {
-      return (
-        <div className="empty">
-          This character doesn&#39;t have any rules.
-          Create a new rule by clicking the &#39;Record&#39; icon.
-        </div>
-      );
-    }
-    return (
-      <ContainerPaneRules character={character} dispatch={this.props.dispatch} />
-    );
-  }
-
-  _renderVariablesContent = (character) => {
-    return (
-      <ContainerPaneVariables character={character} dispatch={this.props.dispatch} />
-    );
-  }
-
   render() {
-    const {characters, selectedCharacterId, actor, dispatch} = this.props;
+    const {character, actor, dispatch, stageUid} = this.props;
     const {activeTab} = this.state;
-    const character = characters[selectedCharacterId];
 
-    const content = character ? {
-      rules: this._renderRulesContent,
-      variables: this._renderVariablesContent,
-    }[activeTab](character) : (
-      <div className="empty">Please select a character.</div>
-    );
+    const ContentContainer = {
+      rules: ContainerPaneRules,
+      variables: ContainerPaneVariables,
+    }[activeTab];
 
     const AddButton = {
-      rules: RuleAddButton,
-      variables: VariablesAddButton,
+      rules: AddRuleButton,
+      variables: AddVariableButton,
     }[activeTab];
 
     return (
@@ -107,7 +85,12 @@ class Container extends React.Component {
             />
           </div>
         </Nav>
-        {content}
+        <ContentContainer
+          character={character}
+          actor={actor}
+          stageUid={stageUid}
+          dispatch={dispatch}
+        />
       </div>
     );
   }
@@ -116,7 +99,9 @@ class Container extends React.Component {
 function mapStateToProps(state) {
   return Object.assign({}, state.ui, {
     characters: state.characters,
+    character: state.characters[state.ui.selectedCharacterId],
     actor: state.stage.actors[state.ui.selectedActorId],
+    stageUid: state.stage.uid,
     appliedRuleIds: state.stage.applied,
 });
 }

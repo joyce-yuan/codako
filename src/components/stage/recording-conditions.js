@@ -75,10 +75,14 @@ class VariableRow extends React.Component {
           <code>
             <Sprite spritesheet={character.spritesheet} appearance={actor.appearance} /> {character.name}'s
           </code>
-          variable {variableId} is
+          variable
+          <code>
+            {character.variables[variableId].name}
+          </code>
+          is
           <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
             <option value="<">&lt;</option>
-            <option value="=">&eq;</option>
+            <option value="=">=</option>
             <option value=">">&gt;</option>
           </select>
           {variableValue}

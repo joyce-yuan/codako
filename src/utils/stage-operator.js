@@ -1,3 +1,5 @@
+import {applyRuleAction, getVariableValue} from './stage-helpers';
+
 export default function StageOperator(stage) {
   const {characters} = window.store.getState();
 
@@ -17,14 +19,16 @@ export default function StageOperator(stage) {
           return false;
         }
       } else {
-        const value = getVariableValue(actor, characters[actor.characterId], id);
-        if ((condition.comparator === '=') && (value / 1 !== condition.value / 1)) {
+        const actorValue = getVariableValue(actor, characters[actor.characterId], id);
+        const otherValue = getVariableValue(other, characters[actor.characterId], id);
+
+        if ((condition.comparator === '=') && (actorValue / 1 !== otherValue.value / 1)) {
           return false;
         }
-        if ((condition.comparator === '>') && (value / 1 <= condition.value / 1)) {
+        if ((condition.comparator === '>') && (actorValue / 1 <= otherValue.value / 1)) {
           return false;
         }
-        if ((condition.comparator === '<') && (value / 1 >= condition.value / 1)) {
+        if ((condition.comparator === '<') && (actorValue / 1 >= otherValue.value / 1)) {
           return false;
         }
       }

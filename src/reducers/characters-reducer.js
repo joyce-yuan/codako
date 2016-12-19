@@ -16,6 +16,18 @@ export default function charactersReducer(state = initialState.characters, actio
       return u.omit(action.characterId, state);
     }
 
+    case Types.CREATE_CHARACTER_VARIABLE: {
+      return u.updateIn(action.characterId, {
+        variables: {
+          [action.variableId]: {
+            value: 0,
+            name: "Untitled",
+            id: action.variableId,
+          },
+        },
+      }, state);
+    }
+
     case Types.CREATE_CHARACTER_EVENT_CONTAINER: {
       const {characterId, eventType, eventCode, id} = action;
 

@@ -154,6 +154,9 @@ body {
           .left {
             flex: 1;
           }
+          select {
+            margin: 0 6px;
+          }
           .sprite {
             zoom: 0.6;
             margin-right: 8px;
@@ -314,6 +317,42 @@ body {
     }
   }
 }
+
+.variables-grid {
+  .variable-box {
+    width: 70px;
+    padding: 5px;
+    padding-top: 0;
+    position: absolute;
+    background-color: #c6c6c6;
+    box-sizing: content-box;
+
+    &.variable-set-true {
+      background-color: orange;
+    }
+
+    .name {
+      border: 0;
+      background-color: transparent;
+      text-align: center;
+      width: 70px;
+      padding: 3px 0;
+      margin: 0;
+    }
+
+    .value {
+      border: 0;
+      background-color: white;
+      text-align: center;
+      width: 70px;
+      height: 36px;
+      padding: 3px 0;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  }
+}
+
 
 .rules-list {
   padding-left: 0;

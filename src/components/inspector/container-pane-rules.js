@@ -77,6 +77,19 @@ export default class ContainerPaneRules extends React.Component {
 
   render() {
     const {character} = this.props;
+    if (!character) {
+      return (
+        <div className="empty">Please select a character.</div>
+      );
+    }
+    if (character.rules.length === 0) {
+      return (
+        <div className="empty">
+          This character doesn&#39;t have any rules.
+          Create a new rule by clicking the &#39;Record&#39; icon.
+        </div>
+      );
+    }
     return (
       <div className="scroll-container">
         <RuleList rules={character.rules} />

@@ -15,14 +15,14 @@
                 "ax1": "Idle"
             }
         },
-        "variableDefaults": {},
+        "variables": {},
         "world": "53418ce7eb74a9fff000002d"
     },
     "aamlcui8uxr": {
         "__v": 0,
         "world": "53418ce7eb74a9fff000002d",
         "id": "aamlcui8uxr",
-        "variableDefaults": {
+        "variables": {
             "_2045001": {
                 "y": 0,
                 "x": 0,
@@ -99,6 +99,7 @@
         "world": "53418ce7eb74a9fff000002d",
         "id": "q9h78ccjtt9",
         "rules": [],
+        "variables": {},
         "spritesheet": {
             "width": 40,
             "appearances": {
@@ -121,6 +122,7 @@
         "world": "53418ce7eb74a9fff000002d",
         "id": "us3zr9c0udi",
         "rules": [],
+        "variables": {},
         "spritesheet": {
             "width": 40,
             "appearanceNames": {
@@ -139,6 +141,7 @@
         "world": "53418ce7eb74a9fff000002d",
         "id": "oou4u6jemi",
         "rules": [],
+        "variables": {},
         "spritesheet": {
             "width": 40,
             "appearanceNames": {
@@ -157,6 +160,7 @@
         "world": "53418ce7eb74a9fff000002d",
         "id": "e1izcd9ggb9",
         "rules": [],
+        "variables": {},
         "spritesheet": {
             "width": 40,
             "appearances": {

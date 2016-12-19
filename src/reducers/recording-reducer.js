@@ -80,10 +80,10 @@ export default function recordingReducer(state = initialState.recording, action)
 
       return u({
         ruleId: rule.id,
+        characterId,
         phase: RECORDING_PHASE_RECORD,
         actorId: rule.mainActorId,
-        characterId,
-        conditions: u.constant({}),
+        conditions: rule.conditions,
         beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
           actors: buildActorsFromRule(rule, characters, {applyActions: false, offsetX, offsetY}),
           uid: 'before',

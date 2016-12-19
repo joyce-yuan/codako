@@ -27,7 +27,7 @@ export function createCharacter() {
           'idle': 'Idle',
         },
       },
-      variableDefaults: {},
+      variables: {},
       world: 'x',
     }
   };
@@ -47,6 +47,15 @@ export function createCharacterEventContainer(characterId, {id, eventCode, event
     eventCode,
     eventType,
     id,
+  };
+}
+
+export function createCharacterVariable(characterId) {
+  const variableId = `${Date.now()}`;
+  return {
+    type: types.CREATE_CHARACTER_VARIABLE,
+    characterId,
+    variableId,
   };
 }
 
