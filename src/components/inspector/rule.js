@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react';
 import ScenarioStage from './scenario-stage';
 import RuleStateCircle from './rule-state-circle';
 import DisclosureTriangle from './disclosure-triangle';
+import TapToEditLabel from '../tap-to-edit-label';
 
 export default class Rule extends React.Component {
   static propTypes = {
@@ -13,6 +14,10 @@ export default class Rule extends React.Component {
     onDragEnd: PropTypes.func,
   };
 
+  static contextTypes = {
+    onRuleChanged: PropTypes.func,
+  };
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -21,7 +26,7 @@ export default class Rule extends React.Component {
   }
 
   _onNameChange = (event) => {
-
+    this.context.onRuleChanged(this.props.rule.id, {name: event.target.value});
   }
 
   render() {
@@ -50,7 +55,7 @@ export default class Rule extends React.Component {
           <i className="fa fa-arrow-right" aria-hidden="true" />
           <ScenarioStage
             rule={rule}
-            applyActions={true}
+            applyActions
             maxWidth={75}
             maxHeight={75}
           />
@@ -59,7 +64,7 @@ export default class Rule extends React.Component {
           onClick={() => this.setState({disclosed: !disclosed})}
           disclosed={disclosed}
         />
-        <input
+        <TapToEditLabel
           className="name"
           value={rule.name}
           onChange={this._onNameChange}

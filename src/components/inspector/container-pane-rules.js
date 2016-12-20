@@ -54,7 +54,7 @@ export default class ContainerPaneRules extends React.Component {
   _onRuleDeleted = (ruleId, event) => {
     const {character, dispatch} = this.props;
     const rules = JSON.parse(JSON.stringify(character.rules));
-    const [_, parentRule, parentIdx] = findRule({rules}, ruleId);
+    const [, parentRule, parentIdx] = findRule({rules}, ruleId);
     parentRule.rules.splice(parentIdx, 1);
     dispatch(changeCharacter(character.id, {rules}));
     if (!event.shiftKey) {

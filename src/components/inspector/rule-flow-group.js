@@ -1,9 +1,10 @@
 import React, {PropTypes} from 'react';
 import RuleStateCircle from './rule-state-circle';
 import DisclosureTriangle from './disclosure-triangle';
+import TapToEditLabel from '../tap-to-edit-label';
 
 import RuleList from './rule-list';
-import {FLOW_GROUP_TYPES} from '../../constants/constants';
+import {FLOW_BEHAVIORS} from '../../constants/constants';
 
 export default class RuleFlowGroup extends React.Component {
   static propTypes = {
@@ -11,6 +12,10 @@ export default class RuleFlowGroup extends React.Component {
     onClick: PropTypes.func,
     onDragStart: PropTypes.func,
     onDragEnd: PropTypes.func,
+  };
+
+  static contextTypes = {
+    onRuleChanged: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -21,7 +26,7 @@ export default class RuleFlowGroup extends React.Component {
   }
 
   _onNameChange = (event) => {
-
+    this.context.onRuleChanged(this.props.rule.id, {name: event.target.value});
   }
 
   render() {
@@ -44,11 +49,11 @@ export default class RuleFlowGroup extends React.Component {
             />
           </div>
           <select onChange={this._onSaveRules} value={rule.behavior}>
-            {Object.keys(FLOW_GROUP_TYPES).map((key) =>
-              <option key={key} value={key}>{FLOW_GROUP_TYPES[key]}</option>
+            {Object.keys(FLOW_BEHAVIORS).map((key) =>
+              <option key={key} value={key}>{FLOW_BEHAVIORS[key]}</option>
             )}
           </select>
-          <input
+          <TapToEditLabel
             className="name"
             value={rule.name}
             onChange={this._onNameChange}

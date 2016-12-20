@@ -373,11 +373,6 @@ body {
 
   input.name {
     width:120px;
-    &:hover, &:focus {
-      background-color: rgba(255,255,255,0.3);
-      border:1px solid rgba(255,255,255,0.5);
-      outline: none;
-    }
   }
 
   .rule-container {
@@ -573,7 +568,7 @@ button.btn.selected:active {
   border-radius: 7px;
   vertical-align: middle;
   display: inline-block;
-
+  
   &.rule {
     background-color: gray;
   }
@@ -582,5 +577,16 @@ button.btn.selected:active {
   }
   &.rule-event {
     background-color: $rule-event-color;
+  }
+}
+
+
+.tap-to-edit {
+  border:1px solid transparent;
+  cursor: text;
+  &:hover, &:focus {
+    background-color: rgba(255,255,255,0.3);
+    border:1px solid rgba(255,255,255,0.5);
+    outline: none;
   }
 }
