@@ -7,11 +7,11 @@ export function selectToolId(toolId) {
   };
 }
 
-export function select(characterId, actorId) {
+export function select(characterId, actorPath) {
   return {
     type: types.SELECT_DEFINITION_ID,
     characterId,
-    actorId,
+    actorPath,
   };
 }
 

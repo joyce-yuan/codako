@@ -4,7 +4,7 @@ import Rule from './rule';
 import RuleEventGroup from './rule-event-group';
 import RuleFlowGroup from './rule-flow-group';
 
-import {TOOL_TRASH} from '../../constants/constants';
+import {TOOL_TRASH, CONTAINER_TYPE_EVENT, CONTAINER_TYPE_FLOW} from '../../constants/constants';
 
 class RuleDropPlaceholder extends React.Component {
   render() {
@@ -21,7 +21,6 @@ export default class RuleList extends React.Component {
 
   static contextTypes = {
     onRuleMoved: PropTypes.func,
-    onRuleChanged: PropTypes.func,
     onRuleDeleted: PropTypes.func,
     onRulePickKey: PropTypes.func,
     onRuleReRecord: PropTypes.func,
@@ -47,10 +46,10 @@ export default class RuleList extends React.Component {
   }
 
   _componentForRule(rule) {
-    if (rule.type === 'group-event') {
+    if (rule.type === CONTAINER_TYPE_EVENT) {
       return RuleEventGroup;
     }
-    if (rule.type === 'group-flow') {
+    if (rule.type === CONTAINER_TYPE_FLOW) {
       return RuleFlowGroup;
     }
     return Rule;

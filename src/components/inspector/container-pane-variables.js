@@ -39,7 +39,7 @@ export default class ContainerPaneVariables extends React.Component {
   static propTypes = {
     character: PropTypes.object,
     actor: PropTypes.object,
-    stageUid: PropTypes.string,
+    selectedActorPath: PropTypes.string,
     dispatch: PropTypes.func,
   }
 
@@ -56,11 +56,14 @@ export default class ContainerPaneVariables extends React.Component {
     if (value.length && Number.isNaN(Number.parseFloat(value))) {
       return;
     }
-    const {actor, dispatch, stageUid} = this.props;
-    if (!actor) {
+
+    const {dispatch, selectedActorPath} = this.props;
+    if (!selectedActorPath) {
       this._onChangeVarDefinition(id, {value});
+      return;
     }
-    dispatch(changeActor(stageUid, actor.id, {
+    const [stageUid, actorId] = selectedActorPath.split(':');
+    dispatch(changeActor(stageUid, actorId, {
       variableValues: {
         [id]: value,
       },

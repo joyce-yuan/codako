@@ -26,7 +26,7 @@ class Stage extends React.Component {
       ymax: PropTypes.number,
     }),
     selectedToolId: PropTypes.string,
-    selectedActorId: PropTypes.string,
+    selectedActorPath: PropTypes.string,
     characters: PropTypes.object,
     stage: PropTypes.shape({
       uid: PropTypes.string,
@@ -79,11 +79,14 @@ class Stage extends React.Component {
   }
 
   _onKeyDown = (event) => {
-    const {dispatch, selectedActorId, stage} = this.props;
+    const {dispatch, selectedActorPath, stage} = this.props;
 
     if (event.keyCode === 127 || event.keyCode === 8) {
-      if (selectedActorId) {
-        dispatch(deleteActor(stage.uid, selectedActorId));
+      if (selectedActorPath) {
+        const [stageUid, actorId] = selectedActorPath.split(':');
+        if (stageUid === stage.uid) {
+          dispatch(deleteActor(stage.uid, actorId));
+        }
       }
       return;
     }
@@ -205,14 +208,14 @@ class Stage extends React.Component {
   }
 
   _onSelectActor = (actor) => {
-    const {selectedToolId, dispatch} = this.props;
+    const {selectedToolId, stage: {uid}, dispatch} = this.props;
     if (selectedToolId === TOOL_POINTER) {
-      dispatch(select(actor.characterId, actor.id));
+      dispatch(select(actor.characterId, `${uid}:${actor.id}`));
     }
   }
 
   _renderActors() {
-    const {stage: {actors}, characters, selectedActorId} = this.props;
+    const {stage: {actors, uid}, characters, selectedActorPath} = this.props;
 
     return Object.keys(actors).map((id) => {
       const character = characters[actors[id].characterId];
@@ -220,7 +223,7 @@ class Stage extends React.Component {
         <ActorSprite
           key={id}
           draggable
-          selected={selectedActorId === id}
+          selected={selectedActorPath === `${uid}:${id}`}
           onClick={(event) => this._onClickActor(actors[id], event)}
           onDoubleClick={() => this._onSelectActor(actors[id])}
           character={character}
@@ -309,7 +312,7 @@ class Stage extends React.Component {
 
 function mapStateToProps(state) {
   return Object.assign({}, {
-    selectedActorId: state.ui.selectedActorId,
+    selectedActorPath: state.ui.selectedActorPath,
     selectedToolId: state.ui.selectedToolId,
     running: state.ui.playback.running,
     characters: state.characters,

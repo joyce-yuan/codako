@@ -2,7 +2,7 @@ import u from 'updeep';
 import objectAssign from 'object-assign';
 
 import * as Types from '../constants/action-types';
-import {FLOW_GROUP_TYPES} from '../constants/constants';
+import {FLOW_BEHAVIORS, CONTAINER_TYPE_EVENT, CONTAINER_TYPE_FLOW} from '../constants/constants';
 import initialState from './initial-state';
 import {findRule, pointIsInside, actionsBetweenStages} from '../utils/stage-helpers';
 
@@ -42,16 +42,14 @@ export default function charactersReducer(state = initialState.characters, actio
       if (!hasEvents) {
         rules = [{
           id: id + 1,
-          name: "",
-          type: "group-event",
+          type: CONTAINER_TYPE_EVENT,
           rules: rules,
           event: "idle",
         }];
       }
       rules.push({
         id: id,
-        name: "",
-        type: "group-event",
+        type: CONTAINER_TYPE_EVENT,
         rules: [],
         event: eventType,
         code: eventCode,
@@ -67,10 +65,10 @@ export default function charactersReducer(state = initialState.characters, actio
       const idleContainer = rules.find(r => r.event === 'idle') || {rules};
       idleContainer.rules.push({
         id,
-        name: "",
-        type: "group-flow",
+        behavior: Object.keys(FLOW_BEHAVIORS)[0],
+        name: "Untitled Group",
+        type: CONTAINER_TYPE_FLOW,
         rules: [],
-        behavior: Object.keys(FLOW_GROUP_TYPES)[0],
       });
       return u.updateIn(action.characterId, {rules}, state);
     }

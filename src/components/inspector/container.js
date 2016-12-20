@@ -15,7 +15,7 @@ class Container extends React.Component {
     characters: PropTypes.object,
     character: PropTypes.object,
     appliedRuleIds: PropTypes.object,
-    stageUid: PropTypes.string,
+    selectedActorPath: PropTypes.string,
     selectedToolId: PropTypes.string,
   };
 
@@ -45,7 +45,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {character, actor, dispatch, stageUid} = this.props;
+    const {character, actor, dispatch, selectedActorPath} = this.props;
     const {activeTab} = this.state;
 
     const ContentContainer = {
@@ -88,7 +88,7 @@ class Container extends React.Component {
         <ContentContainer
           character={character}
           actor={actor}
-          stageUid={stageUid}
+          selectedActorPath={selectedActorPath}
           dispatch={dispatch}
         />
       </div>
@@ -97,11 +97,22 @@ class Container extends React.Component {
 }
 
 function mapStateToProps(state) {
+  let actor = null;
+  if (state.ui.selectedActorPath) {
+    const [stageUid, actorId] = state.ui.selectedActorPath.split(':');
+    for (const stage of [state.stage, state.recording.beforeStage, state.recording.afterStage]) {
+      if (stage.uid === stageUid) {
+        actor = stage.actors[actorId];
+      }
+    }
+  }
+
   return Object.assign({}, state.ui, {
+    actor: actor,
     characters: state.characters,
     character: state.characters[state.ui.selectedCharacterId],
-    actor: state.stage.actors[state.ui.selectedActorId],
-    stageUid: state.stage.uid,
+    selectedToolId: state.ui.selectedToolId,
+    selectedActorPath: state.ui.selectedActorPath,
     appliedRuleIds: state.stage.applied,
 });
 }

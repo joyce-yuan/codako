@@ -14,7 +14,7 @@ export default function uiReducer(state = initialState.ui, action) {
     case Types.SELECT_DEFINITION_ID:
       return objectAssign({}, state, {
         selectedCharacterId: action.characterId,
-        selectedActorId: action.actorId,
+        selectedActorPath: action.actorPath,
       });
     case Types.UPDATE_PAINTING_STATE:
       return objectAssign({}, state, {

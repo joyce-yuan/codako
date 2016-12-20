@@ -6,7 +6,7 @@ export default {
   ui: {
     selectedToolId: 'pointer',
     selectedCharacterId: null,
-    selectedActorId: null,
+    selectedActorPath: null,
     playback: {
       speed: 500,
       running: false,
