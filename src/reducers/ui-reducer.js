@@ -5,8 +5,13 @@ import u from 'updeep';
 
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
-    case Types.UPDATE_PLAYBACK_STATE:
-      return u({playback: action.values}, state);
+    case Types.START_RECORDING: {
+      const {actorId, characterId} = window.store.getState().recording;
+      return objectAssign({}, state, {
+        selectedCharacterId: characterId,
+        selectedActorPath: `after:${actorId}`,
+      });
+    }
     case Types.SELECT_TOOL_ID:
       return objectAssign({}, state, {
         selectedToolId: action.toolId,
@@ -16,6 +21,8 @@ export default function uiReducer(state = initialState.ui, action) {
         selectedCharacterId: action.characterId,
         selectedActorPath: action.actorPath,
       });
+    case Types.UPDATE_PLAYBACK_STATE:
+      return u({playback: action.values}, state);
     case Types.UPDATE_PAINTING_STATE:
       return objectAssign({}, state, {
         paint: {

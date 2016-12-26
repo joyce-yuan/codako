@@ -1,4 +1,5 @@
-import {applyRuleAction, getVariableValue} from './stage-helpers';
+import {applyRuleAction, shuffleArray, getVariableValue} from './stage-helpers';
+
 
 export default function StageOperator(stage) {
   const {characters} = window.store.getState();
@@ -51,7 +52,7 @@ export default function StageOperator(stage) {
       let rules = [].concat(struct.rules);
 
       if (behavior === 'random') {
-        rules = rules.sort(() => Math.random());
+        rules = shuffleArray(rules);
       }
 
       for (const rule of rules) {

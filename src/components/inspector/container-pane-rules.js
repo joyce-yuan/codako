@@ -40,15 +40,26 @@ export default class ContainerPaneRules extends React.Component {
 
   _onRuleMoved = (movingRuleId, newParentId, newParentIdx) => {
     const rules = JSON.parse(JSON.stringify(this.props.character.rules));
-    const [newParentRule] = findRule({rules}, newParentId);
-    const [movingRule, oldParentRule, oldIdx] = findRule({rules}, movingRuleId);
+    const root = {rules};
+
+    const [movingRule, oldParentRule, oldIdx] = findRule(root, movingRuleId);
+    const [newParentRule] = newParentId ? findRule(root, newParentId) : [root];
+    if (!newParentRule) {
+      throw new Error(`Couldn't find new parent rule ID: ${newParentId}`);
+    }
+
+    // check that the rule isn't moving down into itself, which causes it to be detached
+    if (movingRule.rules && (movingRuleId === newParentId || findRule(movingRule, newParentId))) {
+      return;
+    }
+
     let newIdx = newParentIdx;
     if ((oldParentRule === newParentRule) && (newIdx > oldIdx)) {
       newIdx -= 1;
     }
     oldParentRule.rules.splice(oldIdx, 1);
     newParentRule.rules.splice(newIdx, 0, movingRule);
-    this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
+    this.props.dispatch(changeCharacter(this.props.character.id, root));
   }
 
   _onRuleDeleted = (ruleId, event) => {

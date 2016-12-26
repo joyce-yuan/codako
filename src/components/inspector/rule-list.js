@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react';
 
-import Rule from './rule';
-import RuleEventGroup from './rule-event-group';
-import RuleFlowGroup from './rule-flow-group';
+import ContentRule from './content-rule';
+import ContentEventGroup from './content-event-group';
+import ContentFlowGroup from './content-flow-group';
 
 import {TOOL_TRASH, CONTAINER_TYPE_EVENT, CONTAINER_TYPE_FLOW} from '../../constants/constants';
 
@@ -37,7 +37,7 @@ export default class RuleList extends React.Component {
 
   componentWillReceiveProps() {
     if (this.state.dragIndex !== -1) {
-      this.setState({dragIndex: -1});
+      this.setState({dragIndex: -1, dropIndex: -1});
     }
   }
 
@@ -45,19 +45,19 @@ export default class RuleList extends React.Component {
     clearTimeout(this._leaveTimeout);
   }
 
-  _componentForRule(rule) {
+  _contentForRule(rule) {
     if (rule.type === CONTAINER_TYPE_EVENT) {
-      return RuleEventGroup;
+      return ContentEventGroup;
     }
     if (rule.type === CONTAINER_TYPE_FLOW) {
-      return RuleFlowGroup;
+      return ContentFlowGroup;
     }
-    return Rule;
+    return ContentRule;
   }
 
   _dropIndexForRuleDragEvent(event) {
     const hasRuleId = event.dataTransfer.types.includes('rule-id');
-    if (!this.props.parentId || !hasRuleId) {
+    if (!hasRuleId) {
       return -1;
     }
 
@@ -73,12 +73,19 @@ export default class RuleList extends React.Component {
   }
 
   _onRuleClicked = (event, rule) => {
+    event.stopPropagation();
     if (this.context.selectedToolId === TOOL_TRASH) {
       this.context.onRuleDeleted(rule.id, event);
     }
   }
 
+  _onRuleDoubleClick = (event, rule) => {
+    event.stopPropagation();
+    this.context.onRuleReRecord(rule);
+  }
+
   _onDragStart = (event, rule) => {
+    event.stopPropagation();
     event.dataTransfer.setData('rule-id', rule.id);
     this.setState({
       dragIndex: this.props.rules.indexOf(rule),
@@ -95,11 +102,13 @@ export default class RuleList extends React.Component {
 
   _onDragOver = (event) => {
     clearTimeout(this._leaveTimeout);
+
     const dropIndex = this._dropIndexForRuleDragEvent(event);
     if (dropIndex === -1) {
-      event.preventDefault();
       return;
     }
+
+    event.preventDefault();
     this.setState({dropIndex});
   }
 
@@ -113,8 +122,10 @@ export default class RuleList extends React.Component {
     const ruleId = event.dataTransfer.getData('rule-id');
     const dropIndex = this._dropIndexForRuleDragEvent(event);
 
-    if (!this.props.parentId || !ruleId || (dropIndex === -1)) {
-      event.preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (!ruleId || (dropIndex === -1)) {
       return;
     }
 
@@ -131,16 +142,19 @@ export default class RuleList extends React.Component {
     }
 
     const items = rules.map((r) => {
-      const Component = this._componentForRule(r);
+      const ContentComponent = this._contentForRule(r);
       return (
-        <Component
+        <div
+          draggable
+          key={r.id}
+          className={`rule-container ${r.type}`}
           onClick={(event) => this._onRuleClicked(event, r)}
+          onDoubleClick={(event) => this._onRuleDoubleClick(event, r)}
           onDragStart={(event) => this._onDragStart(event, r)}
           onDragEnd={(event) => this._onDragEnd(event, r)}
-          onDoubleClick={() => this.context.onRuleReRecord(r)}
-          rule={r}
-          key={r.id}
-        />
+        >
+          <ContentComponent rule={r} />
+        </div>
       );
     });
 

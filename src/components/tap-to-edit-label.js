@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react';
 export default class TapToEditLabel extends React.Component {
   static propTypes = {
     value: PropTypes.string,
+    className: PropTypes.string,
     onChange: PropTypes.func,
   };
 

@@ -2,17 +2,18 @@ import React, {PropTypes} from 'react';
 import RuleStateCircle from './rule-state-circle';
 import DisclosureTriangle from './disclosure-triangle';
 import RuleList from './rule-list';
+import TapToEditLabel from '../tap-to-edit-label';
 
-import {nameForKey} from '../../utils/event-helpers';
+import {FLOW_BEHAVIORS} from '../../constants/constants';
 
-export default class RuleEventGroup extends React.Component {
+export default class ContentGroupFlow extends React.Component {
   static propTypes = {
     rule: PropTypes.object,
     onClick: PropTypes.func,
   };
 
   static contextTypes = {
-    onRulePickKey: PropTypes.func,
+    onRuleChanged: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -22,22 +23,12 @@ export default class RuleEventGroup extends React.Component {
     };
   }
 
-  _name() {
-    const {event, code} = this.props.rule;
+  _onNameChange = (event) => {
+    this.context.onRuleChanged(this.props.rule.id, {name: event.target.value});
+  }
 
-    if (event === 'key') {
-      return (
-        <span>
-          When the
-          <span className="keycode">{nameForKey(code)} Key</span>
-          is Pressed
-        </span>
-      );
-    }
-    if (event === 'click') {
-      return "When I'm Clicked";
-    }
-    return "When I'm Idle";
+  _onBehaviorChanged = (event) => {
+    this.context.onRuleChanged(this.props.rule.id, {behavior: event.target.value});
   }
 
   render() {
@@ -45,26 +36,29 @@ export default class RuleEventGroup extends React.Component {
     const {disclosed} = this.state;
 
     return (
-      <div className="rule-container event">
+      <div>
         <div className="header">
-          <div style={{float:'left', width: 20, lineHeight:'1.15em'}}>
+          <div style={{float:'left', width:20}}>
             <RuleStateCircle rule={rule} />
             <DisclosureTriangle
               onClick={() => this.setState({disclosed: !disclosed})}
               disclosed={disclosed}
             />
           </div>
-          <img className="icon" src={`/img/icon_event_${rule.event}.png`} />
-          <div
+          <select onChange={this._onBehaviorChanged} value={rule.behavior}>
+            {Object.keys(FLOW_BEHAVIORS).map((key) =>
+              <option key={key} value={key}>{FLOW_BEHAVIORS[key]}</option>
+            )}
+          </select>
+          <TapToEditLabel
             className="name"
-            onDoubleClick={() => this.context.onRulePickKey(rule.id)}
-          >
-            {this._name()}
-          </div>
+            value={rule.name}
+            onChange={this._onNameChange}
+          />
         </div>
         <RuleList
-          rules={rule.rules}
           parentId={rule.id}
+          rules={rule.rules}
           hidden={disclosed}
         />
       </div>

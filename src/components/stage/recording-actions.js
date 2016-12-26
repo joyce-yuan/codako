@@ -105,7 +105,7 @@ export default class RecordingActions extends React.Component {
     extent: PropTypes.object,
   };
 
-  _renderAction = (a, idx) => {
+  _renderAction(a, idx) {
     const {characters, beforeStage, afterStage, extent} = this.props;
     const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
     const character = characters[actor.characterId];
@@ -135,6 +135,33 @@ export default class RecordingActions extends React.Component {
         <li key={idx}>Remove {spriteComponent} from the stage</li>
       );
     }
+    if (a.type === 'variable') {
+      const select = (
+        <select value={a.operator}>
+          <option value="add">Add</option>
+          <option value="subtract">Subtract</option>
+          <option value="set">Set</option>
+        </select>
+      );
+
+      if (a.operator === 'set') {
+        return (
+          <li key={idx}>
+            {select}
+            <code>{character.variables[a.variable].name}</code> of
+            <ActorPositionCanvas position={actor.position} extent={extent} /> to
+            {spriteComponent}
+          </li>
+        );
+      }
+      return (
+        <li key={idx}>
+          {select}
+          <input type="text" value={a.value} /> to <code>{character.variables[a.variable].name}</code> of
+          {spriteComponent}
+        </li>
+      );
+    }
     if (a.type === 'appearance') {
       return (
         <li key={idx}>
@@ -156,7 +183,7 @@ export default class RecordingActions extends React.Component {
       <div style={{flex: 1, marginLeft: 3}}>
         <h2>It should...</h2>
         <ul>
-          {actions.map(this._renderAction)}
+          {actions.map((a, idx) => this._renderAction(a, idx))}
         </ul>
       </div>
     );

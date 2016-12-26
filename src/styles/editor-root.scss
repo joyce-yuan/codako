@@ -355,7 +355,7 @@ body {
 
 
 .rules-list {
-  padding-left: 0;
+  padding: 3px 0;
 
   .name {
     display:inline-block;
@@ -385,12 +385,12 @@ body {
     -webkit-box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
     box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
 
-    &.event {
+    &.group-event {
       background-color: $rule-event-color;
       .header { user-select: none; height:36px; }
     }
 
-    &.flow {
+    &.group-flow {
       background-color: $rule-flow-color;
       .header { user-select: none; height:50px; }
     }
@@ -444,7 +444,7 @@ body {
       margin-bottom:4px;
     }
 
-    ul {
+    ul.rules-list {
       background-color: rgba(0,0,0,0.3);
       padding-top:7px;
       padding-bottom:2px;
@@ -509,10 +509,10 @@ body {
 
 .rules-list.tool-pointer {
   .rule-container {
-    &.event {
+    &.group-event {
       cursor: pointer;
     }
-    &.flow {
+    &.group-flow {
       cursor: move;
       cursor: ns-resize;
     }
@@ -524,8 +524,8 @@ body {
 }
 .rules-list.tool-trash {
   .rule-container {
-    &.event:hover,
-    &.flow:hover,
+    &.group-event:hover,
+    &.group-flow:hover,
     &.rule:hover {
       background-color:#d05959;
     }

@@ -9,6 +9,16 @@ export function pointIsInside(...args) {
   return !pointIsOutside(...args);
 }
 
+export function shuffleArray(d) {
+  for (let c = d.length - 1; c > 0; c--) {
+    const b = Math.floor(Math.random() * (c + 1));
+    const a = d[c];
+    d[c] = d[b];
+    d[b] = a;
+  }
+  return d;
+}
+
 export function buildActorsFromRule(rule, characters, {applyActions = false, offsetX = 0, offsetY = 0}) {
   const actors = {};
   
@@ -98,7 +108,38 @@ export function findRule(node, id) {
   return null;
 }
 
-export function actionsBetweenStages({beforeStage, afterStage, extent}) {
+export function actionsForVariables({beforeActor, afterActor, character}) {
+  if (!afterActor) {
+    return [];
+  }
+
+  const actions = [];
+  for (const vkey of Object.keys(character.variables)) {
+    const before = beforeActor ? getVariableValue(beforeActor, character, vkey) : undefined;
+    const after = getVariableValue(afterActor, character, vkey);
+    let [op, value] = [null, null];
+
+    if (after === before + 1) {
+      [op, value] = ['add', 1];
+    } else if (after > before) {
+      [op, value] = ['set', after - before];
+    } else if (after < before) {
+      [op, value] = ['subtract', before - after];
+    }
+    if (op) {
+      actions.push({
+        actorId: beforeActor.id,
+        type: 'variable',
+        operation: op,
+        variable: vkey,
+        value: value,
+      });
+    }
+  }
+  return actions;
+}
+
+export function actionsBetweenStages({characters, beforeStage, afterStage, extent}) {
   if (!beforeStage.actors || !afterStage.actors) {
     return [];
   }
@@ -110,7 +151,9 @@ export function actionsBetweenStages({beforeStage, afterStage, extent}) {
       return;
     }
     const {x: bx, y: by} = beforeActor.position;
+    const character = characters[beforeActor.characterId];
     const afterActor = afterStage.actors[beforeActor.id];
+
     if (afterActor) {
       const {x: ax, y: ay} = afterActor.position;
       if (ax !== bx || ay !== by) {
@@ -130,6 +173,7 @@ export function actionsBetweenStages({beforeStage, afterStage, extent}) {
           to: afterActor.appearance,
         });
       }
+      actions.push(...actionsForVariables({beforeActor, afterActor, character}));
     } else {
       actions.push({
         actorId: beforeActor.id,
@@ -145,6 +189,7 @@ export function actionsBetweenStages({beforeStage, afterStage, extent}) {
 
   createdIds.forEach((id) => {
     const actor = afterStage.actors[id];
+    const character = characters[actor.characterId];
     if (pointIsOutside(actor.position, extent)) {
       return;
     }
@@ -152,6 +197,11 @@ export function actionsBetweenStages({beforeStage, afterStage, extent}) {
       actorId: actor.id,
       type: 'create',
     });
+    actions.push(...actionsForVariables({
+      beforeActor: null,
+      afterActor: actor,
+      character,
+    }));
   });
   
   return actions;

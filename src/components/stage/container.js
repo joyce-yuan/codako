@@ -44,18 +44,18 @@ class StageContainer extends React.Component {
       } else if (recording.phase === RECORDING_PHASE_RECORD) {
         stageA = (
           <Stage
+            style={{marginRight: 2}}
             stage={recording.beforeStage}
             recordingExtent={recording.extent}
             recordingCentered
-            style={{marginRight: 2}}
           />
         );
         stageB = (
           <Stage
+            style={{marginLeft: 2}}
             stage={recording.afterStage}
             recordingExtent={recording.extent}
             recordingCentered
-            style={{marginLeft: 2}}
           />
         );
         actions = (
@@ -67,7 +67,10 @@ class StageContainer extends React.Component {
               extent={recording.extent}
               dispatch={dispatch}
             />
-            <RecordingActions {...recording} characters={characters} />
+            <RecordingActions
+              characters={characters}
+              {...recording}
+            />
           </div>
         );
       }

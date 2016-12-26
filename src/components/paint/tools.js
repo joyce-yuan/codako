@@ -212,7 +212,7 @@ export class PixelMagicSelectionTool extends PixelTool {
     this.name = 'magicWand';
   }
 
-  mousemove(point, {imageData}, state) {
+  mouseup(point, {imageData}, state) {
     const selectionPixels = [];
     imageData.getContiguousPixels(point, null, (p) => {
       selectionPixels.push(p);

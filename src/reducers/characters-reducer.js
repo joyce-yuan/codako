@@ -39,22 +39,24 @@ export default function charactersReducer(state = initialState.characters, actio
         return state;
       }
 
-      if (!hasEvents) {
-        rules = [{
-          id: id + 1,
-          type: CONTAINER_TYPE_EVENT,
-          rules: rules,
-          event: "idle",
-        }];
-      }
-      rules.push({
+      const rule = {
         id: id,
         type: CONTAINER_TYPE_EVENT,
         rules: [],
         event: eventType,
         code: eventCode,
-      });
+      };
 
+      if (!hasEvents) {
+        rules = [rule, {
+          id: id + 1,
+          type: CONTAINER_TYPE_EVENT,
+          rules: rules,
+          event: "idle",
+        }];
+      } else {
+        rules.unshift(rule);
+      }
       return u.updateIn(action.characterId, {rules}, state);
     }
 
@@ -74,7 +76,7 @@ export default function charactersReducer(state = initialState.characters, actio
     }
 
     case Types.FINISH_RECORDING: {
-      const {recording} = window.store.getState();
+      const {recording, characters} = window.store.getState();
       const rules = JSON.parse(JSON.stringify(state[recording.characterId].rules));
 
       // locate the main actor in the recording to "re-center" the extent to it
@@ -91,10 +93,11 @@ export default function charactersReducer(state = initialState.characters, actio
         }
       }
       const recordedRule = {
+        type: 'rule',
         mainActorId: recording.actorId,
         conditions: recording.conditions,
         actors: recordingActors,
-        actions: actionsBetweenStages(recording),
+        actions: actionsBetweenStages({characters, ...recording}),
         extent: {
           xmin: recording.extent.xmin - mainActor.position.x,
           xmax: recording.extent.xmax - mainActor.position.x,

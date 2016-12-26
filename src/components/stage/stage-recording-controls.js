@@ -3,11 +3,14 @@ import React, {PropTypes} from 'react';
 import {Button} from 'reactstrap';
 import {cancelRecording, startRecording, finishRecording} from '../../actions/recording-actions';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
+import {actionsBetweenStages} from '../../utils/stage-helpers';
 
 export default class StageRecordingControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     phase: PropTypes.string,
+    beforeStage: PropTypes.object,
+    afterStage: PropTypes.object,
     characters: PropTypes.object,
     characterId: PropTypes.string,
   };
@@ -25,6 +28,10 @@ export default class StageRecordingControls extends React.Component {
       this.props.dispatch(startRecording());
     }
     if (this.props.phase === RECORDING_PHASE_RECORD) {
+      if (actionsBetweenStages({...this.props, characters: this.props.characters}).length === 0) {
+        window.alert("To create a rule, edit the right stage by changing appearances, moving actors, or modifying a variable.");
+        return;
+      }
       this.props.dispatch(finishRecording());
     }
   }

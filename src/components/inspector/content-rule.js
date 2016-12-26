@@ -5,13 +5,9 @@ import RuleStateCircle from './rule-state-circle';
 import DisclosureTriangle from './disclosure-triangle';
 import TapToEditLabel from '../tap-to-edit-label';
 
-export default class Rule extends React.Component {
+export default class ContentRule extends React.Component {
   static propTypes = {
     rule: PropTypes.object,
-    onClick: PropTypes.func,
-    onDoubleClick: PropTypes.func,
-    onDragStart: PropTypes.func,
-    onDragEnd: PropTypes.func,
   };
 
   static contextTypes = {
@@ -30,18 +26,11 @@ export default class Rule extends React.Component {
   }
 
   render() {
-    const {rule, onDragStart, onDragEnd, onClick, onDoubleClick} = this.props;
+    const {rule} = this.props;
     const {disclosed} = this.state;
 
     return (
-      <div
-        className="rule-container rule"
-        draggable
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onClick={onClick}
-        onDoubleClick={onDoubleClick}
-      >
+      <div>
         <div className="zerospace">
           <RuleStateCircle rule={rule} />
         </div>
