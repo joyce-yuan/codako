@@ -12,6 +12,11 @@ export default function uiReducer(state = initialState.ui, action) {
         selectedActorPath: `after:${actorId}`,
       });
     }
+    case Types.FINISH_RECORDING: {
+      return objectAssign({}, state, {
+        selectedActorPath: null,
+      });
+    }
     case Types.SELECT_TOOL_ID:
       return objectAssign({}, state, {
         selectedToolId: action.toolId,

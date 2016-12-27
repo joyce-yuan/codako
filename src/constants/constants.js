@@ -1,11 +1,15 @@
 export const STAGE_CELL_SIZE = 40;
+
 export const FLOW_BEHAVIORS = {
-  'first': 'Do First Match',
-  'all': 'Do All & Continue',
-  'random': 'Randomize & Do First',
+  FIRST: 'first',
+  ALL: 'all',
+  RANDOM: 'random',
 };
-export const CONTAINER_TYPE_EVENT = 'group-event';
-export const CONTAINER_TYPE_FLOW = 'group-flow';
+
+export const CONTAINER_TYPES = {
+  EVENT: 'group-event',
+  FLOW: 'group-flow',
+};
 
 export const SPEED_OPTIONS = {
   'Slow': 1000,

@@ -4,7 +4,7 @@ import ContentRule from './content-rule';
 import ContentEventGroup from './content-event-group';
 import ContentFlowGroup from './content-flow-group';
 
-import {TOOL_TRASH, CONTAINER_TYPE_EVENT, CONTAINER_TYPE_FLOW} from '../../constants/constants';
+import {TOOL_TRASH, CONTAINER_TYPES} from '../../constants/constants';
 
 class RuleDropPlaceholder extends React.Component {
   render() {
@@ -46,10 +46,10 @@ export default class RuleList extends React.Component {
   }
 
   _contentForRule(rule) {
-    if (rule.type === CONTAINER_TYPE_EVENT) {
+    if (rule.type === CONTAINER_TYPES.EVENT) {
       return ContentEventGroup;
     }
-    if (rule.type === CONTAINER_TYPE_FLOW) {
+    if (rule.type === CONTAINER_TYPES.FLOW) {
       return ContentFlowGroup;
     }
     return ContentRule;

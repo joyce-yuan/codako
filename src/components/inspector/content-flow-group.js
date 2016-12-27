@@ -46,9 +46,9 @@ export default class ContentGroupFlow extends React.Component {
             />
           </div>
           <select onChange={this._onBehaviorChanged} value={rule.behavior}>
-            {Object.keys(FLOW_BEHAVIORS).map((key) =>
-              <option key={key} value={key}>{FLOW_BEHAVIORS[key]}</option>
-            )}
+            <option key={FLOW_BEHAVIORS.FIRST} value={FLOW_BEHAVIORS.FIRST}>Do First Match</option>
+            <option key={FLOW_BEHAVIORS.ALL} value={FLOW_BEHAVIORS.ALL}>Do All &amp; Continue</option>
+            <option key={FLOW_BEHAVIORS.RANDOM} value={FLOW_BEHAVIORS.RANDOM}>Randomize &amp; Do First</option>
           </select>
           <TapToEditLabel
             className="name"

@@ -1,5 +1,5 @@
 import {applyRuleAction, shuffleArray, getVariableValue} from './stage-helpers';
-
+import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 
 export default function StageOperator(stage) {
   const {characters} = window.store.getState();
@@ -47,11 +47,11 @@ export default function StageOperator(stage) {
     );
   }
 
-  function ActorOperator(actor) {
-    function tickRules(struct, behavior = 'first') {
+  function ActorOperator(actorId) {
+    function tickRulesTree(struct, behavior = FLOW_BEHAVIORS.FIRST) {
       let rules = [].concat(struct.rules);
 
-      if (behavior === 'random') {
+      if (behavior === FLOW_BEHAVIORS.RANDOM) {
         rules = shuffleArray(rules);
       }
 
@@ -59,7 +59,7 @@ export default function StageOperator(stage) {
         if (tickRule(rule)) {
           stage.applied[rule.id] = true;
           stage.applied[struct.id] = true;
-          if (behavior !== 'all') {
+          if (behavior !== FLOW_BEHAVIORS.ALL) {
             break;
           }
         }
@@ -69,12 +69,10 @@ export default function StageOperator(stage) {
     }
 
     function tickRule(rule) {
-      if (rule.type === 'group-event') {
-        if (checkEvent(rule)) {
-          return tickRules(rule, 'first');
-        }
-      } else if (rule.type === 'group-flow') {
-        return tickRules(rule, rule.behavior);
+      if ((rule.type === CONTAINER_TYPES.EVENT) && checkEvent(rule)) {
+        return tickRulesTree(rule, FLOW_BEHAVIORS.FIRST);
+      } else if (rule.type === CONTAINER_TYPES.FLOW) {
+        return tickRulesTree(rule, rule.behavior);
       } else if (checkRuleScenario(rule)) {
         applyRule(rule);
         return true;
@@ -87,7 +85,7 @@ export default function StageOperator(stage) {
         return (stage.input.keys[trigger.code]);
       }
       if (trigger.event === 'click') {
-        return (stage.input.clicks[actor.id]);
+        return (stage.input.clicks[actorId]);
       }
       if (trigger.event === 'idle') {
         return true;
@@ -96,13 +94,15 @@ export default function StageOperator(stage) {
     }
 
     function checkRuleScenario(rule) {
+      const rootActor = stage.actors[actorId];
+      
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
           if (rule.extent.ignored.includes(`${x},${y}`)) {
             continue;
           }
           const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
-          const stagePosition = {x: actor.position.x + x, y: actor.position.y + y};
+          const stagePosition = {x: rootActor.position.x + x, y: rootActor.position.y + y};
           const stageActors = actorsAtPosition(stagePosition);
 
           if (stageActors === null) {
@@ -131,6 +131,7 @@ export default function StageOperator(stage) {
 
     function applyRule(rule) {
       for (const action of rule.actions) {
+        const rootActor = stage.actors[actorId];
         // pos = @stage.wrappedPosition(pos) if @stage
 
         if (action.type === 'create') {
@@ -138,18 +139,18 @@ export default function StageOperator(stage) {
           // actor._id = Math.createUUID() unless rule.editing
         } else {
           // find the actor on the stage that matches
-          const ruleActor = rule.actors[action.actorId];
-          const ruleActorConditions = rule.conditions[action.actorId];
+          const actionActor = rule.actors[action.actorId];
+          const actionActorConditions = rule.conditions[action.actorId];
 
           const stagePosition = {
-            x: actor.position.x + ruleActor.position.x,
-            y: actor.position.y + ruleActor.position.y,
+            x: rootActor.position.x + actionActor.position.x,
+            y: rootActor.position.y + actionActor.position.y,
           };
           const stageCandidates = actorsAtPosition(stagePosition);
           if (!stageCandidates) {
             throw new Error(`Couldn't apply action because the position is not valid.`);
           }
-          const stageActor = stageCandidates.find(a => actorsMatch(a, ruleActor, ruleActorConditions));
+          const stageActor = stageCandidates.find(a => actorsMatch(a, actionActor, actionActorConditions));
           if (!stageActor) {
             throw new Error(`Couldn't find the actor for performing rule: ${rule}`);
           }
@@ -160,7 +161,8 @@ export default function StageOperator(stage) {
 
     return {
       tick() {
-        tickRules(characters[actor.characterId]);
+        const {characterId} = stage.actors[actorId];
+        tickRulesTree(characters[characterId]);
       }
     };
   }
@@ -168,8 +170,8 @@ export default function StageOperator(stage) {
   return {
     tick() {
       stage.applied = {};
-      Object.values(stage.actors).forEach(actor =>
-        ActorOperator(actor).tick()
+      Object.keys(stage.actors).forEach(actorId =>
+        ActorOperator(actorId).tick()
       );
       stage.input = {
         keys: {},
