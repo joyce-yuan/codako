@@ -139,7 +139,17 @@ export function actionsForVariables({beforeActor, afterActor, character}) {
   return actions;
 }
 
-export function actionsBetweenStages({characters, beforeStage, afterStage, extent}) {
+export function createdActorsForRecording({beforeStage, afterStage, extent}) {
+  const beforeIds = Object.keys(beforeStage.actors);
+  const afterIds = Object.keys(afterStage.actors);
+  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
+
+  return createdIds.map((id) => afterStage.actors[id]).filter(a => 
+    pointIsInside(a.position, extent)
+  );
+}
+
+export function actionsForRecording({characters, beforeStage, afterStage, extent}) {
   if (!beforeStage.actors || !afterStage.actors) {
     return [];
   }
@@ -182,17 +192,8 @@ export function actionsBetweenStages({characters, beforeStage, afterStage, exten
     }
   });
 
-  // find created actors
-  const beforeIds = Object.keys(beforeStage.actors);
-  const afterIds = Object.keys(afterStage.actors);
-  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
-
-  createdIds.forEach((id) => {
-    const actor = afterStage.actors[id];
+  createdActorsForRecording({beforeStage, afterStage, extent}).forEach((actor) => {
     const character = characters[actor.characterId];
-    if (pointIsOutside(actor.position, extent)) {
-      return;
-    }
     actions.push({
       actorId: actor.id,
       type: 'create',

@@ -4,7 +4,7 @@ import objectAssign from 'object-assign';
 import initialState from './initial-state';
 import * as Types from '../constants/action-types';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
-import {findRule, pointIsInside, actionsBetweenStages} from '../utils/stage-helpers';
+import {findRule, pointIsInside, actionsForRecording, createdActorsForRecording} from '../utils/stage-helpers';
 
 export default function charactersReducer(state = initialState.characters, action) {
   switch (action.type) {
@@ -81,8 +81,10 @@ export default function charactersReducer(state = initialState.characters, actio
 
       // locate the main actor in the recording to "re-center" the extent to it
       const mainActor = Object.values(recording.beforeStage.actors).find(a => a.id === recording.actorId);
+      const allActors = createdActorsForRecording(recording).concat(Object.values(recording.beforeStage.actors));
       const recordingActors = {};
-      for (const a of Object.values(recording.beforeStage.actors)) {
+
+      for (const a of allActors) {
         if (pointIsInside(a.position, recording.extent)) {
           recordingActors[a.id] = objectAssign({}, a, {
             position: {
@@ -97,7 +99,7 @@ export default function charactersReducer(state = initialState.characters, actio
         mainActorId: recording.actorId,
         conditions: recording.conditions,
         actors: recordingActors,
-        actions: actionsBetweenStages({characters, ...recording}),
+        actions: actionsForRecording({characters, ...recording}),
         extent: {
           xmin: recording.extent.xmin - mainActor.position.x,
           xmax: recording.extent.xmax - mainActor.position.x,

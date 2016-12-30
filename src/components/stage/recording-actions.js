@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import Sprite from '../sprites/sprite';
-import {actionsBetweenStages} from '../../utils/stage-helpers';
+import {actionsForRecording} from '../../utils/stage-helpers';
 
 const DELTA_SQUARE_SIZE = 10;
 
@@ -177,7 +177,7 @@ export default class RecordingActions extends React.Component {
   }
 
   render() {
-    const actions = actionsBetweenStages(this.props);
+    const actions = actionsForRecording(this.props);
 
     return (
       <div style={{flex: 1, marginLeft: 3}}>
