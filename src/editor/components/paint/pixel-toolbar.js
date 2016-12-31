@@ -19,7 +19,7 @@ export default class PixelToolbar extends React.Component {
             className={classNames({'tool': true, 'selected': tool === t})}
             onClick={() => onToolChange(t)}
           >
-            <img src={`/img/tool_${t.name}.png`} />
+            <img src={`/editor/img/tool_${t.name}.png`} />
           </button>
         )}
       </div>

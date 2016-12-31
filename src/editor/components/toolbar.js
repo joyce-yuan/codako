@@ -30,7 +30,7 @@ class Toolbar extends React.Component {
         className={classes}
         onClick={() => dispatch(actions.selectToolId(toolId))}
       >
-        <img src={`/img/sidebar_${toolId}.png`} />
+        <img src={`/editor/img/sidebar_${toolId}.png`} />
       </Button>
     );
   }

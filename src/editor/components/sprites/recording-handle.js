@@ -23,7 +23,7 @@ export default class RecordingHandle extends React.Component {
         draggable
         onDragStart={this._onDragStart}
         className={`handle-${side}`}
-        src={`/img/tiles/handle_${side}.png`}
+        src={`/editor/img/tiles/handle_${side}.png`}
         style={{
           position: 'absolute',
           width: STAGE_CELL_SIZE,

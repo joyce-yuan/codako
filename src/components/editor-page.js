@@ -1,14 +1,5 @@
 import React from 'react';
-import Toolbar from './toolbar';
-import Library from './library';
-import StageContainer from './stage/container';
-import InspectorContainer from './inspector/container';
-import PaintContainer from './paint/container';
-import KeypickerContainer from './keypicker/container';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/editor-root.scss';
-import '../styles/font-awesome.min.css';
+import EditorRoot from '../editor/root';
 
 export default class EditorPage extends React.Component {
   constructor(props, context) {
@@ -17,18 +8,7 @@ export default class EditorPage extends React.Component {
 
   render() {
     return (
-      <div className="editor">
-        <Toolbar />
-        <div className="stage-container">
-          <StageContainer />
-          <Library />
-        </div>
-        <InspectorContainer />
-
-        <PaintContainer />
-        <KeypickerContainer />
-      </div>
-
+      <EditorRoot />
     );
   }
 }

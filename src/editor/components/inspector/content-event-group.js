@@ -54,7 +54,7 @@ export default class ContentEventGroup extends React.Component {
               disclosed={disclosed}
             />
           </div>
-          <img className="icon" src={`/img/icon_event_${rule.event}.png`} />
+          <img className="icon" src={`/editor/img/icon_event_${rule.event}.png`} />
           <div
             className="name"
             onDoubleClick={() => this.context.onRulePickKey(rule.id)}

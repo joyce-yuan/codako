@@ -4,11 +4,25 @@ import React from 'react';
 import {render} from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
+
+// Add support for touch-based click events
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
+
+// Apply various polyfills
+import objectValues from 'object.values';
+if (!Object.values) {
+  objectValues.shim();
+}
+
 import routes from './routes';
 import configureStore from './store/configureStore';
-require('./favicon.ico'); // Tell webpack to load favicon.ico
-import './styles/styles.scss'; // Yep, that's right. You can import SASS/CSS files too! Webpack will run the associated loader and plug this into the page.
-import { syncHistoryWithStore } from 'react-router-redux';
+
+require('./favicon.ico');
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/styles.scss';
+import './styles/font-awesome.min.css';
 
 const store = configureStore();
 window.store = store;

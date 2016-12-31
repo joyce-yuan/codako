@@ -66,7 +66,7 @@ export function createCharacterAppearance(characterId) {
     characterId: characterId,
     values: {
       spritesheet: {
-        appearances: {[newAnimationId]: ['/img/splat.png']},
+        appearances: {[newAnimationId]: ['/editor/img/splat.png']},
         appearanceNames: {[newAnimationId]: 'Untitled'},
       },
     },

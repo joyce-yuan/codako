@@ -1,16 +1,13 @@
-import { combineReducers } from 'redux';
-import uiReducer from './ui-reducer';
-import charactersReducer from './characters-reducer';
-import stageReducer from './stage-reducer';
-import recordingReducer from './recording-reducer';
 import {routerReducer} from 'react-router-redux';
+import objectAssign from 'object-assign';
 
-const rootReducer = combineReducers({
-  characters: charactersReducer,
-  stage: stageReducer,
-  ui: uiReducer,
-  routing: routerReducer,
-  recording: recordingReducer,
-});
+import mainReducer from './main-reducer';
+import initialState from './initial-state';
 
-export default rootReducer;
+export default (state = initialState, action) => {
+  let nextState = objectAssign({}, state);
+  nextState = mainReducer(nextState, action);
+  nextState.routing = routerReducer(nextState.routing, action);
+
+  return nextState;
+};
