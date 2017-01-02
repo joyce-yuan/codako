@@ -3,13 +3,14 @@ import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Container, Row, Col, Button} from 'reactstrap';
 
+import * as CustomPropTypes from '../constants/custom-prop-types';
 import {register} from '../actions/main-actions';
 
 class JoinPage extends React.Component {
   static propTypes = {
     router: PropTypes.object,
     dispatch: PropTypes.func,
-    networkError: PropTypes.object,
+    networkError: CustomPropTypes.BoomNetworkError,
     location: PropTypes.shape({
       state: PropTypes.shape({
         redirectTo: PropTypes.string,
@@ -40,7 +41,7 @@ class JoinPage extends React.Component {
     const {location, networkError} = this.props;
     const redirectPresent = location.state && location.state.redirectTo;
 
-    let message = null;
+    let message = '';
     let messageClass = null;
     if (redirectPresent) {
       message = 'Sorry, you need to log in to view that page.';
@@ -74,19 +75,18 @@ class JoinPage extends React.Component {
                 </div>
               )}
               <form className="card-block" onSubmit={this._onSubmit}>
-                <div className="form-group">
+                <div className={`form-group ${message.includes('username') ? 'has-danger' : ''}`}>
                   <label htmlFor="username">Username</label>
-                  <input className="form-control" id="username" ref="username" />
+                  <input className={`form-control ${message.includes('username') ? 'form-control-danger' : ''}`} id="username" ref="username" />
                   <small className="form-text text-muted">
-                    This will be your username — you can enter your
-                    organization’s username next.
+                    This will be your username — you don't need to use your real name!
                   </small>
                 </div>
-                <div className="form-group">
+                <div className={`form-group ${message.includes('email') ? 'has-danger' : ''}`}>
                   <label htmlFor="email">Email Address</label>
-                  <input className="form-control" id="email" ref="email" />
+                  <input className={`form-control ${message.includes('email') ? 'form-control-danger' : ''}`} id="email" ref="email" />
                   <small className="form-text text-muted">
-                    You will occasionally receive account related emails.
+                    You will occasionally receive emails from Codako.
                     We promise not to share your email with anyone.
                   </small>
                 </div>
@@ -94,7 +94,7 @@ class JoinPage extends React.Component {
                   <label htmlFor="password">Password</label>
                   <input className="form-control" id="password" ref="pass" type="password" />
                   <small className="form-text text-muted">
-                    Use at least one lowercase letter, one numeral, and seven characters.
+                    Use at least one lowercase letter, one numeral, and six characters.
                   </small>
                 </div>
                 <hr />

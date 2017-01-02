@@ -1,4 +1,5 @@
 import * as Types from '../constants/action-types';
+import { LOCATION_CHANGE } from 'react-router-redux'
 import objectAssign from 'object-assign';
 
 export default function mainReducer(state, action) {
@@ -13,6 +14,14 @@ export default function mainReducer(state, action) {
         network: {
           pending: state.network.pending + action.delta,
           error: action.error,
+        },
+      });
+    }
+    case LOCATION_CHANGE: {
+      return objectAssign({}, state, {
+        network: {
+          pending: 0,
+          error: null,
         },
       });
     }

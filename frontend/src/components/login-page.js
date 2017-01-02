@@ -3,13 +3,14 @@ import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Container, Row, Col, Button} from 'reactstrap';
 
+import * as CustomPropTypes from '../constants/custom-prop-types';
 import {login} from '../actions/main-actions';
 
 class LoginPage extends React.Component {
   static propTypes = {
     router: PropTypes.object,
     dispatch: PropTypes.func,
-    networkError: PropTypes.object,
+    networkError: CustomPropTypes.BoomNetworkError,
     location: PropTypes.shape({
       state: PropTypes.shape({
         redirectTo: PropTypes.string,
