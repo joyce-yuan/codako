@@ -10,6 +10,16 @@ body {
   padding: 0;
 }
 
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.page-content-flex {
+  flex: 1;
+}
+
 td {
 	padding: 12px;
 }
@@ -41,6 +51,7 @@ td {
 .home-region.light-green {
   background-color: #EBF1E7;
 }
+
 .footer {
   background-color: #222;
   color: #ddd;

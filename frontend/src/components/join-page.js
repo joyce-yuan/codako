@@ -18,10 +18,6 @@ class JoinPage extends React.Component {
     }),
   };
 
-  static layoutConsiderations = {
-    hidesNav: true,
-  };
-
   constructor(props, context) {
     super(props, context);
   }

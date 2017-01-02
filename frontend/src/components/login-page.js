@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 import {connect} from 'react-redux';
 import {Container, Row, Col, Button} from 'reactstrap';
 
@@ -79,6 +79,11 @@ class LoginPage extends React.Component {
                 </div>
                 <Button block color="primary" type="submit">Login</Button>
               </form>
+            </div>
+            <div className="card">
+              <div className="card-block text-xs-center">
+                New to Codako? <Link to="/join">Create an account</Link>.
+              </div>
             </div>
           </Col>
         </Row>

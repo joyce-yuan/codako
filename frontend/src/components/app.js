@@ -112,9 +112,11 @@ class App extends React.Component {
     const {hidesNav} = (children.type.WrappedComponent && children.type.WrappedComponent.layoutConsiderations) || {};
 
     return (
-      <div>
+      <div className="page-container">
         {!hidesNav && this._renderNav()}
-        {children}
+        <div className="page-content-flex">
+          {children}
+        </div>
         {!hidesNav && this._renderFooter()}
         <div className={`network-bar active-${network.pending > 0}`} />
       </div>
