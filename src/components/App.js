@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {Link, IndexLink} from 'react-router';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
-import {NavDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import {Button, NavDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 
 import {logout} from '../actions/main-actions';
 
@@ -69,13 +69,16 @@ class App extends React.Component {
               </li>
             </ul>
             <ul className="nav navbar-nav float-lg-right">
-                {user ? (
-                  <NavUserMenu user={user} dispatch={dispatch} />
-                ) : (
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Sign in</Link>
+              {user ? (
+                <NavUserMenu user={user} dispatch={dispatch} />
+              ) : ([
+                <li className="nav-item" key="sign-in">
+                  <Link to="/login"><Button >Sign in</Button></Link>
+                </li>,
+                <li className="nav-item" key="sign-up">
+                  <Link to="/join"><Button color="success" to="/join">Sign up</Button></Link>
                 </li>
-                )}
+              ])}
             </ul>
           </div>
         </div>

@@ -3,9 +3,9 @@ import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {Container, Row, Col, Button} from 'reactstrap';
 
-import {login} from '../actions/main-actions';
+import {register} from '../actions/main-actions';
 
-class LoginPage extends React.Component {
+class JoinPage extends React.Component {
   static propTypes = {
     router: PropTypes.object,
     dispatch: PropTypes.func,
@@ -28,13 +28,12 @@ class LoginPage extends React.Component {
   _onSubmit = (event) => {
     event.preventDefault();
 
-    const {location, dispatch} = this.props;
-    const nextPathname = location.state ? location.state.redirectTo : null;
-
-    dispatch(login({
+    const {dispatch} = this.props;
+    dispatch(register({
       email: this.refs.email.value,
       password: this.refs.pass.value,
-    }, nextPathname));
+      username: this.refs.username.value,
+    }));
   }
 
   render() {
@@ -55,10 +54,17 @@ class LoginPage extends React.Component {
     return (
       <Container>
         <Row>
-          <Col sm={{ size: 4, push: 3, pull: 3, offset: 1 }}>
+          <Col size={12}>
             <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
-              <h3>Sign in to Codako</h3>
+              <h3>Join Codako</h3>
+              <p>
+                The best way to design, build, and ship software.
+              </p>
             </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={{ size: 5, offset: 2 }}>
             <div className="card">
               {message && (
                 <div className={`card card-inverse card-${messageClass} card-block text-xs-center`}>
@@ -69,15 +75,49 @@ class LoginPage extends React.Component {
               )}
               <form className="card-block" onSubmit={this._onSubmit}>
                 <div className="form-group">
-                  <label htmlFor="email">Username or email address:</label>
-                  <input className="form-control" id="email" ref="email" />
+                  <label htmlFor="username">Username</label>
+                  <input className="form-control" id="username" ref="username" />
+                  <small className="form-text text-muted">
+                    This will be your username — you can enter your
+                    organization’s username next.
+                  </small>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="password">Password:</label>
-                  <input className="form-control" id="password" ref="pass" type="password" />
+                  <label htmlFor="email">Email Address</label>
+                  <input className="form-control" id="email" ref="email" />
+                  <small className="form-text text-muted">
+                    You will occasionally receive account related emails.
+                    We promise not to share your email with anyone.
+                  </small>
                 </div>
-                <Button block color="primary" type="submit">Login</Button>
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input className="form-control" id="password" ref="pass" type="password" />
+                  <small className="form-text text-muted">
+                    Use at least one lowercase letter, one numeral, and seven characters.
+                  </small>
+                </div>
+                <hr />
+                <p>
+                  By clicking on "Create an account" below, you are agreeing to the Terms of Service and the Privacy Policy.
+                </p>
+                <hr />
+                <Button color="primary" type="submit">Create an account</Button>
               </form>
+            </div>
+          </Col>
+          <Col sm={{ size: 3 }}>
+            <div className="card">
+              <div className="card-header">
+                Featured
+              </div>
+              <div className="card-block">
+                <ul>
+                  <li>Great communication</li>
+                  <li>Frictionless development</li>
+                  <li>Open source community</li>
+                </ul>
+              </div>
             </div>
           </Col>
         </Row>
@@ -92,4 +132,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(LoginPage));
+export default withRouter(connect(mapStateToProps)(JoinPage));

@@ -3,10 +3,10 @@ import {Link} from 'react-router';
 import {Container} from 'reactstrap';
 
 // Since this component is simple and static, there's no parent container for it.
-const AboutPage = () => {
+const DashboardPage = () => {
   return (
     <Container>
-      <h2>About</h2>
+      <h2>Dashboard</h2>
       <p>
         This example app is part of the <a href="https://github.com/coryhouse/react-slingshot">React-Slingshot
         starter kit</a>.
@@ -18,4 +18,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default DashboardPage;
