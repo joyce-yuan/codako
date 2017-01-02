@@ -1,5 +1,33 @@
 import * as types from '../constants/action-types';
 import {replace, push} from 'react-router-redux';
+import objectAssign from 'object-assign';
+
+function request(path, {method = 'GET', headers = {}, dispatch}) {
+  dispatch({
+    type: types.NETWORK_ACTIVITY,
+    error: null,
+    delta: 1,
+  });
+
+  return fetch(`http://api.lvh.me:4310${path}`, {
+    method,
+    headers: objectAssign({
+      'Content-Type': 'application/json',
+    }, headers),
+  })
+  .then((response) => response.json())
+  .then((json) => {
+    dispatch({
+      type: types.NETWORK_ACTIVITY,
+      error: json.error ? json : null,
+      delta: -1,
+    });
+    if (json.error) {
+      throw new Error(json.message);
+    }
+    return json;
+  });
+}
 
 export function logout() {
   return function(dispatch) {
@@ -13,26 +41,19 @@ export function logout() {
 
 export function login(username, password, redirectTo) {
   return function(dispatch) {
-    dispatch({
-      type: types.NETWORK_ACTIVITY,
-      error: null,
-      delta: 1,
-    });
-
-    setTimeout(() => {
+    request('/users/me', {
+      dispatch,
+      headers: {
+        'Authorization': `Basic ${btoa(username + ':' + password)}`,
+      },
+    }).then((user) => {
       dispatch({
         type: types.USER_CHANGED,
-        user: {
-          id: 1,
-          username: 'bengotow',
-        },
-      });
-      dispatch({
-        type: types.NETWORK_ACTIVITY,
-        error: null,
-        delta: -1,
+        user,
       });
       dispatch(replace(redirectTo || '/'));
-    }, 500);
+    }).catch((err) => {
+      console.error(err);
+    });
   };
 }

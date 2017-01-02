@@ -1,5 +1,3 @@
-import u from 'updeep';
-import objectAssign from 'object-assign';
 
 export function pointIsOutside({x, y}, {xmin, xmax, ymin, ymax}) {
   return (x < xmin || x > xmax || y < ymin || y > ymax);
@@ -7,6 +5,10 @@ export function pointIsOutside({x, y}, {xmin, xmax, ymin, ymax}) {
 
 export function pointIsInside(...args) {
   return !pointIsOutside(...args);
+}
+
+export function pointByAdding({x, y}, {x: dx, y: dy}) {
+  return {x: x + dx, y: y + dy};
 }
 
 export function shuffleArray(d) {
@@ -17,40 +19,6 @@ export function shuffleArray(d) {
     d[b] = a;
   }
   return d;
-}
-
-export function buildActorsFromRule(rule, characters, {applyActions = false, offsetX = 0, offsetY = 0}) {
-  const actors = {};
-  
-  for (const actor of Object.values(rule.actors)) {
-    actors[actor.id] = objectAssign({}, actor, {
-      position: {
-        x: actor.position.x + offsetX,
-        y: actor.position.y + offsetY,
-      },
-    });
-  }
-
-  // lay out the before state and apply any rules that apply to
-  // the actors currently on the board
-  if (applyActions && rule.actions) {
-    for (const action of rule.actions) {
-      if (action.type === 'create') {
-        actors[action.actor.id] = objectAssign({}, action.actor, {
-          variableValues: {},
-          position: {
-            x: action.offset.x + offsetX,
-            y: action.offset.y + offsetY,
-          },
-        });
-      } else {
-        const {actorId, characterId} = action;
-        actors[actorId] = applyRuleAction(actors[actorId], characters[characterId], action);
-      }
-    }
-  }
-
-  return actors;
 }
 
 export function getVariableValue(actor, character, id) {
@@ -77,22 +45,6 @@ export function applyVariableOperation(existing, operation, value) {
   throw new Error(`applyVariableOperation unknown operation ${operation}`);
 }
 
-export function applyRuleAction(actor, character, action) {
-  if (action.type === 'move') {
-    return u({position: {x: actor.position.x + action.delta.x, y: actor.position.y + action.delta.y}}, actor);
-  } else if (action.type === 'delete') {
-    return undefined;
-  } else if (action.type === 'appearance') {
-    return u({appearance: action.to}, actor);
-  } else if (action.type === 'variable') {
-    const current = getVariableValue(actor, character, action.variable);
-    const next = applyVariableOperation(current, action.operation, action.value);
-    return u({variableValues: {[action.variable]: next}}, actor);
-  }
-  throw new Error("Not sure how to apply action", action);
-}
-
-
 export function findRule(node, id) {
   for (let idx = 0; idx < node.rules.length; idx ++) {
     const n = node.rules[idx];
@@ -107,6 +59,7 @@ export function findRule(node, id) {
   }
   return null;
 }
+
 
 export function actionsForVariables({beforeActor, afterActor, character}) {
   if (!afterActor) {

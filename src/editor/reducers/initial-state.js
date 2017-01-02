@@ -19,6 +19,9 @@ export default {
     paint: {
       characterId: null,
       appearanceId: null,
+    },
+    settings: {
+      open: false,
     }
   },
   characters: characters,

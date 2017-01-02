@@ -1,13 +1,10 @@
 $tint-color: #5bc0de;
 $highlight-color: rgba($tint-color, 0.35);
 $outline-color: rgba(255, 255, 255, 0.78);
+$stage-default-background: gray;
 
 $rule-event-color: #5BC15C;
 $rule-flow-color: #5BA4CD;
-
-body {
-  background: url(../img/background.png) top left repeat;
-}
 
 .tool-trash {
   cursor: url(../img/cursor_trashcan.png), auto;
@@ -98,7 +95,7 @@ body {
 
       .stage-scroll-wrap {
         flex: 1;
-        overflow: hidden;
+        overflow: scroll;
         margin-bottom: 4px;
         position: relative;
         background-color: #222;
@@ -108,7 +105,7 @@ body {
         }
 
         .stage {
-          background-color: gray;
+          background-color: $stage-default-background;
           position: relative;
           outline: 0;
           transition: top 400ms ease-out, left 400ms ease-out;
@@ -191,6 +188,14 @@ body {
       .left {
         flex: 1;
         text-align: left;
+        .start-thumbnail {
+        }
+        .start-thumbnail img {
+          max-width: 100px;
+          max-height: 50px;
+          border: 2px solid white;
+          background: $stage-default-background;
+        }
       }
       .right {
         flex: 1;

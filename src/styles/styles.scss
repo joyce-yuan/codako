@@ -1,11 +1,10 @@
 /* Variables */
-$vin-blue: #5bb7db;
-$vin-green: #60b044;
-$vin-red: #ff0000;
+$brand-green: #6db33f;
 
 /* Styles */
 body {
   font-family: sans-serif;
+  background: #fcfcfc;
   color: #4d4d4d;
   margin: 0;
   padding: 0;
@@ -15,10 +14,6 @@ td {
 	padding: 12px;
 }
 
-h2 {
-	color: $vin-blue;
-}
-
 .network-bar {
   height: 2px;
   position: absolute;
@@ -26,7 +21,60 @@ h2 {
   left: 0;
   right: 0;
 
+  &.active-false {
+    background: $brand-green;
+  }
   &.active-true {
     background: blue;
+  }
+}
+
+
+.home-region {
+  padding-top: 45px;
+  padding-bottom: 45px;
+}
+.home-region.green {
+  background-color: $brand-green;
+  color: white;
+}
+.home-region.light-green {
+  background-color: #EBF1E7;
+}
+.footer {
+  background-color: #222;
+  color: #ddd;
+  clear: both;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 30px;
+}
+.footer .navbar {
+  position: relative;
+  left: -15px;
+  font-size: 0.9em;
+}
+.footer a {
+  color: #6db33f;
+}
+
+.hero {
+  padding-top: 100px;
+  padding-bottom: 60px;
+  text-align: center;
+  background: url(../img/splash-2.png) center center;
+  background-size: cover;
+  display: block;
+  p, h2 {
+    color: #f4f4f4;
+    display: inline-block;
+    padding: 9px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0.2px;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  p {
+    margin-bottom: 15px;
   }
 }

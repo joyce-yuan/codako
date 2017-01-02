@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
+import {Container, Row, Col, Button} from 'reactstrap';
 
 import {login} from '../actions/main-actions';
 
@@ -8,6 +9,7 @@ class LoginPage extends React.Component {
   static propTypes = {
     router: PropTypes.object,
     dispatch: PropTypes.func,
+    networkError: PropTypes.string,
     location: PropTypes.shape({
       state: PropTypes.shape({
         redirectTo: PropTypes.string,
@@ -15,11 +17,12 @@ class LoginPage extends React.Component {
     }),
   };
 
+  static layoutConsiderations = {
+    hidesNav: true,
+  };
+
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      error: false
-    };
   }
 
   _onSubmit = (event) => {
@@ -33,17 +36,58 @@ class LoginPage extends React.Component {
   }
 
   render() {
-    const {location} = this.props;
+    const {location, networkError} = this.props;
+    const redirectPresent = location.state && location.state.redirectTo;
+
+    let message = null;
+    let messageClass = null;
+    if (redirectPresent) {
+      message = 'Sorry, you need to log in to view that page.';
+      messageClass = 'info';
+    }
+    if (networkError) {
+      message = (networkError.statusCode === 401) ? 'Sorry, your username or password was incorrect.' : networkError.message;
+      messageClass = 'danger';
+    }
 
     return (
-      <form onSubmit={this._onSubmit}>
-        { location.state && location.state.redirectTo ? <div className="error">Sorry, you need to log in to view that page.</div> : null}
-        <label><input ref="email" placeholder="email" defaultValue="joe@example.com" /></label>
-        <label><input ref="pass" placeholder="password" /></label> (hint: password1)<br />
-        <button type="submit">Login</button>
-      </form>
+      <Container>
+        <Row>
+          <Col sm={{ size: 4, push: 3, pull: 3, offset: 1 }}>
+            <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
+              <h3>Sign in to Codako</h3>
+            </div>
+            <div className="card">
+              {message && (
+                <div className={`card card-inverse card-${messageClass} card-block text-xs-center`}>
+                  <blockquote className="card-blockquote">
+                    {message}
+                  </blockquote>
+                </div>
+              )}
+              <form className="card-block" onSubmit={this._onSubmit}>
+                <div className="form-group">
+                  <label htmlFor="email">Username or email address:</label>
+                  <input className="form-control" id="email" ref="email" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password:</label>
+                  <input className="form-control" id="password" ref="pass" type="password" />
+                </div>
+                <Button block color="primary" type="submit">Login</Button>
+              </form>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default withRouter(connect()(LoginPage));
+function mapStateToProps(state) {
+  return {
+    networkError: state.network.error,
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(LoginPage));

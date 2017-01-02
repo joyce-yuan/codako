@@ -3,7 +3,7 @@
 import React from 'react';
 import configureStore from './store/configureStore';
 const store = configureStore();
-window.store = store;
+window.editorStore = store;
 
 import {Provider} from 'react-redux';
 import Toolbar from './components/toolbar';
@@ -12,6 +12,7 @@ import StageContainer from './components/stage/container';
 import InspectorContainer from './components/inspector/container';
 import PaintContainer from './components/paint/container';
 import KeypickerContainer from './components/keypicker/container';
+import SettingsContainer from './components/settings/container';
 
 import './styles/editor.scss';
 
@@ -33,6 +34,7 @@ export default class EditorRoot extends React.Component {
 
           <PaintContainer />
           <KeypickerContainer />
+          <SettingsContainer />
         </div>
       </Provider>
     );

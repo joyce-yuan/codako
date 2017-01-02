@@ -5,7 +5,7 @@ import stageReducer from './stage-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
-import {buildActorsFromRule} from '../utils/stage-helpers';
+import StageOperator from '../utils/stage-operator';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
 
 export default function recordingReducer(state = initialState.recording, action) {
@@ -17,7 +17,7 @@ export default function recordingReducer(state = initialState.recording, action)
   
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
-      const {stage} = window.store.getState();
+      const {stage} = window.editorStore.getState();
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
@@ -40,7 +40,7 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const {characters, stage} = window.store.getState();
+      const {characters, stage} = window.editorStore.getState();
       const character = characters[action.characterId];
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);
@@ -73,10 +73,18 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.EDIT_RULE_RECORDING: {
-      const {characters, stage} = window.store.getState();
+      const {stage} = window.editorStore.getState();
       const {characterId, rule} = action;
-      const offsetX = Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2));
-      const offsetY = Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2));
+      const offset = {
+        x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
+        y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
+      };
+
+      const beforeStage = JSON.parse(JSON.stringify(stage));
+      const afterStage = JSON.parse(JSON.stringify(stage));
+
+      StageOperator(beforeStage).resetForRule(rule, {offset, applyActions: false, uid: 'before'});
+      StageOperator(afterStage).resetForRule(rule, {offset, applyActions: true, uid: 'after'});
 
       return u({
         ruleId: rule.id,
@@ -84,19 +92,13 @@ export default function recordingReducer(state = initialState.recording, action)
         phase: RECORDING_PHASE_RECORD,
         actorId: rule.mainActorId,
         conditions: rule.conditions,
-        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
-          actors: buildActorsFromRule(rule, characters, {applyActions: false, offsetX, offsetY}),
-          uid: 'before',
-        })),
-        afterStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
-          actors: buildActorsFromRule(rule, characters, {applyActions: true, offsetX, offsetY}),
-          uid: 'after',
-        })),
+        beforeStage: u.constant(beforeStage),
+        afterStage: u.constant(afterStage),
         extent: {
-          xmin: rule.extent.xmin + offsetX,
-          xmax: rule.extent.xmax + offsetX,
-          ymin: rule.extent.ymin + offsetY,
-          ymax: rule.extent.ymax + offsetY,
+          xmin: rule.extent.xmin + offset.x,
+          xmax: rule.extent.xmax + offset.x,
+          ymin: rule.extent.ymin + offset.y,
+          ymax: rule.extent.ymax + offset.y,
         },
       }, state);
     }

@@ -6,7 +6,7 @@ import u from 'updeep';
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case Types.START_RECORDING: {
-      const {actorId, characterId} = window.store.getState().recording;
+      const {actorId, characterId} = window.editorStore.getState().recording;
       return objectAssign({}, state, {
         selectedCharacterId: characterId,
         selectedActorPath: `after:${actorId}`,
@@ -41,6 +41,12 @@ export default function uiReducer(state = initialState.ui, action) {
           initialKeyCode: action.initialKeyCode,
           characterId: action.characterId,
           ruleId: action.ruleId,
+        },
+      });
+    case Types.UPDATE_SETTINGS_MODAL_STATE: 
+      return objectAssign({}, state, {
+        settings: {
+          open: action.open,
         },
       });
     default:

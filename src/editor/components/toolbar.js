@@ -39,6 +39,9 @@ class Toolbar extends React.Component {
     return (
       <div className="panel toolbar">
         {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
+        <Button onClick={() => this.props.dispatch(actions.showSettingsModal())}>
+        Settings
+        </Button>
       </div>
     );
   }

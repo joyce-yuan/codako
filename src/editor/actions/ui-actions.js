@@ -22,6 +22,20 @@ export function updatePlaybackState(values) {
   };
 }
 
+export function showSettingsModal() {
+  return {
+    type: types.UPDATE_SETTINGS_MODAL_STATE,
+    open: true,
+  };
+}
+
+export function dismissSettingsModal() {
+  return {
+    type: types.UPDATE_SETTINGS_MODAL_STATE,
+    open: false,
+  };
+}
+
 export function paintCharacterAppearance(characterId, appearanceId) {
   return {
     type: types.UPDATE_PAINTING_STATE,

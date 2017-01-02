@@ -25,6 +25,21 @@ export default function stageReducer(state = initialState.stage, action) {
         input:{ keys: action.keys, clicks: action.clicks }
       }, state);
     }
+    case Types.UPDATE_STAGE_SETTINGS: {
+      const {wrapX, wrapY, width, height} = action.settings;
+      return u({wrapX, wrapY, width, height}, state);
+    }
+    case Types.SAVE_INITIAL_GAME_STATE: {
+      return u({
+        startThumbnail: action.thumbnail,
+        startActors: u.constant(action.actors),
+      }, state);
+    }
+    case Types.RESTORE_INITIAL_GAME_STATE: {
+      return u({
+        actors: u.constant(state.startActors)
+      }, state);
+    }
     case Types.ADVANCE_GAME_STATE: {
       const nextState = JSON.parse(JSON.stringify(state));
       StageOperator(nextState).tick();

@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
-import {buildActorsFromRule} from '../../utils/stage-helpers';
+import StageOperator from '../../utils/stage-operator';
 import ActorSprite from '../sprites/actor-sprite';
 
 
@@ -22,19 +22,24 @@ export default class ScenarioStage extends React.Component {
     const {characters} = this.context;
 
     const {xmin, xmax, ymin, ymax} = rule.extent;
-    const actors = buildActorsFromRule(rule, characters, {applyActions, offsetX: -xmin, offsetY: -ymin});
-
     const width = (xmax - xmin + 1) * STAGE_CELL_SIZE;
     const height = (ymax - ymin + 1) * STAGE_CELL_SIZE;
     const zoom = Math.min(maxWidth / width, maxHeight / height, 1);
 
+    const ruleStage = {actors: {}};
+    StageOperator(ruleStage).resetForRule(rule, {
+      applyActions,
+      offset: {x: -xmin, y: -ymin},
+      uid: 'rule',
+    });
+
     return (
       <div className="scenario-stage" style={{width, height, zoom}}>
-        {Object.keys(actors).map((id) =>
+        {Object.keys(ruleStage.actors).map((id) =>
           <ActorSprite
             key={id}
-            character={characters[actors[id].characterId]}
-            actor={actors[id]}
+            character={characters[ruleStage.actors[id].characterId]}
+            actor={ruleStage.actors[id]}
           />
         )}
       </div>

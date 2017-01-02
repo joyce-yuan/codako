@@ -8,6 +8,29 @@ export function advanceGameState(stageUid) {
   };
 }
 
+export function saveInitialGameState(stageUid, {thumbnail, actors}) {
+  return {
+    type: types.SAVE_INITIAL_GAME_STATE,
+    stageUid,
+    thumbnail,
+    actors,
+  };
+}
+
+export function restoreInitialGameState(stageUid) {
+  return {
+    type: types.RESTORE_INITIAL_GAME_STATE,
+    stageUid,
+  };
+}
+
+export function updateStageSettings(stageUid, settings) {
+  return {
+    type: types.UPDATE_STAGE_SETTINGS,
+    stageUid, settings,
+  };
+}
+
 export function recordKeyForGameState(stageUid, key) {
   return {
     type: types.INPUT_FOR_GAME_STATE,

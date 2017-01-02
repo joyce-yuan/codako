@@ -1,8 +1,26 @@
-import {applyRuleAction, shuffleArray, getVariableValue} from './stage-helpers';
+import objectAssign from 'object-assign';
+import {shuffleArray, getVariableValue, applyVariableOperation, pointByAdding} from './stage-helpers';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 
+/*
+Note: StageOperator and ActorOperator mutate the state you provide them. Clone
+the entire stage before passing it in if you need to have a copy. It's just
+too much of a pain to do all of the possible state changes with updeep, etc.
+ */
+
 export default function StageOperator(stage) {
-  const {characters} = window.store.getState();
+  const {characters} = window.editorStore.getState();
+
+  function wrappedPosition({x, y}) {
+    const o = {
+      x: stage.wrapX ? ((x + stage.width) % stage.width) : x,
+      y: stage.wrapY ? ((y + stage.height) % stage.height) : y,
+    };
+    if (o.x < 0 || o.y < 0 || o.x >= stage.width || o.y >= stage.height) {
+      return null;
+    }
+    return o;
+  }
 
   function actorsMatch(actor, other, conditions = {}) {
     if (other.characterId !== actor.characterId) {
@@ -38,8 +56,7 @@ export default function StageOperator(stage) {
   }
 
   function actorsAtPosition(position) {
-    // const position = @wrappedPosition(position)
-    if (position.x < 0 || position.y < 0 || position.x >= stage.width || position.y >= stage.height) {
+    if (!position) {
       return null;
     }
     return Object.values(stage.actors).filter((a) =>
@@ -47,7 +64,7 @@ export default function StageOperator(stage) {
     );
   }
 
-  function ActorOperator(actorId) {
+  function ActorOperator(me) {
     function tickRulesTree(struct, behavior = FLOW_BEHAVIORS.FIRST) {
       let rules = [].concat(struct.rules);
 
@@ -85,7 +102,7 @@ export default function StageOperator(stage) {
         return (stage.input.keys[trigger.code]);
       }
       if (trigger.event === 'click') {
-        return (stage.input.clicks[actorId]);
+        return (stage.input.clicks[me.id]);
       }
       if (trigger.event === 'idle') {
         return true;
@@ -94,15 +111,13 @@ export default function StageOperator(stage) {
     }
 
     function checkRuleScenario(rule) {
-      const rootActor = stage.actors[actorId];
-      
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
           if (rule.extent.ignored.includes(`${x},${y}`)) {
             continue;
           }
           const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
-          const stagePosition = {x: rootActor.position.x + x, y: rootActor.position.y + y};
+          const stagePosition = wrappedPosition(pointByAdding(me.position, {x, y}));
           const stageActors = actorsAtPosition(stagePosition);
 
           if (stageActors === null) {
@@ -131,21 +146,19 @@ export default function StageOperator(stage) {
 
     function applyRule(rule) {
       for (const action of rule.actions) {
-        const rootActor = stage.actors[actorId];
-        // pos = @stage.wrappedPosition(pos) if @stage
-
         if (action.type === 'create') {
-          // actor = @stage.addActor(descriptor, pos)
-          // actor._id = Math.createUUID() unless rule.editing
+          const nextID = Date.now();
+          stage.actors[nextID] = objectAssign({}, action.actor, {
+            id: nextID,
+            position: wrappedPosition(pointByAdding(me.position, action.offset)),
+            variableValues: {},
+          });
         } else {
           // find the actor on the stage that matches
           const actionActor = rule.actors[action.actorId];
           const actionActorConditions = rule.conditions[action.actorId];
 
-          const stagePosition = {
-            x: rootActor.position.x + actionActor.position.x,
-            y: rootActor.position.y + actionActor.position.y,
-          };
+          const stagePosition = wrappedPosition(pointByAdding(me.position, actionActor.position));
           const stageCandidates = actorsAtPosition(stagePosition);
           if (!stageCandidates) {
             throw new Error(`Couldn't apply action because the position is not valid.`);
@@ -154,29 +167,61 @@ export default function StageOperator(stage) {
           if (!stageActor) {
             throw new Error(`Couldn't find the actor for performing rule: ${rule}`);
           }
-          stage.actors[stageActor.id] = applyRuleAction(stageActor, characters[stageActor.characterId], action);
+
+          if (action.type === 'move') {
+            stageActor.position = wrappedPosition(pointByAdding(stageActor.position, action.delta));
+          } else if (action.type === 'delete') {
+            delete stage.actors[stageActor.id];
+          } else if (action.type === 'appearance') {
+            stageActor.appearance = action.to;
+          } else if (action.type === 'variable') {
+            const current = getVariableValue(stageActor, characters[stageActor.characterId], action.variable);
+            const next = applyVariableOperation(current, action.operation, action.value);
+            stageActor.variableValues[action.variable] = next;
+          } else {
+            throw new Error("Not sure how to apply action", action);
+          }
         }
       }
     }
 
     return {
+      applyRule,
       tick() {
-        const {characterId} = stage.actors[actorId];
-        tickRulesTree(characters[characterId]);
+        const {characterId} = stage.actors[me.id];
+        const struct = characters[characterId];
+        tickRulesTree(struct);
       }
     };
   }
 
+  function resetForRule(rule, {uid, applyActions, offset}) {
+    stage.uid = uid;
+    stage.actors = {};
+    for (const actor of Object.values(rule.actors)) {
+      stage.actors[actor.id] = objectAssign({}, actor, {
+        position: pointByAdding(actor.position, offset),
+      });
+    }
+
+    // lay out the before state and apply any rules that apply to
+    // the actors currently on the board
+    if (applyActions && rule.actions) {
+      ActorOperator(stage.actors[rule.mainActorId]).applyRule(rule);
+    }
+  }
+
   return {
+    resetForRule,
     tick() {
       stage.applied = {};
-      Object.keys(stage.actors).forEach(actorId =>
-        ActorOperator(actorId).tick()
+      Object.values(stage.actors).forEach(actor =>
+        ActorOperator(actor).tick()
       );
       stage.input = {
         keys: {},
         clicks: {},
       };
-    }
+    },
   };
 }

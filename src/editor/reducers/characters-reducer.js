@@ -76,7 +76,7 @@ export default function charactersReducer(state = initialState.characters, actio
     }
 
     case Types.FINISH_RECORDING: {
-      const {recording, characters} = window.store.getState();
+      const {recording, characters} = window.editorStore.getState();
       const rules = JSON.parse(JSON.stringify(state[recording.characterId].rules));
 
       // locate the main actor in the recording to "re-center" the extent to it
