@@ -1,127 +1,112 @@
-// const Joi = require('joi');
+const Joi = require('joi');
+const db = require('../database');
+const Boom = require('boom');
 
-// function upsertMetadata(account, identity, objectId, key, version, data) {
-//   return DatabaseConnector.forShared().then(({Metadata}) => {
-//     return Metadata.find({
-//       accountId: account.id,
-//       nylasId: identity.id,
-//       objectId: objectId,
-//       key: key,
-//     }).then((existing) => {
-//       if (existing) {
-//         if (existing.version / 1 !== version / 1) {
-//           return Promise.reject(new Error("Version Conflict"));
-//         }
-//         existing.data = data;
-//         return existing.save();
-//       }
-//       return Metadata.create({
-//         accountId: account.id,
-//         nylasId: identity.id,
-//         objectId: objectId,
-//         version: 0,
-//         key: key,
-//         data: data,
-//       })
-//     })
-//   })
-// }
+const StageShape = {
+  name: Joi.string(),
+  thumbnail: Joi.string(),
+  data: Joi.string(),
+}
 
 module.exports = (server) => {
-//   server.route({
-//     method: 'GET',
-//     path: `/metadata`,
-//     config: {
-//       description: `metadata`,
-//       notes: 'Notes go here',
-//       tags: ['metadata'],
-//       validate: {
-//         query: {
-//           limit: Joi.number().integer().min(1).max(2000).default(100),
-//           offset: Joi.number().integer().min(0).default(0),
-//         },
-//       },
-//       response: {
-//         schema: Joi.array().items(
-//           // Serialization.jsonSchema('Metadata')
-//         ),
-//       },
-//     },
-//     handler: (request, reply) => {
-//       const {account} = request.auth.credentials;
+  server.route({
+    method: 'GET',
+    path: `/stages`,
+    config: {
+      description: `stages`,
+      tags: ['stages'],
+      validate: {
+        query: {
+          limit: Joi.number().integer().min(1).max(2000).default(100),
+          offset: Joi.number().integer().min(0).default(0),
+        },
+      },
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      db.Stage.findAll({where: {userId: user.id}}).then((stages) => {
+        reply(stages.map(s => s.serialize()));
+      });
+    },
+  });
 
-//       DatabaseConnector.forShared().then(({Metadata}) => {
-//         Metadata.findAll({
-//           accountId: account.id,
-//           limit: request.query.limit,
-//           offset: request.query.offset,
-//         }).then((items) => {
-//           reply(Serialization.jsonStringify(items));
-//         })
-//       })
-//     },
-//   });
+  server.route({
+    method: ['POST'],
+    path: `/stages`,
+    config: {
+      description: `Create stage`,
+      tags: ['stages'],
+      validate: {
+        payload: StageShape,
+      },
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      db.Stage.create({
+        userId: user.id,
+        name: request.payload.name,
+        data: request.payload.data,
+        thumbnail: request.payload.thumbnail,
+      }).then((stage) => {
+        reply(stage.serialize());
+      })
+      .catch((err) => {
+        reply(Boom.badRequest(err.toString));
+      });
+    },
+  });
 
-//   server.route({
-//     method: ['PUT', 'POST'],
-//     path: `/metadata/{objectId}/{key}`,
-//     config: {
-//       description: `Update metadata`,
-//       tags: ['metadata'],
-//       validate: {
-//         params: {
-//           objectId: Joi.string(),
-//           key: Joi.string(),
-//         },
-//         payload: {
-//           version: Joi.number().integer(),
-//           value: Joi.string(),
-//         },
-//       },
-//     },
-//     handler: (request, reply) => {
-//       const {account, identity} = request.auth.credentials;
-//       const {version, value} = request.payload;
-//       const {key, objectId} = request.params;
+  server.route({
+    method: ['PUT'],
+    path: `/stages/{objectId}`,
+    config: {
+      description: `Update stage`,
+      tags: ['stages'],
+      validate: {
+        payload: StageShape,
+      },
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      const {objectId} = request.params;
 
-//       upsertMetadata(account, identity, objectId, key, version, value)
-//       .then((metadata) => {
-//         reply(Serialization.jsonStringify(metadata));
-//       })
-//       .catch((err) => {
-//         reply({error: err.toString()}).code(409);
-//       })
-//     },
-//   })
+      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) => {
+        stage.name = request.payload.name;
+        stage.data = request.payload.data;
+        stage.thumbnail = request.payload.thumbnail;
+        return stage.save().then((saved) => {
+          reply(saved.serialize());
+        });
+      })
+      .catch((err) => {
+        reply(Boom.badRequest(err.toString));
+      });
+    },
+  });
 
-//   server.route({
-//     method: 'DELETE',
-//     path: `/metadata/{objectId}/{key}`,
-//     config: {
-//       description: `Delete metadata`,
-//       tags: ['metadata'],
-//       validate: {
-//         params: {
-//           objectId: Joi.number().integer(),
-//           key: Joi.string(),
-//         },
-//         payload: {
-//           version: Joi.number().integer(),
-//         },
-//       },
-//     },
-//     handler: (request, reply) => {
-//       const {account, identity} = request.auth.credentials;
-//       const {version} = request.payload;
-//       const {key, objectId} = request.params;
+  server.route({
+    method: 'DELETE',
+    path: `/stages/{objectId}`,
+    config: {
+      description: `Delete stage`,
+      tags: ['stages'],
+      validate: {
+        params: {
+          objectId: Joi.number().integer(),
+        },
+      },
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      const {objectId} = request.params;
 
-//       upsertMetadata(account, identity, objectId, key, version, null)
-//       .then((metadata) => {
-//         reply(Serialization.jsonStringify(metadata));
-//       })
-//       .catch((err) => {
-//         reply({error: err.toString()}).code(409);
-//       })
-//     },
-//   })
+      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) =>
+        stage.destroy().then(() => {
+          reply({success: true});
+        })
+      ).catch((err) => {
+        reply(Boom.notFound(err.toString()));
+      });
+    },
+  });
 };

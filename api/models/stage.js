@@ -15,6 +15,16 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     instanceMethods: {
+      serialize: function() {
+        return {
+          name: this.name,
+          id: this.id,
+          userId: this.userId,
+          thumbnail: this.thumbnail,
+          createdAt: this.createdAt,
+          updatedAt: this.updatedAt,
+        };
+      }
     },
   });
 

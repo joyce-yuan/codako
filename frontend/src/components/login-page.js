@@ -33,7 +33,7 @@ class LoginPage extends React.Component {
     const nextPathname = location.state ? location.state.redirectTo : null;
 
     dispatch(login({
-      email: this.refs.email.value,
+      username: this.refs.username.value,
       password: this.refs.pass.value,
     }, nextPathname));
   }
@@ -70,8 +70,8 @@ class LoginPage extends React.Component {
               )}
               <form className="card-block" onSubmit={this._onSubmit}>
                 <div className="form-group">
-                  <label htmlFor="email">Username or email address:</label>
-                  <input className="form-control" id="email" ref="email" />
+                  <label htmlFor="username">Username or email address:</label>
+                  <input className="form-control" id="username" ref="username" />
                 </div>
                 <div className="form-group">
                   <label htmlFor="password">Password:</label>

@@ -2,6 +2,8 @@ import * as types from '../constants/action-types';
 import {replace, push} from 'react-router-redux';
 import objectAssign from 'object-assign';
 
+const DEFAULT_POST_AUTH_PATH = '/dashboard';
+
 function request(path, {method = 'GET', headers = {}, body, dispatch}) {
   dispatch({
     type: types.NETWORK_ACTIVITY,
@@ -51,9 +53,7 @@ export function register({username, password, email}, redirectTo) {
         type: types.USER_CHANGED,
         user,
       });
-      dispatch(replace(redirectTo || '/'));
-    }).catch((err) => {
-      console.error(err);
+      dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
   };
 }
@@ -69,9 +69,7 @@ export function login({username, password}, redirectTo) {
         type: types.USER_CHANGED,
         user,
       });
-      dispatch(replace(redirectTo || '/'));
-    }).catch((err) => {
-      console.error(err);
+      dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
   };
 }
