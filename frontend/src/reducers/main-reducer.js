@@ -9,6 +9,11 @@ export default function mainReducer(state, action) {
         user: action.user,
       });
     }
+    case Types.STAGES_CHANGED: {
+      return objectAssign({}, state, {
+        stages: action.stages,
+      });
+    }
     case Types.NETWORK_ACTIVITY: {
       return objectAssign({}, state, {
         network: {

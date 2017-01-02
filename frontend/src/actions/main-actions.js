@@ -11,11 +11,14 @@ function request(path, {method = 'GET', headers = {}, body, dispatch}) {
     delta: 1,
   });
 
+  const user = window.store.getState().user || {};
+
   return fetch(`http://api.lvh.me:4310${path}`, {
     method,
     body,
     headers: objectAssign({
       'Content-Type': 'application/json',
+      'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
     }, headers),
   })
   .then((response) => response.json())
@@ -51,12 +54,13 @@ export function register({username, password, email}, redirectTo) {
     }).then((user) => {
       dispatch({
         type: types.USER_CHANGED,
-        user,
+        user: objectAssign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
   };
 }
+
 export function login({username, password}, redirectTo) {
   return function(dispatch) {
     request('/users/me', {
@@ -67,9 +71,17 @@ export function login({username, password}, redirectTo) {
     }).then((user) => {
       dispatch({
         type: types.USER_CHANGED,
-        user,
+        user: objectAssign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
+    });
+  };
+}
+
+export function fetchStages() {
+  return function(dispatch) {
+    request('/stages', {dispatch}).then((stages) => {
+      dispatch({type: types.STAGES_CHANGED, stages});
     });
   };
 }
