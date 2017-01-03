@@ -20,6 +20,7 @@ class LoginPage extends React.Component {
 
   static layoutConsiderations = {
     hidesNav: true,
+    hidesFooter: true,
   };
 
   constructor(props, context) {

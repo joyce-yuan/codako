@@ -8,6 +8,11 @@ export default class EditorPage extends React.Component {
     }),
   }
 
+  static layoutConsiderations = {
+    hidesFooter: true,
+    unwrapped: true,
+  };
+
   constructor(props, context) {
     super(props, context);
   }

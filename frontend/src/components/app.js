@@ -56,7 +56,7 @@ class App extends React.Component {
   _renderNav = () => {
     const {user, dispatch} = this.props;
     return (
-      <div className="navbar navbar-light bg-faded">
+      <div className="navbar">
         <div className="container">
           <IndexLink className="navbar-brand" to="/">Codako</IndexLink>
           <ul className="nav navbar-nav">
@@ -90,13 +90,12 @@ class App extends React.Component {
         <div className="container">
           <div className="row">
             <div className="col-md-8">
-              <div className="navbar navbar-inverse ng-scope">
-                <ul className="nav">
-                </ul>
-              </div>
               © 2017
+              {' '}
               <a href="http://www.foundry376.com/">Foundry376</a>, LLC. All Rights Reserved.
+              {' '}
               <a href="/terms-of-use">Terms of Use</a> and
+              {' '}
               <a href="/privacy-policy">Privacy</a>
             </div>
           </div>
@@ -107,15 +106,20 @@ class App extends React.Component {
 
   render() {
     const {children, network} = this.props;
-    const {hidesNav} = (children.type.WrappedComponent && children.type.WrappedComponent.layoutConsiderations) || {};
+    const ChildClass = children.type.WrappedComponent || children.type;
+    const {hidesNav, hidesFooter, unwrapped} = (ChildClass && ChildClass.layoutConsiderations) || {};
 
+    const content = unwrapped ? children : (
+      <div className="page-content-flex">
+        {children}
+      </div>
+    );
+    
     return (
       <div className="page-container">
         {!hidesNav && this._renderNav()}
-        <div className="page-content-flex">
-          {children}
-        </div>
-        {!hidesNav && this._renderFooter()}
+        {content}
+        {!hidesFooter && this._renderFooter()}
         <div className={`network-bar active-${network.pending > 0}`} />
       </div>
     );

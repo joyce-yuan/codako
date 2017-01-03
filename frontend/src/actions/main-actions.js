@@ -54,3 +54,27 @@ export function fetchStages() {
     });
   };
 }
+
+export function deleteStage(id) {
+  return function(dispatch) {
+    makeRequest(`/stages/${id}`, {method: 'DELETE'}).then(() => {
+      dispatch(fetchStages());
+    });
+  };
+}
+
+export function duplicateStage(id) {
+  return function(dispatch) {
+    makeRequest(`/stages/${id}/duplicate`, {method: 'POST'}).then(() => {
+      dispatch(fetchStages());
+    });
+  };
+}
+
+export function createStage() {
+  return function(dispatch) {
+    makeRequest(`/stages`, {method: 'POST'}).then((created) => {
+      dispatch(push(`/editor/${created.id}`));
+    });
+  };
+}

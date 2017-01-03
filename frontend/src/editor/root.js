@@ -104,12 +104,14 @@ export default class EditorRoot extends React.Component {
     return (
       <Provider store={editorStore}>
         <div className="editor">
-          <Toolbar />
-          <div className="stage-container">
-            <StageContainer />
-            <Library />
+          <div className="editor-horizontal-flex">
+            <Toolbar />
+            <div className="stage-container">
+              <StageContainer />
+              <Library />
+            </div>
+            <InspectorContainer />
           </div>
-          <InspectorContainer />
 
           <PaintContainer />
           <KeypickerContainer />

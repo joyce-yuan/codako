@@ -68,18 +68,20 @@ export default class StageControls extends React.Component {
           <div className="start-thumbnail">
             <img src={startThumbnail} />
           </div>
-          <Button
-            size="sm"
-            onClick={this._onRestoreInitialGameState}
-          >
-            <i className="fa fa-arrow-up" />
-          </Button>
-          <Button
-            size="sm"
-            onClick={this._onSaveInitialGameState}
-          >
-            <i className="fa fa-arrow-down" />
-          </Button>
+          <div className="start-buttons">
+            <Button
+              size="sm"
+              onClick={this._onRestoreInitialGameState}
+            >
+              <i className="fa fa-arrow-up" />
+            </Button>
+            <Button
+              size="sm"
+              onClick={this._onSaveInitialGameState}
+            >
+              <i className="fa fa-arrow-down" />
+            </Button>
+          </div>
         </div>
 
         <div className="center">

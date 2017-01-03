@@ -1,13 +1,51 @@
 import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
-import {Button, Container, Row, Col} from 'reactstrap';
-import {fetchStages} from '../actions/main-actions';
+import {Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Container, Row, Col} from 'reactstrap';
+import {fetchStages, deleteStage, duplicateStage, createStage} from '../actions/main-actions';
 import timeago from 'timeago.js';
 
+class StageOptionsMenu extends React.Component {
+  static propTypes = {
+    onDuplicate: PropTypes.func,
+    onDelete: PropTypes.func,
+  };
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      open: false,
+    };
+  }
+
+  render() {
+    return (
+      <ButtonDropdown
+        isOpen={this.state.open}
+        toggle={() => this.setState({open: !this.state.open})}
+        {...this.props}
+      >
+        <DropdownToggle className="btn-link btn-sm">
+          <i className="fa fa-ellipsis-v" />
+        </DropdownToggle>
+        <DropdownMenu right>
+          <DropdownItem onClick={this.props.onDuplicate}>
+            Duplicate Stage
+          </DropdownItem>
+          <DropdownItem divider />
+          <DropdownItem onClick={this.props.onDelete}>
+            Delete Stage
+          </DropdownItem>
+        </DropdownMenu>
+      </ButtonDropdown>
+    )
+  }
+}
 class StageCard extends React.Component {
   static propTypes = {
     stage: PropTypes.object,
+    onDuplicate: PropTypes.func,
+    onDelete: PropTypes.func,
   };
   
   render() {
@@ -19,7 +57,14 @@ class StageCard extends React.Component {
           <img className="card-img-top stage-thumbnail" src={stage.thumbnail} />
         </Link>
         <div className="card-block">
-          <Link to={`/editor/${stage.id}`}><h4 className="card-title">{stage.name}</h4></Link>
+          <StageOptionsMenu
+            style={{float: 'right'}}
+            onDuplicate={this.props.onDuplicate}
+            onDelete={this.props.onDelete}
+          />
+          <Link to={`/editor/${stage.id}`}>
+            <h4 className="card-title">{stage.name}</h4>
+          </Link>
           <small className="card-text text-muted">
             Last updated {new timeago().format(stage.updatedAt)}
           </small>
@@ -32,10 +77,12 @@ class StageCard extends React.Component {
 class StageList extends React.Component {
   static propTypes = {
     stages: PropTypes.array,
+    onDuplicateStage: PropTypes.func,
+    onDeleteStage: PropTypes.func,
   };
 
   render() {
-    const {stages} = this.props;
+    const {stages, onDeleteStage, onDuplicateStage} = this.props;
 
     if (!stages) {
       return (
@@ -50,7 +97,12 @@ class StageList extends React.Component {
     return (
       <div className="stage-list">
         {stages.map((s) =>
-          <StageCard key={s.id} stage={s} />
+          <StageCard
+            key={s.id}
+            stage={s}
+            onDuplicate={() => onDuplicateStage(s)}
+            onDelete={() => onDeleteStage(s)}
+          />
         )}
       </div>
     );
@@ -74,7 +126,7 @@ class DashboardPage extends React.Component {
   }
 
   render() {
-    const {user, stages} = this.props;
+    const {user, stages, dispatch} = this.props;
     return (
       <Container style={{marginTop: 30}}>
         <Row>
@@ -85,12 +137,21 @@ class DashboardPage extends React.Component {
           </Col>
           <Col md={9}>
             <div className="card card-block">
-              <Button size="sm" color="success" className="float-xs-right">
+              <Button
+                size="sm"
+                color="success"
+                className="float-xs-right"
+                onClick={() => dispatch(createStage())}
+              >
                 New Stage
               </Button>
               <h5>My Stages</h5>
               <hr/>
-              <StageList stages={stages} />
+              <StageList
+                stages={stages}
+                onDeleteStage={(s) => dispatch(deleteStage(s.id))}
+                onDuplicateStage={(s) => dispatch(duplicateStage(s.id))}
+              />
             </div>
           </Col>
         </Row>

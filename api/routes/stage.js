@@ -46,20 +46,46 @@ module.exports = (server) => {
     config: {
       description: `Create stage`,
       tags: ['stages'],
-      validate: {
-        payload: StageShape,
-      },
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
       db.Stage.create({
         userId: user.id,
-        name: request.payload.name,
-        data: request.payload.data,
-        thumbnail: request.payload.thumbnail,
-      }).then((stage) => {
+        name: "Untitled",
+        data: "{}",
+        thumbnail: '#',
+      })
+      .then((stage) => {
         reply(stage.serialize());
       })
+      .catch((err) => {
+        reply(Boom.badRequest(err.toString));
+      });
+    },
+  });
+
+  server.route({
+    method: ['POST'],
+    path: `/stages/{objectId}/duplicate`,
+    config: {
+      description: `Duplicate a stage`,
+      tags: ['stages'],
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      const {objectId} = request.params;
+
+      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) =>
+        db.Stage.create({
+          userId: user.id,
+          name: `${stage.name} Copy`,
+          data: stage.data,
+          thumbnail: stage.thumbnail,
+        })
+        .then((clone) => {
+          reply(clone.serialize());
+        })
+      )
       .catch((err) => {
         reply(Boom.badRequest(err.toString));
       });
