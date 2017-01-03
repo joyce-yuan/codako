@@ -3,22 +3,10 @@ import classNames from 'classnames';
 
 import {Button, ButtonGroup} from 'reactstrap';
 import {updatePlaybackState} from '../../actions/ui-actions';
+import {getStageScreenshot} from '../../utils/stage-helpers';
 import {advanceGameState, saveInitialGameState, restoreInitialGameState} from '../../actions/stage-actions';
 import {SPEED_OPTIONS} from '../../constants/constants';
 
-function getStageScreenshot(stage) {
-  const {characters} = window.editorStore.getState();
-  const canvas = document.createElement('canvas');
-  canvas.width = stage.width * 10;
-  canvas.height = stage.height * 10;
-  const context = canvas.getContext('2d');
-  Object.values(stage.actors).forEach(actor => {
-    const i = new Image();
-    i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
-    context.drawImage(i, actor.position.x * 10, actor.position.y * 10, 10, 10);
-  });
-  return canvas.toDataURL();
-}
 
 export default class StageControls extends React.Component {
   static propTypes = {

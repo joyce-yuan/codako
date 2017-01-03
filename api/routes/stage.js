@@ -2,11 +2,11 @@ const Joi = require('joi');
 const db = require('../database');
 const Boom = require('boom');
 
-const StageShape = {
+const StageShape = Joi.object().keys({
   name: Joi.string(),
   thumbnail: Joi.string(),
-  data: Joi.string(),
-}
+  state: Joi.object(),
+});
 
 module.exports = (server) => {
   server.route({
@@ -15,17 +15,27 @@ module.exports = (server) => {
     config: {
       description: `stages`,
       tags: ['stages'],
-      validate: {
-        query: {
-          limit: Joi.number().integer().min(1).max(2000).default(100),
-          offset: Joi.number().integer().min(0).default(0),
-        },
-      },
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
       db.Stage.findAll({where: {userId: user.id}}).then((stages) => {
         reply(stages.map(s => s.serialize()));
+      });
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: `/stages/{objectId}/state`,
+    config: {
+      description: `stages`,
+      tags: ['stages'],
+    },
+    handler: (request, reply) => {
+      const {user} = request.auth.credentials;
+      const {objectId} = request.params;
+      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) => {
+        reply(JSON.parse(stage.data));
       });
     },
   });
@@ -71,9 +81,10 @@ module.exports = (server) => {
       const {objectId} = request.params;
 
       db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) => {
-        stage.name = request.payload.name;
-        stage.data = request.payload.data;
-        stage.thumbnail = request.payload.thumbnail;
+        stage.name = request.payload.name || stage.name;
+        stage.thumbnail = request.payload.thumbnail || stage.thumbnail;
+        stage.data = request.payload.state ? JSON.stringify(request.payload.state) : stage.data;
+
         return stage.save().then((saved) => {
           reply(saved.serialize());
         });

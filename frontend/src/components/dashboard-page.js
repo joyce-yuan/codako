@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {Button, Container, Row, Col} from 'reactstrap';
 import {fetchStages} from '../actions/main-actions';
+import timeago from 'timeago.js';
 
 class StageCard extends React.Component {
   static propTypes = {
@@ -10,12 +11,20 @@ class StageCard extends React.Component {
   };
   
   render() {
+    const {stage} = this.props;
+
     return (
-      <Col md={6}>
-        <div className="card card-block">
-          {this.props.stage.name}
+      <div className="card stage-card">
+        <Link to={`/editor/${stage.id}`}>
+          <img className="card-img-top stage-thumbnail" src={stage.thumbnail} />
+        </Link>
+        <div className="card-block">
+          <Link to={`/editor/${stage.id}`}><h4 className="card-title">{stage.name}</h4></Link>
+          <small className="card-text text-muted">
+            Last updated {new timeago().format(stage.updatedAt)}
+          </small>
         </div>
-      </Col>
+      </div>
     );
   }
 }
@@ -39,21 +48,11 @@ class StageList extends React.Component {
     }
 
     return (
-      <Container>
-        <Row>
-          <Button color="success" className="float-xs-right">
-            New Stage
-          </Button>
-          <h5>Pinned repositories</h5>
-        </Row>
-        <Row>
-          {
-            stages.map((s) =>
-              <StageCard key={s.id} stage={s} />
-            )
-          }
-        </Row>
-      </Container>
+      <div className="stage-list">
+        {stages.map((s) =>
+          <StageCard key={s.id} stage={s} />
+        )}
+      </div>
     );
   }
 }
@@ -77,15 +76,20 @@ class DashboardPage extends React.Component {
   render() {
     const {user, stages} = this.props;
     return (
-      <Container>
+      <Container style={{marginTop: 30}}>
         <Row>
-          <Col md={2}>
-            <div className="card card-block">
-              {user.username}
+          <Col md={3}>
+            <div className="dashboard-sidebar">
+              <h4>{user.username}</h4>
             </div>
           </Col>
-          <Col md={10}>
+          <Col md={9}>
             <div className="card card-block">
+              <Button size="sm" color="success" className="float-xs-right">
+                New Stage
+              </Button>
+              <h5>My Stages</h5>
+              <hr/>
               <StageList stages={stages} />
             </div>
           </Col>

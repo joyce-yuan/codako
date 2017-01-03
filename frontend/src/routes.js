@@ -28,7 +28,7 @@ export default (
     <Route path="login" component={LoginPage} />
     <Route path="join" component={JoinPage} />
 
-    <Route path="editor" component={EditorPage} onEnter={requireAuth} />
+    <Route path="editor/:stageId" component={EditorPage} onEnter={requireAuth} />
     <Route path="dashboard" component={DashboardPage} onEnter={requireAuth} />
 
     <Route path="*" component={NotFoundPage}/>

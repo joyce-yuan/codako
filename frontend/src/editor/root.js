@@ -1,11 +1,15 @@
 /* eslint-disable import/default */
 
-import React from 'react';
-import configureStore from './store/configureStore';
-const store = configureStore();
-window.editorStore = store;
-
+import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
+import objectAssign from 'object-assign';
+
+import configureStore from './store/configureStore';
+import initialState from './reducers/initial-state';
+import {getStageScreenshot} from './utils/stage-helpers';
+
+import {makeRequest} from '../helpers/api';
+
 import Toolbar from './components/toolbar';
 import Library from './components/library';
 import StageContainer from './components/stage/container';
@@ -17,13 +21,88 @@ import SettingsContainer from './components/settings/container';
 import './styles/editor.scss';
 
 export default class EditorRoot extends React.Component {
+  static propTypes = {
+    stageId: PropTypes.string,
+  };
+
   constructor(props, context) {
     super(props, context);
+
+    this._saveTimeout = null;
+    this.state = {
+      editorStore: null,
+      saving: false,
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    makeRequest(`/stages/${this.props.stageId}/state`).then((savedState) => {
+      const state = objectAssign({}, initialState, savedState);
+      const editorStore = window.editorStore = configureStore(state);
+      this.setState({editorStore, loaded: true});
+
+      editorStore.subscribe(this._onSaveDebounced);
+      window.addEventListener("beforeunload", this._onBeforeUnload);
+    });
+  }
+
+  _onBeforeUnload = (event) => {
+    if (this._saveTimeout) {
+      this._onSaveTimeoutFire();
+
+      const msg = 'Your changes are still saving. Are you sure you want to close the editor?';
+      event.returnValue = msg; // Gecko, Trident, Chrome 34+
+      return msg; // Gecko, WebKit, Chrome <34
+    }
+    return undefined;
+  }
+
+  _onSaveDebounced = () => {
+    clearTimeout(this._saveTimeout);
+    this._saveTimeout = setTimeout(this._onSaveTimeoutFire, 2000);
+  }
+
+  _onSaveTimeoutFire = () => {
+    clearTimeout(this._saveTimeout);
+    this._saveTimeout = null;
+    this._onSave();
+  }
+
+  _onSave = () => {
+    if (this.state.saving && !this._saveTimeout) {
+      this._onSaveDebounced();
+      return;
+    }
+
+    this.setState({saving: true});
+
+    const editorState = this.state.editorStore.getState();
+    makeRequest(`/stages/${this.props.stageId}`, {
+      method: 'PUT',
+      json: {
+        thumbnail: getStageScreenshot(editorState.stage),
+        state: editorState,
+      },
+    }).then(() => {
+      this.setState({saving: false});
+    }).catch((e) => {
+      this.setState({saving: false});
+      alert(`Codako was unable to save changes to your stage. Your internet connection may be offline. \n(Detail: ${e.message})`);
+    });
   }
 
   render() {
+    const {loaded, editorStore} = this.state;
+
+    if (!loaded) {
+      return (
+        <div>Loading...</div>
+      );
+    }
+
     return (
-      <Provider store={store}>
+      <Provider store={editorStore}>
         <div className="editor">
           <Toolbar />
           <div className="stage-container">

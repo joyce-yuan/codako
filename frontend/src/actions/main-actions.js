@@ -1,39 +1,10 @@
-import * as types from '../constants/action-types';
 import {replace, push} from 'react-router-redux';
 import objectAssign from 'object-assign';
 
+import {makeRequest} from '../helpers/api';
+import * as types from '../constants/action-types';
+
 const DEFAULT_POST_AUTH_PATH = '/dashboard';
-
-function request(path, {method = 'GET', headers = {}, body, dispatch}) {
-  dispatch({
-    type: types.NETWORK_ACTIVITY,
-    error: null,
-    delta: 1,
-  });
-
-  const user = window.store.getState().user || {};
-
-  return fetch(`http://api.lvh.me:4310${path}`, {
-    method,
-    body,
-    headers: objectAssign({
-      'Content-Type': 'application/json',
-      'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
-    }, headers),
-  })
-  .then((response) => response.json())
-  .then((json) => {
-    dispatch({
-      type: types.NETWORK_ACTIVITY,
-      error: json.error ? json : null,
-      delta: -1,
-    });
-    if (json.error) {
-      throw new Error(json.message);
-    }
-    return json;
-  });
-}
 
 export function logout() {
   return function(dispatch) {
@@ -47,10 +18,9 @@ export function logout() {
 
 export function register({username, password, email}, redirectTo) {
   return function(dispatch) {
-    request('/users', {
+    makeRequest('/users', {
       method: 'POST',
-      dispatch,
-      body: JSON.stringify({username, password, email}),
+      json: {username, password, email},
     }).then((user) => {
       dispatch({
         type: types.USER_CHANGED,
@@ -63,8 +33,7 @@ export function register({username, password, email}, redirectTo) {
 
 export function login({username, password}, redirectTo) {
   return function(dispatch) {
-    request('/users/me', {
-      dispatch,
+    makeRequest('/users/me', {
       headers: {
         'Authorization': `Basic ${btoa(username + ':' + password)}`,
       },
@@ -80,7 +49,7 @@ export function login({username, password}, redirectTo) {
 
 export function fetchStages() {
   return function(dispatch) {
-    request('/stages', {dispatch}).then((stages) => {
+    makeRequest('/stages').then((stages) => {
       dispatch({type: types.STAGES_CHANGED, stages});
     });
   };

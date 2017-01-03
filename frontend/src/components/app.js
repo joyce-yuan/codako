@@ -58,29 +58,27 @@ class App extends React.Component {
     return (
       <div className="navbar navbar-light bg-faded">
         <div className="container">
-          <div className="collapse navbar-toggleable-md">
-            <IndexLink className="navbar-brand" to="/">Codako</IndexLink>
-            <ul className="nav navbar-nav">
-              <li className="nav-item">
-                <IndexLink className="nav-link" to="/">Home</IndexLink>
+          <IndexLink className="navbar-brand" to="/">Codako</IndexLink>
+          <ul className="nav navbar-nav">
+            <li className="nav-item">
+              <IndexLink className="nav-link" to="/">Home</IndexLink>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/about">About</Link>
+            </li>
+          </ul>
+          <ul className="nav navbar-nav float-xs-right">
+            {user ? (
+              <NavUserMenu user={user} dispatch={dispatch} />
+            ) : ([
+              <li className="nav-item" key="sign-in">
+                <Link to="/login"><Button >Sign in</Button></Link>
+              </li>,
+              <li className="nav-item" key="sign-up">
+                <Link to="/join"><Button color="success" to="/join">Sign up</Button></Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/about">About</Link>
-              </li>
-            </ul>
-            <ul className="nav navbar-nav float-lg-right">
-              {user ? (
-                <NavUserMenu user={user} dispatch={dispatch} />
-              ) : ([
-                <li className="nav-item" key="sign-in">
-                  <Link to="/login"><Button >Sign in</Button></Link>
-                </li>,
-                <li className="nav-item" key="sign-up">
-                  <Link to="/join"><Button color="success" to="/join">Sign up</Button></Link>
-                </li>
-              ])}
-            </ul>
-          </div>
+            ])}
+          </ul>
         </div>
       </div>
     );

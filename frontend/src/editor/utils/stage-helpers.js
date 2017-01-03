@@ -92,6 +92,20 @@ export function actionsForVariables({beforeActor, afterActor, character}) {
   return actions;
 }
 
+export function getStageScreenshot(stage) {
+  const {characters} = window.editorStore.getState();
+  const canvas = document.createElement('canvas');
+  canvas.width = stage.width * 10;
+  canvas.height = stage.height * 10;
+  const context = canvas.getContext('2d');
+  Object.values(stage.actors).forEach(actor => {
+    const i = new Image();
+    i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
+    context.drawImage(i, actor.position.x * 10, actor.position.y * 10, 10, 10);
+  });
+  return canvas.toDataURL();
+}
+
 export function createdActorsForRecording({beforeStage, afterStage, extent}) {
   const beforeIds = Object.keys(beforeStage.actors);
   const afterIds = Object.keys(afterStage.actors);
