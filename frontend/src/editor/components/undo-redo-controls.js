@@ -6,8 +6,16 @@ import {connect} from 'react-redux';
 class UndoRedoControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    canRedo: PropTypes.bool,
-    canUndo: PropTypes.bool,
+    undoDepth: PropTypes.number,
+    redoDepth: PropTypes.number,
+  }
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      showingSlider: false,
+      mouseover: false,
+    };
   }
 
   componentDidMount() {
@@ -16,37 +24,82 @@ class UndoRedoControls extends React.Component {
 
   componentWillUnmount() {
     document.body.removeEventListener("keydown", this._onHandleGlobalShortcuts);
+    clearTimeout(this._hideTimeout);
   }
 
   _onHandleGlobalShortcuts = (event) => {
-    if (event.which === 89 && (event.ctrlKey || event.metaKey)){
-      this.props.dispatch(undo());
+    if (event.which === 89 && (event.ctrlKey || event.metaKey)) {
+      this._dispatch(undo());
       event.preventDefault();
       event.stopPropagation();
     }
-    else if (event.which === 90 && (event.ctrlKey || event.metaKey)){
-      this.props.dispatch(event.shiftKey ? redo() : undo());
+    else if (event.which === 90 && (event.ctrlKey || event.metaKey)) {
+      this._dispatch(event.shiftKey ? redo() : undo());
       event.preventDefault();
       event.stopPropagation();
     }
   }
 
+  _onSlideUndoRedo = (event) => {
+    const dest = event.target.value;
+    let current = this.props.undoDepth;
+    while (dest < current) {
+      this._dispatch(undo());
+      current -= 1;
+    }
+    while (dest > current) {
+      this._dispatch(redo());
+      current += 1;
+    }
+  }
+
+  _onHideDebounced = () => {
+    clearTimeout(this._hideTimeout);
+    this._hideTimeout = setTimeout(() => {
+      if (this.state.mouseover) {
+        this._onHideDebounced();
+        return;
+      }
+      this.setState({showingSlider: false});
+    }, 1000);
+  }
+
+  _dispatch = (action) => {
+    if (!this.state.showingSlider) {
+      this.setState({showingSlider: true});
+    }
+    this._onHideDebounced();
+    this.props.dispatch(action);
+  }
+
   render() {
-    const {canUndo, canRedo, dispatch} = this.props;
+    const {undoDepth, redoDepth} = this.props;
+    const {showingSlider} = this.state;
 
     return (
-      <div>
+      <div
+        className={`undo-redo-controls showing-slider-${showingSlider}`}
+        onMouseEnter={() => this.setState({mouseover: true})}
+        onMouseLeave={() => { this.setState({mouseover: false}); this._onHideDebounced(); }}
+      >
+        <input 
+          type="range"
+          max={undoDepth + redoDepth}
+          min={0}
+          value={undoDepth}
+          onChange={this._onSlideUndoRedo}
+        />
         <Button
           className="icon"
-          onClick={() => dispatch(undo())}
-          disabled={!canUndo}
+          onClick={() => this._dispatch(undo())}
+          disabled={undoDepth === 0}
         >
           <img src="/editor/img/icon_undo.png" />
         </Button>
         <Button
           className="icon"
-          onClick={() => dispatch(redo())}
-          disabled={!canRedo}
+          onClick={() => this._dispatch(redo())}
+          disabled={redoDepth === 0}
         >
           <img src="/editor/img/icon_redo.png" />
         </Button>
@@ -57,8 +110,8 @@ class UndoRedoControls extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    canUndo: state.undoStack.length > 0,
-    canRedo: state.redoStack.length > 0,
+    undoDepth: state.undoStack.length,
+    redoDepth: state.redoStack.length,
   }
 }
 

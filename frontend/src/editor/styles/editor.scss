@@ -55,6 +55,9 @@ $rule-flow-color: #5BA4CD;
   flex: 1;
   background: url(../img/background.png) top left;
   padding-top: 15px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   .editor-horizontal-flex {
     display: flex;
@@ -71,6 +74,21 @@ $rule-flow-color: #5BA4CD;
     user-select: none;
   }
 
+  .undo-redo-controls {
+    input[type=range] {
+      margin-right: 10px;
+      width: 150px;
+      opacity: 0;
+      transform: translate3d(0,10px,0);
+      transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
+    }
+    &.showing-slider-true {
+      input[type=range] {
+      transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+    }
+  }
   .toolbar {
     order: 0;
     width:56px;

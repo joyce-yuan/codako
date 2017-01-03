@@ -98,14 +98,16 @@ export default class EditorRoot extends React.Component {
 
     if (!loaded) {
       return (
-        <div>Loading...</div>
+        <div className="editor">
+          <h1 style={{margin: 'auto'}}>Loading...</h1>
+        </div>
       );
     }
 
     return (
       <Provider store={editorStore}>
         <div className="editor">
-          <div style={{width: 1190, margin: 'auto'}}>
+          <div style={{width: 1190}}>
             <div className="editor-horizontal-flex">
               <h3 style={{flex: 1}}>Stage Name</h3>
               <UndoRedoControls />
