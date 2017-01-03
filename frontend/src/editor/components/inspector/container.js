@@ -102,7 +102,7 @@ function mapStateToProps(state) {
     const [stageUid, actorId] = state.ui.selectedActorPath.split(':');
     for (const stage of [state.stage, state.recording.beforeStage, state.recording.afterStage]) {
       if (stage.uid === stageUid) {
-        actor = stage.actors[actorId];
+        actor = (stage.actors || {})[actorId];
       }
     }
   }

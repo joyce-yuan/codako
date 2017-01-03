@@ -3,6 +3,8 @@ import stage from './initial-state-stage';
 import world from './initial-state-world';
 
 export default {
+  undoStack: [],
+  redoStack: [],
   ui: {
     selectedToolId: 'pointer',
     selectedCharacterId: null,

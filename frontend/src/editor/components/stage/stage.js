@@ -81,6 +81,11 @@ class Stage extends React.Component {
   _onKeyDown = (event) => {
     const {dispatch, selectedActorPath, stage} = this.props;
 
+    if (event.shiftKey || event.metaKey || event.ctrlKey) {
+      // do not catch these events, they're probably actual hotkeys
+      return;
+    }
+
     if (event.keyCode === 127 || event.keyCode === 8) {
       if (selectedActorPath) {
         const [stageUid, actorId] = selectedActorPath.split(':');
@@ -90,6 +95,7 @@ class Stage extends React.Component {
       }
       return;
     }
+
     dispatch(recordKeyForGameState(stage.uid, event.keyCode));
   }
 

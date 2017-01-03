@@ -7,11 +7,12 @@ import objectAssign from 'object-assign';
 import configureStore from './store/configureStore';
 import initialState from './reducers/initial-state';
 import {getStageScreenshot} from './utils/stage-helpers';
-
 import {makeRequest} from '../helpers/api';
 
 import Toolbar from './components/toolbar';
 import Library from './components/library';
+
+import UndoRedoControls from './components/undo-redo-controls';
 import StageContainer from './components/stage/container';
 import InspectorContainer from './components/inspector/container';
 import PaintContainer from './components/paint/container';
@@ -104,6 +105,12 @@ export default class EditorRoot extends React.Component {
     return (
       <Provider store={editorStore}>
         <div className="editor">
+          <div style={{width: 1190, margin: 'auto'}}>
+            <div className="editor-horizontal-flex">
+              <h3 style={{flex: 1}}>Stage Name</h3>
+              <UndoRedoControls />
+            </div>
+          </div>
           <div className="editor-horizontal-flex">
             <Toolbar />
             <div className="stage-container">

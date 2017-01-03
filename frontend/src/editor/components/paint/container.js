@@ -113,10 +113,12 @@ class Container extends React.Component {
     if (event.which === 89 && (event.ctrlKey || event.metaKey)){
       this._onRedo();
       event.preventDefault();
+      event.stopPropagation();
     }
     else if (event.which === 90 && (event.ctrlKey || event.metaKey)){
       event.shiftKey ? this._onRedo() : this._onUndo();
       event.preventDefault();
+      event.stopPropagation();
     }
   }
 

@@ -86,8 +86,8 @@ export default function StageOperator(stage) {
     }
 
     function tickRule(rule) {
-      if ((rule.type === CONTAINER_TYPES.EVENT) && checkEvent(rule)) {
-        return tickRulesTree(rule, FLOW_BEHAVIORS.FIRST);
+      if (rule.type === CONTAINER_TYPES.EVENT) {
+        return checkEvent(rule) && tickRulesTree(rule, FLOW_BEHAVIORS.FIRST);
       } else if (rule.type === CONTAINER_TYPES.FLOW) {
         return tickRulesTree(rule, rule.behavior);
       } else if (checkRuleScenario(rule)) {

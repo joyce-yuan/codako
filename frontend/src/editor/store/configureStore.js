@@ -3,6 +3,8 @@ import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 
+import {undoRedoMiddleware} from '../utils/undo-redo';
+
 // thunk middleware can also accept an extra argument to be passed to each thunk action
 // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
 
@@ -11,6 +13,7 @@ function configureStoreProd(initialState) {
   return createStore(rootReducer, initialState, compose(
     applyMiddleware(
       thunk,
+      undoRedoMiddleware,
     )
   ));
 }
@@ -21,6 +24,7 @@ function configureStoreDev(initialState) {
     applyMiddleware(
       reduxImmutableStateInvariant(),
       thunk,
+      undoRedoMiddleware,
     )
   ));
 
