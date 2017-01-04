@@ -311,8 +311,17 @@ $rule-flow-color: #5BA4CD;
 
 .modal-dialog.paint {
   user-select: none;
+
   canvas {
     cursor: crosshair;
+  }
+  canvas.mouseoverSelection {
+    cursor: move;
+    cursor: -webkit-grab;
+  }
+  canvas.mousedown.mouseoverSelection {
+    cursor: move;
+    cursor: -webkit-grabbing;
   }
 
   .paint-sidebar {

@@ -299,6 +299,8 @@ class Stage extends React.Component {
             left: this.state.left,
             width: stage.width * STAGE_CELL_SIZE,
             height: stage.height * STAGE_CELL_SIZE,
+            background: stage.background,
+            backgroundSize: 'cover',
           }}
           className="stage"
           onDragOver={this._onDragOver}

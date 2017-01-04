@@ -35,10 +35,6 @@ export class PixelTool {
       },
     });
   }
-
-  render(context, props, state) {
-    return state;
-  }
 }
 
 
@@ -72,7 +68,7 @@ export class PixelPaintbucketTool extends PixelTool {
       return;
     }
 
-    imageData.getContiguousPixels(e, state.selectionPixels, (p) => {
+    imageData.getContiguousPixels(e, state.interactionPixels, (p) => {
       context.fillPixel(p.x, p.y, color);
     });
   }
@@ -179,29 +175,32 @@ export class PixelRectSelectionTool extends PixelTool {
     this.name = 'select';
   }
 
-  selectionPixelsForState(state) {
-    const results = [];
+  interactionPixelsForState(state) {
+    if (!state.interaction.s || !state.interaction.e) {
+      return {};
+    }
+    const results = {};
     forEachInRect(state.interaction.s, state.interaction.e, (x, y) =>
-      results.push({x, y})
+      results[`${x},${y}`] = true
     );
     return results;
   }
 
   mousedown(point, props, state) {
     return objectAssign(super.mousedown(point, props, state), {
-      selectionPixels: [],
+      interactionPixels: null,
     });
   }
 
   mousemove(point, props, state) {
     return objectAssign(super.mousemove(point, props, state), {
-      selectionPixels: this.selectionPixelsForState(state),
+      interactionPixels: this.interactionPixelsForState(state),
     });
   }
 
   mouseup(point, props, state) {
     return objectAssign(super.mouseup(point, props, state), {
-      selectionPixels: this.selectionPixelsForState(state),
+      interactionPixels: this.interactionPixelsForState(state),
     });
   }
 }
@@ -213,11 +212,11 @@ export class PixelMagicSelectionTool extends PixelTool {
   }
 
   mouseup(point, {imageData}, state) {
-    const selectionPixels = [];
+    const interactionPixels = {};
     imageData.getContiguousPixels(point, null, (p) => {
-      selectionPixels.push(p);
+      interactionPixels[`${p.x},${p.y}`] = true;
     });
-    return objectAssign({}, state, {selectionPixels});
+    return objectAssign({}, state, {interactionPixels});
   }
 }
 
@@ -229,7 +228,7 @@ export class PixelTranslateTool extends PixelTool {
 
   mousedown(point, props, state) {
     // this.down = true;
-    // if (!canvas.selectionPixels.length) {
+    // if (!canvas.interactionPixels.length) {
     //   return;
     // }
     // canvas.cut()

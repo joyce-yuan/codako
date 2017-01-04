@@ -7,6 +7,33 @@ export default function CreatePixelImageData() {
     return clone;
   };
 
+  this.log = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = this.width;
+    canvas.height = this.height;
+    const ctx = canvas.getContext('2d');
+    ctx.putImageData(this, 0, 0);
+    const url = canvas.toDataURL();
+    
+		const img = new Image();
+		img.onload = function() {
+			const dim = {
+        string: "+",
+        style: "font-size: 1px; padding: " + Math.floor(this.height/2) + "px " + Math.floor(this.width/2) + "px; line-height: " + this.height + "px;"
+      };
+			console.log("%c" + dim.string, dim.style + "background: url(" + url + "); background-size: " + (this.width) + "px " + (this.height) + "px; color: transparent;");
+		};
+		img.src = url;
+  }
+
+  this.maskUsingPixels = (mask) => {
+    forEachInRect({x: 0, y: 0}, {x: this.width, y: this.height}, (x, y) => {
+      if (!mask[`${x},${y}`]) {
+        this.fillPixelRGBA(x, y, 0, 0, 0, 0);
+      }
+    });
+  }
+
   this.fillPixel = (xx, yy, color) => {
     if (!color) {
       throw new Error("fillPixel requires a color.");
@@ -14,11 +41,15 @@ export default function CreatePixelImageData() {
     if ((xx >= this.width || xx < 0) || (yy >= this.height || yy < 0)) {
       return;
     }
-
     const components = color.substr(5, color.length - 6).split(',');
-    components.forEach((val, idx) => {
-      this.data[(yy * this.width + xx) * 4 + idx] = val / 1;
-    });
+    this.fillPixelRGBA(xx, yy, ...components);
+  };
+
+  this.fillPixelRGBA = (xx, yy, r, g, b, a) => {
+    this.data[(yy * this.width + xx) * 4 + 0] = r / 1;
+    this.data[(yy * this.width + xx) * 4 + 1] = g / 1;
+    this.data[(yy * this.width + xx) * 4 + 2] = b / 1;
+    this.data[(yy * this.width + xx) * 4 + 3] = a / 1;
   };
 
   this.getPixel = (xx, yy) => {
@@ -28,16 +59,16 @@ export default function CreatePixelImageData() {
 
   this.clearPixelsInRect = (startX, startY, endX, endY) => {
     forEachInRect({x: startX, y: startY}, {x: endX, y: endY}, (x, y) =>
-      this.fillPixel(x, y, 'rgba(0,0,0,0)')
+      this.fillPixelRGBA(x, y, 0, 0, 0, 0)
     );
   };
 
-  this.getContiguousPixels = (startPixel, region, callback) => {
+  this.getContiguousPixels = (startPixel, regionMap, callback) => {
     const points = [startPixel];
     const startPixelData = this.getPixel(startPixel.x, startPixel.y);
 
     const pointsHit = {};
-    pointsHit[`${startPixel.x}-${startPixel.y}`] = 1;
+    pointsHit[`${startPixel.x},${startPixel.y}`] = 1;
     let p = points.pop();
 
     while (p) {
@@ -45,14 +76,14 @@ export default function CreatePixelImageData() {
 
       for (const d of [{x:-1, y:0}, {x:0,y:1}, {x:0,y:-1}, {x:1,y:0}]) {
         const pp = {x: p.x + d.x, y: p.y + d.y};
-        const pkey =  `${pp.x}-${pp.y}`;
+        const pkey =  `${pp.x},${pp.y}`;
         if (pointsHit[pkey]) {
           continue;
         }
         if (!(pp.x >= 0 && pp.y >= 0 && pp.x < this.width && pp.y < this.height)) {
           continue;
         }
-        if (region && region.length && !region.find((test) => pp.x === test.x && pp.y === test.y)) {
+        if (regionMap && regionMap[pkey]) {
           continue;
         }
 
@@ -71,22 +102,14 @@ export default function CreatePixelImageData() {
     }
   };
 
-  // this function calls a callback on every pixel on the border of a group of pixels
-  this.getEdgePixels = (selectionPixels) => {
-    const selection = {};
-    for (const p of selectionPixels) {
-      selection[`${p.x},${p.y}`] = true;
-    }
-    const results = [];
-    for (const p of selectionPixels) {
-      const left = selection[`${p.x - 1},${p.y}`];
-      const right = selection[`${p.x + 1},${p.y}`];
-      const top = selection[`${p.x},${p.y - 1}`];
-      const bot = selection[`${p.x},${p.y + 1}`];
-      if (!left || !right || !top || !bot) {
-        results.push([p.x, p.y, left, right, top, bot]);
+  this.getOpaquePixels = () => {
+    const pixels = {};
+    forEachInRect({x: 0, y: 0}, {x: this.width, y: this.height}, (x, y) => {
+      const [,,,a] = this.getPixel(x, y);
+      if (a > 0) {
+        pixels[`${x},${y}`] = true;
       }
-    }
-    return results;
+    });
+    return pixels;
   };
 }

@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
+import objectAssign from 'object-assign';
 
 import * as Tools from './tools';
 
@@ -53,6 +54,8 @@ class Container extends React.Component {
     this.setImageDataFromProps();
 
     // add event listeners which can't be attached to our div
+    document.body.addEventListener('cut', this._onGlobalCut);
+    document.body.addEventListener('copy', this._onGlobalCopy);
     document.body.addEventListener('paste', this._onGlobalPaste);
   }
 
@@ -61,6 +64,8 @@ class Container extends React.Component {
   }
 
   componentWillUnmount() {
+    document.body.removeEventListener('cut', this._onGlobalCut);
+    document.body.removeEventListener('copy', this._onGlobalCopy);
     document.body.removeEventListener('paste', this._onGlobalPaste);
   }
 
@@ -78,30 +83,32 @@ class Container extends React.Component {
     }
   }
 
-  _onChangeImageData = (nextImageData) => {
-    this.setState({
-      imageData: nextImageData,
+  _onCommitChanges = (changes) => {
+    this.setState(objectAssign({}, changes, {
       undoStack: this.state.undoStack
         .slice(Math.max(0, this.state.undoStack.length - MAX_UNDO_STEPS))
-        .concat([this.state.imageData]),
+        .concat([{
+          imageData: this.state.imageData,
+          selectionImageData: this.state.selectionImageData,
+        }]),
       redoStack: [],
-    });
+    }));
   }
 
   _onUndo = () => {
     const undoStack = [].concat(this.state.undoStack);
-    const imageData = undoStack.pop();
-    if (!imageData) { return; }
+    const changes = undoStack.pop();
+    if (!changes) { return; }
     const redoStack = [].concat(this.state.redoStack, [this.state.imageData]);
-    this.setState({imageData, redoStack, undoStack});
+    this.setState(objectAssign({}, changes, {redoStack, undoStack}));
   }
 
   _onRedo = () => {
     const redoStack = [].concat(this.state.redoStack);
-    const imageData = redoStack.pop();
-    if (!imageData) { return; }
+    const changes = redoStack.pop();
+    if (!changes) { return; }
     const undoStack = [].concat(this.state.undoStack, [this.state.imageData]);
-    this.setState({imageData, redoStack, undoStack});
+    this.setState(objectAssign({}, changes, {redoStack, undoStack}));
   }
 
   _onClose = () => {
@@ -127,6 +134,14 @@ class Container extends React.Component {
       event.preventDefault();
       event.stopPropagation();
     }
+  }
+
+  _onGlobalCut = (event) => {
+    this._onGlobalCopy(event, {cut: true})
+  }
+
+  _onGlobalCopy = (event) => {
+    
   }
 
   _onGlobalPaste = (event) => {
@@ -155,11 +170,13 @@ class Container extends React.Component {
     ctx.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
     const nextImageData = ctx.getImageData(0, 0, width, height);
     CreatePixelImageData.call(nextImageData);
-    this._onChangeImageData(nextImageData);
+    this._onCommitChanges({
+      imageData: nextImageData,
+    });
   }
 
   render() {
-    const {imageData, tools, selectedTool, selectedColor, undoStack, redoStack} = this.state;
+    const {imageData, selectionImageData, tools, selectedTool, selectedColor, undoStack, redoStack} = this.state;
 
     return (
       <Modal
@@ -203,10 +220,11 @@ class Container extends React.Component {
                 color={selectedColor}
                 tool={selectedTool}
                 imageData={imageData}
+                selectionImageData={selectionImageData}
                 offsetX={0}
                 offsetY={0}
                 pixelSize={11}
-                onChangeImageData={this._onChangeImageData}
+                onCommitChanges={this._onCommitChanges}
               />
             </div>
           </ModalBody>

@@ -51,7 +51,7 @@ export default class EditorRoot extends React.Component {
 
   loadStage = () => {
     return makeRequest(`/stages/${this.props.stageId}/state`).then((savedState) => {
-      const state = objectAssign({}, initialState, savedState);
+      const state = u(savedState, initialState);
       const editorStore = window.editorStore = configureStore(state);
       editorStore.subscribe(this._onSaveDebounced);
       this.setState({editorStore, loaded: true});
