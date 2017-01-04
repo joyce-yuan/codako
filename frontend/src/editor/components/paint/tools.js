@@ -6,8 +6,13 @@ export class PixelTool {
     this.name = 'Undefined';
   }
 
-  mousedown(point, props, state) {
-    return objectAssign({}, state, {
+  layerForProps(props, {clone = false} = {}) {
+    const key = props.selectionImageData ? 'selectionImageData' : 'imageData';
+    return {layerKey: key, layerImageData: clone ? props[key].clone() : props[key]};
+  }
+
+  mousedown(point, props) {
+    return objectAssign({}, props, {
       interaction: {
         s: point,
         e: point,
@@ -16,24 +21,32 @@ export class PixelTool {
     });
   }
 
-  mousemove(point, props, state) {
-    return objectAssign({}, state, {
+  mousemove(point, props) {
+    return objectAssign({}, props, {
       interaction: {
-        s: state.interaction.s,
+        s: props.interaction.s,
         e: point,
-        points: [].concat(state.interaction.points, [point]),
+        points: [].concat(props.interaction.points, [point]),
       },
     });
   }
 
-  mouseup(point, props, state) {
-    return objectAssign({}, state, {
+  mouseup(props) {
+    const {layerImageData, layerKey} = this.layerForProps(props, {clone: true});
+    this.render(layerImageData, props);
+
+    return objectAssign({}, props, {
+      [layerKey]: layerImageData,
       interaction: {
-        s: state.interaction.s,
-        e: point,
-        points: [].concat(state.interaction.points, [point]),
-      },
+        s: null,
+        e: null,
+        points: [],
+      }
     });
+  }
+
+  render() {
+    // no effect
   }
 }
 
@@ -44,7 +57,7 @@ export class PixelFillRectTool extends PixelTool {
     this.name = 'rect';
   }
 
-  render(context, {color}, {interaction}) {
+  render(context, {color, interaction}) {
     if (!interaction.s || !interaction.e) {
       return;
     }
@@ -61,15 +74,13 @@ export class PixelPaintbucketTool extends PixelTool {
     this.name = 'paintbucket';
   }
 
-  render(context, {color, imageData}, state) {
-    const e = state.interaction.e;
-
-    if (!e) {
+  render(context, props) {
+    if (!props.interaction.e) {
       return;
     }
-
-    imageData.getContiguousPixels(e, state.interactionPixels, (p) => {
-      context.fillPixel(p.x, p.y, color);
+    const {layerImageData} = this.layerForProps(props);
+    layerImageData.getContiguousPixels(props.interaction.e, layerImageData.getOpaquePixels(), (p) => {
+      context.fillPixel(p.x, p.y, props.color);
     });
   }
 }
@@ -81,7 +92,7 @@ export class PixelFillEllipseTool extends PixelTool {
     this.name = 'ellipse';
   }
 
-  render(context, {color}, {interaction}) {
+  render(context, {color, interaction}) {
     const {s, e} = interaction;
     if (!s || !e) {
       return;
@@ -106,12 +117,12 @@ export class PixelFreehandTool extends PixelTool {
     this.name = 'pen';
   }
 
-  render(context, {color}, {interaction}) {
-    if (!interaction.points || !interaction.points.length) {
+  render(context, {color, interaction: {points}}) {
+    if (!points || !points.length) {
       return;
     }
-    let prev = interaction.points[0];
-    for (const point of interaction.points) {
+    let prev = points[0];
+    for (const point of points) {
       forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y, color));
       prev = point;
     }
@@ -124,7 +135,7 @@ export class PixelLineTool extends PixelTool {
     this.name = 'line';
   }
 
-  render(context, {color, pixelSize}, {interaction}, isPreview) {
+  render(context, {color, pixelSize, interaction}, isPreview) {
     const {s, e} = interaction;
     if (!s || !e) {
       return;
@@ -153,12 +164,12 @@ export class PixelEraserTool extends PixelTool {
     this.name = 'eraser';
   }
 
-  render(context, {color}, {interaction}, isPreview) {
-    if (!interaction.points || !interaction.points.length) {
+  render(context, {color, interaction: {points}}, isPreview) {
+    if (!points || !points.length) {
       return;
     }
-    let prev = interaction.points[0];
-    for (const point of interaction.points) {
+    let prev = points[0];
+    for (const point of points) {
       if (isPreview) {
         forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.clearPixel(x, y));
       } else {
@@ -169,70 +180,115 @@ export class PixelEraserTool extends PixelTool {
   }
 }
 
-export class PixelRectSelectionTool extends PixelTool {
+class PixelSelectionTool extends PixelTool {
+  selectionOffsetForProps(props) {
+    const {interaction: {s, e}, initialSelectionOffset} = props;
+    return {
+      x: initialSelectionOffset.x + (e.x - s.x),
+      y: initialSelectionOffset.y + (e.y - s.y),
+    };
+  }
+
+  selectionPixelsForProps(props) {
+    // override in subclasses
+  }
+
+  shouldDrag(point, props) {
+    const x = point.x - props.selectionOffset.x;
+    const y = point.y - props.selectionOffset.y;
+    return props.selectionImageData && props.selectionImageData.getOpaquePixels()[`${x},${y}`];
+  }
+
+  mousedown(point, props) {
+    if (this.shouldDrag(point, props)) {
+      return objectAssign({}, super.mousedown(point, props), {
+        initialSelectionOffset: props.selectionOffset,
+        draggingSelection: true,
+      });
+    }
+
+    let nextImageData = props.imageData;
+    if (props.selectionImageData) {
+      nextImageData = props.imageData.clone();
+      nextImageData.applyPixelsFromData(props.selectionImageData, 0, 0, props.selectionImageData.width, props.selectionImageData.height, props.selectionOffset.x, props.selectionOffset.y, {
+        ignoreClearPixels: true,
+      });
+    }
+
+    return objectAssign({}, super.mousedown(point, props), {
+      imageData: nextImageData,
+      selectionImageData: null,
+      selectionOffset: {x: 0, y: 0},
+      interactionPixels: this.selectionPixelsForProps(props),
+    });
+  }
+
+  mousemove(point, props) {
+    if (props.draggingSelection) {
+      return objectAssign({}, super.mousemove(point, props), {
+        selectionOffset: this.selectionOffsetForProps(props),
+      });
+    }
+    return objectAssign({}, super.mousemove(point, props), {
+      interactionPixels: this.selectionPixelsForProps(props),
+    });
+  }
+
+  mouseup(props) {
+    if (props.draggingSelection) {
+      return objectAssign({}, super.mouseup(props), {
+        selectionOffset: this.selectionOffsetForProps(props),
+        draggingSelection: false,
+      });
+    }
+
+    const selectionImageData = props.imageData.clone();
+    selectionImageData.maskUsingPixels(props.interactionPixels);
+
+    const imageData = props.imageData.clone();
+    for (const key of Object.keys(props.interactionPixels)) {
+      const [x, y] = key.split(',').map(v => v / 1);
+      imageData.fillPixelRGBA(x, y, 0, 0, 0, 0);
+    }
+    return objectAssign({}, super.mouseup(props), {
+      selectionOffset: {x: 0, y: 0},
+      selectionImageData,
+      imageData,
+      interactionPixels: null,
+    });
+
+  }
+}
+
+export class PixelRectSelectionTool extends PixelSelectionTool {
   constructor() {
     super();
     this.name = 'select';
   }
 
-  interactionPixelsForState(state) {
-    if (!state.interaction.s || !state.interaction.e) {
-      return {};
+  selectionPixelsForProps({interaction}) {
+    if (!interaction.s || !interaction.e) {
+      return null;
     }
-    const results = {};
-    forEachInRect(state.interaction.s, state.interaction.e, (x, y) =>
-      results[`${x},${y}`] = true
+    const interactionPixels = {};
+    forEachInRect(interaction.s, interaction.e, (x, y) =>
+      interactionPixels[`${x},${y}`] = true
     );
-    return results;
-  }
-
-  mousedown(point, props, state) {
-    return objectAssign(super.mousedown(point, props, state), {
-      interactionPixels: null,
-    });
-  }
-
-  mousemove(point, props, state) {
-    return objectAssign(super.mousemove(point, props, state), {
-      interactionPixels: this.interactionPixelsForState(state),
-    });
-  }
-
-  mouseup(point, props, state) {
-    return objectAssign(super.mouseup(point, props, state), {
-      interactionPixels: this.interactionPixelsForState(state),
-    });
+    return interactionPixels;
   }
 }
 
-export class PixelMagicSelectionTool extends PixelTool {
+export class PixelMagicSelectionTool extends PixelSelectionTool {
   constructor() {
     super();
     this.name = 'magicWand';
   }
 
-  mouseup(point, {imageData}, state) {
+  selectionPixelsForProps({imageData, interaction}) {
     const interactionPixels = {};
-    imageData.getContiguousPixels(point, null, (p) => {
+    imageData.getContiguousPixels(interaction.e, null, (p) => {
       interactionPixels[`${p.x},${p.y}`] = true;
     });
-    return objectAssign({}, state, {interactionPixels});
-  }
-}
-
-export class PixelTranslateTool extends PixelTool {
-  constructor() {
-    super();
-    this.name = 'translate';
-  }
-
-  mousedown(point, props, state) {
-    // this.down = true;
-    // if (!canvas.interactionPixels.length) {
-    //   return;
-    // }
-    // canvas.cut()
-    // canvas.paste()
-    return state;
+    return interactionPixels;
   }
 }

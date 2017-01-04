@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react';
 import classNames from 'classnames';
-import objectAssign from 'object-assign';
 import CreatePixelContext from './create-pixel-context';
 
 const SELECTION_ANTS_INTERVAL = 200;
@@ -18,7 +17,7 @@ function getEdgePixels(pixelMap) {
     }
   }
   return results;
-};
+}
 
 export default class PixelCanvas extends React.Component {
   static propTypes = {
@@ -27,15 +26,19 @@ export default class PixelCanvas extends React.Component {
     pixelSize: PropTypes.number,
     imageData: PropTypes.object,
     selectionImageData: PropTypes.object,
-    onCommitChanges: PropTypes.func,
+    selectionOffset: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number,
+    }),
+    interactionPixels: PropTypes.object,
+    onMouseDown: PropTypes.func,
+    onMouseMove: PropTypes.func,
+    onMouseUp: PropTypes.func,
   };
 
   constructor(props, context) {
     super(props, context);
-
     this.state = {
-      interaction: {},
-      interactionPixels: null,
       mousedown: false,
       mouseoverSelection: false,
     };
@@ -73,8 +76,8 @@ export default class PixelCanvas extends React.Component {
   }
 
   _selectionPixels() {
-    if (this.state.interactionPixels) {
-      return this.state.interactionPixels;
+    if (this.props.interactionPixels) {
+      return this.props.interactionPixels;
     }
 
     if (this.props.selectionImageData) {
@@ -85,7 +88,7 @@ export default class PixelCanvas extends React.Component {
   }
 
   renderToCanvas() {
-    const {pixelSize, imageData, selectionImageData} = this.props;
+    const {pixelSize, imageData, selectionImageData, selectionOffset} = this.props;
     const c = this._pixelContext;
 
     c.fillStyle = "rgb(255,255,255)";
@@ -93,15 +96,15 @@ export default class PixelCanvas extends React.Component {
     c.drawTransparentPattern();
 
     if (imageData) {
-      c.applyPixelsFromData(imageData, 0, 0, 40, 40, 0, 0, {});
-    }
-
-    if (this.props.tool && this.props.tool.render) {
-      this.props.tool.render(c, this.props, this.state, true);
+      c.applyPixelsFromData(imageData, 0, 0, imageData.width, imageData.height, 0, 0, {});
     }
 
     if (selectionImageData) {
-      c.applyPixelsFromData(selectionImageData, 0, 0, 40, 40, 0, 0, {});
+      c.applyPixelsFromData(selectionImageData, 0, 0, selectionImageData.width, selectionImageData.height, selectionOffset.x, selectionOffset.y, {});
+    }
+
+    if (this.props.tool && this.props.tool.render) {
+      this.props.tool.render(c, this.props, true);
     }
 
     const edgePixels = getEdgePixels(this._selectionPixels());
@@ -110,10 +113,10 @@ export default class PixelCanvas extends React.Component {
       c.beginPath();
       for (const [x, y, left, right, top, bot] of edgePixels) {
         if ((Math.floor(Date.now() / SELECTION_ANTS_INTERVAL) + x + y * (imageData.width + 1)) % 2 === 0) {
-          const topY = (y) * pixelSize + 0.5;
-          const botY = (y+1) * pixelSize + 0.5;
-          const leftX = (x) * pixelSize + 0.5;
-          const rightX = (x+1) * pixelSize + 0.5;
+          const topY = (y + selectionOffset.y) * pixelSize + 0.5;
+          const botY = (y + 1 + selectionOffset.y) * pixelSize + 0.5;
+          const leftX = (x + selectionOffset.x) * pixelSize + 0.5;
+          const rightX = (x + 1 + selectionOffset.x) * pixelSize + 0.5;
           if (!left) {
             c.moveTo(leftX, topY);
             c.lineTo(leftX, botY);
@@ -144,37 +147,24 @@ export default class PixelCanvas extends React.Component {
     c.drawGrid();
   }
 
-  _stateByApplyingToolEvent = (event, type) => {
-    if (!this.props.tool) {
-      return {};
-    }
-    const pixel = this._pixelForEvent(event);
-    return this.props.tool[type](pixel, this.props, this.state);
-  }
-
   _onMouseDown = (event) => {
     this._pixelCanvas.removeEventListener('mousemove', this._onMouseMove);
     document.addEventListener('mousemove', this._onMouseMove);
     document.addEventListener('mouseup', this._onMouseUp);
-
-    this.setState(objectAssign(this._stateByApplyingToolEvent(event, 'mousedown'), {
-      mousedown: true,
-    }));
+    this.props.onMouseDown(event, this._pixelForEvent(event));
+    this.setState({mousedown: true});
   }
 
   _onMouseMove = (event) => {
-    const nextState = {};
+    const p = this._pixelForEvent(event);
 
-    const {x, y} = this._pixelForEvent(event);
-    const mouseoverSelection = this._selectionPixels()[`${x},${y}`];
-    if (mouseoverSelection !== this.state.mouseoverSelection) {
-      objectAssign(nextState, {mouseoverSelection});
-    }
     if (this.state.mousedown) {
-      objectAssign(nextState, this._stateByApplyingToolEvent(event, 'mousemove'));
+      this.props.onMouseMove(event, p);
     }
-    if (Object.keys(nextState).length) {
-      this.setState(nextState);
+
+    const mouseoverSelection = this._selectionPixels()[`${p.x - this.props.selectionOffset.x},${p.y - this.props.selectionOffset.y}`];
+    if (mouseoverSelection !== this.state.mouseoverSelection) {
+      this.setState({mouseoverSelection});
     }
   }
 
@@ -183,28 +173,9 @@ export default class PixelCanvas extends React.Component {
     document.removeEventListener('mousemove', this._onMouseMove);
     document.removeEventListener('mouseup', this._onMouseUp);
 
-    const {imageData, tool, onCommitChanges} = this.props;
-    const postMouseUpState = this._stateByApplyingToolEvent(event, 'mouseup');
-
-    if (this.state.mousedown && tool) {
-      const changes = {};
-      if (tool.render) {
-        changes.imageData = imageData.clone();
-        tool.render(changes.imageData, this.props, this.state, false);
-      }
-      if (postMouseUpState.interactionPixels) {
-        changes.selectionImageData = imageData.clone();
-        changes.selectionImageData.maskUsingPixels(postMouseUpState.interactionPixels);
-      }
-      if (Object.keys(changes).length) {
-        onCommitChanges(changes);
-      }
-
-      this.setState(objectAssign(postMouseUpState, {
-        mousedown: false,
-        interaction: {},
-        interactionPixels: null,
-      }));
+    if (this.state.mousedown) {
+      this.props.onMouseUp(event, this._pixelForEvent(event));
+      this.setState({mousedown: false});
     }
   }
 

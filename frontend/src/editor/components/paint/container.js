@@ -38,15 +38,24 @@ class Container extends React.Component {
         new Tools.PixelFillEllipseTool(),
         new Tools.PixelPaintbucketTool(),
 
-        new Tools.PixelTranslateTool(),
         new Tools.PixelRectSelectionTool(),
         new Tools.PixelMagicSelectionTool(),
       ],
-      selectedColor: ColorOptions[3],
-      selectedTool: null,
+      color: ColorOptions[3],
+      tool: null,
+
       imageData: null,
+      selectionImageData: null,
+      selectionOffset: {
+        x: 0,
+        y: 0,
+      },
+
       undoStack: [],
       redoStack: [],
+
+      interaction: {},
+      interactionPixels: null,
     };
   }
 
@@ -83,8 +92,8 @@ class Container extends React.Component {
     }
   }
 
-  _onCommitChanges = (changes) => {
-    this.setState(objectAssign({}, changes, {
+  setStateWithCheckpoint = (state) => {
+    this.setState(objectAssign({}, state, {
       undoStack: this.state.undoStack
         .slice(Math.max(0, this.state.undoStack.length - MAX_UNDO_STEPS))
         .concat([{
@@ -170,13 +179,34 @@ class Container extends React.Component {
     ctx.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
     const nextImageData = ctx.getImageData(0, 0, width, height);
     CreatePixelImageData.call(nextImageData);
-    this._onCommitChanges({
+    this.setStateWithCheckpoint({
       imageData: nextImageData,
     });
   }
 
+  _onCanvasMouseDown = (event, pixel) => {
+    const tool = this.state.tool;
+    if (tool) {
+      this.setState(tool.mousedown(pixel, this.state));
+    }
+  }
+
+  _onCanvasMouseMove = (event, pixel) => {
+    const tool = this.state.tool;
+    if (tool) {
+      this.setState(tool.mousemove(pixel, this.state));
+    }
+  }
+
+  _onCanvasMouseUp = (event, pixel) => {
+    const tool = this.state.tool;
+    if (tool) {
+      this.setStateWithCheckpoint(tool.mouseup(tool.mousemove(pixel, this.state)));
+    }
+  }
+
   render() {
-    const {imageData, selectionImageData, tools, selectedTool, selectedColor, undoStack, redoStack} = this.state;
+    const {imageData, tool, tools, color, undoStack, redoStack} = this.state;
 
     return (
       <Modal
@@ -207,24 +237,21 @@ class Container extends React.Component {
             <div className="flex-horizontal">
               <div className="paint-sidebar">
                 <PixelColorPicker
-                  color={selectedColor}
-                  onColorChange={(color) => this.setState({selectedColor: color})}
+                  color={color}
+                  onColorChange={(c) => this.setState({color: c})}
                 />
                 <PixelToolbar
                   tools={tools}
-                  tool={selectedTool}
-                  onToolChange={(tool) => this.setState({selectedTool: tool})}
+                  tool={tool}
+                  onToolChange={(t) => this.setState({tool: t})}
                 />
               </div>
               <PixelCanvas
-                color={selectedColor}
-                tool={selectedTool}
-                imageData={imageData}
-                selectionImageData={selectionImageData}
-                offsetX={0}
-                offsetY={0}
                 pixelSize={11}
-                onCommitChanges={this._onCommitChanges}
+                onMouseDown={this._onCanvasMouseDown}
+                onMouseMove={this._onCanvasMouseMove}
+                onMouseUp={this._onCanvasMouseUp}
+                {...this.state}
               />
             </div>
           </ModalBody>

@@ -32,7 +32,25 @@ export default function CreatePixelImageData() {
         this.fillPixelRGBA(x, y, 0, 0, 0, 0);
       }
     });
-  }
+  };
+
+  this.applyPixelsFromData = (imageData, startX, startY, endX, endY, offsetX, offsetY, options = {}) => {
+    const {data, width} = imageData;
+    for (let x = startX; x < endX; x ++) {
+      for (let y = startY; y < endY; y ++) {
+        if ((x+offsetX >= this.width) || (y+offsetY >= this.height)) {
+          continue;
+        }
+        const r = data[(y * width + x) * 4 + 0];
+        const g = data[(y * width + x) * 4 + 1];
+        const b = data[(y * width + x) * 4 + 2];
+        const a = data[(y * width + x) * 4 + 3];
+        if (!(options.ignoreClearPixels && a <= 0)) {
+          this.fillPixelRGBA(x+offsetX, y+offsetY, r, g, b, a);
+        }
+      }
+    }
+  };
 
   this.fillPixel = (xx, yy, color) => {
     if (!color) {
