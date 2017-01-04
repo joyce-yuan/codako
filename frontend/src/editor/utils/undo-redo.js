@@ -1,10 +1,16 @@
 /* eslint no-unused-vars: 0 */
-import jsondiffpatch from 'jsondiffpatch';
+import {DiffPatcher} from 'jsondiffpatch/src/diffpatcher';
 import objectAssign from 'object-assign';
 
 const PERFORM_UNDO = 'PERFORM_UNDO';
 const PERFORM_REDO = 'PERFORM_REDO';
 const PUSH_STACK = 'PUSH_STACK';
+
+const patcher = new DiffPatcher({
+  textDiff: {
+    minLength: Number.MAX_SAFE_INTEGER,
+  },
+});
 
 export function undo() {
   return {
@@ -18,40 +24,44 @@ export function redo() {
   };
 }
 
+function shift(state, sourceStackName, targetStackName) {
+  let nextState = JSON.parse(JSON.stringify(state));
+  const diff = nextState[sourceStackName].pop();
+  if (diff) {
+    nextState = patcher.patch(nextState, diff);
+    nextState[targetStackName].push(patcher.reverse(diff));
+  }
+  return nextState;
+}
+
+function diffByApplyingOptions(fullDiff = {}, {trackedKeys} = {}) {
+  let diff = fullDiff || {};
+  if (trackedKeys) {
+    diff = {};
+    Object.keys(fullDiff).filter(key =>
+      trackedKeys.includes(key)
+    ).forEach(key => {
+      diff[key] = fullDiff[key];
+    });
+  }
+  return (Object.keys(diff).length > 0) ? diff : null;
+}
+
 export const undoRedoReducerFactory = ({trackedKeys, ignoredActions} = {}) => {
   return (state, action) => {
     if (action.type === PERFORM_UNDO) {
-      let nextState = JSON.parse(JSON.stringify(state));
-      const diff = nextState.undoStack.pop();
-      if (diff) {
-        nextState = jsondiffpatch.patch(nextState, diff);
-        nextState.redoStack.push(jsondiffpatch.reverse(diff));
-      }
-      return nextState;
+      return shift(state, 'undoStack', 'redoStack');
     }
     if (action.type === PERFORM_REDO) {
-      let nextState = JSON.parse(JSON.stringify(state));
-      const diff = nextState.redoStack.pop();
-      if (diff) {
-        nextState = jsondiffpatch.patch(nextState, diff);
-        nextState.undoStack.push(jsondiffpatch.reverse(diff));
-      }
-      return nextState;
+      return shift(state, 'redoStack', 'undoStack');
     }
     if (action.type === PUSH_STACK) {
-      let diff = action.diff || {};
       if (ignoredActions.includes(action.triggeringActionType)) {
         return state;
       }
-      if (trackedKeys) {
-        diff = {};
-        Object.keys(action.diff).filter(key =>
-          trackedKeys.includes(key)
-        ).forEach(key => {
-          diff[key] = action.diff[key];
-        });
-      }
-      if (Object.keys(diff).length > 0) {
+
+      const diff = diffByApplyingOptions(action.diff, {trackedKeys});
+      if (diff) {
         return objectAssign({}, state, {
           undoStack: [].concat(state.undoStack.slice(state.undoStack.length - 50), [diff]),
           redoStack: [],
@@ -71,7 +81,12 @@ export const undoRedoMiddleware = store => next => action => {
   const before = store.getState();
   const result = next(action);
   const after = store.getState();
-  const diff = jsondiffpatch.diff(after, before);
+
+  const t = Date.now();
+  const diff = patcher.diff(after, before);
+  if (Date.now() - t > 50) {
+    console.warn("Spent more than 50ms creating the undo/redo diff.");
+  }
   if (diff && Object.keys(diff).length > 0) {
     store.dispatch({
       type: 'PUSH_STACK',

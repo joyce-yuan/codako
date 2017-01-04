@@ -40,7 +40,7 @@ class Toolbar extends React.Component {
       <div className="panel toolbar">
         {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
         <Button onClick={() => this.props.dispatch(actions.showSettingsModal())}>
-        Settings
+          <img src="/editor/img/sidebar_choose_background.png" />
         </Button>
       </div>
     );

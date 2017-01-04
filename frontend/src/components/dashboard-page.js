@@ -23,7 +23,6 @@ class StageOptionsMenu extends React.Component {
       <ButtonDropdown
         isOpen={this.state.open}
         toggle={() => this.setState({open: !this.state.open})}
-        {...this.props}
       >
         <DropdownToggle className="btn-link btn-sm">
           <i className="fa fa-ellipsis-v" />
@@ -58,7 +57,6 @@ class StageCard extends React.Component {
         </Link>
         <div className="card-block">
           <StageOptionsMenu
-            style={{float: 'right'}}
             onDuplicate={this.props.onDuplicate}
             onDelete={this.props.onDelete}
           />

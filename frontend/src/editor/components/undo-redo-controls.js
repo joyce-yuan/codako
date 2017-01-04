@@ -19,15 +19,19 @@ class UndoRedoControls extends React.Component {
   }
 
   componentDidMount() {
-    document.body.addEventListener("keydown", this._onHandleGlobalShortcuts);
+    document.body.addEventListener("keydown", this._onGlobalKeydown);
   }
 
   componentWillUnmount() {
-    document.body.removeEventListener("keydown", this._onHandleGlobalShortcuts);
+    document.body.removeEventListener("keydown", this._onGlobalKeydown);
     clearTimeout(this._hideTimeout);
   }
 
-  _onHandleGlobalShortcuts = (event) => {
+  _onGlobalKeydown = (event) => {
+    if (event.target.closest('.modal')) {
+      return;
+    }
+
     if (event.which === 89 && (event.ctrlKey || event.metaKey)) {
       this._dispatch(undo());
       event.preventDefault();

@@ -65,6 +65,9 @@ body {
     margin-right: 10px;
     max-width: 50%;
     max-width: calc(50% - 20px);
+    .btn-group {
+      float: right;
+    }
   }
   .stage-thumbnail {
     background: #ccc;

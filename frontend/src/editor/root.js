@@ -38,13 +38,22 @@ export default class EditorRoot extends React.Component {
   }
 
   componentDidMount() {
-    makeRequest(`/stages/${this.props.stageId}/state`).then((savedState) => {
+    this.loadStage(this.props.stageId);
+    window.addEventListener("beforeunload", this._onBeforeUnload);
+  }
+  
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.stageId !== this.props.stageId) {
+      this.loadStage(nextProps.stageId);
+    }
+  }
+
+  loadStage = () => {
+    return makeRequest(`/stages/${this.props.stageId}/state`).then((savedState) => {
       const state = objectAssign({}, initialState, savedState);
       const editorStore = window.editorStore = configureStore(state);
-      this.setState({editorStore, loaded: true});
-
       editorStore.subscribe(this._onSaveDebounced);
-      window.addEventListener("beforeunload", this._onBeforeUnload);
+      this.setState({editorStore, loaded: true});
     });
   }
 
@@ -79,11 +88,15 @@ export default class EditorRoot extends React.Component {
     this.setState({saving: true});
 
     const editorState = this.state.editorStore.getState();
+    const savedState = objectAssign({}, editorState);
+    delete savedState.undoStack;
+    delete savedState.redoStack;
+    
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
         thumbnail: getStageScreenshot(editorState.stage),
-        state: editorState,
+        state: savedState,
       },
     }).then(() => {
       this.setState({saving: false});

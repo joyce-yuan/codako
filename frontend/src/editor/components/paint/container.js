@@ -51,10 +51,17 @@ class Container extends React.Component {
 
   componentDidMount() {
     this.setImageDataFromProps();
+
+    // add event listeners which can't be attached to our div
+    document.body.addEventListener('paste', this._onGlobalPaste);
   }
 
   componentWillReceiveProps(nextProps) {
     this.setImageDataFromProps(nextProps);
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('paste', this._onGlobalPaste);
   }
 
   setImageDataFromProps(props = this.props) {
@@ -120,6 +127,35 @@ class Container extends React.Component {
       event.preventDefault();
       event.stopPropagation();
     }
+  }
+
+  _onGlobalPaste = (event) => {
+    const items = Array.from(event.clipboardData.items);
+    if (items) {
+      const imageItem = items.find(i => i.type.includes("image"));
+      if (imageItem) {
+        const img = new Image();
+        img.onload = () => {
+          this._onApplyImage(img);
+        };
+        img.src = URL.createObjectURL(imageItem.getAsFile());
+      }
+    }
+  }
+
+  _onApplyImage = (img) => {
+    const {imageData} = this.state;
+    const {width, height} = imageData;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    const scale = Math.min(height / img.height, width / img.width);
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
+    const nextImageData = ctx.getImageData(0, 0, width, height);
+    CreatePixelImageData.call(nextImageData);
+    this._onChangeImageData(nextImageData);
   }
 
   render() {

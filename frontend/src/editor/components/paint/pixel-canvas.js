@@ -48,7 +48,7 @@ export default class PixelCanvas extends React.Component {
 
     this.renderToCanvas();
   }
-
+  
   renderToCanvas() {
     const {pixelSize, imageData} = this.props;
     const c = this._pixelContext;
