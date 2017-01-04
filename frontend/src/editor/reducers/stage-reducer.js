@@ -12,17 +12,22 @@ export default function stageReducer(state = initialState.stage, action) {
   switch (action.type) {
     case Types.UPSERT_ACTOR: {
       return u({
-        actors: u.updateIn(action.id, action.values)
+        actors: u.updateIn(action.id, action.values),
+        history: u.constant([]),
       }, state);
     }
     case Types.DELETE_ACTOR: {
       return u({
         actors: u.omit(action.id),
+        history: u.constant([]),
       }, state);
     }
     case Types.INPUT_FOR_GAME_STATE: {
       return u({
-        input:{ keys: action.keys, clicks: action.clicks }
+        input: {
+          keys: action.keys,
+          clicks: action.clicks,
+        },
       }, state);
     }
     case Types.UPDATE_STAGE_SETTINGS: {
@@ -37,13 +42,34 @@ export default function stageReducer(state = initialState.stage, action) {
     }
     case Types.RESTORE_INITIAL_GAME_STATE: {
       return u({
-        actors: u.constant(state.startActors)
+        actors: u.constant(state.startActors),
+        history: u.constant([]),
       }, state);
     }
     case Types.ADVANCE_GAME_STATE: {
       const nextState = JSON.parse(JSON.stringify(state));
+      nextState.history.push({
+        applied: state.applied,
+        actors: state.actors,
+        input: state.input,
+      });
+      if (nextState.history.length > 20) {
+        nextState.history = nextState.history.slice(1);
+      }
       StageOperator(nextState).tick();
       return nextState;
+    }
+    case Types.STEP_BACK_GAME_STATE: {
+      const top = state.history[state.history.length - 1];
+      if (!top) {
+        return state;
+      }
+      return u({
+        applied: u.constant(top.applied),
+        actors: u.constant(top.actors),
+        input: u.constant(top.input),
+        history: state.history.slice(0, state.history.length - 1),
+      }, state);
     }
     default:
       return state;

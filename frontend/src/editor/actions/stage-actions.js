@@ -8,6 +8,13 @@ export function advanceGameState(stageUid) {
   };
 }
 
+export function stepBackGameState(stageUid) {
+  return {
+    type: types.STEP_BACK_GAME_STATE,
+    stageUid,
+  };
+}
+
 export function saveInitialGameState(stageUid, {thumbnail, actors}) {
   return {
     type: types.SAVE_INITIAL_GAME_STATE,

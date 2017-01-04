@@ -59,7 +59,6 @@ export const undoRedoReducerFactory = ({trackedKeys, ignoredActions} = {}) => {
       if (ignoredActions.includes(action.triggeringActionType)) {
         return state;
       }
-
       const diff = diffByApplyingOptions(action.diff, {trackedKeys});
       if (diff) {
         return objectAssign({}, state, {

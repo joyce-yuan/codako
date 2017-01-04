@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {Button, ButtonGroup} from 'reactstrap';
 import {updatePlaybackState} from '../../actions/ui-actions';
 import {getStageScreenshot} from '../../utils/stage-helpers';
-import {advanceGameState, saveInitialGameState, restoreInitialGameState} from '../../actions/stage-actions';
+import {advanceGameState, stepBackGameState, saveInitialGameState, restoreInitialGameState} from '../../actions/stage-actions';
 import {SPEED_OPTIONS} from '../../constants/constants';
 
 
@@ -60,7 +60,7 @@ export default class StageControls extends React.Component {
   }
 
   render() {
-    const {speed, dispatch, running, stage: {startThumbnail, uid}} = this.props;
+    const {speed, dispatch, running, stage: {startThumbnail, uid, history}} = this.props;
 
     return (
       <div className="stage-controls">
@@ -87,6 +87,8 @@ export default class StageControls extends React.Component {
         <div className="center">
           <Button
             size="sm"
+            disabled={history.length === 0}
+            onClick={() => dispatch(stepBackGameState(uid))}
           >
             <i className="fa fa-step-backward" /> Back
           </Button>{' '}

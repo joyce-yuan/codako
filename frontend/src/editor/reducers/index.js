@@ -23,6 +23,7 @@ const undoRedoReducer = undoRedoReducerFactory({
   ],
   ignoredActions: [
     Types.ADVANCE_GAME_STATE,
+    Types.STEP_BACK_GAME_STATE,
     Types.INPUT_FOR_GAME_STATE,
   ],
 });

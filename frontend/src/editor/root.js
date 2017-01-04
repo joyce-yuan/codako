@@ -3,6 +3,7 @@
 import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
 import objectAssign from 'object-assign';
+import u from 'updeep';
 
 import configureStore from './store/configureStore';
 import initialState from './reducers/initial-state';
@@ -87,15 +88,18 @@ export default class EditorRoot extends React.Component {
 
     this.setState({saving: true});
 
-    const editorState = this.state.editorStore.getState();
-    const savedState = objectAssign({}, editorState);
-    delete savedState.undoStack;
-    delete savedState.redoStack;
-    
+    const savedState = u({
+      undoStack: u.constant(undefined),
+      redoStack: u.constant(undefined),
+      stage: {
+        history: u.constant(undefined),
+      },
+    }, this.state.editorStore.getState());
+
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
-        thumbnail: getStageScreenshot(editorState.stage),
+        thumbnail: getStageScreenshot(savedState.stage),
         state: savedState,
       },
     }).then(() => {
