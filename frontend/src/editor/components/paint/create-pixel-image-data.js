@@ -1,4 +1,4 @@
-import {forEachInRect} from './helpers';
+import {forEachInRect, getDataURLFromImageData} from './helpers';
 
 export default function CreatePixelImageData() {
   this.clone = () => {
@@ -8,13 +8,7 @@ export default function CreatePixelImageData() {
   };
 
   this.log = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = this.width;
-    canvas.height = this.height;
-    const ctx = canvas.getContext('2d');
-    ctx.putImageData(this, 0, 0);
-    const url = canvas.toDataURL();
-    
+    const url = getDataURLFromImageData(this);    
 		const img = new Image();
 		img.onload = function() {
 			const dim = {
@@ -37,8 +31,11 @@ export default function CreatePixelImageData() {
   this.applyPixelsFromData = (imageData, startX, startY, endX, endY, offsetX, offsetY, options = {}) => {
     const {data, width} = imageData;
     for (let x = startX; x < endX; x ++) {
+      if ((x + offsetX >= this.width) || (x + offsetX < 0)) {
+        continue;
+      }
       for (let y = startY; y < endY; y ++) {
-        if ((x+offsetX >= this.width) || (y+offsetY >= this.height)) {
+        if ((y + offsetY >= this.height) || (y + offsetY < 0)) {
           continue;
         }
         const r = data[(y * width + x) * 4 + 0];
@@ -81,16 +78,18 @@ export default function CreatePixelImageData() {
     );
   };
 
-  this.getContiguousPixels = (startPixel, regionMap, callback) => {
+  this.getContiguousPixels = (startPixel, callback) => {
     const points = [startPixel];
     const startPixelData = this.getPixel(startPixel.x, startPixel.y);
 
     const pointsHit = {};
-    pointsHit[`${startPixel.x},${startPixel.y}`] = 1;
+    pointsHit[`${startPixel.x},${startPixel.y}`] = true;
     let p = points.pop();
 
     while (p) {
-      callback(p);
+      if (callback) {
+        callback(p);
+      }
 
       for (const d of [{x:-1, y:0}, {x:0,y:1}, {x:0,y:-1}, {x:1,y:0}]) {
         const pp = {x: p.x + d.x, y: p.y + d.y};
@@ -101,9 +100,6 @@ export default function CreatePixelImageData() {
         if (!(pp.x >= 0 && pp.y >= 0 && pp.x < this.width && pp.y < this.height)) {
           continue;
         }
-        if (regionMap && regionMap[pkey]) {
-          continue;
-        }
 
         const pixelData = this.getPixel(pp.x, pp.y);
         let colorDelta = 0;
@@ -111,13 +107,14 @@ export default function CreatePixelImageData() {
           colorDelta += Math.abs(pixelData[i] - startPixelData[i]);
         }
         if (colorDelta < 15) {
-          points.push(pp);
           pointsHit[pkey] = true;
+          points.push(pp);
         }
       }
 
       p = points.pop();
     }
+    return pointsHit;
   };
 
   this.getOpaquePixels = () => {

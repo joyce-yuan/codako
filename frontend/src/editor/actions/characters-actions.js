@@ -21,7 +21,7 @@ export function createCharacter() {
       spritesheet: {
         width: 40,
         appearances: {
-          'idle': ['/img/splat.png'],
+          'idle': ['/editor/img/splat.png'],
         },
         appearanceNames:{
           'idle': 'Idle',

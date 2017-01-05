@@ -89,26 +89,38 @@ export function hsvToRgb(h, s, v) {
 
 const tempCanvas = document.createElement('canvas');
 
-export function getDataURLFromImageData(imageData, callback) {
+export function getDataURLFromImageData(imageData) {
   tempCanvas.width = imageData.width;
   tempCanvas.height = imageData.height;
   const tempContext = tempCanvas.getContext('2d');
   tempContext.clearRect(0, 0, imageData.width, imageData.height);
   tempContext.putImageData(imageData, 0, 0);
-  callback(tempCanvas.toDataURL());
+  return tempCanvas.toDataURL();
 }
 
-export function getImageDataFromDataURL(dataURL, callback) {
+export function getImageDataFromDataURL(dataURL, {maxWidth, maxHeight} = {}, callback) {
   const img = new Image();
   img.onload = () => {
-    const {width, height} = img;
-    tempCanvas.width = width;
-    tempCanvas.height = height;
+    const scale = maxWidth ? Math.min(1, maxHeight / img.height, maxWidth / img.width) : 1;
+    const width = tempCanvas.width = img.width * scale;
+    const height = tempCanvas.height = img.height * scale;
+
     const tempContext = tempCanvas.getContext('2d');
     tempContext.imageSmoothingEnabled = false;
     tempContext.clearRect(0, 0, width, height);
-    tempContext.drawImage(img, 0, 0);
+    tempContext.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
     callback(tempContext.getImageData(0, 0, width, height));
   };
   img.src = dataURL;
+}
+
+export function getFlattenedImageData({imageData, selectionImageData, selectionOffset}) {
+  if (!selectionImageData) {
+    return imageData;
+  }
+  const nextImageData = imageData.clone();
+  nextImageData.applyPixelsFromData(selectionImageData, 0, 0, selectionImageData.width, selectionImageData.height, selectionOffset.x, selectionOffset.y, {
+    ignoreClearPixels: true,
+  });
+  return nextImageData;
 }

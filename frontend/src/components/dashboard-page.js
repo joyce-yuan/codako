@@ -37,7 +37,7 @@ class StageOptionsMenu extends React.Component {
           </DropdownItem>
         </DropdownMenu>
       </ButtonDropdown>
-    )
+    );
   }
 }
 class StageCard extends React.Component {

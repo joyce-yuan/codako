@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
+import {Button, Modal, ModalBody, ModalFooter, DropdownMenu, DropdownToggle, ButtonDropdown, DropdownItem} from 'reactstrap';
 import objectAssign from 'object-assign';
 
 import * as Tools from './tools';
@@ -8,7 +8,7 @@ import * as Tools from './tools';
 import {paintCharacterAppearance} from '../../actions/ui-actions';
 import {changeCharacter} from '../../actions/characters-actions';
 
-import {getImageDataFromDataURL, getDataURLFromImageData} from './helpers';
+import {getImageDataFromDataURL, getDataURLFromImageData, getFlattenedImageData} from './helpers';
 import CreatePixelImageData from './create-pixel-image-data';
 import PixelCanvas from './pixel-canvas';
 import PixelToolbar from './pixel-toolbar';
@@ -83,7 +83,7 @@ class Container extends React.Component {
     if (characterId) {
       const {spritesheet} = characters[characterId];
       const frameDataURL = spritesheet.appearances[appearanceId][0];
-      getImageDataFromDataURL(frameDataURL, (imageData) => {
+      getImageDataFromDataURL(frameDataURL, {}, (imageData) => {
         CreatePixelImageData.call(imageData);
         this.setState({imageData, undoStack: [], redoStack: []});
       });
@@ -92,15 +92,20 @@ class Container extends React.Component {
     }
   }
 
-  setStateWithCheckpoint = (state) => {
-    this.setState(objectAssign({}, state, {
+  getCheckpoint(state = this.state) {
+    return {
+      imageData: state.imageData,
+      selectionImageData: state.selectionImageData,
+      selectionOffset: state.selectionOffset,
+    };
+  }
+
+  setStateWithCheckpoint(nextState) {
+    this.setState(objectAssign({}, nextState, {
+      redoStack: [],
       undoStack: this.state.undoStack
         .slice(Math.max(0, this.state.undoStack.length - MAX_UNDO_STEPS))
-        .concat([{
-          imageData: this.state.imageData,
-          selectionImageData: this.state.selectionImageData,
-        }]),
-      redoStack: [],
+        .concat([this.getCheckpoint()]),
     }));
   }
 
@@ -108,7 +113,7 @@ class Container extends React.Component {
     const undoStack = [].concat(this.state.undoStack);
     const changes = undoStack.pop();
     if (!changes) { return; }
-    const redoStack = [].concat(this.state.redoStack, [this.state.imageData]);
+    const redoStack = [].concat(this.state.redoStack, [this.getCheckpoint()]);
     this.setState(objectAssign({}, changes, {redoStack, undoStack}));
   }
 
@@ -116,7 +121,7 @@ class Container extends React.Component {
     const redoStack = [].concat(this.state.redoStack);
     const changes = redoStack.pop();
     if (!changes) { return; }
-    const undoStack = [].concat(this.state.undoStack, [this.state.imageData]);
+    const undoStack = [].concat(this.state.undoStack, [this.getCheckpoint()]);
     this.setState(objectAssign({}, changes, {redoStack, undoStack}));
   }
 
@@ -126,68 +131,98 @@ class Container extends React.Component {
 
   _onCloseAndSave = () => {
     const {dispatch, characterId, appearanceId} = this.props;
-    getDataURLFromImageData(this.state.imageData, (imageDataURL) => {
-      dispatch(changeCharacter(characterId, {spritesheet: {appearances: {[appearanceId]: [imageDataURL]}}}));
-      dispatch(paintCharacterAppearance(null));
-    });
+    const imageDataURL = getDataURLFromImageData(this.state.imageData);
+    dispatch(changeCharacter(characterId, {spritesheet: {appearances: {[appearanceId]: [imageDataURL]}}}));
+    dispatch(paintCharacterAppearance(null));
   }
 
   _onKeyDown = (event) => {
-    if (event.which === 89 && (event.ctrlKey || event.metaKey)){
+    if ((event.key === 'y' || event.key === 'Z') && (event.ctrlKey || event.metaKey)){
       this._onRedo();
       event.preventDefault();
       event.stopPropagation();
     }
-    else if (event.which === 90 && (event.ctrlKey || event.metaKey)){
-      event.shiftKey ? this._onRedo() : this._onUndo();
+    else if (event.key === 'z' && (event.ctrlKey || event.metaKey)){
+      this._onUndo();
       event.preventDefault();
       event.stopPropagation();
     }
-  }
-
-  _onGlobalCut = (event) => {
-    this._onGlobalCopy(event, {cut: true})
-  }
-
-  _onGlobalCopy = (event) => {
-    
-  }
-
-  _onGlobalPaste = (event) => {
-    const items = Array.from(event.clipboardData.items);
-    if (items) {
-      const imageItem = items.find(i => i.type.includes("image"));
-      if (imageItem) {
-        const img = new Image();
-        img.onload = () => {
-          this._onApplyImage(img);
-        };
-        img.src = URL.createObjectURL(imageItem.getAsFile());
-      }
+    else if ((event.key === 'Escape') || (event.key === 'Enter')) {
+      this.setStateWithCheckpoint({
+        imageData: getFlattenedImageData(this.state),
+        selectionImageData: null,
+      });
+    }
+    else if ((event.key === 'Delete') || (event.key === 'Backspace')) {
+      this.setStateWithCheckpoint({
+        selectionImageData: null,
+      });
+    }
+    else if (event.key.startsWith('Arrow')) {
+      const delta = event.shiftKey ? 5 : 1;
+      this.setStateWithCheckpoint({
+        selectionOffset: {
+          x: this.state.selectionOffset.x + ({ArrowLeft: -delta, ArrowRight: delta}[event.key] || 0),
+          y: this.state.selectionOffset.y + ({ArrowUp: -delta, ArrowDown: delta}[event.key] || 0),
+        }
+      });
     }
   }
 
-  _onApplyImage = (img) => {
-    const {imageData} = this.state;
-    const {width, height} = imageData;
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    const scale = Math.min(height / img.height, width / img.width);
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
-    const nextImageData = ctx.getImageData(0, 0, width, height);
-    CreatePixelImageData.call(nextImageData);
+  _onGlobalCopy = (event) => {
+    event.clipboardData.setData('dataurl', getDataURLFromImageData(this.state.selectionImageData));
+    event.clipboardData.setData('offset', JSON.stringify(this.state.selectionOffset));
+    event.preventDefault();
+  }
+
+  _onGlobalCut = (event) => {
+    this._onGlobalCopy(event);
     this.setStateWithCheckpoint({
-      imageData: nextImageData,
+      selectionImageData: null,
+    });
+  }
+
+  _onGlobalPaste = (event) => {
+    const {imageData, tools} = this.state;
+    const items = Array.from(event.clipboardData.items);
+
+    let dataURL = event.clipboardData.getData('dataurl');
+    const offset = event.clipboardData.getData('offset') || `{"x":0,"y":0}`;
+
+    const imageItem = items && items.find(i => i.type.includes("image"));
+    if (imageItem) {
+      dataURL = URL.createObjectURL(imageItem.getAsFile());
+    }
+
+    if (dataURL) {
+      getImageDataFromDataURL(dataURL, {
+        maxWidth: imageData.width,
+        maxHeight: imageData.height,
+      }, (nextSelectionImageData) => {
+        CreatePixelImageData.call(nextSelectionImageData);
+
+        this.setStateWithCheckpoint({
+          imageData: getFlattenedImageData(this.state),
+          selectionOffset: JSON.parse(offset),
+          selectionImageData: nextSelectionImageData,
+          tool: tools.find(t => t.name === 'select')
+        });
+      });
+    }
+  }
+
+  _onChooseTool = (tool) => {
+    this.setState({
+      tool: tool,
+      imageData: getFlattenedImageData(this.state),
+      selectionImageData: null,
     });
   }
 
   _onCanvasMouseDown = (event, pixel) => {
     const tool = this.state.tool;
     if (tool) {
-      this.setState(tool.mousedown(pixel, this.state));
+      this.setStateWithCheckpoint(tool.mousedown(pixel, this.state, event));
     }
   }
 
@@ -201,8 +236,23 @@ class Container extends React.Component {
   _onCanvasMouseUp = (event, pixel) => {
     const tool = this.state.tool;
     if (tool) {
-      this.setStateWithCheckpoint(tool.mouseup(tool.mousemove(pixel, this.state)));
+      this.setState(tool.mouseup(tool.mousemove(pixel, this.state)));
     }
+  }
+
+  _onApplyCoordinateTransform = (coordTransformCallback) => {
+    const key = this.state.selectionImageData ? 'selectionImageData' : 'imageData';
+    const clone = this.state[key].clone();
+
+    for (let x = 0; x < clone.width; x ++) {
+      for (let y = 0; y < clone.height; y ++) {
+        const {x: nx, y: ny} = coordTransformCallback({x, y});
+        clone.fillPixelRGBA(x, y, ...this.state[key].getPixel(nx, ny));
+      }
+    }
+    this.setStateWithCheckpoint({
+      [key]: clone,
+    });
   }
 
   render() {
@@ -232,6 +282,26 @@ class Container extends React.Component {
             >
               <img src="/editor/img/icon_redo.png" />
             </Button>
+            <ButtonDropdown
+              isOpen={this.state.dropdownOpen}
+              toggle={() => this.setState({dropdownOpen: !this.state.dropdownOpen})}
+            >
+              <DropdownToggle className="icon">
+                <i className="fa fa-ellipsis-v" />
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem onClick={() => this._onApplyCoordinateTransform(({x, y}) => { return {x: imageData.width - x, y}; })}>
+                  Flip Horizontally
+                </DropdownItem>
+                <DropdownItem onClick={() => this._onApplyCoordinateTransform(({x, y}) => { return {x, y: imageData.height - y }; })}>
+                  Flip Vertically
+                </DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem onClick={this._onChooseFile}>
+                  Import Image from File...
+                </DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
           </div>
           <ModalBody>
             <div className="flex-horizontal">
@@ -243,7 +313,7 @@ class Container extends React.Component {
                 <PixelToolbar
                   tools={tools}
                   tool={tool}
-                  onToolChange={(t) => this.setState({tool: t})}
+                  onToolChange={this._onChooseTool}
                 />
               </div>
               <PixelCanvas

@@ -1,14 +1,9 @@
-import {forEachInLine, forEachInRect} from './helpers';
+import {forEachInLine, forEachInRect, getFlattenedImageData} from './helpers';
 import objectAssign from 'object-assign';
 
 export class PixelTool {
   constructor() {
     this.name = 'Undefined';
-  }
-
-  layerForProps(props, {clone = false} = {}) {
-    const key = props.selectionImageData ? 'selectionImageData' : 'imageData';
-    return {layerKey: key, layerImageData: clone ? props[key].clone() : props[key]};
   }
 
   mousedown(point, props) {
@@ -32,11 +27,11 @@ export class PixelTool {
   }
 
   mouseup(props) {
-    const {layerImageData, layerKey} = this.layerForProps(props, {clone: true});
-    this.render(layerImageData, props);
+    const nextImageData = props.imageData.clone();
+    this.render(nextImageData, props);
 
     return objectAssign({}, props, {
-      [layerKey]: layerImageData,
+      imageData: nextImageData,
       interaction: {
         s: null,
         e: null,
@@ -74,13 +69,12 @@ export class PixelPaintbucketTool extends PixelTool {
     this.name = 'paintbucket';
   }
 
-  render(context, props) {
-    if (!props.interaction.e) {
+  render(context, {imageData, interaction, color}) {
+    if (!interaction.e) {
       return;
     }
-    const {layerImageData} = this.layerForProps(props);
-    layerImageData.getContiguousPixels(props.interaction.e, layerImageData.getOpaquePixels(), (p) => {
-      context.fillPixel(p.x, p.y, props.color);
+    imageData.getContiguousPixels(interaction.e, (p) => {
+      context.fillPixel(p.x, p.y, color);
     });
   }
 }
@@ -193,30 +187,23 @@ class PixelSelectionTool extends PixelTool {
     // override in subclasses
   }
 
-  shouldDrag(point, props) {
-    const x = point.x - props.selectionOffset.x;
-    const y = point.y - props.selectionOffset.y;
-    return props.selectionImageData && props.selectionImageData.getOpaquePixels()[`${x},${y}`];
+  shouldDrag(point, {selectionImageData, selectionOffset}) {
+    const x = point.x - selectionOffset.x;
+    const y = point.y - selectionOffset.y;
+    return selectionImageData && selectionImageData.getOpaquePixels()[`${x},${y}`];
   }
 
-  mousedown(point, props) {
+  mousedown(point, props, event) {
     if (this.shouldDrag(point, props)) {
       return objectAssign({}, super.mousedown(point, props), {
+        imageData: event.altKey ? getFlattenedImageData(props) : props.imageData,
         initialSelectionOffset: props.selectionOffset,
         draggingSelection: true,
       });
     }
 
-    let nextImageData = props.imageData;
-    if (props.selectionImageData) {
-      nextImageData = props.imageData.clone();
-      nextImageData.applyPixelsFromData(props.selectionImageData, 0, 0, props.selectionImageData.width, props.selectionImageData.height, props.selectionOffset.x, props.selectionOffset.y, {
-        ignoreClearPixels: true,
-      });
-    }
-
     return objectAssign({}, super.mousedown(point, props), {
-      imageData: nextImageData,
+      imageData: getFlattenedImageData(props),
       selectionImageData: null,
       selectionOffset: {x: 0, y: 0},
       interactionPixels: this.selectionPixelsForProps(props),
@@ -285,10 +272,9 @@ export class PixelMagicSelectionTool extends PixelSelectionTool {
   }
 
   selectionPixelsForProps({imageData, interaction}) {
-    const interactionPixels = {};
-    imageData.getContiguousPixels(interaction.e, null, (p) => {
-      interactionPixels[`${p.x},${p.y}`] = true;
-    });
-    return interactionPixels;
+    if (!interaction.e) {
+      return {};
+    }
+    return imageData.getContiguousPixels(interaction.e);
   }
 }
