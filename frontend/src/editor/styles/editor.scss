@@ -2,9 +2,30 @@ $tint-color: #5bc0de;
 $highlight-color: rgba($tint-color, 0.35);
 $outline-color: rgba(255, 255, 255, 0.78);
 $stage-default-background: gray;
+$trash-hover-color: #d05959;
 
 $rule-event-color: #5BC15C;
 $rule-flow-color: #5BA4CD;
+
+/*
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  border-left: 1px solid #CCC;
+  background: #eee;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+
+::-webkit-scrollbar-thumb {
+  width: 8px;
+  height: 8px;
+  padding:1px;
+  background: #bbb;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+*/
 
 .tool-trash {
   cursor: url(../img/cursor_trashcan.png), auto;
@@ -46,7 +67,7 @@ $rule-flow-color: #5BA4CD;
     text-align: center;
     color: #bbb;
     padding:20px;
-    padding-top:40px;
+    padding-top:20px;
   }
 }
 
@@ -156,6 +177,8 @@ $rule-flow-color: #5BA4CD;
         background-color: #eee;
         padding: 3px 6px;
         margin-bottom: 4px;
+        display: flex;
+        flex-direction: column;
       }
       ul {
         margin: 0; 
@@ -254,6 +277,7 @@ $rule-flow-color: #5BA4CD;
       flex-direction: row;
       flex-grow: 1;
       min-height:130px;
+      max-height:170px;
 
       .panel {
         display: flex;
@@ -295,6 +319,17 @@ $rule-flow-color: #5BA4CD;
         }
       }
     }
+    .library-container.tool-trash {
+      .item-grid {
+        .item:hover {
+          background-color: $trash-hover-color;
+          .name {
+            color: white;
+          }
+        }
+      }
+    }
+
   }
 
   .inspector-panel-container {
@@ -582,7 +617,7 @@ $rule-flow-color: #5BA4CD;
     &.group-event:hover,
     &.group-flow:hover,
     &.rule:hover {
-      background-color:#d05959;
+      background-color: $trash-hover-color;
     }
   }
 }
@@ -622,8 +657,8 @@ button.btn.selected:active {
 
 .tap-to-edit {
   border:1px solid transparent;
-  cursor: text;
-  &:hover, &:focus {
+  &.enabled-true:hover, &.enabled-true:focus {
+    cursor: text;
     background-color: rgba(255,255,255,0.3);
     border:1px solid rgba(255,255,255,0.5);
     outline: none;

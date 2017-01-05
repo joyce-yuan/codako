@@ -183,11 +183,10 @@ class Container extends React.Component {
   }
 
   _onGlobalPaste = (event) => {
-    const {imageData, tools} = this.state;
     const items = Array.from(event.clipboardData.items);
 
     let dataURL = event.clipboardData.getData('dataurl');
-    const offset = event.clipboardData.getData('offset') || `{"x":0,"y":0}`;
+    const offset = event.clipboardData.getData('offset');
 
     const imageItem = items && items.find(i => i.type.includes("image"));
     if (imageItem) {
@@ -195,20 +194,25 @@ class Container extends React.Component {
     }
 
     if (dataURL) {
-      getImageDataFromDataURL(dataURL, {
-        maxWidth: imageData.width,
-        maxHeight: imageData.height,
-      }, (nextSelectionImageData) => {
-        CreatePixelImageData.call(nextSelectionImageData);
-
-        this.setStateWithCheckpoint({
-          imageData: getFlattenedImageData(this.state),
-          selectionOffset: JSON.parse(offset),
-          selectionImageData: nextSelectionImageData,
-          tool: tools.find(t => t.name === 'select')
-        });
-      });
+      this._onApplyExternalDataURL(dataURL, offset);
     }
+  }
+
+  _onApplyExternalDataURL = (dataURL, offset) => {
+    const {imageData, tools} = this.state;
+    getImageDataFromDataURL(dataURL, {
+      maxWidth: imageData.width,
+      maxHeight: imageData.height,
+    }, (nextSelectionImageData) => {
+      CreatePixelImageData.call(nextSelectionImageData);
+
+      this.setStateWithCheckpoint({
+        imageData: getFlattenedImageData(this.state),
+        selectionOffset: JSON.parse(offset || `{"x":0,"y":0}`),
+        selectionImageData: nextSelectionImageData,
+        tool: tools.find(t => t.name === 'select')
+      });
+    });
   }
 
   _onChooseTool = (tool) => {
@@ -255,6 +259,17 @@ class Container extends React.Component {
     });
   }
 
+  _onChooseFile = (event) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      this._onApplyExternalDataURL(reader.result);
+    }, false);
+    const file = event.target.files[0];
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }
+
   render() {
     const {imageData, tool, tools, color, undoStack, redoStack} = this.state;
 
@@ -266,6 +281,13 @@ class Container extends React.Component {
         className="paint"
       >
         <div tabIndex={0} onKeyDown={this._onKeyDown}>
+          <input
+            id="hiddenFileInput"
+            accept="image/*"
+            type="file"
+            style={{position:'fixed', top: -1000}}
+            onChange={this._onChooseFile}
+          />
           <div className="modal-header" style={{display: 'flex'}}>
             <h4 style={{flex: 1}}>Edit Appearance</h4>
             <Button
@@ -297,9 +319,9 @@ class Container extends React.Component {
                   Flip Vertically
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem onClick={this._onChooseFile}>
+                <label htmlFor="hiddenFileInput" className="dropdown-item">
                   Import Image from File...
-                </DropdownItem>
+                </label>
               </DropdownMenu>
             </ButtonDropdown>
           </div>

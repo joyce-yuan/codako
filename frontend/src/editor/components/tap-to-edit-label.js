@@ -29,7 +29,7 @@ export default class TapToEditLabel extends React.Component {
       <div
         contentEditable={editing}
         ref={(el) => this._el = el}
-        className={`tap-to-edit editing-${editing} ${className}`}
+        className={`tap-to-edit editing-${editing} enabled-${!!onChange} ${className}`}
         dangerouslySetInnerHTML={{__html: value}}
         onChange={(e) => {
           onChange({target: {value: e.target.innerText}});

@@ -3,14 +3,20 @@ import {connect} from 'react-redux';
 import classNames from 'classnames';
 import {Button} from 'reactstrap';
 
+import {TOOL_POINTER, TOOL_TRASH} from '../constants/constants';
+
 import {
   createCharacter,
   changeCharacter,
+  deleteCharacter,
   changeCharacterAppearanceName,
   createCharacterAppearance,
+  deleteCharacterAppearance,
 } from '../actions/characters-actions';
+
 import {
   select,
+  selectToolId,
   paintCharacterAppearance,
 } from '../actions/ui-actions';
 
@@ -22,9 +28,10 @@ class LibraryItem extends React.Component {
   static propTypes = {
     character: PropTypes.object.isRequired,
     label: PropTypes.string.isRequired,
+    labelEditable: PropTypes.bool,
     onChangeLabel: PropTypes.func.isRequired,
     selected: PropTypes.bool,
-    onSelect: PropTypes.func,
+    onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
     dragType: PropTypes.string,
     appearance: PropTypes.string,
@@ -53,7 +60,7 @@ class LibraryItem extends React.Component {
   }
 
   render() {
-    const {selected, onSelect, character, label, appearance, onDoubleClick} = this.props;
+    const {selected, onClick, character, label, labelEditable, appearance, onDoubleClick} = this.props;
     const {spritesheet} = character;
 
     return (
@@ -61,7 +68,7 @@ class LibraryItem extends React.Component {
         className={classNames({"item": true, "selected": selected})}
         draggable
         onDragStart={this._onDragStart}
-        onClick={onSelect}
+        onClick={onClick}
         onDoubleClick={onDoubleClick}
       >
         <Sprite
@@ -72,7 +79,7 @@ class LibraryItem extends React.Component {
         <TapToEditLabel
           className="name"
           value={label}
-          onChange={this.props.onChangeLabel}
+          onChange={labelEditable ? this.props.onChangeLabel : undefined}
         />
       </div>
     );
@@ -90,6 +97,28 @@ class Library extends React.Component {
     super(props, context);
   }
 
+  _onClickCharacter = (event, characterId) => {
+    const {ui, dispatch} = this.props;
+    if (ui.selectedToolId === TOOL_TRASH) {
+      dispatch(deleteCharacter(characterId));
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOL_POINTER));
+      }
+    } else {
+      dispatch(select(characterId, null));
+    }
+  }
+
+  _onClickAppearance = (event, characterId, appearanceId) => {
+    const {ui, dispatch} = this.props;
+    if (ui.selectedToolId === TOOL_TRASH) {
+      dispatch(deleteCharacterAppearance(characterId, appearanceId));
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOL_POINTER));
+      }
+    }
+  }
+
   renderCharactersPanel() {
     const {characters, dispatch, ui} = this.props;
 
@@ -98,16 +127,13 @@ class Library extends React.Component {
         {Object.keys(characters).map(id =>
           <LibraryItem
             key={id}
+            dragType="sprite"
             character={characters[id]}
             label={characters[id].name}
-            dragType="sprite"
-            onChangeLabel={(event) =>
-              dispatch(changeCharacter(id, {name: event.target.value}))
-            }
+            labelEditable={ui.selectedToolId !== TOOL_TRASH}
             selected={id === ui.selectedCharacterId}
-            onSelect={() =>
-              dispatch(select(id, null))
-            }
+            onChangeLabel={(event) => dispatch(changeCharacter(id, {name: event.target.value}))}
+            onClick={(event) => this._onClickCharacter(event, id)}
           />
         )}
       </div>
@@ -135,8 +161,12 @@ class Library extends React.Component {
             appearance={appearanceId}
             dragType="appearance"
             label={character.spritesheet.appearanceNames[appearanceId]}
+            labelEditable={ui.selectedToolId !== TOOL_TRASH}
             onDoubleClick={() =>
               dispatch(paintCharacterAppearance(character.id, appearanceId))
+            }
+            onClick={(event) =>
+              this._onClickAppearance(event, character.id, appearanceId)
             }
             onChangeLabel={(event) =>
               dispatch(changeCharacterAppearanceName(character.id, appearanceId, event.target.value))
@@ -151,7 +181,7 @@ class Library extends React.Component {
     const {ui, dispatch} = this.props;
 
     return (
-      <div className="library-container">
+      <div className={`library-container tool-${ui.selectedToolId}`}>
         <div className="panel library">
           <div className="header">
             <h2>Library</h2>

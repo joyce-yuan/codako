@@ -5,7 +5,7 @@ import initialState from './initial-state';
 import StageOperator from '../utils/stage-operator';
 
 export default function stageReducer(state = initialState.stage, action) {
-  if (action.stageUid !== state.uid) {
+  if (action.stageUid && action.stageUid !== state.uid) {
     return state;
   }
 
@@ -19,6 +19,12 @@ export default function stageReducer(state = initialState.stage, action) {
     case Types.DELETE_ACTOR: {
       return u({
         actors: u.omit(action.id),
+        history: u.constant([]),
+      }, state);
+    }
+    case Types.DELETE_CHARACTER: {
+      return u({
+        actors: u.omitBy((value) => value.characterId === action.characterId),
         history: u.constant([]),
       }, state);
     }

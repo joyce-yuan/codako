@@ -3,7 +3,10 @@ import {STAGE_CELL_SIZE} from '../../constants/constants';
 
 export default class RecordingMaskSprite extends React.Component {
   static propTypes = {
-    position: PropTypes.object,
+    xmin: PropTypes.number,
+    xmax: PropTypes.number,
+    ymin: PropTypes.number,
+    ymax: PropTypes.number,
   };
 
   render() {
@@ -11,10 +14,10 @@ export default class RecordingMaskSprite extends React.Component {
       <div style={{
         position: 'absolute',
         backgroundColor: 'rgba(0,0,0,0.5)',
-        width: STAGE_CELL_SIZE - 1,
-        height: STAGE_CELL_SIZE - 1,
-        left: this.props.position.x * STAGE_CELL_SIZE + 0.5,
-        top: this.props.position.y * STAGE_CELL_SIZE + 0.5,
+        width: (this.props.xmax - this.props.xmin) * STAGE_CELL_SIZE,
+        height: (this.props.ymax - this.props.ymin) * STAGE_CELL_SIZE,
+        left: this.props.xmin * STAGE_CELL_SIZE,
+        top: this.props.ymin * STAGE_CELL_SIZE,
       }} />
     );
   }

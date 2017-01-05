@@ -246,15 +246,12 @@ class Stage extends React.Component {
     const components = [];
 
     // add the dark squares
-    for (let x = 0; x < width; x ++) {
-      for (let y = 0; y < height; y ++) {
-        if (pointIsOutside({x, y}, recordingExtent)) {
-          components.push(
-            <RecordingMaskSprite key={`${x}-${y}`} position={{x, y}} />
-          );
-        }
-      }
-    }
+    components.push(
+      <RecordingMaskSprite key={`mask-top`} xmin={0} xmax={width} ymin={0} ymax={ymin} />,
+      <RecordingMaskSprite key={`mask-bottom`} xmin={0} xmax={width} ymin={ymax + 1} ymax={height} />,
+      <RecordingMaskSprite key={`mask-left`} xmin={0} xmax={xmin} ymin={ymin} ymax={ymax + 1} />,
+      <RecordingMaskSprite key={`mask-right`} xmin={xmax + 1} xmax={width} ymin={ymin} ymax={ymax + 1} />,
+    );
 
     // add the handles
     const handles = {

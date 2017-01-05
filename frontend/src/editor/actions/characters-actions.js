@@ -33,6 +33,14 @@ export function createCharacter() {
   };
 }
 
+
+export function deleteCharacter(characterId) {
+  return {
+    type: types.DELETE_CHARACTER,
+    characterId,
+  };
+}
+
 export function createCharacterFlowContainer(characterId, {id}) {
   return {
     type: types.CREATE_CHARACTER_FLOW_CONTAINER,
@@ -70,6 +78,14 @@ export function createCharacterAppearance(characterId) {
         appearanceNames: {[newAnimationId]: 'Untitled'},
       },
     },
+  };
+}
+
+export function deleteCharacterAppearance(characterId, appearanceId) {
+  return {
+    type: types.DELETE_CHARACTER_APPEARANCE,
+    characterId,
+    appearanceId,
   };
 }
 

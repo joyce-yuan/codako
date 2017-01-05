@@ -28,6 +28,15 @@ export default function charactersReducer(state = initialState.characters, actio
       }, state);
     }
 
+    case Types.DELETE_CHARACTER_APPEARANCE: {
+      return u.updateIn(action.characterId, {
+        spritesheet: {
+          appearances: u.omit(action.appearanceId),
+          appearanceNames: u.omit(action.appearanceId),
+        },
+       }, state);
+    }
+
     case Types.CREATE_CHARACTER_EVENT_CONTAINER: {
       const {characterId, eventType, eventCode, id} = action;
 
