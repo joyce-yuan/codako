@@ -105,7 +105,7 @@ export class PixelFillEllipseTool extends PixelTool {
   }
 }
 
-export class PixelFreehandTool extends PixelTool {
+export class PixelPenTool extends PixelTool {
   constructor() {
     super();
     this.name = 'pen';

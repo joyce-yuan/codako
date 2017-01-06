@@ -15,6 +15,36 @@ import PixelToolbar from './pixel-toolbar';
 import PixelColorPicker, {ColorOptions} from './pixel-color-picker';
 
 const MAX_UNDO_STEPS = 30;
+const TOOLS = [
+  new Tools.PixelPenTool(),
+  new Tools.PixelLineTool(),
+  new Tools.PixelEraserTool(),
+
+  new Tools.PixelFillRectTool(),
+  new Tools.PixelFillEllipseTool(),
+  new Tools.PixelPaintbucketTool(),
+
+  new Tools.PixelRectSelectionTool(),
+  new Tools.PixelMagicSelectionTool(),
+];
+
+const INITIAL_STATE = {
+  color: ColorOptions[3],
+  tool: TOOLS.find(t => t.name === 'pen'),
+
+  imageData: null,
+  selectionImageData: null,
+  selectionOffset: {
+    x: 0,
+    y: 0,
+  },
+
+  undoStack: [],
+  redoStack: [],
+
+  interaction: {},
+  interactionPixels: null,
+};
 
 class Container extends React.Component {
   static propTypes = {
@@ -27,36 +57,7 @@ class Container extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-
-    this.state = {
-      tools: [
-        new Tools.PixelFreehandTool(),
-        new Tools.PixelLineTool(),
-        new Tools.PixelEraserTool(),
-
-        new Tools.PixelFillRectTool(),
-        new Tools.PixelFillEllipseTool(),
-        new Tools.PixelPaintbucketTool(),
-
-        new Tools.PixelRectSelectionTool(),
-        new Tools.PixelMagicSelectionTool(),
-      ],
-      color: ColorOptions[3],
-      tool: null,
-
-      imageData: null,
-      selectionImageData: null,
-      selectionOffset: {
-        x: 0,
-        y: 0,
-      },
-
-      undoStack: [],
-      redoStack: [],
-
-      interaction: {},
-      interactionPixels: null,
-    };
+    this.state = objectAssign({}, INITIAL_STATE);
   }
 
   componentDidMount() {
@@ -85,10 +86,10 @@ class Container extends React.Component {
       const frameDataURL = spritesheet.appearances[appearanceId][0];
       getImageDataFromDataURL(frameDataURL, {}, (imageData) => {
         CreatePixelImageData.call(imageData);
-        this.setState({imageData, undoStack: [], redoStack: []});
+        this.setState(objectAssign({}, INITIAL_STATE, {imageData}));
       });
     } else {
-      this.setState({imageData: null, undoStack: [], redoStack: []});
+        this.setState(objectAssign({}, INITIAL_STATE));
     }
   }
 
@@ -131,7 +132,7 @@ class Container extends React.Component {
 
   _onCloseAndSave = () => {
     const {dispatch, characterId, appearanceId} = this.props;
-    const imageDataURL = getDataURLFromImageData(this.state.imageData);
+    const imageDataURL = getDataURLFromImageData(getFlattenedImageData(this.state));
     dispatch(changeCharacter(characterId, {spritesheet: {appearances: {[appearanceId]: [imageDataURL]}}}));
     dispatch(paintCharacterAppearance(null));
   }
@@ -144,6 +145,17 @@ class Container extends React.Component {
     }
     else if (event.key === 'z' && (event.ctrlKey || event.metaKey)){
       this._onUndo();
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    else if (event.key === 'a' && (event.ctrlKey || event.metaKey)){
+      const empty = this.state.imageData.clone();
+      empty.clearPixelsInRect(0, 0, empty.width, empty.height);
+      this.setStateWithCheckpoint({
+        imageData: empty,
+        selectionOffset: {x: 0, y: 0},
+        selectionImageData: getFlattenedImageData(this.state),
+      });
       event.preventDefault();
       event.stopPropagation();
     }
@@ -287,6 +299,7 @@ class Container extends React.Component {
             type="file"
             style={{position:'fixed', top: -1000}}
             onChange={this._onChooseFile}
+            onFocus={(event) => {event.target.parentNode.focus()}}
           />
           <div className="modal-header" style={{display: 'flex'}}>
             <h4 style={{flex: 1}}>Edit Appearance</h4>
@@ -333,7 +346,7 @@ class Container extends React.Component {
                   onColorChange={(c) => this.setState({color: c})}
                 />
                 <PixelToolbar
-                  tools={tools}
+                  tools={TOOLS}
                   tool={tool}
                   onToolChange={this._onChooseTool}
                 />
