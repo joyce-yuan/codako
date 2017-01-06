@@ -6,6 +6,7 @@ import charactersReducer from './characters-reducer';
 import stageReducer from './stage-reducer';
 import recordingReducer from './recording-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
+import {tutorialSteps} from '../constants/tutorial';
 
 const reducerMap = {
   characters: charactersReducer,
@@ -29,9 +30,15 @@ const undoRedoReducer = undoRedoReducerFactory({
 });
 
 export default function (state, action) {
-  const nextState = objectAssign({}, state);
+  let nextState = objectAssign({}, state);
+
+  // apply reducers that handle individual state ekys
   for (const key of Object.keys(reducerMap)) {
     nextState[key] = reducerMap[key](state[key], action);
   }
-  return undoRedoReducer(nextState, action);
+
+  // apply undo/redo actions
+  nextState = undoRedoReducer(nextState, action);
+
+  return nextState;
 }

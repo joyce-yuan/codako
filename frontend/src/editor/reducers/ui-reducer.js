@@ -49,6 +49,12 @@ export default function uiReducer(state = initialState.ui, action) {
           open: action.open,
         },
       });
+    case Types.UPDATE_TUTORIAL_STATE: 
+      return objectAssign({}, state, {
+        tutorial: {
+          stepIndex: action.stepIndex,
+        },
+      });
     default:
       return state;
   }

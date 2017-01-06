@@ -1,34 +1,1363 @@
 {
-  "__v": 13,
-  "id": "5233a60cfd685f755e000002" ,
+  "id": "5233a60cfd685f755e000002",
   "uid": "main",
   "applied": {},
   "input": {
-    "keys":{},
-    "clicks":{}
-  },
-  "actors": {
-    "1": {
-      "id": "1",
-      "variableValues": {
-
-      },
-      "appearance": "idle",
-      "position": {
-        "y": 12,
-        "x": 0
-      },
-      "characterId": "q9h78ccjtt9"
-    }
+    "keys": {},
+    "clicks": {}
   },
   "history": [],
+  "actors": {
+    "1483668698770": {
+      "variableValues": {},
+      "appearance": "1483692402546",
+      "position": {
+        "x": 1,
+        "y": 9
+      },
+      "characterId": "aamlcui8uxr",
+      "id": "1483668698770"
+    },
+    "1483691260895": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 5
+      },
+      "characterId": "oou4u6jemi",
+      "id": "1483691260895"
+    },
+    "1483692723872": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 3,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692723872"
+    },
+    "1483692729120": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 4,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692729120"
+    },
+    "1483692729572": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 6,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692729572"
+    },
+    "1483692730066": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 6,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692730066"
+    },
+    "1483692730592": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 7,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692730592"
+    },
+    "1483692738445": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 8,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692738445"
+    },
+    "1483692738937": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 9,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692738937"
+    },
+    "1483692739378": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 10,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692739378"
+    },
+    "1483692740134": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 12,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692740134"
+    },
+    "1483692743355": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 5,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692743355"
+    },
+    "1483692746757": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 5,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692746757"
+    },
+    "1483692751791": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692751791"
+    },
+    "1483692755509": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692755509"
+    },
+    "1483692756010": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692756010"
+    },
+    "1483692756444": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 3,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692756444"
+    },
+    "1483692757245": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 9
+      },
+      "characterId": "1483692683990",
+      "id": "1483692757245"
+    },
+    "1483692761267": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 3,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692761267"
+    },
+    "1483692761791": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 4,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692761791"
+    },
+    "1483692762810": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692762810"
+    },
+    "1483692763409": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692763409"
+    },
+    "1483692764340": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692764340"
+    },
+    "1483692767358": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692767358"
+    },
+    "1483692767874": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692767874"
+    },
+    "1483692768451": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692768451"
+    },
+    "1483692781078": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 7,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781078"
+    },
+    "1483692781512": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 8,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781512"
+    },
+    "1483692781972": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 9,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781972"
+    },
+    "1483692782449": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 10,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692782449"
+    },
+    "1483692782900": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 11,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692782900"
+    },
+    "1483692792862": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 9,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692792862"
+    },
+    "1483692797244": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 10,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692797244"
+    },
+    "1483692801168": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 11,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692801168"
+    },
+    "1483692801609": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 12,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692801609"
+    },
+    "1483692802102": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 13,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692802102"
+    },
+    "1483692803208": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692803208"
+    },
+    "1483692803669": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692803669"
+    },
+    "1483692806044": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806044"
+    },
+    "1483692806556": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806556"
+    },
+    "1483692806992": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806992"
+    },
+    "1483692807508": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692807508"
+    },
+    "1483692810667": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692810667"
+    },
+    "1483692811116": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692811116"
+    },
+    "1483692811551": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692811551"
+    },
+    "1483692812009": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812009"
+    },
+    "1483692812410": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812410"
+    },
+    "1483692812902": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812902"
+    },
+    "1483692814723": {
+      "variableValues": {},
+      "appearance": "ax1",
+      "position": {
+        "x": 19,
+        "y": 10
+      },
+      "characterId": "jizye5ng66r",
+      "id": "1483692814723"
+    },
+    "1483692819815": {
+      "variableValues": {},
+      "appearance": "1483692702012",
+      "position": {
+        "x": 14,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692819815"
+    },
+    "1483692826745": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692826745"
+    },
+    "1483692827262": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692827262"
+    },
+    "1483692827684": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692827684"
+    },
+    "1483692828073": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692828073"
+    },
+    "1483692828509": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692828509"
+    },
+    "1483692831993": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692831993"
+    },
+    "1483692832393": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692832393"
+    },
+    "1483692832969": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 3
+      },
+      "characterId": "1483692683990",
+      "id": "1483692832969"
+    },
+    "1483692834371": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 3
+      },
+      "characterId": "1483692683990",
+      "id": "1483692834371"
+    },
+    "1483692834878": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692834878"
+    },
+    "1483692835371": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692835371"
+    },
+    "1483692837850": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692837850"
+    },
+    "1483692838512": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692838512"
+    },
+    "1483692852740": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 11,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692852740"
+    },
+    "1483692853167": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 12,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692853167"
+    },
+    "1483692853645": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 13,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692853645"
+    },
+    "1483692854052": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 13,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692854052"
+    }
+  },
   "background": "url(/editor/img/backgrounds/Layer0_2.png)",
   "height": 13,
-  "startThumbnail": "data:image/png;base64,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",
+  "startThumbnail": "data:image/png;base64,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",
   "tutorial_name": "introduction",
   "tutorial_step": 0,
   "width": 20,
   "world": "5233a60cfd685f755e000001",
   "wrapX": true,
-  "wrapY": true
+  "wrapY": true,
+  "startActors": {
+    "1483668698770": {
+      "variableValues": {},
+      "appearance": "1483692402546",
+      "position": {
+        "x": 0,
+        "y": 8
+      },
+      "characterId": "aamlcui8uxr",
+      "id": "1483668698770"
+    },
+    "1483691260895": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 5
+      },
+      "characterId": "oou4u6jemi",
+      "id": "1483691260895"
+    },
+    "1483692723872": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 3,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692723872"
+    },
+    "1483692729120": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 4,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692729120"
+    },
+    "1483692729572": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 6,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692729572"
+    },
+    "1483692730066": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 6,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692730066"
+    },
+    "1483692730592": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 7,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692730592"
+    },
+    "1483692738445": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 8,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692738445"
+    },
+    "1483692738937": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 9,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692738937"
+    },
+    "1483692739378": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 10,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692739378"
+    },
+    "1483692740134": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 12,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692740134"
+    },
+    "1483692743355": {
+      "variableValues": {},
+      "appearance": "1483692615578",
+      "position": {
+        "x": 5,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692743355"
+    },
+    "1483692746757": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 5,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692746757"
+    },
+    "1483692751791": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692751791"
+    },
+    "1483692755509": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692755509"
+    },
+    "1483692756010": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692756010"
+    },
+    "1483692756444": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 3,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692756444"
+    },
+    "1483692757245": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 9
+      },
+      "characterId": "1483692683990",
+      "id": "1483692757245"
+    },
+    "1483692761267": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 3,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692761267"
+    },
+    "1483692761791": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 4,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692761791"
+    },
+    "1483692762810": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692762810"
+    },
+    "1483692763409": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692763409"
+    },
+    "1483692764340": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692764340"
+    },
+    "1483692767358": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 2,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692767358"
+    },
+    "1483692767874": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 1,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692767874"
+    },
+    "1483692768451": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 0,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692768451"
+    },
+    "1483692781078": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 7,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781078"
+    },
+    "1483692781512": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 8,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781512"
+    },
+    "1483692781972": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 9,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692781972"
+    },
+    "1483692782449": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 10,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692782449"
+    },
+    "1483692782900": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 11,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692782900"
+    },
+    "1483692792862": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 9,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692792862"
+    },
+    "1483692797244": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 10,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692797244"
+    },
+    "1483692801168": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 11,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692801168"
+    },
+    "1483692801609": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 12,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692801609"
+    },
+    "1483692802102": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 13,
+        "y": 10
+      },
+      "characterId": "1483692683990",
+      "id": "1483692802102"
+    },
+    "1483692803208": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692803208"
+    },
+    "1483692803669": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692803669"
+    },
+    "1483692806044": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806044"
+    },
+    "1483692806556": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806556"
+    },
+    "1483692806992": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692806992"
+    },
+    "1483692807508": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 11
+      },
+      "characterId": "1483692683990",
+      "id": "1483692807508"
+    },
+    "1483692810667": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 14,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692810667"
+    },
+    "1483692811116": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692811116"
+    },
+    "1483692811551": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692811551"
+    },
+    "1483692812009": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812009"
+    },
+    "1483692812410": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812410"
+    },
+    "1483692812902": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 12
+      },
+      "characterId": "1483692683990",
+      "id": "1483692812902"
+    },
+    "1483692814723": {
+      "variableValues": {},
+      "appearance": "ax1",
+      "position": {
+        "x": 19,
+        "y": 10
+      },
+      "characterId": "jizye5ng66r",
+      "id": "1483692814723"
+    },
+    "1483692819815": {
+      "variableValues": {},
+      "appearance": "1483692702012",
+      "position": {
+        "x": 14,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692819815"
+    },
+    "1483692826745": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 15,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692826745"
+    },
+    "1483692827262": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 16,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692827262"
+    },
+    "1483692827684": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692827684"
+    },
+    "1483692828073": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692828073"
+    },
+    "1483692828509": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 6
+      },
+      "characterId": "1483692683990",
+      "id": "1483692828509"
+    },
+    "1483692831993": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692831993"
+    },
+    "1483692832393": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 17,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692832393"
+    },
+    "1483692832969": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 3
+      },
+      "characterId": "1483692683990",
+      "id": "1483692832969"
+    },
+    "1483692834371": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 3
+      },
+      "characterId": "1483692683990",
+      "id": "1483692834371"
+    },
+    "1483692834878": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692834878"
+    },
+    "1483692835371": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692835371"
+    },
+    "1483692837850": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 19,
+        "y": 5
+      },
+      "characterId": "1483692683990",
+      "id": "1483692837850"
+    },
+    "1483692838512": {
+      "variableValues": {},
+      "appearance": "idle",
+      "position": {
+        "x": 18,
+        "y": 4
+      },
+      "characterId": "1483692683990",
+      "id": "1483692838512"
+    },
+    "1483692852740": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 11,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692852740"
+    },
+    "1483692853167": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 12,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692853167"
+    },
+    "1483692853645": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 13,
+        "y": 11
+      },
+      "characterId": "1483692598319",
+      "id": "1483692853645"
+    },
+    "1483692854052": {
+      "variableValues": {},
+      "appearance": "1483692635012",
+      "position": {
+        "x": 13,
+        "y": 12
+      },
+      "characterId": "1483692598319",
+      "id": "1483692854052"
+    }
+  }
 }

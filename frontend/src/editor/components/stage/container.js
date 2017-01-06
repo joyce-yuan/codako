@@ -89,7 +89,6 @@ class StageContainer extends React.Component {
   }
 }
 
-
 function mapStateToProps(state) {
   return Object.assign({}, {
     recording: state.recording,

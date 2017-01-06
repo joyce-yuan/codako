@@ -84,7 +84,7 @@ export default class StageControls extends React.Component {
           </div>
         </div>
 
-        <div className="center">
+        <div className="center" data-tutorial-id="controls">
           <Button
             size="sm"
             disabled={history.length === 0}
@@ -99,6 +99,7 @@ export default class StageControls extends React.Component {
             <i className="fa fa-stop" /> Stop
           </Button>{' '}
           <Button
+            data-tutorial-id="run"
             className={classNames({'selected': running})}
             onClick={() => dispatch(updatePlaybackState({running: true}))}
           >

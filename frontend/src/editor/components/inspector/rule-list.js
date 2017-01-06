@@ -144,7 +144,7 @@ export default class RuleList extends React.Component {
     const items = rules.map((r) => {
       const ContentComponent = this._contentForRule(r);
       return (
-        <div
+        <li
           draggable
           key={r.id}
           className={`rule-container ${r.type}`}
@@ -154,7 +154,7 @@ export default class RuleList extends React.Component {
           onDragEnd={(event) => this._onDragEnd(event, r)}
         >
           <ContentComponent rule={r} />
-        </div>
+        </li>
       );
     });
 

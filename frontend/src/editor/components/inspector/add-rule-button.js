@@ -48,6 +48,7 @@ export default class RuleAddButton extends React.Component {
     return (
       <ButtonDropdown
         isOpen={this.state.open}
+        data-tutorial-id="inspector-add-rule"
         toggle={() => this.setState({open: !this.state.open})}
       >
         <DropdownToggle caret disabled={!character}>

@@ -182,11 +182,12 @@ class Library extends React.Component {
 
     return (
       <div className={`library-container tool-${ui.selectedToolId}`}>
-        <div className="panel library">
+        <div className="panel library" data-tutorial-id="characters">
           <div className="header">
             <h2>Library</h2>
             <Button
               size="sm"
+              data-tutorial-id="characters-add-button"
               disabled={false}
               onClick={() =>
                 dispatch(createCharacter())

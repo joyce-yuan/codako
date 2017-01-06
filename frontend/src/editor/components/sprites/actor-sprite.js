@@ -34,6 +34,7 @@ export default class ActorSprite extends React.Component {
     return (
       <div
         draggable={draggable}
+        data-stage-character-id={character.id}
         onDragStart={this._onDragStart}
         onClick={this.props.onClick}
         onDoubleClick={this.props.onDoubleClick}

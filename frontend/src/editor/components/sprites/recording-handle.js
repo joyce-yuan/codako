@@ -21,6 +21,7 @@ export default class RecordingHandle extends React.Component {
     return (
       <img
         draggable
+        data-stage-handle={side}
         onDragStart={this._onDragStart}
         className={`handle-${side}`}
         src={`/editor/img/tiles/handle_${side}.png`}

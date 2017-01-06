@@ -9,6 +9,9 @@ export default {
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorPath: null,
+    tutorial: {
+      stepIndex: 0,
+    },
     playback: {
       speed: 500,
       running: false,

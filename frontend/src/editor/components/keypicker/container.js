@@ -59,8 +59,18 @@ class Container extends React.Component {
           <Keyboard keyCode={this.state.keyCode} onKeyDown={this._onKeyDown} />
         </ModalBody>
         <ModalFooter>
-          <Button key="cancel" onClick={this._onClose}>Cancel</Button>{' '}
-          <Button key="save" onClick={this._onCloseAndSave}>Save</Button>
+          <Button
+            key="cancel"
+            onClick={this._onClose}>
+            Cancel
+          </Button>
+          {' '}
+          <Button
+            key="save"
+            data-tutorial-id="keypicker-save"
+            onClick={this._onCloseAndSave}>
+            Save
+          </Button>
         </ModalFooter>
       </Modal>
     );

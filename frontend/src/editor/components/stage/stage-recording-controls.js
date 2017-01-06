@@ -58,7 +58,7 @@ export default class StageRecordingControls extends React.Component {
           <Button onClick={this._onCancel}>
             Cancel
           </Button>{' '}
-          <Button color="success" onClick={this._onNext}>
+          <Button data-tutorial-id="record-next-step" color="success" onClick={this._onNext}>
             {next}
           </Button>{' '}
         </div>

@@ -28,6 +28,7 @@ class Toolbar extends React.Component {
       <Button
         key={toolId}
         className={classes}
+        data-tutorial-id={`toolbar-tool-${toolId}`}
         onClick={() => dispatch(actions.selectToolId(toolId))}
       >
         <img src={`/editor/img/sidebar_${toolId}.png`} />

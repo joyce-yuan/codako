@@ -2,7 +2,6 @@
 
 import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
-import objectAssign from 'object-assign';
 import u from 'updeep';
 
 import configureStore from './store/configureStore';
@@ -19,6 +18,7 @@ import InspectorContainer from './components/inspector/container';
 import PaintContainer from './components/paint/container';
 import KeypickerContainer from './components/keypicker/container';
 import SettingsContainer from './components/settings/container';
+import TutorialContainer from './components/tutorial/container';
 
 import './styles/editor.scss';
 
@@ -139,6 +139,7 @@ export default class EditorRoot extends React.Component {
             <InspectorContainer />
           </div>
 
+          <TutorialContainer />
           <PaintContainer />
           <KeypickerContainer />
           <SettingsContainer />

@@ -287,6 +287,7 @@ class Stage extends React.Component {
       <div
         style={style}
         ref={(el) => this._scrollEl = el}
+          data-stage-wrap-uid={stage.uid}
         className={`stage-scroll-wrap tool-${selectedToolId} running-${running}`}
       >
         <div

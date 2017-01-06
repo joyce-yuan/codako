@@ -34,10 +34,16 @@ export default class TapToEditLabel extends React.Component {
         onChange={(e) => {
           onChange({target: {value: e.target.innerText}});
         }}
+        onDragStart={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
         onDoubleClick={(e) => {
+          e.stopPropagation();
           if (!editing) {
             this.setState({editing: true});
-            e.stopPropagation();
             e.preventDefault();
           }
         }}  

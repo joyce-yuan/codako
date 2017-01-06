@@ -12,7 +12,7 @@ export default class PixelToolbar extends React.Component {
     const {tool, tools, onToolChange} = this.props;
 
     return (
-      <div className="tools">
+      <div className="tools" data-tutorial-id="paint-tools">
         {tools.map(t =>
           <button
             key={t.name}

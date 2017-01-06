@@ -52,3 +52,10 @@ export function pickCharacterRuleEventKey(characterId, ruleId, initialKeyCode) {
     initialKeyCode,
   };
 }
+
+export function updateTutorialState({stepIndex}) {
+  return {
+    type: types.UPDATE_TUTORIAL_STATE,
+    stepIndex,
+  };
+}

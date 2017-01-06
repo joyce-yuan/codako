@@ -14,11 +14,9 @@ export default class Sprite extends React.Component {
     const {appearance, frame, spritesheet, className} = this.props;
     const {width, appearances} = spritesheet;
 
-    let data = null;
-    if (appearance) {
+    let data = '/editor/img/splat.png';
+    if (appearance && appearances[appearance]) {
       data = appearances[appearance][frame || 0];
-    } else {
-      data = '/editor/img/splat.png';
     }
 
     const style = objectAssign({
