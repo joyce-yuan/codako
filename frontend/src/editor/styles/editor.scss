@@ -74,11 +74,15 @@ $rule-flow-color: #5BA4CD;
 .editor {
   width: 100%;
   flex: 1;
+  font-size: 14px;
   background: url(../img/background.png) top left;
   padding-top: 15px;
   display: flex;
   align-items: center;
   flex-direction: column;
+  .btn, .dropdown-menu {
+    font-size: 0.9rem;
+  }
 
   .editor-horizontal-flex {
     display: flex;

@@ -8,14 +8,12 @@ export function changeCharacter(characterId, values) {
   };
 }
 
-export function createCharacter() {
-  const id = `${Date.now()}`;
-
+export function createCharacter(newId) {
   return {
     type: types.UPSERT_CHARACTER,
-    characterId: id,
+    characterId: newId,
     values: {
-      id: id,
+      id: newId,
       name: 'Untitled',
       rules: [],
       spritesheet: {
@@ -67,15 +65,14 @@ export function createCharacterVariable(characterId) {
   };
 }
 
-export function createCharacterAppearance(characterId) {
-  const newAnimationId = `${Date.now()}`;
+export function createCharacterAppearance(characterId, newAppearanceId, newAppearanceData) {
   return {
     type: types.UPSERT_CHARACTER,
     characterId: characterId,
     values: {
       spritesheet: {
-        appearances: {[newAnimationId]: ['/editor/img/splat.png']},
-        appearanceNames: {[newAnimationId]: 'Untitled'},
+        appearances: {[newAppearanceId]: [newAppearanceData || '/editor/img/splat.png']},
+        appearanceNames: {[newAppearanceId]: 'Untitled'},
       },
     },
   };

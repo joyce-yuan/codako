@@ -177,11 +177,26 @@ class Library extends React.Component {
     );
   }
 
-  render() {
-    const {ui, dispatch} = this.props;
+  _onCreateCharacter = () => {
+    const newCharacterId = `${Date.now()}`;
+    this.props.dispatch(createCharacter(newCharacterId));
+    this.props.dispatch(paintCharacterAppearance(newCharacterId, 'idle'));
+  }
 
+  _onCreateAppearance = () => {
+    const {ui, characters, dispatch} = this.props;
+    const char = characters[ui.selectedCharacterId];
+    const appearance = Object.values(char.spritesheet.appearances)[0];
+
+    const newAppearanceId = `${Date.now()}`;
+    const newAppearanceData = appearance ? appearance[0] : null;
+    dispatch(createCharacterAppearance(ui.selectedCharacterId, newAppearanceId, newAppearanceData));
+    dispatch(paintCharacterAppearance(ui.selectedCharacterId, newAppearanceId));
+  }
+
+  render() {
     return (
-      <div className={`library-container tool-${ui.selectedToolId}`}>
+      <div className={`library-container tool-${this.props.ui.selectedToolId}`}>
         <div className="panel library" data-tutorial-id="characters">
           <div className="header">
             <h2>Library</h2>
@@ -189,9 +204,7 @@ class Library extends React.Component {
               size="sm"
               data-tutorial-id="characters-add-button"
               disabled={false}
-              onClick={() =>
-                dispatch(createCharacter())
-              }
+              onClick={this._onCreateCharacter}
             >
               <i className="fa fa-plus" />
             </Button>
@@ -203,10 +216,8 @@ class Library extends React.Component {
             <h2>Appearances</h2>
             <Button
               size="sm"
-              disabled={!ui.selectedCharacterId}
-              onClick={() =>
-                dispatch(createCharacterAppearance(ui.selectedCharacterId))
-              }
+              disabled={!this.props.ui.selectedCharacterId}
+              onClick={this._onCreateAppearance}
             >
               <i className="fa fa-plus" />
             </Button>
