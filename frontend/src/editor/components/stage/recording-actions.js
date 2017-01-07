@@ -97,6 +97,52 @@ class ActorDeltaCanvas extends React.Component {
   }
 }
 
+class VariableBlock extends React.Component {
+  static propTypes = {
+    character: PropTypes.object,
+    variableId: PropTypes.string,
+  }
+
+  render() {
+    const {variableId, character} = this.props;
+    return (
+      <code>{character.variables[variableId].name}</code>
+    );
+  }
+}
+
+class ActorBlock extends React.Component {
+  static propTypes = {
+    character: PropTypes.object,
+    actor: PropTypes.object,
+  }
+  render() {
+    const {character, actor} = this.props;
+    return (
+      <code>
+        <Sprite spritesheet={character.spritesheet} appearance={actor.appearance} />
+        {character.name}
+      </code>
+    );
+  }
+}
+
+class AppearanceBlock extends React.Component {
+  static propTypes = {
+    character: PropTypes.object,
+    appearanceId: PropTypes.string,
+  };
+  render() {
+    const {character, appearanceId} = this.props;
+    return (
+      <code>
+        <Sprite spritesheet={character.spritesheet} appearance={appearanceId} />
+        {character.spritesheet.appearanceNames[appearanceId]}
+      </code>
+    );
+  }
+}
+
 export default class RecordingActions extends React.Component {
   static propTypes = {
     characters: PropTypes.object,
@@ -110,66 +156,58 @@ export default class RecordingActions extends React.Component {
     const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
     const character = characters[actor.characterId];
 
-    const spriteComponent = (
-      <code>
-        <Sprite spritesheet={character.spritesheet} appearance={actor.appearance} />
-        {character.name}
-      </code>
-    );
-
     if (a.type === 'move') {
       return (
-        <li key={idx}>Move {spriteComponent} to <ActorDeltaCanvas delta={a.delta} /></li>
+        <li key={idx}>
+          Move
+          <ActorBlock actor={actor} character={character} />
+          to
+          <ActorDeltaCanvas delta={a.delta} />
+        </li>
       );
     }
     if (a.type === 'create') {
       return (
         <li key={idx}>
-          Create a {spriteComponent} at
+          Create a
+          <ActorBlock actor={actor} character={character} />
+          at
           <ActorPositionCanvas position={actor.position} extent={extent} />
         </li>
       );
     }
     if (a.type === 'delete') {
       return (
-        <li key={idx}>Remove {spriteComponent} from the stage</li>
+        <li key={idx}>
+          Remove
+          <ActorBlock actor={actor} character={character} />
+          from the stage
+        </li>
       );
     }
     if (a.type === 'variable') {
-      const select = (
-        <select value={a.operator}>
-          <option value="add">Add</option>
-          <option value="subtract">Subtract</option>
-          <option value="set">Set</option>
-        </select>
-      );
-
-      if (a.operator === 'set') {
-        return (
-          <li key={idx}>
-            {select}
-            <code>{character.variables[a.variable].name}</code> of
-            <ActorPositionCanvas position={actor.position} extent={extent} /> to
-            {spriteComponent}
-          </li>
-        );
-      }
       return (
         <li key={idx}>
-          {select}
-          <input type="text" value={a.value} /> to <code>{character.variables[a.variable].name}</code> of
-          {spriteComponent}
+          <select value={a.operation} className="variable-operation-select">
+            <option value="add">Add</option>
+            <option value="subtract">Subtract</option>
+            <option value="set">Put</option>
+          </select>
+          <input className="variable-value-input" type="text" value={a.value} />
+          {{set: 'into', add: 'to', subtract: 'from'}[a.operation]}
+          <VariableBlock character={character} variableId={a.variable} />
+          of
+          <ActorBlock character={character} actor={actor} />
         </li>
       );
     }
     if (a.type === 'appearance') {
       return (
         <li key={idx}>
-          Change appearance of {spriteComponent} to
-          <code>
-            <Sprite spritesheet={character.spritesheet} appearance={a.to} />
-            {character.spritesheet.appearanceNames[a.to]}
-          </code>
+          Change appearance of
+          <ActorBlock character={character} actor={actor} />
+          to
+          <AppearanceBlock character={character} appearanceId={a.to} />
         </li>
       );
     }

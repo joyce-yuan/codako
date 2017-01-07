@@ -59,7 +59,7 @@ class StageContainer extends React.Component {
           />
         );
         actions = (
-          <div className="actions" style={{height: 200, display: 'flex'}}>
+          <div className="recording-specifics" style={{height: 200, display: 'flex'}}>
             <RecordingConditions
               characters={characters}
               conditions={recording.conditions}
@@ -82,7 +82,7 @@ class StageContainer extends React.Component {
           {stageA || <Stage stage={stage} recording={null} />}
           {stageB || <Stage style={{flex: 0}} />}
         </div>
-        {actions || <div className="actions" style={{height: 0}} />}
+        {actions || <div className="recording-specifics" style={{height: 0}} />}
         {controls || <StageControls {...playback} dispatch={dispatch} stage={stage} />}
       </div>
     );

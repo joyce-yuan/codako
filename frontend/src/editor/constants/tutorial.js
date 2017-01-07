@@ -245,7 +245,7 @@ export const tutorialSteps = [
     pose: 'sitting-talking',
     text: `Great! See how that created an instruction for our character? Now he knows what he should do!`,
     soundURL: '/editor/sounds/tutorial/tutorial-26.mp3',
-    annotation: {selectors: ['.panel.actions .action'], style: 'outline'},
+    annotation: {selectors: ['.recording-specifics .action'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',

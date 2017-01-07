@@ -43,18 +43,27 @@ class Container extends React.Component {
           <h4 style={{flex: 1}}>Stage Settings</h4>
         </div>
         <ModalBody>
-          <div>
-            <input id="wrapX" type="checkbox" checked={wrapX} onChange={(e) => this.setState({wrapX: e.target.checked})} />
-            <label htmlFor="wrapX">Wrap Horizontally</label>
-            <input id="wrapY" type="checkbox" checked={wrapY} onChange={(e) => this.setState({wrapY: e.target.checked})} />
-            <label htmlFor="wrapY">Wrap Vertically</label>
-          </div>
-          <div>
-            <label htmlFor="width">Stage Size</label>
-            <input id="width" type="number" value={width} onChange={(e) => this.setState({width: e.target.value / 1})} />
-            <span>x</span>
-            <input type="number" value={height} onChange={(e) => this.setState({height: e.target.value / 1})} />
-          </div>
+          <fieldset className="form-group row form-inline">
+            <legend className="col-form-legend col-sm-3">Stage Size</legend>
+            <div className="col-sm-9">
+              <input className="form-control" type="number" value={width} onChange={(e) => this.setState({width: e.target.value / 1})} />
+              <span style={{paddingLeft: 10, paddingRight: 10}}>x</span>
+              <input className="form-control" type="number" value={height} onChange={(e) => this.setState({height: e.target.value / 1})} />
+            </div>
+          </fieldset>
+          <fieldset className="form-group row">
+            <div className="col-sm-3">Wrapping</div>
+            <div className="col-sm-9">
+              <label className="form-check-label" htmlFor="wrapX">
+                <input style={{marginRight: 5}} className="form-check-input" id="wrapX" type="checkbox" checked={wrapX} onChange={(e) => this.setState({wrapX: e.target.checked})} />
+                Wrap Horizontally
+              </label>
+              <label className="form-check-label" htmlFor="wrapY">
+                <input style={{marginRight: 5, marginLeft: 0}} className="form-check-input" id="wrapY" type="checkbox" checked={wrapY} onChange={(e) => this.setState({wrapY: e.target.checked})} />
+                Wrap Vertically
+              </label>
+            </div>
+          </fieldset>
         </ModalBody>
         <ModalFooter>
           <Button key="cancel" onClick={this._onClose}>Cancel</Button>{' '}
