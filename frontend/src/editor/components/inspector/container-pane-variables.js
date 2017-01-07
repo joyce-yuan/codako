@@ -10,26 +10,24 @@ class VariableBlock extends React.Component {
     valueSetOnActor: PropTypes.bool,
     onChangeValue: PropTypes.func,
     onChangeDefinition: PropTypes.func,
+    onBlurValue: PropTypes.func,
   };
 
   render() {
-    const {name, value, valueSetOnActor, id, onChangeDefinition, onChangeValue} = this.props;
+    const {name, value, valueSetOnActor, id, onChangeDefinition, onChangeValue, onBlurValue} = this.props;
 
     return (
       <div className={`variable-box variable-set-${valueSetOnActor}`}>
         <input
           className="name"
           value={name}
-          onChange={(e) =>
-            onChangeDefinition(id, {name: e.target.value})
-          }
+          onChange={(e) => onChangeDefinition(id, {name: e.target.value})}
         />
         <input
           className="value"
           value={value}
-          onChange={(e) =>
-            onChangeValue(id, e.target.value)
-          }
+          onBlur={(e) => onBlurValue(id, e.target.value)}
+          onChange={(e) => onChangeValue(id, e.target.value)}
         />
       </div>
     );
@@ -53,10 +51,6 @@ export default class ContainerPaneVariables extends React.Component {
   }
 
   _onChangeVarValue = (id, value) => {
-    if (value.length && Number.isNaN(Number.parseFloat(value))) {
-      return;
-    }
-
     const {dispatch, selectedActorPath} = this.props;
     if (!selectedActorPath) {
       this._onChangeVarDefinition(id, {value});
@@ -69,6 +63,14 @@ export default class ContainerPaneVariables extends React.Component {
       },
     }));
   }
+  
+  _onFinalizeVarValue = (id, value) => {
+    if (value !== '' && `${value / 1}` === value) {
+      this._onChangeVarValue(id, value / 1);
+    } else {
+      this._onChangeVarValue(id, undefined);
+    }
+  }
 
   render() {
     const {character, actor} = this.props;
@@ -79,6 +81,7 @@ export default class ContainerPaneVariables extends React.Component {
     }
 
     const actorValues = actor ? actor.variableValues : {};
+
     return (
       <div className="scroll-container variables-grid">
       {Object.values(character.variables).map(({name, id, value}) =>
@@ -86,10 +89,11 @@ export default class ContainerPaneVariables extends React.Component {
           id={id}
           key={id}
           name={name}
-          value={!Number.isNaN(Number.parseFloat(actorValues[id])) ? actorValues[id] : value}
-          valueSetOnActor={!Number.isNaN(Number.parseFloat(actorValues[id]))}
+          value={(actorValues[id] !== undefined) ? actorValues[id] : value}
+          valueSetOnActor={actorValues[id] !== undefined}
           onChangeDefinition={this._onChangeVarDefinition}
           onChangeValue={this._onChangeVarValue}
+          onBlurValue={this._onFinalizeVarValue}
         />
       )}
       </div>
