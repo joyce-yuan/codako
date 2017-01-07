@@ -1,20 +1,30 @@
 import * as types from '../constants/action-types';
+import {stopPlayback} from './ui-actions';
 
 export function setupRecordingForActor({characterId, actor}) {
-  return {
-    type: types.SETUP_RECORDING_FOR_ACTOR, characterId, actor,
-  };
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.SETUP_RECORDING_FOR_ACTOR, characterId, actor,
+    });
+  }
 }
 
 export function setupRecordingForCharacter({characterId}) {
-  return {
-    type: types.SETUP_RECORDING_FOR_CHARACTER, characterId,
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.SETUP_RECORDING_FOR_CHARACTER, characterId,
+    });
   };
 }
 
 export function editRuleRecording({characterId, rule}) {
-  return {
-    type: types.EDIT_RULE_RECORDING, characterId, rule,
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.EDIT_RULE_RECORDING, characterId, rule,
+    });
   };
 }
 

@@ -22,10 +22,20 @@ export function updatePlaybackState(values) {
   };
 }
 
-export function showSettingsModal() {
+export function stopPlayback() {
   return {
-    type: types.UPDATE_SETTINGS_MODAL_STATE,
-    open: true,
+    type: types.UPDATE_PLAYBACK_STATE,
+    values: {running: false},
+  };
+}
+
+export function showSettingsModal() {
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.UPDATE_SETTINGS_MODAL_STATE,
+      open: true,
+    });
   };
 }
 
@@ -37,19 +47,25 @@ export function dismissSettingsModal() {
 }
 
 export function paintCharacterAppearance(characterId, appearanceId) {
-  return {
-    type: types.UPDATE_PAINTING_STATE,
-    characterId,
-    appearanceId,
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.UPDATE_PAINTING_STATE,
+      characterId,
+      appearanceId,
+    });
   };
 }
 
 export function pickCharacterRuleEventKey(characterId, ruleId, initialKeyCode) {
-  return {
-    type: types.UPDATE_KEYPICKER_STATE,
-    characterId,
-    ruleId,
-    initialKeyCode,
+  return (dispatch) => {
+    dispatch(stopPlayback());
+    dispatch({
+      type: types.UPDATE_KEYPICKER_STATE,
+      characterId,
+      ruleId,
+      initialKeyCode,
+    });
   };
 }
 

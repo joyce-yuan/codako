@@ -211,7 +211,7 @@ class Container extends React.Component {
   }
 
   _onApplyExternalDataURL = (dataURL, offset) => {
-    const {imageData, tools} = this.state;
+    const {imageData} = this.state;
     getImageDataFromDataURL(dataURL, {
       maxWidth: imageData.width,
       maxHeight: imageData.height,
@@ -222,7 +222,7 @@ class Container extends React.Component {
         imageData: getFlattenedImageData(this.state),
         selectionOffset: JSON.parse(offset || `{"x":0,"y":0}`),
         selectionImageData: nextSelectionImageData,
-        tool: tools.find(t => t.name === 'select')
+        tool: TOOLS.find(t => t.name === 'select')
       });
     });
   }
@@ -283,7 +283,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {imageData, tool, tools, color, undoStack, redoStack} = this.state;
+    const {imageData, tool, color, undoStack, redoStack} = this.state;
 
     return (
       <Modal
