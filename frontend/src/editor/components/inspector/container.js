@@ -14,14 +14,14 @@ class Container extends React.Component {
     actor: PropTypes.object,
     characters: PropTypes.object,
     character: PropTypes.object,
-    appliedRuleIds: PropTypes.object,
+    evaluatedRuleIds: PropTypes.object,
     selectedActorPath: PropTypes.string,
     selectedToolId: PropTypes.string,
   };
 
   static childContextTypes = {
     characters: PropTypes.object,
-    appliedRuleIds: PropTypes.object,
+    evaluatedRuleIds: PropTypes.object,
     selectedToolId: PropTypes.string,
   };
 
@@ -36,7 +36,7 @@ class Container extends React.Component {
     return {
       characters: this.props.characters,
       selectedToolId: this.props.selectedToolId,
-      appliedRuleIds: this.props.appliedRuleIds,
+      evaluatedRuleIds: this.props.evaluatedRuleIds,
     };
   }
 
@@ -113,7 +113,7 @@ function mapStateToProps(state) {
     character: state.characters[state.ui.selectedCharacterId],
     selectedToolId: state.ui.selectedToolId,
     selectedActorPath: state.ui.selectedActorPath,
-    appliedRuleIds: state.stage.applied,
+    evaluatedRuleIds: state.stage.evaluatedRuleIds,
 });
 }
 

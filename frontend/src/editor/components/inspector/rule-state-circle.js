@@ -6,11 +6,11 @@ export default class RuleStateCircle extends React.Component {
   };
 
   static contextTypes = {
-    appliedRuleIds: PropTypes.object,
+    evaluatedRuleIds: PropTypes.object,
   }
 
   render() {
-    const applied = this.context.appliedRuleIds[this.props.rule.id];
+    const applied = this.context.evaluatedRuleIds[this.props.rule.id];
     return (
       <div className={`circle ${applied}`} />
     );

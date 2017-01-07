@@ -73,16 +73,15 @@ export default function StageOperator(stage) {
       }
 
       for (const rule of rules) {
-        if (tickRule(rule)) {
-          stage.applied[rule.id] = true;
-          stage.applied[struct.id] = true;
-          if (behavior !== FLOW_BEHAVIORS.ALL) {
-            break;
-          }
+        const applied = tickRule(rule);
+        stage.evaluatedRuleIds[rule.id] = applied;
+        stage.evaluatedRuleIds[struct.id] = applied;
+        if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
+          break;
         }
       }
 
-      return stage.applied[struct.id];
+      return stage.evaluatedRuleIds[struct.id];
     }
 
     function tickRule(rule) {
@@ -214,7 +213,7 @@ export default function StageOperator(stage) {
   return {
     resetForRule,
     tick() {
-      stage.applied = {};
+      stage.evaluatedRuleIds = {};
       Object.values(stage.actors).forEach(actor =>
         ActorOperator(actor).tick()
       );

@@ -55,7 +55,7 @@ export default function stageReducer(state = initialState.stage, action) {
     case Types.ADVANCE_GAME_STATE: {
       const nextState = JSON.parse(JSON.stringify(state));
       nextState.history.push({
-        applied: state.applied,
+        evaluatedRuleIds: state.evaluatedRuleIds,
         actors: state.actors,
         input: state.input,
       });
@@ -71,7 +71,7 @@ export default function stageReducer(state = initialState.stage, action) {
         return state;
       }
       return u({
-        applied: u.constant(top.applied),
+        evaluatedRuleIds: u.constant(top.evaluatedRuleIds),
         actors: u.constant(top.actors),
         input: u.constant(top.input),
         history: state.history.slice(0, state.history.length - 1),

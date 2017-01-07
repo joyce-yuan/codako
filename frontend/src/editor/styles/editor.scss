@@ -511,11 +511,9 @@ $rule-flow-color: #5BA4CD;
       border:1px solid rgba(0,0,0,0.2);
       &.true {
         background-color: #74E535;
-        border:1px solid rgba(0,0,0,0.2);
       }
       &.false {
-        background-color: gray;
-        border:1px solid rgba(0,0,0,0.2);
+        background-color: red;
       }
     }
     .icon {
