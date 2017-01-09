@@ -82,6 +82,7 @@ export default class TutorialAnnotation extends React.Component {
   allTargetsPresent() {
     return this.targetEls.length && this.targetEls.every(el => !!el);
   }
+  
   reposition = () => {
     if (!this.allTargetsPresent()) {
       this._el.style.opacity = 0;
@@ -107,6 +108,7 @@ export default class TutorialAnnotation extends React.Component {
     this.targetRelativeBounds = targetRects.map((r) => {
       return {top: r.top - top, left: r.left - left, width: r.width, height: r.height, right: r.right - left, bottom: r.bottom - top};
     });
+    this.draw();
   }
 
   draw = () => {
