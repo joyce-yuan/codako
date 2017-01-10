@@ -57,7 +57,7 @@ class LoginPage extends React.Component {
     return (
       <Container>
         <Row>
-          <Col sm={{ size: 4, push: 3, pull: 3, offset: 1 }}>
+          <Col lg={{ size: 4, push: 3, pull: 3, offset: 1 }}>
             <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
               <h3>Sign in to Codako</h3>
             </div>

@@ -42,7 +42,10 @@ module.exports = (server) => {
       const passwordHash = hash.digest('hex');
 
       db.User.create({
-        email, username, passwordHash, passwordSalt,
+        email: email.toLowerCase(),
+        username: username.toLowerCase(),
+        passwordHash,
+        passwordSalt,
       }).then((user) => {
         reply(user.serialize());
       }).catch((err) => {

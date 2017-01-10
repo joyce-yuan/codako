@@ -47,7 +47,8 @@
     "redux": "3.6.0",
     "redux-thunk": "2.1.0",
     "timeago.js": "2.0.4",
-    "updeep": "1.0.0"
+    "updeep": "1.0.0",
+    "xhr": "2.3.3"
   },
   "devDependencies": {
     "autoprefixer": "6.5.1",

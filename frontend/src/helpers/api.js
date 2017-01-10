@@ -1,5 +1,6 @@
 import * as types from '../constants/action-types';
 import objectAssign from 'object-assign';
+import xhr from 'xhr';
 
 export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {}) {
   const {dispatch} = window.store;
@@ -12,24 +13,27 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
 
   const user = window.store.getState().user || {};
 
-  return fetch(`http://api.lvh.me:4310${path}`, {
-    method,
-    body: json ? JSON.stringify(json) : body,
-    headers: objectAssign({
-      'Content-Type': 'application/json',
-      'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
-    }, headers),
-  })
-  .then((response) => response.json())
-  .then((responseJSON) => {
-    dispatch({
-      type: types.NETWORK_ACTIVITY,
-      error: responseJSON.error ? responseJSON : null,
-      delta: -1,
+  return new Promise((resolve, reject) => {
+    xhr(`http://api.lvh.me:4310${path}`, {
+      method,
+      body: json ? JSON.stringify(json) : body,
+      headers: objectAssign({
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
+      }, headers),
+    }, (err, response, body) => {
+      const responseJSON = JSON.parse(body);
+
+      dispatch({
+        type: types.NETWORK_ACTIVITY,
+        error: responseJSON.error ? responseJSON : null,
+        delta: -1,
+      });
+      if (response.statusCode !== 200 || responseJSON.error) {
+        reject(new Error(responseJSON.message));
+      } else {
+        resolve(responseJSON);
+      }
     });
-    if (responseJSON.error) {
-      throw new Error(responseJSON.message);
-    }
-    return responseJSON;
   });
 }

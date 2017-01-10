@@ -28,7 +28,7 @@ server.connection({ port: process.env.PORT });
 const validate = (incomingRequest, username, password, callback) => {
   db.User.find({
     where: {
-      $or: [{email: username}, {username: username}],
+      $or: [{email: username.toLowerCase()}, {username: username.toLowerCase()}],
     },
   }).then((user) => {
     if (!user) {
