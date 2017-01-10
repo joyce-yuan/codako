@@ -84,7 +84,7 @@ class StageContainer extends React.Component {
 
     return ( 
       <div className="panel stages">
-        <div style={{display: 'flex'}}>
+        <div className="stages-horizontal-flex">
           {stageA || <Stage stage={stage} recording={null} />}
           {stageB || <Stage style={{flex: 0}} />}
         </div>

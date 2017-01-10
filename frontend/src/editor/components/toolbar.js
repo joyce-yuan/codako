@@ -5,6 +5,7 @@ import {Button} from 'reactstrap';
 
 import * as actions from '../actions/ui-actions';
 import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
+import UndoRedoControls from './undo-redo-controls';
 
 class Toolbar extends React.Component {
   static propTypes = {
@@ -38,11 +39,23 @@ class Toolbar extends React.Component {
 
   render() {
     return (
-      <div className="panel toolbar">
-        {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
-        <Button onClick={() => this.props.dispatch(actions.showSettingsModal())}>
-          <img src="/editor/img/sidebar_choose_background.png" />
-        </Button>
+      <div className="toolbar">
+        <div style={{flex: 1, textAlign: 'left'}}>
+          {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
+        </div>
+
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <Button onClick={() => this.props.dispatch(actions.showSettingsModal())}>
+            <img src="/editor/img/sidebar_choose_background.png" />
+          </Button>
+          <div className="title">
+            <a>World</a> > <a>Stage 1</a>
+          </div>
+        </div>
+
+        <div style={{flex: 1, textAlign: 'right'}}>
+          <UndoRedoControls />
+        </div>
       </div>
     );
   }

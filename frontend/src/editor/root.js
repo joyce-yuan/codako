@@ -12,7 +12,6 @@ import {makeRequest} from '../helpers/api';
 import Toolbar from './components/toolbar';
 import Library from './components/library';
 
-import UndoRedoControls from './components/undo-redo-controls';
 import StageContainer from './components/stage/container';
 import InspectorContainer from './components/inspector/container';
 import PaintContainer from './components/paint/container';
@@ -124,25 +123,23 @@ export default class EditorRoot extends React.Component {
     return (
       <Provider store={editorStore}>
         <div className="editor">
-          <div style={{width: 1190}}>
+          <div className="editor-centered-flex">
             <div className="editor-horizontal-flex">
-              <h3 style={{flex: 1}}>Stage Name</h3>
-              <UndoRedoControls />
+              <Toolbar />
             </div>
-          </div>
-          <div className="editor-horizontal-flex">
-            <Toolbar />
-            <div className="stage-container">
-              <StageContainer />
-              <Library />
+            <div className="editor-horizontal-flex" style={{flex: 1}}>
+              <div className="stage-container">
+                <StageContainer />
+                <Library />
+              </div>
+              <InspectorContainer />
             </div>
-            <InspectorContainer />
-          </div>
 
-          <TutorialContainer />
-          <PaintContainer />
-          <KeypickerContainer />
-          <SettingsContainer />
+            <TutorialContainer />
+            <PaintContainer />
+            <KeypickerContainer />
+            <SettingsContainer />
+          </div>
         </div>
       </Provider>
     );

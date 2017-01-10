@@ -47,7 +47,7 @@ const validate = (incomingRequest, username, password, callback) => {
 };
 
 const attach = (directory) => {
-  const routesDir = path.join(__dirname, directory)
+  const routesDir = path.join(__dirname, directory);
   fs.readdirSync(routesDir).forEach((filename) => {
     if (filename.endsWith('.js')) {
       const routeFactory = require(path.join(routesDir, filename));

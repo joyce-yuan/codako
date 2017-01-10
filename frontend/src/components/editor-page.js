@@ -9,6 +9,7 @@ export default class EditorPage extends React.Component {
   }
 
   static layoutConsiderations = {
+    hidesNav: true,
     hidesFooter: true,
     unwrapped: true,
   };

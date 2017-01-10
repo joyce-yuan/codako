@@ -84,6 +84,8 @@ export default class StageControls extends React.Component {
           </div>
         </div>
 
+        <div style={{flex: 1}} />
+
         <div className="center" data-tutorial-id="controls">
           <Button
             size="sm"
@@ -112,6 +114,8 @@ export default class StageControls extends React.Component {
             <i className="fa fa-step-forward" /> Forward
           </Button>
         </div>
+
+        <div style={{flex: 1}} />
 
         <div className="right">
           <ButtonGroup>

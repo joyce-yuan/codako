@@ -88,6 +88,9 @@ class Stage extends React.Component {
       return;
     }
 
+    event.preventDefault();
+    event.stopPropagation();
+
     if (event.keyCode === 127 || event.keyCode === 8) {
       if (selectedActorPath) {
         const [stageUid, actorId] = selectedActorPath.split(':');
@@ -332,10 +335,6 @@ class Stage extends React.Component {
           style={{
             top: this.state.top,
             left: this.state.left,
-            width: stage.width * STAGE_CELL_SIZE,
-            height: stage.height * STAGE_CELL_SIZE,
-            background: stage.background,
-            backgroundSize: 'cover',
           }}
           className="stage"
           onDragOver={this._onDragOver}
@@ -345,6 +344,13 @@ class Stage extends React.Component {
           onClick={this._onClickStage}
           tabIndex={0}
         >
+          <div className="background" style={{
+            position: 'absolute',
+            width: stage.width * STAGE_CELL_SIZE,
+            height: stage.height * STAGE_CELL_SIZE,
+            background: stage.background,
+            backgroundSize: 'cover',
+          }} />
           {this._renderActors()}
           {recordingExtent ? this._renderRecordingExtent() : []}
         </div>

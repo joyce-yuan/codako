@@ -21,8 +21,8 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
       }, headers),
-    }, (err, response, body) => {
-      const responseJSON = JSON.parse(body);
+    }, (err, response, responseBody) => {
+      const responseJSON = JSON.parse(responseBody);
 
       dispatch({
         type: types.NETWORK_ACTIVITY,
