@@ -18,7 +18,7 @@ export default function CreatePixelImageData() {
 			console.log("%c" + dim.string, dim.style + "background: url(" + url + "); background-size: " + (this.width) + "px " + (this.height) + "px; color: transparent;");
 		};
 		img.src = url;
-  }
+  };
 
   this.maskUsingPixels = (mask) => {
     forEachInRect({x: 0, y: 0}, {x: this.width, y: this.height}, (x, y) => {

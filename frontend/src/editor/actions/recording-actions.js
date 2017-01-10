@@ -7,7 +7,7 @@ export function setupRecordingForActor({characterId, actor}) {
     dispatch({
       type: types.SETUP_RECORDING_FOR_ACTOR, characterId, actor,
     });
-  }
+  };
 }
 
 export function setupRecordingForCharacter({characterId}) {
@@ -55,5 +55,17 @@ export function setRecordingExtent(extent) {
 export function updateRecordingCondition(actorId, key, values) {
   return {
     type: types.UPDATE_RECORDING_CONDITION, actorId, key, values
+  };
+}
+
+export function updateRecordingActionPrefs(actorId, values) {
+  return {
+    type: types.UPDATE_RECORDING_ACTION_PREFS, actorId, values
+  };
+}
+
+export function toggleSquareIgnored(position) {
+  return {
+    type: types.TOGGLE_RECORDING_SQUARE_IGNORED, position
   };
 }

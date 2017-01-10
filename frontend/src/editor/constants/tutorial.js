@@ -235,8 +235,8 @@ export const tutorialSteps = [
     soundURL: '/editor/sounds/tutorial/tutorial-25.mp3',
     waitsFor: {
       stateMatching: ({recording}) => {
-        const before = Object.values(recording.beforeStage.actors).find(a => a.characterId === 'aamlcui8uxr')
-        const after = Object.values(recording.afterStage.actors).find(a => a.characterId === 'aamlcui8uxr')
+        const before = Object.values(recording.beforeStage.actors).find(a => a.characterId === 'aamlcui8uxr');
+        const after = Object.values(recording.afterStage.actors).find(a => a.characterId === 'aamlcui8uxr');
         return before && after && (after.position.x === before.position.x + 1) && (after.position.y === before.position.y - 1); 
       }
     },
@@ -436,7 +436,7 @@ export const tutorialSteps = [
     annotation: {selectors: ['[data-tutorial-id=toolbar-tool-record]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state) => {
-        return state.ui.selectedToolId === TOOL_RECORD && state.recording.phase === RECORDING_PHASE_SETUP
+        return state.ui.selectedToolId === TOOL_RECORD && state.recording.phase === RECORDING_PHASE_SETUP;
       },
     },
   },

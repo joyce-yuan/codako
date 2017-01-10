@@ -108,7 +108,7 @@ class UndoRedoControls extends React.Component {
           <img src="/editor/img/icon_redo.png" />
         </Button>
       </div>
-    )
+    );
   }
 }
 
@@ -116,7 +116,7 @@ function mapStateToProps(state) {
   return {
     undoDepth: state.undoStack.length,
     redoDepth: state.redoStack.length,
-  }
+  };
 }
 
 export default connect(

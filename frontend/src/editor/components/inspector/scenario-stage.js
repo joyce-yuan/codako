@@ -4,6 +4,8 @@ import {STAGE_CELL_SIZE} from '../../constants/constants';
 import StageOperator from '../../utils/stage-operator';
 import ActorSprite from '../sprites/actor-sprite';
 
+import {extentIgnoredPositions} from '../../utils/recording-helpers';
+import RecordingIgnoredSprite from '../sprites/recording-ignored-sprite';
 
 export default class ScenarioStage extends React.Component {
   static propTypes = {
@@ -32,7 +34,7 @@ export default class ScenarioStage extends React.Component {
       offset: {x: -xmin, y: -ymin},
       uid: 'rule',
     });
-
+    
     return (
       <div className="scenario-stage" style={{width, height, zoom}}>
         {Object.keys(ruleStage.actors).map((id) =>
@@ -41,6 +43,9 @@ export default class ScenarioStage extends React.Component {
             character={characters[ruleStage.actors[id].characterId]}
             actor={ruleStage.actors[id]}
           />
+        )}
+        {extentIgnoredPositions(rule.extent).map(({x, y}) =>
+          <RecordingIgnoredSprite key={`ignored-${x}-${y}`} x={x - xmin} y={y - ymin} />
         )}
       </div>
     );

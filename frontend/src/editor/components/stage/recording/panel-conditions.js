@@ -1,19 +1,9 @@
 import React, {PropTypes} from 'react';
-import {updateRecordingCondition} from '../../actions/recording-actions';
-import Sprite from '../sprites/sprite';
-import {pointIsInside} from '../../utils/stage-helpers';
-
-class ConditionToggle extends React.Component {
-  static propTypes = {
-    onClick: PropTypes.func,
-    enabled: PropTypes.bool,
-  }
-  render() {
-    return (
-      <div onClick={this.props.onClick} className={`condition-toggle enabled-${this.props.enabled}`} />
-    );
-  }
-}
+import {updateRecordingCondition} from '../../../actions/recording-actions';
+import {pointIsInside} from '../../../utils/stage-helpers';
+import ActorBlock from './actor-block';
+import AppearanceBlock from './appearance-block';
+import VariableBlock from './variable-block';
 
 class AppearanceRow extends React.Component {
   static propTypes = {
@@ -29,22 +19,16 @@ class AppearanceRow extends React.Component {
   }
 
   render() {
-    const {appearance, character, enabled, onChange} = this.props;
+    const {appearance, actor, character, enabled, onChange} = this.props;
 
     return (
-      <li>
+      <li className={`enabled-${this.props.enabled}`}>
         <div className="left">
-          <code>
-            <Sprite spritesheet={character.spritesheet} appearance={appearance} />
-            {character.name}'s
-          </code>
+          <ActorBlock character={character} actor={actor} />
           appearance is
-          <code>
-            <Sprite spritesheet={character.spritesheet} appearance={appearance} />
-            {character.spritesheet.appearanceNames[appearance]}
-          </code>
+          <AppearanceBlock character={character} appearanceId={appearance} />
         </div>
-        <ConditionToggle enabled={enabled} onClick={() => onChange(!enabled)} />
+        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
       </li>
     );
   }
@@ -57,7 +41,7 @@ class VariableRow extends React.Component {
     enabled: PropTypes.bool,
     onChange: PropTypes.func,
     variableId: PropTypes.string,
-    variableValue: PropTypes.string,
+    variableValue: PropTypes.number,
     comparator: PropTypes.string,
   };
 
@@ -70,15 +54,11 @@ class VariableRow extends React.Component {
     const {actor, character, enabled, onChange, variableId, variableValue, comparator} = this.props;
 
     return (
-      <li>
+      <li className={`enabled-${this.props.enabled}`}>
         <div className="left">
-          <code>
-            <Sprite spritesheet={character.spritesheet} appearance={actor.appearance} /> {character.name}'s
-          </code>
+          <ActorBlock character={character} actor={actor} />
           variable
-          <code>
-            {character.variables[variableId].name}
-          </code>
+          <VariableBlock character={character} variableId={variableId} />
           is
           <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
             <option value="<">&lt;</option>
@@ -87,7 +67,7 @@ class VariableRow extends React.Component {
           </select>
           {variableValue}
         </div>
-        <ConditionToggle enabled={enabled} onClick={() => onChange(!enabled, comparator)} />
+        <div onClick={() => onChange(!enabled, comparator)} className="condition-toggle"><div /></div>
       </li>
     );
   }

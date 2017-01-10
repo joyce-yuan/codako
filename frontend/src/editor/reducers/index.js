@@ -6,7 +6,6 @@ import charactersReducer from './characters-reducer';
 import stageReducer from './stage-reducer';
 import recordingReducer from './recording-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
-import {tutorialSteps} from '../constants/tutorial';
 
 const reducerMap = {
   characters: charactersReducer,

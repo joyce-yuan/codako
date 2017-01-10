@@ -112,7 +112,7 @@ export default function StageOperator(stage) {
     function checkRuleScenario(rule) {
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
-          if (rule.extent.ignored.includes(`${x},${y}`)) {
+          if (rule.extent.ignored[`${x},${y}`]) {
             continue;
           }
           const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);

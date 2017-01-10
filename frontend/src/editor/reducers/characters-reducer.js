@@ -4,7 +4,8 @@ import objectAssign from 'object-assign';
 import initialState from './initial-state';
 import * as Types from '../constants/action-types';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
-import {findRule, pointIsInside, actionsForRecording, createdActorsForRecording} from '../utils/stage-helpers';
+import {findRule, pointIsInside, createdActorsForRecording} from '../utils/stage-helpers';
+import {actionsForRecording, extentByShiftingExtent} from '../utils/recording-helpers';
 
 export default function charactersReducer(state = initialState.characters, action) {
   switch (action.type) {
@@ -103,19 +104,14 @@ export default function charactersReducer(state = initialState.characters, actio
           });
         }
       }
+
       const recordedRule = {
         type: 'rule',
         mainActorId: recording.actorId,
         conditions: recording.conditions,
         actors: recordingActors,
-        actions: actionsForRecording({characters, ...recording}),
-        extent: {
-          xmin: recording.extent.xmin - mainActor.position.x,
-          xmax: recording.extent.xmax - mainActor.position.x,
-          ymin: recording.extent.ymin - mainActor.position.y,
-          ymax: recording.extent.ymax - mainActor.position.y,
-          ignored: [],
-        },
+        actions: actionsForRecording(recording, {characters}),
+        extent: extentByShiftingExtent(recording.extent, {x: -mainActor.position.x, y: -mainActor.position.y}),
       };
 
       if (recording.ruleId) {

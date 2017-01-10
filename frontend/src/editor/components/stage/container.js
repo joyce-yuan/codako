@@ -2,11 +2,13 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Stage from './stage';
 import StageControls from './stage-controls';
+import StageRecordingTools from './stage-recording-tools';
 import StageRecordingControls from './stage-recording-controls';
-import RecordingActions from './recording-actions';
-import RecordingConditions from './recording-conditions';
+import RecordingActions from './recording/panel-actions';
+import RecordingConditions from './recording/panel-conditions';
 
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
+
 
 class StageContainer extends React.Component {
   static propTypes = {
@@ -30,7 +32,7 @@ class StageContainer extends React.Component {
         <StageRecordingControls
           characters={characters}
           dispatch={dispatch}
-          {...recording}
+          recording={recording}
         />
       );
 
@@ -59,7 +61,10 @@ class StageContainer extends React.Component {
           />
         );
         actions = (
-          <div className="recording-specifics" style={{height: 200, display: 'flex'}}>
+          <div className="recording-specifics">
+            <div style={{position: "absolute", transform:'translate(0, -100%)', paddingBottom: 5}}>
+              <StageRecordingTools />
+            </div>
             <RecordingConditions
               characters={characters}
               conditions={recording.conditions}
@@ -69,7 +74,8 @@ class StageContainer extends React.Component {
             />
             <RecordingActions
               characters={characters}
-              {...recording}
+              recording={recording}
+              dispatch={dispatch}
             />
           </div>
         );

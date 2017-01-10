@@ -31,10 +31,9 @@ export default class ContentRule extends React.Component {
 
     return (
       <div>
-        <div className="zerospace">
-          <RuleStateCircle rule={rule} />
-        </div>
         <div className="scenario">
+          <RuleStateCircle rule={rule} />
+          <div style={{flex: 1}} />
           <ScenarioStage
             rule={rule}
             applyActions={false}
@@ -48,6 +47,7 @@ export default class ContentRule extends React.Component {
             maxWidth={75}
             maxHeight={75}
           />
+          <div style={{flex: 1}} />
         </div>
         <DisclosureTriangle
           onClick={() => this.setState({disclosed: !disclosed})}

@@ -4,13 +4,15 @@ import objectAssign from 'object-assign';
 
 import ActorSprite from '../sprites/actor-sprite';
 import RecordingMaskSprite from '../sprites/recording-mask-sprite';
+import RecordingIgnoredSprite from '../sprites/recording-ignored-sprite';
 import RecordingHandle from '../sprites/recording-handle';
 
 import {createActor, changeActor, deleteActor, recordClickForGameState, recordKeyForGameState} from '../../actions/stage-actions';
 import {select, selectToolId, paintCharacterAppearance} from '../../actions/ui-actions';
-import {setRecordingExtent, setupRecordingForActor} from '../../actions/recording-actions';
+import {setRecordingExtent, setupRecordingForActor, toggleSquareIgnored} from '../../actions/recording-actions';
 
-import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../../constants/constants';
+import {STAGE_CELL_SIZE, TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT, TOOL_IGNORE_SQUARE} from '../../constants/constants';
+import {extentIgnoredPositions} from '../../utils/recording-helpers';
 import {pointIsOutside} from '../../utils/stage-helpers';
 
 class Stage extends React.Component {
@@ -141,9 +143,13 @@ class Stage extends React.Component {
     this.props.dispatch(setRecordingExtent(nextExtent));
   }
 
-  _getDropPositionForEvent(event) {
-    const {dragLeft, dragTop} = JSON.parse(event.dataTransfer.getData('drag-offset'));
+  _getPositionForEvent(event) {
     const stageOffset = this._el.getBoundingClientRect();
+    const dragOffset = event.dataTransfer && event.dataTransfer.getData('drag-offset');
+
+    // subtracting half when no offset is present is a lazy way of doing Math.floor instead of Math.round!
+    const halfOffset = {dragTop: STAGE_CELL_SIZE/2, dragLeft: STAGE_CELL_SIZE/2};
+    const {dragLeft, dragTop} = dragOffset ? JSON.parse(dragOffset) : halfOffset;
     return {
       x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
       y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
@@ -153,7 +159,7 @@ class Stage extends React.Component {
   _onDropAppearance = (event) => {
     const {stage, dispatch, recordingExtent} = this.props;
     const {appearance, characterId} = JSON.parse(event.dataTransfer.getData('appearance'));
-    const position = this._getDropPositionForEvent(event);
+    const position = this._getPositionForEvent(event);
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
       return;
     }
@@ -168,7 +174,7 @@ class Stage extends React.Component {
   _onDropSprite = (event) => {
     const {stage, stage: {actors}, characters, dispatch, recordingExtent} = this.props;
     const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
-    const position = this._getDropPositionForEvent(event);
+    const position = this._getPositionForEvent(event);
 
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
       return;
@@ -190,26 +196,48 @@ class Stage extends React.Component {
   }
 
   _onClickActor = (actor, event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const {selectedToolId, dispatch, stage} = this.props;
-    if (selectedToolId === TOOL_PAINT) {
-      dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
+    switch (selectedToolId) {
+      case TOOL_PAINT:
+        dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
+        break;
+      case TOOL_TRASH:
+        dispatch(deleteActor(stage.uid, actor.id));
+        break;
+      case TOOL_RECORD:
+        dispatch(setupRecordingForActor({
+          characterId: actor.characterId,
+          actor: actor,
+          ruleId: null,
+        }));
+        break;
+      case TOOL_IGNORE_SQUARE:
+        dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
+        break;
+      case TOOL_POINTER:
+        dispatch(recordClickForGameState(stage.uid, actor.id));
+        break;
     }
-    if (selectedToolId === TOOL_TRASH) {
-      dispatch(deleteActor(stage.uid, actor.id));
+
+    if (selectedToolId !== TOOL_POINTER && !event.shiftKey) {
+      dispatch(selectToolId(TOOL_POINTER));
     }
-    if (selectedToolId === TOOL_RECORD) {
-      dispatch(setupRecordingForActor({
-        characterId: actor.characterId,
-        actor: actor,
-        ruleId: null,
-      }));
+  }
+
+  _onClickStage = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const {selectedToolId, dispatch} = this.props;
+    if (selectedToolId === TOOL_IGNORE_SQUARE) {
+      dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
     }
-    if (selectedToolId !== TOOL_POINTER) {
-      if (!event.shiftKey) {
-        dispatch(selectToolId(TOOL_POINTER));
-      }
-    } else {
-      dispatch(recordClickForGameState(stage.uid, actor.id));
+
+    if (selectedToolId !== TOOL_POINTER && !event.shiftKey) {
+      dispatch(selectToolId(TOOL_POINTER));
     }
   }
 
@@ -253,6 +281,15 @@ class Stage extends React.Component {
       <RecordingMaskSprite key={`mask-right`} xmin={xmax + 1} xmax={width} ymin={ymin} ymax={ymax + 1} />,
     );
 
+    // add the ignored squares
+    extentIgnoredPositions(recordingExtent)
+      .filter(({x, y}) => x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+      .forEach(({x, y}) => { 
+        components.push(
+          <RecordingIgnoredSprite x={x} y={y} key={`ignored-${x}-${y}`} />
+        );
+      });
+    
     // add the handles
     const handles = {
       top: [xmin + (xmax - xmin) / 2.0, ymin - 1],
@@ -305,6 +342,7 @@ class Stage extends React.Component {
           onDrop={this._onDrop}
           onKeyDown={this._onKeyDown}
           onBlur={this._onBlur}
+          onClick={this._onClickStage}
           tabIndex={0}
         >
           {this._renderActors()}

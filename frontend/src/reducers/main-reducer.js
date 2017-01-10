@@ -1,5 +1,5 @@
 import * as Types from '../constants/action-types';
-import { LOCATION_CHANGE } from 'react-router-redux'
+import { LOCATION_CHANGE } from 'react-router-redux';
 import objectAssign from 'object-assign';
 
 export default function mainReducer(state, action) {

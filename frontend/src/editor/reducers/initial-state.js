@@ -43,7 +43,9 @@ export default {
       xmax: 0,
       ymin: 0,
       ymax: 0,
+      ignored: {},
     },
+    prefs: {},
     beforeStage: {
       uid: 'before',
     },

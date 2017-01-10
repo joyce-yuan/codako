@@ -1,11 +1,13 @@
 import React, {PropTypes} from 'react';
 import {changeActor} from '../../actions/stage-actions';
 import {changeCharacter} from '../../actions/characters-actions';
+import TapToEditLabel from '../tap-to-edit-label';
 
 class VariableBlock extends React.Component {
   static propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
+    disabled: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     valueSetOnActor: PropTypes.bool,
     onChangeValue: PropTypes.func,
@@ -14,16 +16,18 @@ class VariableBlock extends React.Component {
   };
 
   render() {
-    const {name, value, valueSetOnActor, id, onChangeDefinition, onChangeValue, onBlurValue} = this.props;
+    const {name, disabled, value, valueSetOnActor, id, onChangeDefinition, onChangeValue, onBlurValue} = this.props;
 
     return (
       <div className={`variable-box variable-set-${valueSetOnActor}`}>
-        <input
+        <TapToEditLabel
+          disabled={disabled}
           className="name"
           value={name}
           onChange={(e) => onChangeDefinition(id, {name: e.target.value})}
         />
         <input
+          disabled={disabled}
           className="value"
           value={value}
           onBlur={(e) => onBlurValue(id, e.target.value)}
@@ -40,6 +44,10 @@ export default class ContainerPaneVariables extends React.Component {
     selectedActorPath: PropTypes.string,
     dispatch: PropTypes.func,
   }
+
+  static contextTypes = {
+    selectedToolId: PropTypes.string,
+  };
 
   _onChangeVarDefinition = (id, changes) => {
     const {character, dispatch} = this.props;
@@ -83,12 +91,13 @@ export default class ContainerPaneVariables extends React.Component {
     const actorValues = actor ? actor.variableValues : {};
 
     return (
-      <div className="scroll-container variables-grid">
+      <div className={`scroll-container variables-grid tool-${this.context.selectedToolId}`}>
       {Object.values(character.variables).map(({name, id, value}) =>
         <VariableBlock
           id={id}
           key={id}
           name={name}
+          disabled={this.context.selectedToolId === 'trash'}
           value={(actorValues[id] !== undefined) ? actorValues[id] : value}
           valueSetOnActor={actorValues[id] !== undefined}
           onChangeDefinition={this._onChangeVarDefinition}

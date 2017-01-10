@@ -1,4 +1,3 @@
-/* eslint no-param-reassign: 0 */
 import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
 import stageReducer from './stage-reducer';
@@ -7,14 +6,14 @@ import u from 'updeep';
 
 import StageOperator from '../utils/stage-operator';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
+import {extentByShiftingExtent} from '../utils/recording-helpers';
 
 export default function recordingReducer(state = initialState.recording, action) {
-
-  state = objectAssign({}, state, {
+  const nextState = objectAssign({}, state, {
     beforeStage: stageReducer(state.beforeStage, action),
     afterStage: stageReducer(state.afterStage, action),
   });
-  
+
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
       const {stage} = window.editorStore.getState();
@@ -35,12 +34,13 @@ export default function recordingReducer(state = initialState.recording, action)
           xmax: actor.position.x,
           ymin: actor.position.y,
           ymax: actor.position.y,
+          ignored: {},
         },
-      }, state);
+      }, nextState);
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const {characters, stage} = window.editorStore.getState();
+      const {stage, characters} = window.editorStore.getState();
       const character = characters[action.characterId];
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);
@@ -69,7 +69,8 @@ export default function recordingReducer(state = initialState.recording, action)
           ymin: cy,
           ymax: cy,
         },
-      }, state);
+        prefs: {},
+      }, nextState);
     }
 
     case Types.EDIT_RULE_RECORDING: {
@@ -94,13 +95,9 @@ export default function recordingReducer(state = initialState.recording, action)
         conditions: rule.conditions,
         beforeStage: u.constant(beforeStage),
         afterStage: u.constant(afterStage),
-        extent: {
-          xmin: rule.extent.xmin + offset.x,
-          xmax: rule.extent.xmax + offset.x,
-          ymin: rule.extent.ymin + offset.y,
-          ymax: rule.extent.ymax + offset.y,
-        },
-      }, state);
+        extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
+        prefs: {},
+      }, nextState);
     }
     case Types.FINISH_RECORDING: {
       return objectAssign({}, initialState.recording);
@@ -111,10 +108,10 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.START_RECORDING: {
       return u({
         phase: RECORDING_PHASE_RECORD,
-        afterStage: objectAssign(JSON.parse(JSON.stringify(state.beforeStage)), {
+        afterStage: objectAssign(JSON.parse(JSON.stringify(nextState.beforeStage)), {
           uid: 'after',
         }),
-      }, state);
+      }, nextState);
     }
     case Types.UPDATE_RECORDING_CONDITION: {
       const {actorId, key, values} = action;
@@ -124,13 +121,22 @@ export default function recordingReducer(state = initialState.recording, action)
             [key]: values,
           },
         },
-      }, state);
+      }, nextState);
+    }
+    case Types.UPDATE_RECORDING_ACTION_PREFS: {
+      const {actorId, values} = action;
+      return u({
+        prefs: {
+          [actorId]: values,
+        },
+      }, nextState);
+
     }
     case Types.SET_RECORDING_EXTENT: {
       // find the primary actor, make sure the extent still includes it
       const extent = objectAssign({}, action.extent);
-      for (const stage of [state.beforeStage, state.afterStage]) {
-        const mainActor = Object.values(stage.actors || {}).find(a => a.id === state.actorId);
+      for (const astage of [nextState.beforeStage, nextState.afterStage]) {
+        const mainActor = Object.values(astage.actors || {}).find(a => a.id === nextState.actorId);
         if (mainActor) {
           extent.xmin = Math.min(extent.xmin, mainActor.position.x);
           extent.ymin = Math.min(extent.ymin, mainActor.position.y);
@@ -138,9 +144,20 @@ export default function recordingReducer(state = initialState.recording, action)
           extent.ymax = Math.max(extent.ymax, mainActor.position.y);
         }
       }
-      return u({ extent }, state);
+      return u({extent}, nextState);
+    }
+    case Types.TOGGLE_RECORDING_SQUARE_IGNORED: {
+      const {x, y} = action.position;
+      const {xmin, xmax, ymin, ymax} = nextState.extent;
+
+      if (x < xmin || x > xmax || y < ymin || y > ymax) {
+        return nextState;
+      }
+      const key = `${x},${y}`;
+      const ignored = nextState.extent.ignored[key] ? u.omit(key) : {[key]: true};
+      return u({extent: {ignored}}, nextState);
     }
     default:
-      return state;
+      return nextState;
   }
 }

@@ -7,6 +7,11 @@ $trash-hover-color: #d05959;
 $rule-event-color: #5BC15C;
 $rule-flow-color: #5BA4CD;
 
+@mixin cursor($name) {
+  cursor: url(../img/cursor_#{$name}.cur) 0 0, auto;
+  cursor: -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0, url(../img/cursor_#{$name}.cur) 0 0, auto;
+}
+
 /*
 ::-webkit-scrollbar {
   width: 10px;
@@ -28,16 +33,16 @@ $rule-flow-color: #5BA4CD;
 */
 
 .tool-trash {
-  cursor: url(../img/cursor_trashcan.png), auto;
-  cursor: -webkit-image-set(url(../img/cursor_trashcan.png) 2x),url(../img/cursor_trashcan.png), auto;
+  @include cursor('trashcan');
 }
 .tool-paint {
-  cursor: url(../img/cursor_paint.png), auto;
-  cursor: -webkit-image-set(url(../img/cursor_paint.png) 2x),url(../img/cursor_paint.png), auto;
+  @include cursor('paint');
 }
 .tool-record {
-  cursor: url(/img/cursor_camera.png), auto;
-  cursor: -webkit-image-set(url(../img/cursor_camera.png) 2x),url(../img/cursor_camera.png), auto;
+  @include cursor('camera');
+}
+.tool-ignore-square {
+  @include cursor('ignored_square');
 }
 .tool-pointer {
   cursor: default;
@@ -176,7 +181,15 @@ $rule-flow-color: #5BA4CD;
       cursor: ew-resize;
     }
 
+    .tool-ignored-square {
+      img { width: 20px; height: 20px; }
+      padding: 4px;
+    }
+
     .recording-specifics {
+      height: 200px;
+      display: flex;
+
       & > div {
         background-color: #eee;
         padding: 3px 6px;
@@ -200,29 +213,43 @@ $rule-flow-color: #5BA4CD;
           .left {
             flex: 1;
           }
-          .variable-operation-select {
-            margin-right: 6px;
-          }
-          .variable-value-input {
-            margin-right: 6px;
-            width: 50px;
-          }
           .sprite {
             zoom: 0.6;
             margin-right: 8px;
           }
           code,
+          select,
           .delta-canvas {
             margin-left: 7px;
             margin-right: 7px;
           }
+          .variable-operation-select {
+            margin-right: 6px;
+            margin-left: 0;
+          }
+          .variable-value-input {
+            margin-right: 6px;
+            width: 50px;
+          }
           .condition-toggle {
-            width: 25px;
-            height: 13px;
-            display: inline-block;
-            background: url(../img/visible.png) top left no-repeat;
-            &.enabled-false {
-              opacity: 0.4;
+            padding: 4px;
+            div {
+              width: 25px;
+              height: 13px;
+              background: url(../img/visible.png) top left no-repeat;
+            }
+          }
+        }
+        li.enabled-false {
+          .left {
+            opacity: 0.4;
+          }
+          .condition-toggle {
+            opacity: 0.4;
+            &:hover {
+              opacity: 0.8;
+            }
+            div {
               background: url(../img/visible.png) top right no-repeat;
             }
           }
@@ -418,23 +445,27 @@ $rule-flow-color: #5BA4CD;
 }
 
 .variables-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding-top:5px;
   .variable-box {
     width: 70px;
     padding: 5px;
     padding-top: 0;
-    position: absolute;
     background-color: #c6c6c6;
     box-sizing: content-box;
+    margin: 8px 0;
 
     &.variable-set-true {
       background-color: orange;
     }
 
     .name {
-      border: 0;
       background-color: transparent;
       text-align: center;
-      width: 70px;
+      overflow-y: scroll;
+      text-overflow: ellipsis;
       padding: 3px 0;
       margin: 0;
     }
@@ -451,7 +482,15 @@ $rule-flow-color: #5BA4CD;
     }
   }
 }
-
+.variables-grid.tool-trash {
+  .variable-box:hover {
+    background-color: $trash-hover-color;
+    .name { color: white; }
+  }
+  .variable-box input:hover  {
+    @include cursor('trashcan');
+  }
+}
 
 .rules-list {
   padding: 3px 0;
@@ -583,7 +622,7 @@ $rule-flow-color: #5BA4CD;
       background-color: #E8B432;
     }
     .scenario {
-      display: block;
+      display: flex;
       text-align: center;
       margin-bottom: 3px;
       pointer-events: none;
@@ -600,6 +639,7 @@ $rule-flow-color: #5BA4CD;
 
       i {
         margin:5px;
+        align-self: center;
       }
     }
   }

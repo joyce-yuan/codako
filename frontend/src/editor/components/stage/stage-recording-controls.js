@@ -3,16 +3,13 @@ import React, {PropTypes} from 'react';
 import {Button} from 'reactstrap';
 import {cancelRecording, startRecording, finishRecording} from '../../actions/recording-actions';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
-import {actionsForRecording} from '../../utils/stage-helpers';
+import {actionsForRecording} from '../../utils/recording-helpers';
 
 export default class StageRecordingControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    phase: PropTypes.string,
-    beforeStage: PropTypes.object,
-    afterStage: PropTypes.object,
+    recording: PropTypes.object,
     characters: PropTypes.object,
-    characterId: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -24,20 +21,22 @@ export default class StageRecordingControls extends React.Component {
   }
 
   _onNext = () => {
-    if (this.props.phase === RECORDING_PHASE_SETUP) {
-      this.props.dispatch(startRecording());
+    const {dispatch, recording, characters} = this.props;
+    
+    if (recording.phase === RECORDING_PHASE_SETUP) {
+      dispatch(startRecording());
     }
-    if (this.props.phase === RECORDING_PHASE_RECORD) {
-      if (actionsForRecording({...this.props, characters: this.props.characters}).length === 0) {
+    if (recording.phase === RECORDING_PHASE_RECORD) {
+      if (actionsForRecording(recording, {characters}).length === 0) {
         window.alert("To create a rule, edit the right stage by changing appearances, moving actors, or modifying a variable.");
         return;
       }
-      this.props.dispatch(finishRecording());
+      dispatch(finishRecording());
     }
   }
 
   render() {
-    const {phase, characters, characterId} = this.props;
+    const {characters, recording: {characterId, phase}} = this.props;
 
     const message = {
       [RECORDING_PHASE_SETUP]: `Set the stage! Select the area around the ${characters[characterId].name} you want to record in.`,

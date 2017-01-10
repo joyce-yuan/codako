@@ -60,38 +60,6 @@ export function findRule(node, id) {
   return null;
 }
 
-
-export function actionsForVariables({beforeActor, afterActor, character}) {
-  if (!afterActor) {
-    return [];
-  }
-
-  const actions = [];
-  for (const vkey of Object.keys(character.variables)) {
-    const before = beforeActor ? getVariableValue(beforeActor, character, vkey) : undefined;
-    const after = getVariableValue(afterActor, character, vkey);
-    let [op, value] = [null, null];
-
-    if (after === before + 1) {
-      [op, value] = ['add', 1];
-    } else if (after > before) {
-      [op, value] = ['set', after - before];
-    } else if (after < before) {
-      [op, value] = ['subtract', before - after];
-    }
-    if (op) {
-      actions.push({
-        actorId: beforeActor.id,
-        type: 'variable',
-        operation: op,
-        variable: vkey,
-        value: value,
-      });
-    }
-  }
-  return actions;
-}
-
 export function getStageScreenshot(stage) {
   const {characters} = window.editorStore.getState();
   const canvas = document.createElement('canvas');
@@ -114,63 +82,4 @@ export function createdActorsForRecording({beforeStage, afterStage, extent}) {
   return createdIds.map((id) => afterStage.actors[id]).filter(a => 
     pointIsInside(a.position, extent)
   );
-}
-
-export function actionsForRecording({characters, beforeStage, afterStage, extent}) {
-  if (!beforeStage.actors || !afterStage.actors) {
-    return [];
-  }
-
-  const actions = [];
-
-  Object.values(beforeStage.actors).forEach((beforeActor) => {
-    if (pointIsOutside(beforeActor.position, extent)) {
-      return;
-    }
-    const {x: bx, y: by} = beforeActor.position;
-    const character = characters[beforeActor.characterId];
-    const afterActor = afterStage.actors[beforeActor.id];
-
-    if (afterActor) {
-      const {x: ax, y: ay} = afterActor.position;
-      if (ax !== bx || ay !== by) {
-        actions.push({
-          actorId: beforeActor.id,
-          type: 'move',
-          delta: {
-            x: ax - bx,
-            y: ay - by,
-          },
-        });
-      }
-      if (beforeActor.appearance !== afterActor.appearance) {
-        actions.push({
-          actorId: beforeActor.id,
-          type: 'appearance',
-          to: afterActor.appearance,
-        });
-      }
-      actions.push(...actionsForVariables({beforeActor, afterActor, character}));
-    } else {
-      actions.push({
-        actorId: beforeActor.id,
-        type: 'delete',
-      });
-    }
-  });
-
-  createdActorsForRecording({beforeStage, afterStage, extent}).forEach((actor) => {
-    const character = characters[actor.characterId];
-    actions.push({
-      actorId: actor.id,
-      type: 'create',
-    });
-    actions.push(...actionsForVariables({
-      beforeActor: null,
-      afterActor: actor,
-      character,
-    }));
-  });
-  
-  return actions;
 }
