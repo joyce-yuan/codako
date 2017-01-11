@@ -6,6 +6,11 @@ export const FLOW_BEHAVIORS = {
   RANDOM: 'random',
 };
 
+export const MODALS = {
+  STAGES: 'STAGES',
+  STAGE_SETTINGS: 'STAGE_SETTINGS',
+};
+
 export const CONTAINER_TYPES = {
   EVENT: 'group-event',
   FLOW: 'group-flow',

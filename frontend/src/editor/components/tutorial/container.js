@@ -82,7 +82,9 @@ class TutorialAdvancer {
 
     if (this._waitsFor.stateMatching) {
       this._unsub = window.editorStore.subscribe(() => {
-        if (this._waitsFor.stateMatching(window.editorStore.getState())) {
+        const state = window.editorStore.getState();
+        const stage = state.stages[state.ui.selectedStageIndex];
+        if (this._waitsFor.stateMatching(state, stage)) {
           this._timer = setTimeout(this._callback, this._waitsFor.delay || 750);
           this._unsub();
         }

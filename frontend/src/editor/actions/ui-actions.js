@@ -7,6 +7,13 @@ export function selectToolId(toolId) {
   };
 }
 
+export function selectStageIndex(stageIndex) {
+  return {
+    type: types.SELECT_STAGE_INDEX,
+    stageIndex,
+  };
+}
+
 export function select(characterId, actorPath) {
   return {
     type: types.SELECT_DEFINITION_ID,
@@ -29,20 +36,20 @@ export function stopPlayback() {
   };
 }
 
-export function showSettingsModal() {
+export function showModal(id) {
   return (dispatch) => {
     dispatch(stopPlayback());
     dispatch({
-      type: types.UPDATE_SETTINGS_MODAL_STATE,
-      open: true,
+      type: types.UPDATE_MODAL_STATE,
+      openId: id,
     });
   };
 }
 
-export function dismissSettingsModal() {
+export function dismissModal() {
   return {
-    type: types.UPDATE_SETTINGS_MODAL_STATE,
-    open: false,
+    type: types.UPDATE_MODAL_STATE,
+    openId: null,
   };
 }
 

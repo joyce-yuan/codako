@@ -13,11 +13,13 @@ import Toolbar from './components/toolbar';
 import Library from './components/library';
 
 import StageContainer from './components/stage/container';
-import InspectorContainer from './components/inspector/container';
-import PaintContainer from './components/paint/container';
-import KeypickerContainer from './components/keypicker/container';
-import SettingsContainer from './components/settings/container';
 import TutorialContainer from './components/tutorial/container';
+import InspectorContainer from './components/inspector/container';
+
+import PaintContainer from './components/modal-paint/container';
+import KeypickerContainer from './components/modal-keypicker/container';
+import StageSettingsContainer from './components/modal-stage-settings/container';
+import StagesContainer from './components/modal-stages/container';
 
 import './styles/editor.scss';
 
@@ -96,7 +98,7 @@ export default class EditorRoot extends React.Component {
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
-        thumbnail: getStageScreenshot(savedState.stages[savedState.stageIndex]),
+        thumbnail: getStageScreenshot(savedState.stages[savedState.ui.selectedStageIndex]),
         state: savedState,
       },
     }).then(() => {
@@ -136,7 +138,8 @@ export default class EditorRoot extends React.Component {
             <TutorialContainer />
             <PaintContainer />
             <KeypickerContainer />
-            <SettingsContainer />
+            <StageSettingsContainer />
+            <StagesContainer />
           </div>
         </div>
       </Provider>

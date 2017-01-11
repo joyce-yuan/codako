@@ -4,11 +4,13 @@ import classNames from 'classnames';
 import {Button} from 'reactstrap';
 
 import * as actions from '../actions/ui-actions';
-import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT} from '../constants/constants';
+import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT, MODALS} from '../constants/constants';
 import UndoRedoControls from './undo-redo-controls';
 
 class Toolbar extends React.Component {
   static propTypes = {
+    stageIndex: PropTypes.number,
+    stageNames: PropTypes.array.isRequired,
     selectedToolId: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
   };
@@ -38,6 +40,8 @@ class Toolbar extends React.Component {
   }
 
   render() {
+    const {stageNames, stageIndex, dispatch} = this.props;
+
     return (
       <div className="toolbar">
         <div style={{flex: 1, textAlign: 'left'}}>
@@ -45,11 +49,11 @@ class Toolbar extends React.Component {
         </div>
 
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button onClick={() => this.props.dispatch(actions.showSettingsModal())}>
+          <Button onClick={() => dispatch(actions.showModal(MODALS.STAGE_SETTINGS))}>
             <img src="/editor/img/sidebar_choose_background.png" />
           </Button>
-          <div className="title">
-            <a>Stage 1</a>
+          <div className="title" onClick={() => dispatch(actions.showModal(MODALS.STAGES))}>
+            {stageNames[stageIndex]}            
           </div>
         </div>
 
@@ -62,7 +66,11 @@ class Toolbar extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return state.ui;
+  return {
+    selectedToolId: state.ui.selectedToolId,
+    stageIndex: state.ui.selectedStageIndex,
+    stageNames: state.stages.map(s => s.uid),
+  };
 }
 
 export default connect(

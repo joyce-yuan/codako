@@ -2,7 +2,8 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
-import {dismissSettingsModal} from '../../actions/ui-actions';
+import {MODALS} from '../../constants/constants';
+import {dismissModal} from '../../actions/ui-actions';
 import {updateStageSettings} from '../../actions/stage-actions';
 
 class Container extends React.Component {
@@ -25,12 +26,12 @@ class Container extends React.Component {
   }
 
   _onClose = () => {
-    this.props.dispatch(dismissSettingsModal());
+    this.props.dispatch(dismissModal());
   }
 
   _onCloseAndSave = () => {
     const {dispatch, stage} = this.props;
-    dispatch(dismissSettingsModal());
+    dispatch(dismissModal());
     dispatch(updateStageSettings(stage.uid, this.state));
   }
 
@@ -76,8 +77,8 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    stage: state.stages[state.stageIndex],
-    open: state.ui.settings.open,
+    stage: state.stages[state.ui.selectedStageIndex],
+    open: state.ui.modal.openId === MODALS.STAGE_SETTINGS,
   };
 }
 

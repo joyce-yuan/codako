@@ -1,6 +1,30 @@
 import * as types from '../constants/action-types';
 import objectAssign from 'object-assign';
 
+export function createStage() {
+  return {
+    type: types.CREATE_STAGE,
+    stageUid: `${Date.now()}`,
+  };
+}
+
+export function reorderStage(startIdx, endIdx) {
+  return {
+    type: types.REORDER_STAGE,
+    startIdx, endIdx,
+  };
+}
+
+export function deleteStage(stageUid) {
+  return {
+    type: types.DELETE_STAGE,
+    stageUid,
+  };
+}
+
+
+// individual stage actions (Require stage ID)
+
 export function advanceGameState(stageUid) {
   return {
     type: types.ADVANCE_GAME_STATE,

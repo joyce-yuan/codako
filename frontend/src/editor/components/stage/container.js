@@ -100,7 +100,7 @@ function mapStateToProps(state) {
     recording: state.recording,
     characters: state.characters,
     playback: state.ui.playback,
-    stage: state.stages[state.stageIndex],
+    stage: state.stages[state.ui.selectedStageIndex],
   });
 }
 

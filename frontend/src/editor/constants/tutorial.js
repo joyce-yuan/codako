@@ -52,7 +52,7 @@ export const tutorialSteps = [
     text: `You can move the hero around with the arrow keys. Go ahead and try it!`,
     soundURL: '/editor/sounds/tutorial/tutorial-05.mp3',
     waitsFor: {
-      stateMatching: (state) => Object.keys(state.stages[state.stageIndex].input.keys).length > 0,
+      stateMatching: (state, stage) => Object.keys(stage.input.keys).length > 0,
       delay: 10000,
     },
   },
@@ -125,10 +125,10 @@ export const tutorialSteps = [
     text: 'Drag enough blocks out from the library to create a bridge over the lava.',
     annotation: null,
     waitsFor: {
-      stateMatching: (state) => {
+      stateMatching: (state, stage) => {
         // wait for there to be five of a single characterId, assume it's new bridge
         const counts = {};
-        Object.values(state.stages[state.stageIndex].actors).forEach((a) => {
+        Object.values(stage.actors).forEach((a) => {
           counts[a.characterId] = counts[a.characterId] ? counts[a.characterId] + 1 : 1;
         });
         return (Object.values(counts).find(v => v === 5));
@@ -142,8 +142,8 @@ export const tutorialSteps = [
     soundURL: '/editor/sounds/tutorial/tutorial-14.mp3',
     annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
     waitsFor: {
-      stateMatching: (state) => {
-        return Object.values(state.stages[state.stageIndex].actors).find(a => a.characterId === 'aamlcui8uxr' && a.position.x === 9);
+      stateMatching: (state, stage) => {
+        return Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr' && a.position.x === 9);
       },
     },
   },
@@ -262,8 +262,8 @@ export const tutorialSteps = [
     soundURL: '/editor/sounds/tutorial/tutorial-28.mp3',
     annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
     waitsFor: {
-      stateMatching: (state) => {
-        const main = Object.values(state.stages[state.stageIndex].actors).find(a => a.characterId === 'aamlcui8uxr');
+      stateMatching: (state, stage) => {
+        const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
         return main && main.position.x > 9;
       },
     },
@@ -402,8 +402,8 @@ export const tutorialSteps = [
     //   $scope.mainCharacter().setWorldPos(1, 5)
     //   $scope.highlight('#button-run')
     waitsFor: {
-      stateMatching: (state) => {
-        const main = Object.values(state.stages[state.stageIndex].actors).find(a => a.characterId === 'aamlcui8uxr');
+      stateMatching: (state, stage) => {
+        const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
         return main.position.x > 9;
       },
     },

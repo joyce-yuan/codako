@@ -3,13 +3,13 @@ import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
 import uiReducer from './ui-reducer';
 import charactersReducer from './characters-reducer';
-import stageReducer from './stage-reducer';
+import stageCollectionReducer from './stage-collection-reducer';
 import recordingReducer from './recording-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
 
 const reducerMap = {
   ui: uiReducer,
-  stages: stageReducer,
+  stages: stageCollectionReducer,
   characters: charactersReducer,
   recording: recordingReducer,
 };
@@ -32,11 +32,7 @@ function applyReducerMap(map, state, action) {
 
   for (const key of Object.keys(map)) {
     if (map[key] instanceof Function) {
-      if (state[key] instanceof Array) {
-        nextState[key] = state[key].map(item => map[key](item, action));
-      } else {
-        nextState[key] = map[key](state[key], action);
-      }
+      nextState[key] = map[key](state[key], action);
     } else {
       nextState[key] = applyReducerMap(map[key], state[key], action);
     }

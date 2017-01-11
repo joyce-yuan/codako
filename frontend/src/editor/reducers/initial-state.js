@@ -1,13 +1,12 @@
 import stage from './initial-state-stage';
-import characters from './initial-state-characters';
 
 export default {
   stages: [stage],
-  stageIndex: 0,
-  characters: characters,
+  characters: {},
   undoStack: [],
   redoStack: [],
   ui: {
+    selectedStageIndex: 0,
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorPath: null,
@@ -27,8 +26,8 @@ export default {
       characterId: null,
       appearanceId: null,
     },
-    settings: {
-      open: false,
+    modal: {
+      openId: null,
     }
   },
   recording: {

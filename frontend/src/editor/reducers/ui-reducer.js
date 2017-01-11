@@ -5,6 +5,11 @@ import u from 'updeep';
 
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
+    case Types.SELECT_STAGE_INDEX: {
+      return objectAssign({}, state, {
+        selectedStageIndex: action.stageIndex,
+      });
+    }
     case Types.START_RECORDING: {
       const {actorId, characterId} = window.editorStore.getState().recording;
       return objectAssign({}, state, {
@@ -43,10 +48,10 @@ export default function uiReducer(state = initialState.ui, action) {
           ruleId: action.ruleId,
         },
       });
-    case Types.UPDATE_SETTINGS_MODAL_STATE: 
+    case Types.UPDATE_MODAL_STATE: 
       return objectAssign({}, state, {
-        settings: {
-          open: action.open,
+        modal: {
+          openId: action.openId,
         },
       });
     case Types.UPDATE_TUTORIAL_STATE: 
