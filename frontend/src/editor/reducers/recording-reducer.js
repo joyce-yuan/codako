@@ -25,9 +25,9 @@ export default function recordingReducer(state = initialState.recording, action)
         conditions: u.constant({
           [actor.id]: {},
         }),
-        afterStage: u.constant({uid: 'after'}),
+        afterStage: u.constant({id: 'after'}),
         beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stages[selectedStageIndex])), {
-          uid: 'before',
+          id: 'before',
         })),
         extent: {
           xmin: actor.position.x,
@@ -52,7 +52,7 @@ export default function recordingReducer(state = initialState.recording, action)
         phase: RECORDING_PHASE_SETUP,
         characterId: action.characterId,
         conditions: u.constant({}),
-        afterStage: u.constant({uid: 'after'}),
+        afterStage: u.constant({id: 'after'}),
         beforeStage: u.constant(objectAssign({}, stage, {
           actors: {
             dude: {
@@ -63,7 +63,7 @@ export default function recordingReducer(state = initialState.recording, action)
               position: {x: cx, y: cy},
             },
           },
-          uid: 'before',
+          id: 'before',
         })),
         extent: {
           xmin: cx,
@@ -86,8 +86,8 @@ export default function recordingReducer(state = initialState.recording, action)
       const beforeStage = JSON.parse(JSON.stringify(stage));
       const afterStage = JSON.parse(JSON.stringify(stage));
 
-      StageOperator(beforeStage).resetForRule(rule, {offset, applyActions: false, uid: 'before'});
-      StageOperator(afterStage).resetForRule(rule, {offset, applyActions: true, uid: 'after'});
+      StageOperator(beforeStage).resetForRule(rule, {offset, applyActions: false, id: 'before'});
+      StageOperator(afterStage).resetForRule(rule, {offset, applyActions: true, id: 'after'});
 
       return u({
         ruleId: rule.id,
@@ -111,7 +111,7 @@ export default function recordingReducer(state = initialState.recording, action)
       return u({
         phase: RECORDING_PHASE_RECORD,
         afterStage: objectAssign(JSON.parse(JSON.stringify(nextState.beforeStage)), {
-          uid: 'after',
+          id: 'after',
         }),
       }, nextState);
     }

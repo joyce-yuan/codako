@@ -221,13 +221,13 @@ export const tutorialSteps = [
     text: `Whenever our hero is walking around, he'll look at the picture on the left
     and see if his surroundings look like that.`,
     soundURL: '/editor/sounds/tutorial/tutorial-23.mp3',
-    annotation: {selectors: ['[data-stage-wrap-uid=before]'], style: 'outline'},
+    annotation: {selectors: ['[data-stage-wrap-id=before]'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
     text: `If they do, he'll follow the instructions we give him here!`,
     soundURL: '/editor/sounds/tutorial/tutorial-24.mp3',
-    annotation: {selectors: ['[data-stage-wrap-uid=after]'], style: 'outline'},
+    annotation: {selectors: ['[data-stage-wrap-id=after]'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
@@ -271,7 +271,7 @@ export const tutorialSteps = [
   {
     pose: ['excited', 'sitting-talking', 'sitting-talking'],
     text: `Wow that was great! We taught the hero how to climb up over the block,
-    and now we can use the arrow keys to guide him to the exit.`,
+    and now we can use the arrow keys to gide him to the exit.`,
     soundURL: '/editor/sounds/tutorial/tutorial-29.mp3',
   },
   {

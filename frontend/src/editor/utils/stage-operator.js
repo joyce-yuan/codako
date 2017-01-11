@@ -194,8 +194,8 @@ export default function StageOperator(stage) {
     };
   }
 
-  function resetForRule(rule, {uid, applyActions, offset}) {
-    stage.uid = uid;
+  function resetForRule(rule, {id, applyActions, offset}) {
+    stage.id = id;
     stage.actors = {};
     for (const actor of Object.values(rule.actors)) {
       stage.actors[actor.id] = objectAssign({}, actor, {

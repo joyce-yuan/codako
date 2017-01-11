@@ -12,7 +12,7 @@ export default function stageCollectionReducer(state, action) {
 
   switch (action.type) {
     case Types.CREATE_STAGE: {
-      return [].concat(state, [objectAssign({}, initialStateStage, {uid: action.stageUid})]);
+      return [].concat(state, [objectAssign({}, initialStateStage, {id: action.stageId})]);
     }
     case Types.REORDER_STAGE: {
       state = [].concat(state);
@@ -22,7 +22,7 @@ export default function stageCollectionReducer(state, action) {
       return state;
     }
     case Types.DELETE_STAGE: {
-      return state.filter(s => s.uid !== action.stageUid);
+      return state.filter(s => s.id !== action.stageId);
     }
     default:
       return state;

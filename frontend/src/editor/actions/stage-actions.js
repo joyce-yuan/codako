@@ -4,7 +4,7 @@ import objectAssign from 'object-assign';
 export function createStage() {
   return {
     type: types.CREATE_STAGE,
-    stageUid: `${Date.now()}`,
+    stageId: `${Date.now()}`,
   };
 }
 
@@ -15,72 +15,72 @@ export function reorderStage(startIdx, endIdx) {
   };
 }
 
-export function deleteStage(stageUid) {
+export function deleteStage(stageId) {
   return {
     type: types.DELETE_STAGE,
-    stageUid,
+    stageId,
   };
 }
 
 
 // individual stage actions (Require stage ID)
 
-export function advanceGameState(stageUid) {
+export function advanceGameState(stageId) {
   return {
     type: types.ADVANCE_GAME_STATE,
-    stageUid,
+    stageId,
   };
 }
 
-export function stepBackGameState(stageUid) {
+export function stepBackGameState(stageId) {
   return {
     type: types.STEP_BACK_GAME_STATE,
-    stageUid,
+    stageId,
   };
 }
 
-export function saveInitialGameState(stageUid, {thumbnail, actors}) {
+export function saveInitialGameState(stageId, {thumbnail, actors}) {
   return {
     type: types.SAVE_INITIAL_GAME_STATE,
-    stageUid,
+    stageId,
     thumbnail,
     actors,
   };
 }
 
-export function restoreInitialGameState(stageUid) {
+export function restoreInitialGameState(stageId) {
   return {
     type: types.RESTORE_INITIAL_GAME_STATE,
-    stageUid,
+    stageId,
   };
 }
 
-export function updateStageSettings(stageUid, settings) {
+export function updateStageSettings(stageId, settings) {
   return {
     type: types.UPDATE_STAGE_SETTINGS,
-    stageUid, settings,
+    stageId, settings,
   };
 }
 
-export function recordKeyForGameState(stageUid, key) {
+export function recordKeyForGameState(stageId, key) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
-    stageUid,
+    stageId,
     keys: {[key]: true},
     clicks: {},
   };
 }
 
-export function recordClickForGameState(stageUid, actorId) {
+export function recordClickForGameState(stageId, actorId) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
-    stageUid,
+    stageId,
     keys: {},
     clicks: {[actorId]: true},
   };
 }
 
-export function createActor(stageUid, character, initialValues) {
+export function createActor(stageId, character, initialValues) {
   const newID = `${Date.now()}`;
 
   const newActor = objectAssign({
@@ -93,23 +93,23 @@ export function createActor(stageUid, character, initialValues) {
 
   return {
     type: types.UPSERT_ACTOR,
-    stageUid,
+    stageId,
     id: newID,
     values: newActor,
   };
 }
-export function changeActor(stageUid, id, values) {
+export function changeActor(stageId, id, values) {
   return {
     type: types.UPSERT_ACTOR,
-    stageUid,
+    stageId,
     id,
     values,
   };
 }
-export function deleteActor(stageUid, id) {
+export function deleteActor(stageId, id) {
   return {
     type: types.DELETE_ACTOR,
-    stageUid,
+    stageId,
     id,
   };
 }

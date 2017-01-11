@@ -31,7 +31,7 @@ class Stage extends React.Component {
     selectedActorPath: PropTypes.string,
     characters: PropTypes.object,
     stage: PropTypes.shape({
-      uid: PropTypes.string,
+      id: PropTypes.string,
       actors: PropTypes.object,
       width: PropTypes.number,
       height: PropTypes.number,
@@ -93,15 +93,15 @@ class Stage extends React.Component {
 
     if (event.keyCode === 127 || event.keyCode === 8) {
       if (selectedActorPath) {
-        const [stageUid, actorId] = selectedActorPath.split(':');
-        if (stageUid === stage.uid) {
-          dispatch(deleteActor(stage.uid, actorId));
+        const [stageId, actorId] = selectedActorPath.split(':');
+        if (stageId === stage.id) {
+          dispatch(deleteActor(stage.id, actorId));
         }
       }
       return;
     }
 
-    dispatch(recordKeyForGameState(stage.uid, event.keyCode));
+    dispatch(recordKeyForGameState(stage.id, event.keyCode));
   }
 
   _onDragOver = (event) => {
@@ -170,7 +170,7 @@ class Stage extends React.Component {
       a.position.x === position.x && a.position.y === position.y && a.characterId === characterId
     );
     if (actor) {
-      dispatch(changeActor(stage.uid, actor.id, {appearance}));
+      dispatch(changeActor(stage.id, actor.id, {appearance}));
     }
   }
 
@@ -188,13 +188,13 @@ class Stage extends React.Component {
         const actor = actors[actorId];
         const clonedActor = objectAssign({}, actor, {position});
         const character = characters[actor.characterId];
-        dispatch(createActor(stage.uid, character, clonedActor));
+        dispatch(createActor(stage.id, character, clonedActor));
       } else {
-        dispatch(changeActor(stage.uid, actorId, {position}));
+        dispatch(changeActor(stage.id, actorId, {position}));
       }
     } else if (characterId) {
       const character = characters[characterId];
-      dispatch(createActor(stage.uid, character, {position}));
+      dispatch(createActor(stage.id, character, {position}));
     }
   }
 
@@ -208,7 +208,7 @@ class Stage extends React.Component {
         dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
         break;
       case TOOL_TRASH:
-        dispatch(deleteActor(stage.uid, actor.id));
+        dispatch(deleteActor(stage.id, actor.id));
         break;
       case TOOL_RECORD:
         dispatch(setupRecordingForActor({
@@ -221,7 +221,7 @@ class Stage extends React.Component {
         dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
         break;
       case TOOL_POINTER:
-        dispatch(recordClickForGameState(stage.uid, actor.id));
+        dispatch(recordClickForGameState(stage.id, actor.id));
         break;
     }
 
@@ -245,26 +245,26 @@ class Stage extends React.Component {
   }
 
   _onSelectActor = (actor) => {
-    const {selectedToolId, stage: {uid}, dispatch} = this.props;
+    const {selectedToolId, stage: {id}, dispatch} = this.props;
     if (selectedToolId === TOOL_POINTER) {
-      dispatch(select(actor.characterId, `${uid}:${actor.id}`));
+      dispatch(select(actor.characterId, `${id}:${actor.id}`));
     }
   }
 
   _renderActors() {
-    const {stage: {actors, uid}, characters, selectedActorPath} = this.props;
+    const {stage: {actors, id}, characters, selectedActorPath} = this.props;
 
-    return Object.keys(actors).map((id) => {
-      const character = characters[actors[id].characterId];
+    return Object.values(actors).map((actor) => {
+      const character = characters[actor.characterId];
       return (
         <ActorSprite
-          key={id}
+          key={actor.id}
           draggable
-          selected={selectedActorPath === `${uid}:${id}`}
-          onClick={(event) => this._onClickActor(actors[id], event)}
-          onDoubleClick={() => this._onSelectActor(actors[id])}
+          selected={selectedActorPath === `${id}:${id}`}
+          onClick={(event) => this._onClickActor(actor, event)}
+          onDoubleClick={() => this._onSelectActor(actor)}
           character={character}
-          actor={actors[id]}
+          actor={actor}
         />
       );
     });
@@ -327,7 +327,7 @@ class Stage extends React.Component {
       <div
         style={style}
         ref={(el) => this._scrollEl = el}
-          data-stage-wrap-uid={stage.uid}
+          data-stage-wrap-id={stage.id}
         className={`stage-scroll-wrap tool-${selectedToolId} running-${running}`}
       >
         <div

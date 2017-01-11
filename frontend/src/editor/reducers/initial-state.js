@@ -45,10 +45,10 @@ export default {
     },
     prefs: {},
     beforeStage: {
-      uid: 'before',
+      id: 'before',
     },
     afterStage: {
-      uid: 'after',
+      id: 'after',
     },
   },
 };

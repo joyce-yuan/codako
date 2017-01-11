@@ -32,7 +32,7 @@ class Container extends React.Component {
   _onCloseAndSave = () => {
     const {dispatch, stage} = this.props;
     dispatch(dismissModal());
-    dispatch(updateStageSettings(stage.uid, this.state));
+    dispatch(updateStageSettings(stage.id, this.state));
   }
 
   render() {

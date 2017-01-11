@@ -64,8 +64,8 @@ export default class ContainerPaneVariables extends React.Component {
       this._onChangeVarDefinition(id, {value});
       return;
     }
-    const [stageUid, actorId] = selectedActorPath.split(':');
-    dispatch(changeActor(stageUid, actorId, {
+    const [stageId, actorId] = selectedActorPath.split(':');
+    dispatch(changeActor(stageId, actorId, {
       variableValues: {
         [id]: value,
       },

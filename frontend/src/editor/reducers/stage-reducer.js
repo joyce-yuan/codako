@@ -4,7 +4,7 @@ import * as Types from '../constants/action-types';
 import StageOperator from '../utils/stage-operator';
 
 export default function stageReducer(state, action) {
-  if (action.stageUid && action.stageUid !== state.uid) {
+  if (action.stageId && action.stageId !== state.id) {
     return state;
   }
 

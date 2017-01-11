@@ -101,9 +101,9 @@ function mapStateToProps(state) {
 
   let actor = null;
   if (state.ui.selectedActorPath) {
-    const [stageUid, actorId] = state.ui.selectedActorPath.split(':');
+    const [stageId, actorId] = state.ui.selectedActorPath.split(':');
     for (const s of [stage, state.recording.beforeStage, state.recording.afterStage]) {
-      if (s.uid === stageUid) {
+      if (s.id === stageId) {
         actor = (s.actors || {})[actorId];
       }
     }

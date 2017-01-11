@@ -44,9 +44,9 @@ class Container extends React.Component {
         <ModalBody>
           <div className="stage-list">
             {stages.map((s, idx) => 
-              <div key={s.uid} className="stage-item" onClick={() => this._onSelectStage(idx)}>
+              <div key={s.id} className="stage-item" onClick={() => this._onSelectStage(idx)}>
                 <img src={getStageScreenshot(s)} style={{background: s.background}} />
-                <h3>{s.uid}</h3>  
+                <h3>{s.id}</h3>  
               </div>
             )}
             <div key="add" className="stage-item" onClick={this._onAddStage}>

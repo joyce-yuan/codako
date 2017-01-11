@@ -69,7 +69,7 @@ function mapStateToProps(state) {
   return {
     selectedToolId: state.ui.selectedToolId,
     stageIndex: state.ui.selectedStageIndex,
-    stageNames: state.stages.map(s => s.uid),
+    stageNames: state.stages.map(s => s.id),
   };
 }
 

@@ -26,7 +26,7 @@ export default class RecordingActions extends React.Component {
 
     const actor = beforeStage.actors[actorId];
     const after = applyVariableOperation(actor.variableValues[variableId], operation, value);
-    dispatch(changeActor(afterStage.uid, actorId, {variableValues: {[variableId]: after}}));
+    dispatch(changeActor(afterStage.id, actorId, {variableValues: {[variableId]: after}}));
   }
 
   _renderAction(a, idx) {

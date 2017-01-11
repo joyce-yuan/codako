@@ -42,25 +42,25 @@ export default class StageControls extends React.Component {
   }
 
   _onTick = () => {
-    this.props.dispatch(advanceGameState(this.props.stage.uid));
+    this.props.dispatch(advanceGameState(this.props.stage.id));
   }
 
   _onRestoreInitialGameState = () => {
     if (window.confirm("Are you sure you want to reset the stage to the saved `Start` state?")) {
-      this.props.dispatch(restoreInitialGameState(this.props.stage.uid));
+      this.props.dispatch(restoreInitialGameState(this.props.stage.id));
     }
   }
 
   _onSaveInitialGameState = () => {
     const {dispatch, stage} = this.props;
-    dispatch(saveInitialGameState(stage.uid, {
+    dispatch(saveInitialGameState(stage.id, {
       actors: stage.actors,
       thumbnail: getStageScreenshot(stage),
     }));
   }
 
   render() {
-    const {speed, dispatch, running, stage: {startThumbnail, uid, history}} = this.props;
+    const {speed, dispatch, running, stage: {startThumbnail, id, history}} = this.props;
 
     return (
       <div className="stage-controls">
@@ -90,7 +90,7 @@ export default class StageControls extends React.Component {
           <Button
             size="sm"
             disabled={history && history.length === 0}
-            onClick={() => dispatch(stepBackGameState(uid))}
+            onClick={() => dispatch(stepBackGameState(id))}
           >
             <i className="fa fa-step-backward" /> Back
           </Button>{' '}
@@ -109,7 +109,7 @@ export default class StageControls extends React.Component {
           </Button>{' '}
           <Button
             size="sm"
-            onClick={() => dispatch(advanceGameState(uid))}
+            onClick={() => dispatch(advanceGameState(id))}
           >
             <i className="fa fa-step-forward" /> Forward
           </Button>

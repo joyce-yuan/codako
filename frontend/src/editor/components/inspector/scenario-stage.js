@@ -32,7 +32,7 @@ export default class ScenarioStage extends React.Component {
     StageOperator(ruleStage).resetForRule(rule, {
       applyActions,
       offset: {x: -xmin, y: -ymin},
-      uid: 'rule',
+      id: 'rule',
     });
     
     return (
