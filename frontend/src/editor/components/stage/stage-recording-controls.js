@@ -53,6 +53,7 @@ export default class StageRecordingControls extends React.Component {
         <div className="left message">
           {message}
         </div>
+        <div style={{flex: 1}} />
         <div className="right">
           <Button onClick={this._onCancel}>
             Cancel

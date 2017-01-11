@@ -206,10 +206,12 @@ export default class TutorialAnnotation extends React.Component {
 
   render() {
     return (
-      <canvas
-        ref={(el) => this._el = el}
-        style={{position:'absolute', zIndex:3000, pointerEvents:'none'}}
-      />
+      <div style={{position: 'absolute', top:0,left:0, right:0, bottom:0, overflow: 'hidden', pointerEvents:'none'}}>
+        <canvas
+          ref={(el) => this._el = el}
+          style={{position:'absolute', zIndex:3000}}
+        />
+      </div>
     );
   }
 }

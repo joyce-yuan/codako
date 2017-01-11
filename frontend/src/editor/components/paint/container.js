@@ -299,7 +299,7 @@ class Container extends React.Component {
             type="file"
             style={{position:'fixed', top: -1000}}
             onChange={this._onChooseFile}
-            onFocus={(event) => {event.target.parentNode.focus()}}
+            onFocus={(event) => event.target.parentNode.focus()}
           />
           <div className="modal-header" style={{display: 'flex'}}>
             <h4 style={{flex: 1}}>Edit Appearance</h4>

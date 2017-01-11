@@ -1,8 +1,10 @@
-import characters from './initial-state-characters';
 import stage from './initial-state-stage';
-import world from './initial-state-world';
+import characters from './initial-state-characters';
 
 export default {
+  stages: [stage],
+  stageIndex: 0,
+  characters: characters,
   undoStack: [],
   redoStack: [],
   ui: {
@@ -29,9 +31,6 @@ export default {
       open: false,
     }
   },
-  characters: characters,
-  stage: stage,
-  world: world,
   recording: {
     phase: null,
     characterId: null,

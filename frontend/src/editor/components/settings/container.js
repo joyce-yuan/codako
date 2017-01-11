@@ -76,7 +76,7 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    stage: state.stage,
+    stage: state.stages[state.stageIndex],
     open: state.ui.settings.open,
   };
 }

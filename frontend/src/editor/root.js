@@ -88,17 +88,15 @@ export default class EditorRoot extends React.Component {
     this.setState({saving: true});
 
     const savedState = u({
-      undoStack: u.constant(undefined),
-      redoStack: u.constant(undefined),
-      stage: {
-        history: u.constant(undefined),
-      },
+      undoStack: u.constant([]),
+      redoStack: u.constant([]),
+      stages: u.map({history: u.constant([])}),
     }, this.state.editorStore.getState());
 
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
-        thumbnail: getStageScreenshot(savedState.stage),
+        thumbnail: getStageScreenshot(savedState.stages[savedState.stageIndex]),
         state: savedState,
       },
     }).then(() => {

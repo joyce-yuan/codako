@@ -49,7 +49,7 @@ class Toolbar extends React.Component {
             <img src="/editor/img/sidebar_choose_background.png" />
           </Button>
           <div className="title">
-            <a>World</a> > <a>Stage 1</a>
+            <a>Stage 1</a>
           </div>
         </div>
 

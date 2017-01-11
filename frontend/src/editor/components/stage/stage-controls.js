@@ -89,7 +89,7 @@ export default class StageControls extends React.Component {
         <div className="center" data-tutorial-id="controls">
           <Button
             size="sm"
-            disabled={history.length === 0}
+            disabled={history && history.length === 0}
             onClick={() => dispatch(stepBackGameState(uid))}
           >
             <i className="fa fa-step-backward" /> Back

@@ -223,7 +223,7 @@ $rule-flow-color: #5BA4CD;
       ul {
         margin: 0; 
         padding: 0;
-        overflow-y: scroll;
+        overflow-y: auto;
         border-top: 1px solid rgba(0,0,0,0.2);
 
         li {
@@ -355,7 +355,7 @@ $rule-flow-color: #5BA4CD;
         flex-wrap: wrap;
         margin-top:4px;
         flex: 1;
-        overflow-y: scroll;
+        overflow-y: auto;
         align-items: flex-start;
         background-color: #eee;
         .item {
@@ -392,7 +392,14 @@ $rule-flow-color: #5BA4CD;
     display: flex;
     flex-direction: column;
     .scroll-container {
-      overflow-y: scroll;
+      position: relative;
+      overflow-y: auto;
+      flex:1;
+
+      .scroll-container-contents {
+        position: absolute;
+        width: 100%;
+      }
     }
   }
 }
@@ -461,11 +468,26 @@ $rule-flow-color: #5BA4CD;
   }
 }
 
+.variables-section {
+  border-top: 1px solid #eee;
+  margin-top:20px;
+  h3 {
+    font-size: 16px;
+    color: #999;
+    position: relative;
+    top: -10px;
+    background: white;
+    display: inline-block;
+    margin: 0;
+    padding-left:5px;
+    padding-right:15px;
+  }
+}
+
 .variables-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  padding-top:5px;
   .variable-box {
     width: 70px;
     padding: 5px;
@@ -481,7 +503,7 @@ $rule-flow-color: #5BA4CD;
     .name {
       background-color: transparent;
       text-align: center;
-      overflow-y: scroll;
+      overflow-y: auto;
       text-overflow: ellipsis;
       padding: 3px 0;
       margin: 0;
@@ -751,7 +773,7 @@ button.btn.selected:active {
     margin-right:160px;
     padding:5px;
     font-size:14px;
-    overflow-y:scroll;
+    overflow-y: auto;
     height:110px;
   }
 }

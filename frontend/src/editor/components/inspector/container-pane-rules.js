@@ -103,7 +103,9 @@ export default class ContainerPaneRules extends React.Component {
     }
     return (
       <div className="scroll-container">
-        <RuleList rules={character.rules} />
+        <div className="scroll-container-contents">
+          <RuleList rules={character.rules} />
+        </div>
       </div>
     );
   }

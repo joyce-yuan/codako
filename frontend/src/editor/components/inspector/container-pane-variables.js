@@ -80,7 +80,7 @@ export default class ContainerPaneVariables extends React.Component {
     }
   }
 
-  render() {
+  _renderCharacterSection() {
     const {character, actor} = this.props;
     if (!character) {
       return (
@@ -91,20 +91,44 @@ export default class ContainerPaneVariables extends React.Component {
     const actorValues = actor ? actor.variableValues : {};
 
     return (
-      <div className={`scroll-container variables-grid tool-${this.context.selectedToolId}`}>
-      {Object.values(character.variables).map(({name, id, value}) =>
-        <VariableBlock
-          id={id}
-          key={id}
-          name={name}
-          disabled={this.context.selectedToolId === 'trash'}
-          value={(actorValues[id] !== undefined) ? actorValues[id] : value}
-          valueSetOnActor={actorValues[id] !== undefined}
-          onChangeDefinition={this._onChangeVarDefinition}
-          onChangeValue={this._onChangeVarValue}
-          onBlurValue={this._onFinalizeVarValue}
-        />
-      )}
+      <div className="variables-grid">
+        {Object.values(character.variables).map(({name, id, value}) =>
+          <VariableBlock
+            id={id}
+            key={id}
+            name={name}
+            disabled={this.context.selectedToolId === 'trash'}
+            value={(actorValues[id] !== undefined) ? actorValues[id] : value}
+            valueSetOnActor={actorValues[id] !== undefined}
+            onChangeDefinition={this._onChangeVarDefinition}
+            onChangeValue={this._onChangeVarValue}
+            onBlurValue={this._onFinalizeVarValue}
+          />
+        )}
+      </div>
+    );
+  }
+
+  _renderWorldSection() {
+    return (
+      <div className="variables-grid">
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div className={`scroll-container tool-${this.context.selectedToolId}`}>
+        <div className="scroll-container-contents">
+          <div className="variables-section">
+            <h3>Actor</h3>
+            {this._renderCharacterSection()}
+          </div>
+          <div className="variables-section">
+            <h3>World</h3>
+            {this._renderWorldSection()}
+          </div>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Button} from 'reactstrap';
+import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {createCharacterVariable} from '../../actions/characters-actions';
 
 export default class VariablesAddButton extends React.Component {
@@ -11,9 +11,10 @@ export default class VariablesAddButton extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {open: false};
   }
 
-  _onClick = () => {
+  _onCreateVar = () => {
     this.props.dispatch(createCharacterVariable(this.props.character.id));
   }
 
@@ -21,8 +22,23 @@ export default class VariablesAddButton extends React.Component {
     const {character} = this.props;
 
     return (
-      <Button disabled={!character} onClick={this._onClick}>
-        <i className="fa fa-inbox" /> Add
-      </Button>
+      <ButtonDropdown
+        isOpen={this.state.open}
+        data-tutorial-id="inspector-add-rule"
+        toggle={() => this.setState({open: !this.state.open})}
+      >
+        <DropdownToggle caret>
+          <i className="fa fa-inbox" /> Add
+        </DropdownToggle>
+        <DropdownMenu right>
+          <DropdownItem disabled={!character} onClick={this._onCreateVar}>
+            <span className="badge rule" /> Add Character Variable
+          </DropdownItem>
+          <DropdownItem divider />
+          <DropdownItem onClick={this._onCreateGlobalVar}>
+            <span className="badge rule-flow" /> Add World Variable
+          </DropdownItem>
+        </DropdownMenu>
+      </ButtonDropdown>
     );
   }}

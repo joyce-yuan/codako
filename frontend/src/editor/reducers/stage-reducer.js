@@ -1,10 +1,9 @@
 import u from 'updeep';
 
 import * as Types from '../constants/action-types';
-import initialState from './initial-state';
 import StageOperator from '../utils/stage-operator';
 
-export default function stageReducer(state = initialState.stage, action) {
+export default function stageReducer(state, action) {
   if (action.stageUid && action.stageUid !== state.uid) {
     return state;
   }

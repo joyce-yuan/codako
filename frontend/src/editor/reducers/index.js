@@ -8,17 +8,16 @@ import recordingReducer from './recording-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
 
 const reducerMap = {
-  characters: charactersReducer,
-  stage: stageReducer,
   ui: uiReducer,
+  stages: stageReducer,
+  characters: charactersReducer,
   recording: recordingReducer,
 };
 
 const undoRedoReducer = undoRedoReducerFactory({
   trackedKeys: [
-    'characters',
     'recording',
-    'stage',
+    'stages',
     'world',
   ],
   ignoredActions: [
@@ -28,13 +27,27 @@ const undoRedoReducer = undoRedoReducerFactory({
   ],
 });
 
-export default function (state, action) {
-  let nextState = objectAssign({}, state);
+function applyReducerMap(map, state, action) {
+ const nextState = objectAssign({}, state);
 
-  // apply reducers that handle individual state ekys
-  for (const key of Object.keys(reducerMap)) {
-    nextState[key] = reducerMap[key](state[key], action);
+  for (const key of Object.keys(map)) {
+    if (map[key] instanceof Function) {
+      if (state[key] instanceof Array) {
+        nextState[key] = state[key].map(item => map[key](item, action));
+      } else {
+        nextState[key] = map[key](state[key], action);
+      }
+    } else {
+      nextState[key] = applyReducerMap(map[key], state[key], action);
+    }
   }
+
+  return nextState;
+}
+
+export default function (state, action) {
+  // apply reducers that handle individual state keys
+  let nextState = applyReducerMap(reducerMap, state, action);
 
   // apply undo/redo actions
   nextState = undoRedoReducer(nextState, action);

@@ -98,9 +98,10 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   let actor = null;
+
   if (state.ui.selectedActorPath) {
     const [stageUid, actorId] = state.ui.selectedActorPath.split(':');
-    for (const stage of [state.stage, state.recording.beforeStage, state.recording.afterStage]) {
+    for (const stage of [state.stages[state.stageIndex], state.recording.beforeStage, state.recording.afterStage]) {
       if (stage.uid === stageUid) {
         actor = (stage.actors || {})[actorId];
       }
@@ -113,7 +114,7 @@ function mapStateToProps(state) {
     character: state.characters[state.ui.selectedCharacterId],
     selectedToolId: state.ui.selectedToolId,
     selectedActorPath: state.ui.selectedActorPath,
-    evaluatedRuleIds: state.stage.evaluatedRuleIds,
+    evaluatedRuleIds: state.stages[state.stageIndex].evaluatedRuleIds,
 });
 }
 
