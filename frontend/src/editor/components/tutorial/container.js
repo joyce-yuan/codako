@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Button} from 'reactstrap';
 
 import {updateTutorialState} from '../../actions/ui-actions';
+import {getCurrentStage} from '../../utils/selectors';
 import {tutorialSteps, poseFrames} from '../../constants/tutorial';
 import TutorialAnnotation from './annotation';
 
@@ -83,8 +84,7 @@ class TutorialAdvancer {
     if (this._waitsFor.stateMatching) {
       this._unsub = window.editorStore.subscribe(() => {
         const state = window.editorStore.getState();
-        const stage = state.stages[state.ui.selectedStageId];
-        if (this._waitsFor.stateMatching(state, stage)) {
+        if (this._waitsFor.stateMatching(state, getCurrentStage(state))) {
           this._timer = setTimeout(this._callback, this._waitsFor.delay || 750);
           this._unsub();
         }

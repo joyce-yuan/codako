@@ -21,7 +21,7 @@ export default function charactersReducer(state = initialState.characters, actio
       return u.updateIn(action.characterId, {
         variables: {
           [action.variableId]: {
-            value: 0,
+            defaultValue: 0,
             name: "Untitled",
             id: action.variableId,
           },

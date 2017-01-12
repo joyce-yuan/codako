@@ -7,6 +7,7 @@ import StageRecordingControls from './stage-recording-controls';
 import RecordingActions from './recording/panel-actions';
 import RecordingConditions from './recording/panel-conditions';
 
+import {getCurrentStage} from '../../utils/selectors';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
 
 
@@ -100,7 +101,7 @@ function mapStateToProps(state) {
     recording: state.recording,
     characters: state.characters,
     playback: state.ui.playback,
-    stage: state.stages[state.ui.selectedStageId],
+    stage: getCurrentStage(state),
   });
 }
 

@@ -25,8 +25,8 @@ export function getVariableValue(actor, character, id) {
   if (actor.variableValues[id]) {
     return actor.variableValues[id] / 1;
   }
-  if (character.variables[id].value) {
-    return character.variables[id].value / 1;
+  if (character.variables[id]) {
+    return character.variables[id].defaultValue / 1;
   }
   return null;
 }

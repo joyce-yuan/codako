@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {Button} from 'reactstrap';
 
 import * as actions from '../actions/ui-actions';
+import {getCurrentStage} from '../utils/selectors';
 import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT, MODALS} from '../constants/constants';
 import UndoRedoControls from './undo-redo-controls';
 
@@ -67,7 +68,7 @@ class Toolbar extends React.Component {
 function mapStateToProps(state) {
   return {
     selectedToolId: state.ui.selectedToolId,
-    stageName: state.stages[state.ui.selectedStageId].name,
+    stageName: getCurrentStage(state).name,
   };
 }
 

@@ -61,7 +61,7 @@ export default class ContainerPaneVariables extends React.Component {
   _onChangeVarValue = (id, value) => {
     const {dispatch, selectedActorPath} = this.props;
     if (!selectedActorPath) {
-      this._onChangeVarDefinition(id, {value});
+      this._onChangeVarDefinition(id, {defaultValue: value});
       return;
     }
     const [stageId, actorId] = selectedActorPath.split(':');
@@ -92,13 +92,13 @@ export default class ContainerPaneVariables extends React.Component {
 
     return (
       <div className="variables-grid">
-        {Object.values(character.variables).map(({name, id, value}) =>
+        {Object.values(character.variables).map(({name, id, defaultValue}) =>
           <VariableBlock
             id={id}
             key={id}
             name={name}
             disabled={this.context.selectedToolId === 'trash'}
-            value={(actorValues[id] !== undefined) ? actorValues[id] : value}
+            value={(actorValues[id] !== undefined) ? actorValues[id] : defaultValue}
             valueSetOnActor={actorValues[id] !== undefined}
             onChangeDefinition={this._onChangeVarDefinition}
             onChangeValue={this._onChangeVarValue}
@@ -112,6 +112,18 @@ export default class ContainerPaneVariables extends React.Component {
   _renderWorldSection() {
     return (
       <div className="variables-grid">
+        <VariableBlock
+          id="stage-id"
+          name="Current Stage"
+          value={"none"}
+          valueSetOnActor
+        />
+        <VariableBlock
+          id="main-character-id"
+          name="Main Character"
+          value={"none"}
+          valueSetOnActor
+        />
       </div>
     );
   }

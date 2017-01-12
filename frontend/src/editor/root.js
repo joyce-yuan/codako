@@ -7,6 +7,7 @@ import u from 'updeep';
 import configureStore from './store/configureStore';
 import initialState from './reducers/initial-state';
 import {getStageScreenshot} from './utils/stage-helpers';
+import {getCurrentStage} from './utils/selectors';
 import {makeRequest} from '../helpers/api';
 
 import Toolbar from './components/toolbar';
@@ -97,7 +98,7 @@ export default class EditorRoot extends React.Component {
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
-        thumbnail: getStageScreenshot(savedState.stages[savedState.ui.selectedStageId]),
+        thumbnail: getStageScreenshot(getCurrentStage(savedState)),
         state: savedState,
       },
     }).then(() => {

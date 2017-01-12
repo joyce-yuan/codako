@@ -6,6 +6,7 @@ import u from 'updeep';
 
 import StageOperator from '../utils/stage-operator';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
+import {getCurrentStage} from '../utils/selectors';
 import {extentByShiftingExtent} from '../utils/recording-helpers';
 
 export default function recordingReducer(state = initialState.recording, action) {
@@ -16,7 +17,7 @@ export default function recordingReducer(state = initialState.recording, action)
 
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
-      const {stages, ui: {selectedStageId}} = window.editorStore.getState();
+      const stage = getCurrentStage(window.editorStore.getState());
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
@@ -26,7 +27,7 @@ export default function recordingReducer(state = initialState.recording, action)
           [actor.id]: {},
         }),
         afterStage: u.constant({id: 'after'}),
-        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stages[selectedStageId])), {
+        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
           id: 'before',
         })),
         extent: {
@@ -40,9 +41,9 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const {stages, ui: {selectedStageId}, characters} = window.editorStore.getState();
-      const character = characters[action.characterId];
-      const stage = stages[selectedStageId];
+      const globalState = window.editorStore.getState();
+      const character = globalState.characters[action.characterId];
+      const stage = getCurrentStage(globalState);
 
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);

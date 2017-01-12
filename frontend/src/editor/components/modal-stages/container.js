@@ -4,6 +4,7 @@ import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
 import StageSettings from './settings';
 import {MODALS} from '../../constants/constants';
+import {getCurrentStage} from '../../utils/selectors';
 import {selectStageId, dismissModal} from '../../actions/ui-actions';
 import {createStage, deleteStageId, updateStageSettings} from '../../actions/stage-actions';
 import {getStageScreenshot} from '../../utils/stage-helpers';
@@ -31,9 +32,14 @@ class Container extends React.Component {
   }
   
   _scrollToSelectedStage() {
+    if (!this._listEl) {
+      return;
+    }
+
     const item = this._listEl.querySelector(`[data-stage-id="${this.props.stage.id}"]`);
     if (item) {
-      if ((item.offsetTop > this._listEl.scrollTop + this._listEl.clientHeight - item.clientHeight) || (item.offsetTop < this._listEl.scrollTop)) {
+      const [minTop, maxTop] = [this._listEl.scrollTop, this._listEl.scrollTop + this._listEl.clientHeight - item.clientHeight];
+      if ((item.offsetTop > maxTop) || (item.offsetTop < minTop)) {
         item.scrollIntoView();
       }
     }
@@ -123,8 +129,8 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   return {
+    stage: getCurrentStage(state),
     stagesArray: Object.values(state.stages).sort((a, b) => a.order - b.order),
-    stage: state.stages[state.ui.selectedStageId],
     open: state.ui.modal.openId === MODALS.STAGES,
   };
 }

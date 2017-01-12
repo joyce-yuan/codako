@@ -7,6 +7,7 @@ import ContainerPaneRules from './container-pane-rules';
 import ContainerPaneVariables from './container-pane-variables';
 import AddRuleButton from './add-rule-button';
 import AddVariableButton from './add-variable-button';
+import {getCurrentStage} from '../../utils/selectors';
 
 class Container extends React.Component {
   static propTypes = {
@@ -97,7 +98,7 @@ class Container extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const stage = state.stages[state.ui.selectedStageId];
+  const stage = getCurrentStage(state);
 
   let actor = null;
   if (state.ui.selectedActorPath) {
