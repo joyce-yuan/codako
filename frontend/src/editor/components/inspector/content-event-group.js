@@ -18,7 +18,7 @@ export default class ContentEventGroup extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      disclosed: false,
+      collapsed: false,
     };
   }
 
@@ -42,7 +42,7 @@ export default class ContentEventGroup extends React.Component {
 
   render() {
     const {rule} = this.props;
-    const {disclosed} = this.state;
+    const {collapsed} = this.state;
 
     return (
       <div>
@@ -50,8 +50,8 @@ export default class ContentEventGroup extends React.Component {
           <div style={{float:'left', width: 20, lineHeight:'1.15em'}}>
             <RuleStateCircle rule={rule} />
             <DisclosureTriangle
-              onClick={() => this.setState({disclosed: !disclosed})}
-              disclosed={disclosed}
+              onClick={() => this.setState({collapsed: !collapsed})}
+              collapsed={collapsed}
             />
           </div>
           <img className="icon" src={`/editor/img/icon_event_${rule.event}.png`} />
@@ -65,7 +65,7 @@ export default class ContentEventGroup extends React.Component {
       <RuleList
         parentId={rule.id}
         rules={rule.rules}
-        hidden={disclosed}
+        collapsed={collapsed}
       />
     </div>
     );

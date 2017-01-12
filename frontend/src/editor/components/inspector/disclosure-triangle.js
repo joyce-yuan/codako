@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 
 export default class DisclosureTriangle extends React.Component {
   static propTypes = {
-    disclosed: PropTypes.bool,
+    collapsed: PropTypes.bool,
     onClick: PropTypes.func,
   };
 
@@ -10,7 +10,7 @@ export default class DisclosureTriangle extends React.Component {
     return (
       <div
         onClick={this.props.onClick}
-        className={`triangle ${this.props.disclosed ? 'disclosed': ''}`}
+        className={`triangle ${this.props.collapsed ? 'disclosed': ''}`}
       />
     );
   }

@@ -16,7 +16,7 @@ export default class RuleList extends React.Component {
   static propTypes = {
     parentId: PropTypes.string,
     rules: PropTypes.array,
-    hidden: PropTypes.bool,
+    collapsed: PropTypes.bool,
   };
 
   static contextTypes = {
@@ -134,10 +134,10 @@ export default class RuleList extends React.Component {
   }
 
   render() {
-    const {hidden, rules} = this.props;
+    const {collapsed, rules} = this.props;
     const {dropIndex, dragIndex} = this.state;
 
-    if (hidden || !rules) {
+    if (collapsed || !rules) {
       return <span />;
     }
 
@@ -164,7 +164,7 @@ export default class RuleList extends React.Component {
 
     return (
       <ul
-        className={`rules-list`}
+        className="rules-list"
         ref={(el) => this._el = el}
         onDragOver={this._onDragOver}
         onDragLeave={this._onDragLeave}

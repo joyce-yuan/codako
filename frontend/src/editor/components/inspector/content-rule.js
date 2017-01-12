@@ -17,7 +17,7 @@ export default class ContentRule extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      disclosed: false,
+      collapsed: false,
     };
   }
 
@@ -27,7 +27,7 @@ export default class ContentRule extends React.Component {
 
   render() {
     const {rule} = this.props;
-    const {disclosed} = this.state;
+    const {collapsed} = this.state;
 
     return (
       <div>
@@ -50,8 +50,8 @@ export default class ContentRule extends React.Component {
           <div style={{flex: 1}} />
         </div>
         <DisclosureTriangle
-          onClick={() => this.setState({disclosed: !disclosed})}
-          disclosed={disclosed}
+          onClick={() => this.setState({collapsed: !collapsed})}
+          collapsed={collapsed}
         />
         <TapToEditLabel
           className="name"

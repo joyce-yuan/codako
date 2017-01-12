@@ -19,7 +19,7 @@ export default class ContentGroupFlow extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      disclosed: false,
+      collapsed: false,
     };
   }
 
@@ -33,7 +33,7 @@ export default class ContentGroupFlow extends React.Component {
 
   render() {
     const {rule} = this.props;
-    const {disclosed} = this.state;
+    const {collapsed} = this.state;
 
     return (
       <div>
@@ -41,8 +41,8 @@ export default class ContentGroupFlow extends React.Component {
           <div style={{float:'left', width:20}}>
             <RuleStateCircle rule={rule} />
             <DisclosureTriangle
-              onClick={() => this.setState({disclosed: !disclosed})}
-              disclosed={disclosed}
+              onClick={() => this.setState({collapsed: !collapsed})}
+              collapsed={collapsed}
             />
           </div>
           <select onChange={this._onBehaviorChanged} value={rule.behavior}>
@@ -59,7 +59,7 @@ export default class ContentGroupFlow extends React.Component {
         <RuleList
           parentId={rule.id}
           rules={rule.rules}
-          hidden={disclosed}
+          collapsed={collapsed}
         />
       </div>
     );
