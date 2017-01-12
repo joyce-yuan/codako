@@ -29,6 +29,12 @@ export default function charactersReducer(state = initialState.characters, actio
       }, state);
     }
 
+    case Types.DELETE_CHARACTER_VARIABLE: {
+      return u.updateIn(action.characterId, {
+        variables: u.omit(action.variableId),
+      }, state);
+    }
+
     case Types.DELETE_CHARACTER_APPEARANCE: {
       return u.updateIn(action.characterId, {
         spritesheet: {

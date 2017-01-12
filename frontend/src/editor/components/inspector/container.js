@@ -12,6 +12,7 @@ import {getCurrentStage} from '../../utils/selectors';
 class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
+    globals: PropTypes.object,
     actor: PropTypes.object,
     characters: PropTypes.object,
     character: PropTypes.object,
@@ -46,7 +47,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {character, actor, dispatch, selectedActorPath} = this.props;
+    const {character, globals, actor, dispatch, selectedActorPath} = this.props;
     const {activeTab} = this.state;
 
     const ContentContainer = {
@@ -60,7 +61,7 @@ class Container extends React.Component {
     }[activeTab];
 
     return (
-      <div className="panel inspector-panel-container">
+      <div className={`panel inspector-panel-container tool-${this.props.selectedToolId}`}>
         <Nav tabs>
           <NavItem>
             <NavLink
@@ -87,6 +88,7 @@ class Container extends React.Component {
           </div>
         </Nav>
         <ContentContainer
+          globals={globals}
           character={character}
           actor={actor}
           selectedActorPath={selectedActorPath}
@@ -112,6 +114,7 @@ function mapStateToProps(state) {
 
   return Object.assign({}, state.ui, {
     actor: actor,
+    globals: state.globals,
     characters: state.characters,
     character: state.characters[state.ui.selectedCharacterId],
     selectedToolId: state.ui.selectedToolId,

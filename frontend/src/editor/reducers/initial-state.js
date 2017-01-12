@@ -5,10 +5,29 @@ export default {
     [stage.id]: stage,
   },
   characters: {},
+  globals: {
+    selectedStageId: {
+      id: "selectedStageId",
+      name: "Current Stage",
+      value: stage.id,
+      type: "stage",
+    },
+    mainCharacterId: {
+      id: "mainCharacterId",
+      name: "Main Character",
+      value: null,
+      type: "character",
+    },
+    as123123: {
+      id: "as123123",
+      name: "Points",
+      value: 0,
+      type: "number",
+    },
+  },
   undoStack: [],
   redoStack: [],
   ui: {
-    selectedStageId: stage.id,
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorPath: null,

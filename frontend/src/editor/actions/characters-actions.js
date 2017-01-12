@@ -65,6 +65,14 @@ export function createCharacterVariable(characterId) {
   };
 }
 
+export function deleteCharacterVariable(characterId, variableId) {
+  return {
+    type: types.DELETE_CHARACTER_VARIABLE,
+    characterId,
+    variableId,
+  };
+}
+
 export function createCharacterAppearance(characterId, newAppearanceId, newAppearanceData) {
   return {
     type: types.UPSERT_CHARACTER,

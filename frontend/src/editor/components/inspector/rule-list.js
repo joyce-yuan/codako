@@ -164,7 +164,7 @@ export default class RuleList extends React.Component {
 
     return (
       <ul
-        className={`rules-list tool-${this.context.selectedToolId}`}
+        className={`rules-list`}
         ref={(el) => this._el = el}
         onDragOver={this._onDragOver}
         onDragLeave={this._onDragLeave}

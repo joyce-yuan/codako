@@ -1,35 +1,41 @@
 import React, {PropTypes} from 'react';
 import {changeActor} from '../../actions/stage-actions';
-import {changeCharacter} from '../../actions/characters-actions';
+import {changeCharacter, deleteCharacterVariable} from '../../actions/characters-actions';
 import TapToEditLabel from '../tap-to-edit-label';
+import {selectToolId} from '../../actions/ui-actions';
+import {TOOL_TRASH, TOOL_POINTER} from '../../constants/constants';
 
 class VariableBlock extends React.Component {
   static propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
-    disabled: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    valueSetOnActor: PropTypes.bool,
+    valueDefault: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     onChangeValue: PropTypes.func,
     onChangeDefinition: PropTypes.func,
     onBlurValue: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
+  static contextTypes = {
+    selectedToolId: PropTypes.string,
+  };
+  
   render() {
-    const {name, disabled, value, valueSetOnActor, id, onChangeDefinition, onChangeValue, onBlurValue} = this.props;
+    const {name, value, valueDefault, id, onChangeDefinition, onChangeValue, onBlurValue, onClick} = this.props;
+    const disabled = this.context.selectedToolId === 'trash';
 
     return (
-      <div className={`variable-box variable-set-${valueSetOnActor}`}>
+      <div className={`variable-box variable-set-${value !== undefined}`} onClick={(e) => onClick(id, e)}>
         <TapToEditLabel
-          disabled={disabled}
           className="name"
           value={name}
-          onChange={(e) => onChangeDefinition(id, {name: e.target.value})}
+          onChange={disabled ? null : (e) => onChangeDefinition(id, {name: e.target.value})}
         />
         <input
           disabled={disabled}
           className="value"
-          value={value}
+          value={(value !== undefined) ? value : valueDefault}
           onBlur={(e) => onBlurValue(id, e.target.value)}
           onChange={(e) => onChangeValue(id, e.target.value)}
         />
@@ -41,13 +47,24 @@ export default class ContainerPaneVariables extends React.Component {
   static propTypes = {
     character: PropTypes.object,
     actor: PropTypes.object,
+    globals: PropTypes.array,
     selectedActorPath: PropTypes.string,
     dispatch: PropTypes.func,
-  }
+  };
 
   static contextTypes = {
     selectedToolId: PropTypes.string,
   };
+
+  _onClickVar = (id, event) => {
+    if (this.context.selectedToolId === TOOL_TRASH) {
+      const {character, dispatch} = this.props;
+      dispatch(deleteCharacterVariable(character.id, id));
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOL_POINTER));
+      }
+    }
+  }
 
   _onChangeVarDefinition = (id, changes) => {
     const {character, dispatch} = this.props;
@@ -97,12 +114,12 @@ export default class ContainerPaneVariables extends React.Component {
             id={id}
             key={id}
             name={name}
-            disabled={this.context.selectedToolId === 'trash'}
-            value={(actorValues[id] !== undefined) ? actorValues[id] : defaultValue}
-            valueSetOnActor={actorValues[id] !== undefined}
+            value={actorValues[id]}
+            valueDefault={defaultValue}
             onChangeDefinition={this._onChangeVarDefinition}
             onChangeValue={this._onChangeVarValue}
             onBlurValue={this._onFinalizeVarValue}
+            onClick={this._onClickVar}
           />
         )}
       </div>
@@ -110,27 +127,25 @@ export default class ContainerPaneVariables extends React.Component {
   }
 
   _renderWorldSection() {
+    const {globals} = this.props;
+
     return (
       <div className="variables-grid">
+      {Object.values(globals).map((g) =>
         <VariableBlock
-          id="stage-id"
-          name="Current Stage"
-          value={"none"}
-          valueSetOnActor
+          id={g.id}
+          key={g.id}
+          name={g.name}
+          value={g.value}
         />
-        <VariableBlock
-          id="main-character-id"
-          name="Main Character"
-          value={"none"}
-          valueSetOnActor
-        />
+      )}
       </div>
     );
   }
 
   render() {
     return (
-      <div className={`scroll-container tool-${this.context.selectedToolId}`}>
+      <div className={`scroll-container`}>
         <div className="scroll-container-contents">
           <div className="variables-section">
             <h3>Actor</h3>

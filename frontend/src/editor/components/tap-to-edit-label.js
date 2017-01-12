@@ -1,3 +1,4 @@
+/* eslint react/no-danger: 0 */
 import React, {PropTypes} from 'react';
 
 export default class TapToEditLabel extends React.Component {
@@ -22,14 +23,24 @@ export default class TapToEditLabel extends React.Component {
   }
 
   render() {
-    const {value, onChange, className, ...props} = this.props;
+    const {value, onChange, className} = this.props;
     const {editing} = this.state;
     
+    if (!onChange) {
+      return (
+        <div
+          ref={(el) => this._el = el}
+          className={`tap-to-edit editing-false ${className}`}
+          dangerouslySetInnerHTML={{__html: value}}
+        />
+      );
+    }
+
     return (
       <div
         contentEditable={editing}
         ref={(el) => this._el = el}
-        className={`tap-to-edit editing-${editing} enabled-${!!onChange} ${className}`}
+        className={`tap-to-edit editing-${editing} enabled ${className}`}
         dangerouslySetInnerHTML={{__html: value}}
         onChange={(e) => {
           onChange({target: {value: e.target.innerText}});
@@ -56,7 +67,6 @@ export default class TapToEditLabel extends React.Component {
           this.setState({editing: false});
           onChange({target: {value: e.target.innerText}});
         }}
-        {...props}
       />
     );
 

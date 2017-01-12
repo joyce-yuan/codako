@@ -5,11 +5,6 @@ import u from 'updeep';
 
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
-    case Types.SELECT_STAGE_ID: {
-      return objectAssign({}, state, {
-        selectedStageId: action.stageId,
-      });
-    }
     case Types.START_RECORDING: {
       const {actorId, characterId} = window.editorStore.getState().recording;
       return objectAssign({}, state, {
