@@ -97,7 +97,7 @@ class Container extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const stage = state.stages[state.ui.selectedStageIndex];
+  const stage = state.stages[state.ui.selectedStageId];
 
   let actor = null;
   if (state.ui.selectedActorPath) {

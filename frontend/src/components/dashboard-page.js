@@ -126,7 +126,7 @@ class DashboardPage extends React.Component {
   render() {
     const {user, stages, dispatch} = this.props;
     return (
-      <Container style={{marginTop: 30}}>
+      <Container style={{marginTop: 30}} className="dashboard">
         <Row>
           <Col md={3}>
             <div className="dashboard-sidebar">

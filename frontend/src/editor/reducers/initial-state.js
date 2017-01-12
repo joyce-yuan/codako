@@ -1,12 +1,14 @@
 import stage from './initial-state-stage';
 
 export default {
-  stages: [stage],
+  stages: {
+    [stage.id]: stage,
+  },
   characters: {},
   undoStack: [],
   redoStack: [],
   ui: {
-    selectedStageIndex: 0,
+    selectedStageId: stage.id,
     selectedToolId: 'pointer',
     selectedCharacterId: null,
     selectedActorPath: null,

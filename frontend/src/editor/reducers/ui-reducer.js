@@ -5,9 +5,9 @@ import u from 'updeep';
 
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
-    case Types.SELECT_STAGE_INDEX: {
+    case Types.SELECT_STAGE_ID: {
       return objectAssign({}, state, {
-        selectedStageIndex: action.stageIndex,
+        selectedStageId: action.stageId,
       });
     }
     case Types.START_RECORDING: {

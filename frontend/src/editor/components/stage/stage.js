@@ -260,7 +260,7 @@ class Stage extends React.Component {
         <ActorSprite
           key={actor.id}
           draggable
-          selected={selectedActorPath === `${id}:${id}`}
+          selected={selectedActorPath === `${id}:${actor.id}`}
           onClick={(event) => this._onClickActor(actor, event)}
           onDoubleClick={() => this._onSelectActor(actor)}
           character={character}

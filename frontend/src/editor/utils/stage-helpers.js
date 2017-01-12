@@ -66,6 +66,16 @@ export function getStageScreenshot(stage) {
   canvas.width = stage.width * 10;
   canvas.height = stage.height * 10;
   const context = canvas.getContext('2d');
+
+  if (stage.background.includes('url(')) {
+    const background = new Image();
+    background.src = stage.background.split('url(').pop().slice(0, -1);
+    context.drawImage(background, 0, 0, canvas.width, canvas.height);
+  } else {
+    context.fillStyle = stage.background;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   Object.values(stage.actors).forEach(actor => {
     const i = new Image();
     i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];

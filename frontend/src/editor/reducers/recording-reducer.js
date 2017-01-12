@@ -16,7 +16,7 @@ export default function recordingReducer(state = initialState.recording, action)
 
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
-      const {stages, ui: {selectedStageIndex}} = window.editorStore.getState();
+      const {stages, ui: {selectedStageId}} = window.editorStore.getState();
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
@@ -26,7 +26,7 @@ export default function recordingReducer(state = initialState.recording, action)
           [actor.id]: {},
         }),
         afterStage: u.constant({id: 'after'}),
-        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stages[selectedStageIndex])), {
+        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stages[selectedStageId])), {
           id: 'before',
         })),
         extent: {
@@ -40,9 +40,9 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const {stages, stageIndex, characters} = window.editorStore.getState();
+      const {stages, ui: {selectedStageId}, characters} = window.editorStore.getState();
       const character = characters[action.characterId];
-      const stage = stages[stageIndex];
+      const stage = stages[selectedStageId];
 
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);

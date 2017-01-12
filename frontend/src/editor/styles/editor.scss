@@ -777,3 +777,63 @@ button.btn.selected:active {
     height:110px;
   }
 }
+
+
+.stage-sidebar {
+  max-height: 380px;
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  background-color: #eee;
+  border-right:1px solid #ccc;
+
+  .bar {
+    display: flex;
+
+    .add, .remove {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      margin: 0;
+      padding: 2px 0 0 0;
+    }
+    .space {
+      border-top:1px solid #ccc;
+      flex: 1;
+    }
+  }
+
+  .stage-list {
+    overflow-y: auto;
+    position: relative;
+    flex: 1;
+
+    .stage-item {
+      margin: 10px;
+      display: inline-block;
+      border: 2px solid lighten(gray, 10%);
+      background-color: gray;
+      vertical-align: top;
+      padding: 2px;
+      &.selected {
+        border: 2px solid lighten($tint-color, 10%);
+        background-color: $tint-color;
+      }
+      img {
+        width: 160px;
+        height: 104px;
+        object-fit: cover;
+      }
+      h3 {
+        width: 160px;
+        overflow: hidden;
+        font-size: 18px;
+        color:rgba(255,255,255,0.9);
+        margin: 5px 0 2px 0;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+    }
+  }
+}

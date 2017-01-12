@@ -36,8 +36,7 @@ export default function stageReducer(state, action) {
       }, state);
     }
     case Types.UPDATE_STAGE_SETTINGS: {
-      const {wrapX, wrapY, width, height} = action.settings;
-      return u({wrapX, wrapY, width, height}, state);
+      return u(action.settings, state);
     }
     case Types.SAVE_INITIAL_GAME_STATE: {
       return u({

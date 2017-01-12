@@ -9,8 +9,7 @@ import UndoRedoControls from './undo-redo-controls';
 
 class Toolbar extends React.Component {
   static propTypes = {
-    stageIndex: PropTypes.number,
-    stageNames: PropTypes.array.isRequired,
+    stageName: PropTypes.string,
     selectedToolId: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
   };
@@ -40,7 +39,7 @@ class Toolbar extends React.Component {
   }
 
   render() {
-    const {stageNames, stageIndex, dispatch} = this.props;
+    const {stageName, dispatch} = this.props;
 
     return (
       <div className="toolbar">
@@ -49,11 +48,11 @@ class Toolbar extends React.Component {
         </div>
 
         <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button onClick={() => dispatch(actions.showModal(MODALS.STAGE_SETTINGS))}>
+          <Button onClick={() => dispatch(actions.showModal(MODALS.STAGES))}>
             <img src="/editor/img/sidebar_choose_background.png" />
           </Button>
           <div className="title" onClick={() => dispatch(actions.showModal(MODALS.STAGES))}>
-            {stageNames[stageIndex]}            
+            {stageName || "Untitled Stage"}            
           </div>
         </div>
 
@@ -68,8 +67,7 @@ class Toolbar extends React.Component {
 function mapStateToProps(state) {
   return {
     selectedToolId: state.ui.selectedToolId,
-    stageIndex: state.ui.selectedStageIndex,
-    stageNames: state.stages.map(s => s.id),
+    stageName: state.stages[state.ui.selectedStageId].name,
   };
 }
 

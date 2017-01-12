@@ -8,23 +8,21 @@ import * as Types from '../constants/action-types';
 import initialStateStage from './initial-state-stage';
 
 export default function stageCollectionReducer(state, action) {
-  state = state.map(stage => stageReducer(stage, action));
+  const nextState = {};
+  for (const stageId of Object.keys(state)) {
+    nextState[stageId] = stageReducer(state[stageId], action);
+  }
 
   switch (action.type) {
     case Types.CREATE_STAGE: {
-      return [].concat(state, [objectAssign({}, initialStateStage, {id: action.stageId})]);
+      nextState[action.stageId] = objectAssign({}, initialStateStage, {id: action.stageId});
+      return nextState;
     }
-    case Types.REORDER_STAGE: {
-      state = [].concat(state);
-      const stage = state[action.startIndex];
-      state.splice(action.startIndex, 1);
-      state.splice(action.endIndex, 0, stage);
-      return state;
-    }
-    case Types.DELETE_STAGE: {
-      return state.filter(s => s.id !== action.stageId);
+    case Types.DELETE_STAGE_ID: {
+      delete nextState[action.stageId];
+      return nextState;
     }
     default:
-      return state;
+      return nextState;
   }
 }

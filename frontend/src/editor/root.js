@@ -18,7 +18,6 @@ import InspectorContainer from './components/inspector/container';
 
 import PaintContainer from './components/modal-paint/container';
 import KeypickerContainer from './components/modal-keypicker/container';
-import StageSettingsContainer from './components/modal-stage-settings/container';
 import StagesContainer from './components/modal-stages/container';
 
 import './styles/editor.scss';
@@ -98,7 +97,7 @@ export default class EditorRoot extends React.Component {
     makeRequest(`/stages/${this.props.stageId}`, {
       method: 'PUT',
       json: {
-        thumbnail: getStageScreenshot(savedState.stages[savedState.ui.selectedStageIndex]),
+        thumbnail: getStageScreenshot(savedState.stages[savedState.ui.selectedStageId]),
         state: savedState,
       },
     }).then(() => {
@@ -138,7 +137,6 @@ export default class EditorRoot extends React.Component {
             <TutorialContainer />
             <PaintContainer />
             <KeypickerContainer />
-            <StageSettingsContainer />
             <StagesContainer />
           </div>
         </div>

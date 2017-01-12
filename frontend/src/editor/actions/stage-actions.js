@@ -1,27 +1,25 @@
 import * as types from '../constants/action-types';
 import objectAssign from 'object-assign';
 
+import {selectStageId} from './ui-actions';
+
 export function createStage() {
-  return {
-    type: types.CREATE_STAGE,
-    stageId: `${Date.now()}`,
+  const stageId =  `${Date.now()}`;
+  return (dispatch) => {
+    dispatch({
+      type: types.CREATE_STAGE,
+      stageId,
+    });
+    dispatch(selectStageId(stageId));
   };
 }
 
-export function reorderStage(startIdx, endIdx) {
+export function deleteStageId(stageId) {
   return {
-    type: types.REORDER_STAGE,
-    startIdx, endIdx,
-  };
-}
-
-export function deleteStage(stageId) {
-  return {
-    type: types.DELETE_STAGE,
+    type: types.DELETE_STAGE_ID,
     stageId,
   };
 }
-
 
 // individual stage actions (Require stage ID)
 
