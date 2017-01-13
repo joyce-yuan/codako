@@ -22,18 +22,28 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
         'Authorization': `Basic ${btoa(user.username + ':' + user.password)}`,
       }, headers),
     }, (err, response, responseBody) => {
-      const responseJSON = JSON.parse(responseBody);
+      if (err) {
+        reject(err);
+        return;
+      }
 
-      dispatch({
-        type: types.NETWORK_ACTIVITY,
-        error: responseJSON.error ? responseJSON : null,
-        delta: -1,
-      });
+      let responseJSON = null;
+      try {
+        responseJSON = JSON.parse(responseBody);
+      } catch (jsonErr) {
+        reject(jsonErr);
+        return;
+      }
+
       if (response.statusCode !== 200 || responseJSON.error) {
         reject(new Error(responseJSON.message));
       } else {
+        dispatch({type: types.NETWORK_ACTIVITY, error: null, delta: -1});
         resolve(responseJSON);
       }
     });
+  }).catch((error) => {
+    dispatch({type: types.NETWORK_ACTIVITY, error, delta: -1});
+    throw error;
   });
 }
