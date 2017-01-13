@@ -1,53 +1,24 @@
 import React, {PropTypes} from 'react';
 import {changeActor} from '../../actions/stage-actions';
+import {upsertGlobal, deleteGlobal} from '../../actions/globals-actions';
 import {changeCharacter, deleteCharacterVariable} from '../../actions/characters-actions';
-import TapToEditLabel from '../tap-to-edit-label';
+import VariableGridItem from './variable-grid-item';
 import {selectToolId} from '../../actions/ui-actions';
 import {TOOL_TRASH, TOOL_POINTER} from '../../constants/constants';
 
-class VariableBlock extends React.Component {
-  static propTypes = {
-    id: PropTypes.string,
-    name: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    valueDefault: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    onChangeValue: PropTypes.func,
-    onChangeDefinition: PropTypes.func,
-    onBlurValue: PropTypes.func,
-    onClick: PropTypes.func,
-  };
-
-  static contextTypes = {
-    selectedToolId: PropTypes.string,
-  };
-  
-  render() {
-    const {name, value, valueDefault, id, onChangeDefinition, onChangeValue, onBlurValue, onClick} = this.props;
-    const disabled = this.context.selectedToolId === 'trash';
-
-    return (
-      <div className={`variable-box variable-set-${value !== undefined}`} onClick={(e) => onClick(id, e)}>
-        <TapToEditLabel
-          className="name"
-          value={name}
-          onChange={disabled ? null : (e) => onChangeDefinition(id, {name: e.target.value})}
-        />
-        <input
-          disabled={disabled}
-          className="value"
-          value={(value !== undefined) ? value : valueDefault}
-          onBlur={(e) => onBlurValue(id, e.target.value)}
-          onChange={(e) => onChangeValue(id, e.target.value)}
-        />
-      </div>
-    );
+function coerceToType(value, type) {
+  if (type === 'number') {
+    return (value !== '' && `${value / 1}` === value) ? value / 1 : undefined;
   }
+
+  return value;
 }
+
 export default class ContainerPaneVariables extends React.Component {
   static propTypes = {
     character: PropTypes.object,
     actor: PropTypes.object,
-    globals: PropTypes.array,
+    globals: PropTypes.object,
     selectedActorPath: PropTypes.string,
     dispatch: PropTypes.func,
   };
@@ -55,6 +26,8 @@ export default class ContainerPaneVariables extends React.Component {
   static contextTypes = {
     selectedToolId: PropTypes.string,
   };
+
+  // Chararacter and actor variables
 
   _onClickVar = (id, event) => {
     if (this.context.selectedToolId === TOOL_TRASH) {
@@ -89,11 +62,18 @@ export default class ContainerPaneVariables extends React.Component {
     }));
   }
   
-  _onFinalizeVarValue = (id, value) => {
-    if (value !== '' && `${value / 1}` === value) {
-      this._onChangeVarValue(id, value / 1);
-    } else {
-      this._onChangeVarValue(id, undefined);
+  // Globals
+
+  _onChangeGlobalDefinition = (id, changes) => {
+    this.props.dispatch(upsertGlobal(id, changes));
+  }
+
+  _onClickGlobal = (id) => {
+    if (this.context.selectedToolId === TOOL_TRASH) {
+      this.props.dispatch(deleteGlobal(id));
+      if (!event.shiftKey) {
+        this.props.dispatch(selectToolId(TOOL_POINTER));
+      }
     }
   }
 
@@ -101,7 +81,9 @@ export default class ContainerPaneVariables extends React.Component {
     const {character, actor} = this.props;
     if (!character) {
       return (
-        <div className="empty">Please select a character.</div>
+        <div className="empty">
+          Please select a character.
+        </div>
       );
     }
 
@@ -109,16 +91,14 @@ export default class ContainerPaneVariables extends React.Component {
 
     return (
       <div className="variables-grid">
-        {Object.values(character.variables).map(({name, id, defaultValue}) =>
-          <VariableBlock
-            id={id}
-            key={id}
-            name={name}
-            value={actorValues[id]}
-            valueDefault={defaultValue}
+        {Object.values(character.variables).map((definition) =>
+          <VariableGridItem
+            key={definition.id}
+            definition={definition}
+            value={actorValues[definition.id]}
             onChangeDefinition={this._onChangeVarDefinition}
             onChangeValue={this._onChangeVarValue}
-            onBlurValue={this._onFinalizeVarValue}
+            onBlurValue={(id, value) => this._onChangeVarValue(id, coerceToType(value, 'number'))}
             onClick={this._onClickVar}
           />
         )}
@@ -127,18 +107,23 @@ export default class ContainerPaneVariables extends React.Component {
   }
 
   _renderWorldSection() {
-    const {globals} = this.props;
-
     return (
       <div className="variables-grid">
-      {Object.values(globals).map((g) =>
-        <VariableBlock
-          id={g.id}
-          key={g.id}
-          name={g.name}
-          value={g.value}
-        />
-      )}
+        {Object.values(this.props.globals).map((definition) =>
+          <VariableGridItem
+            key={definition.id}
+            definition={definition}
+            value={definition.value || ''}
+            onChangeDefinition={this._onChangeGlobalDefinition}
+            onChangeValue={(id, value) =>
+              this._onChangeGlobalDefinition(id, {value})
+            }
+            onBlurValue={(id, value) =>
+              this._onChangeGlobalDefinition(id, {value: coerceToType(value, 'number')})
+            }
+            onClick={this._onClickGlobal}
+          />
+        )}
       </div>
     );
   }

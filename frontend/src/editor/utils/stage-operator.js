@@ -2,14 +2,13 @@ import objectAssign from 'object-assign';
 import {shuffleArray, getVariableValue, applyVariableOperation, pointByAdding} from './stage-helpers';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 
-/*
-Note: StageOperator and ActorOperator mutate the state you provide them. Clone
-the entire stage before passing it in if you need to have a copy. It's just
-too much of a pain to do all of the possible state changes with updeep, etc.
- */
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 
-export default function StageOperator(stage) {
-  const {characters} = window.editorStore.getState();
+export default function StageOperator(previousStage) {
+  let characters = null;
+  let stage = null;
 
   function wrappedPosition({x, y}) {
     const o = {
@@ -41,13 +40,13 @@ export default function StageOperator(stage) {
         const actorValue = getVariableValue(actor, characters[actor.characterId], id);
         const otherValue = getVariableValue(other, characters[actor.characterId], id);
 
-        if ((condition.comparator === '=') && (actorValue / 1 !== otherValue.value / 1)) {
+        if ((condition.comparator === '=') && (actorValue / 1 !== otherValue / 1)) {
           return false;
         }
-        if ((condition.comparator === '>') && (actorValue / 1 <= otherValue.value / 1)) {
+        if ((condition.comparator === '>') && (actorValue / 1 <= otherValue / 1)) {
           return false;
         }
-        if ((condition.comparator === '<') && (actorValue / 1 >= otherValue.value / 1)) {
+        if ((condition.comparator === '<') && (actorValue / 1 >= otherValue / 1)) {
           return false;
         }
       }
@@ -65,6 +64,12 @@ export default function StageOperator(stage) {
   }
 
   function ActorOperator(me) {
+    function tickAllRules() {
+      const {characterId} = stage.actors[me.id];
+      const struct = characters[characterId];
+      tickRulesTree(struct);
+    }
+
     function tickRulesTree(struct, behavior = FLOW_BEHAVIORS.FIRST) {
       let rules = [].concat(struct.rules);
 
@@ -147,7 +152,7 @@ export default function StageOperator(stage) {
       for (const action of rule.actions) {
         if (action.type === 'create') {
           const nextID = Date.now();
-          stage.actors[nextID] = objectAssign({}, action.actor, {
+          stage.actors[nextID] = objectAssign(deepClone(action.actor), {
             id: nextID,
             position: wrappedPosition(pointByAdding(me.position, action.offset)),
             variableValues: {},
@@ -164,7 +169,7 @@ export default function StageOperator(stage) {
           }
           const stageActor = stageCandidates.find(a => actorsMatch(a, actionActor, actionActorConditions));
           if (!stageActor) {
-            throw new Error(`Couldn't find the actor for performing rule: ${rule}`);
+            throw new Error(`Couldn't find the actor for performing rule: ${JSON.stringify(rule)}. Candidates: ${JSON.stringify(stageCandidates)}`);
           }
 
           if (action.type === 'move') {
@@ -186,19 +191,18 @@ export default function StageOperator(stage) {
 
     return {
       applyRule,
-      tick() {
-        const {characterId} = stage.actors[me.id];
-        const struct = characters[characterId];
-        tickRulesTree(struct);
-      }
+      tickAllRules,
     };
   }
 
   function resetForRule(rule, {id, applyActions, offset}) {
+    characters = window.editorStore.getState().characters;
+    stage = deepClone(previousStage);
     stage.id = id;
     stage.actors = {};
+
     for (const actor of Object.values(rule.actors)) {
-      stage.actors[actor.id] = objectAssign({}, actor, {
+      stage.actors[actor.id] = objectAssign(deepClone(actor), {
         position: pointByAdding(actor.position, offset),
       });
     }
@@ -208,19 +212,29 @@ export default function StageOperator(stage) {
     if (applyActions && rule.actions) {
       ActorOperator(stage.actors[rule.mainActorId]).applyRule(rule);
     }
+
+    return stage;
+  }
+
+  function tick() {
+    characters = window.editorStore.getState().characters;
+    stage = deepClone(previousStage);
+    stage.evaluatedRuleIds = {};
+
+    Object.values(stage.actors).forEach(actor =>
+      ActorOperator(actor).tickAllRules()
+    );
+
+    stage.input = {
+      keys: {},
+      clicks: {},
+    };
+
+    return stage;
   }
 
   return {
     resetForRule,
-    tick() {
-      stage.evaluatedRuleIds = {};
-      Object.values(stage.actors).forEach(actor =>
-        ActorOperator(actor).tick()
-      );
-      stage.input = {
-        keys: {},
-        clicks: {},
-      };
-    },
+    tick,
   };
 }

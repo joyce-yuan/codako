@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {createCharacterVariable} from '../../actions/characters-actions';
+import {createGlobal} from '../../actions/globals-actions';
 
 export default class VariablesAddButton extends React.Component {
   static propTypes = {
@@ -16,6 +17,10 @@ export default class VariablesAddButton extends React.Component {
 
   _onCreateVar = () => {
     this.props.dispatch(createCharacterVariable(this.props.character.id));
+  }
+
+  _onCreateGlobal = () => {
+    this.props.dispatch(createGlobal());
   }
 
   render() {
@@ -35,7 +40,7 @@ export default class VariablesAddButton extends React.Component {
             <span className="badge rule" /> Add Character Variable
           </DropdownItem>
           <DropdownItem divider />
-          <DropdownItem onClick={this._onCreateGlobalVar}>
+          <DropdownItem onClick={this._onCreateGlobal}>
             <span className="badge rule-flow" /> Add World Variable
           </DropdownItem>
         </DropdownMenu>

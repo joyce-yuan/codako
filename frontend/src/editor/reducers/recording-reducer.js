@@ -77,18 +77,15 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.EDIT_RULE_RECORDING: {
-      const {stage} = window.editorStore.getState();
+      const stage = getCurrentStage(window.editorStore.getState());
       const {characterId, rule} = action;
       const offset = {
         x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
         y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
       };
 
-      const beforeStage = JSON.parse(JSON.stringify(stage));
-      const afterStage = JSON.parse(JSON.stringify(stage));
-
-      StageOperator(beforeStage).resetForRule(rule, {offset, applyActions: false, id: 'before'});
-      StageOperator(afterStage).resetForRule(rule, {offset, applyActions: true, id: 'after'});
+      const beforeStage = StageOperator(stage).resetForRule(rule, {offset, applyActions: false, id: 'before'});
+      const afterStage = StageOperator(stage).resetForRule(rule, {offset, applyActions: true, id: 'after'});
 
       return u({
         ruleId: rule.id,

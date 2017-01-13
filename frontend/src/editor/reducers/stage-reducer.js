@@ -51,16 +51,18 @@ export default function stageReducer(state, action) {
       }, state);
     }
     case Types.ADVANCE_GAME_STATE: {
-      const nextState = JSON.parse(JSON.stringify(state));
-      nextState.history.push({
-        evaluatedRuleIds: state.evaluatedRuleIds,
-        actors: state.actors,
-        input: state.input,
-      });
-      if (nextState.history.length > 20) {
-        nextState.history = nextState.history.slice(1);
-      }
-      StageOperator(nextState).tick();
+      let nextState = u({
+        history: (values) =>
+          [].concat(values.slice(values.length - 20), [{
+            evaluatedRuleIds: state.evaluatedRuleIds,
+            actors: state.actors,
+            input: state.input,
+          }])
+        ,
+      }, state);
+
+      nextState = StageOperator(nextState).tick();
+
       return nextState;
     }
     case Types.STEP_BACK_GAME_STATE: {
