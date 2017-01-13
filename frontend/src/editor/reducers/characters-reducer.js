@@ -24,6 +24,7 @@ export default function charactersReducer(state = initialState.characters, actio
             defaultValue: 0,
             name: "Untitled",
             id: action.variableId,
+            type: 'number',
           },
         },
       }, state);

@@ -5,13 +5,13 @@ import uiReducer from './ui-reducer';
 import charactersReducer from './characters-reducer';
 import stageCollectionReducer from './stage-collection-reducer';
 import recordingReducer from './recording-reducer';
-import globalsReducer from './globals-reducer';
+import worldReducer from './world-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
 
 const reducerMap = {
   ui: uiReducer,
   stages: stageCollectionReducer,
-  globals: globalsReducer,
+  world: worldReducer,
   characters: charactersReducer,
   recording: recordingReducer,
 };
@@ -19,7 +19,7 @@ const reducerMap = {
 const undoRedoReducer = undoRedoReducerFactory({
   trackedKeys: [
     'recording',
-    'globals',
+    'world',
     'characters',
     'stages',
   ],

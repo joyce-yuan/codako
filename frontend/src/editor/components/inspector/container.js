@@ -12,7 +12,7 @@ import {getCurrentStage} from '../../utils/selectors';
 class Container extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    globals: PropTypes.object,
+    world: PropTypes.object,
     actor: PropTypes.object,
     characters: PropTypes.object,
     character: PropTypes.object,
@@ -47,7 +47,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {character, globals, actor, dispatch, selectedActorPath} = this.props;
+    const {character, world, actor, dispatch, selectedActorPath} = this.props;
     const {activeTab} = this.state;
 
     const ContentContainer = {
@@ -88,7 +88,7 @@ class Container extends React.Component {
           </div>
         </Nav>
         <ContentContainer
-          globals={globals}
+          world={world}
           character={character}
           actor={actor}
           selectedActorPath={selectedActorPath}
@@ -101,20 +101,28 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   const stage = getCurrentStage(state);
+  const [stageId, actorId] = (state.ui.selectedActorPath || ":").split(':');
 
+  // find the focused actor
   let actor = null;
-  if (state.ui.selectedActorPath) {
-    const [stageId, actorId] = state.ui.selectedActorPath.split(':');
-    for (const s of [stage, state.recording.beforeStage, state.recording.afterStage]) {
-      if (s.id === stageId) {
-        actor = (s.actors || {})[actorId];
-      }
+  for (const s of [stage, state.recording.beforeStage, state.recording.afterStage]) {
+    if (s.id === stageId) {
+      actor = (s.actors || {})[actorId];
+      break;
     }
+  }
+
+  // find the focused world
+  let world = state.world;
+  if (stageId === 'before') {
+    world = state.recording.beforeWorld;
+  } else if (stageId === 'after') {
+    world = state.recording.afterWorld;
   }
 
   return Object.assign({}, state.ui, {
     actor: actor,
-    globals: state.globals,
+    world: world,
     characters: state.characters,
     character: state.characters[state.ui.selectedCharacterId],
     selectedToolId: state.ui.selectedToolId,

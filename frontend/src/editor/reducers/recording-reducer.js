@@ -1,6 +1,7 @@
 import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
 import stageReducer from './stage-reducer';
+import worldReducer from './world-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
@@ -10,14 +11,18 @@ import {getCurrentStage} from '../utils/selectors';
 import {extentByShiftingExtent} from '../utils/recording-helpers';
 
 export default function recordingReducer(state = initialState.recording, action) {
+
   const nextState = objectAssign({}, state, {
     beforeStage: stageReducer(state.beforeStage, action),
+    beforeWorld: worldReducer(state.beforeWorld, action),
     afterStage: stageReducer(state.afterStage, action),
+    afterWorld: worldReducer(state.afterWorld, action),
   });
 
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
-      const stage = getCurrentStage(window.editorStore.getState());
+      const entireState = window.editorStore.getState();
+      const stage = getCurrentStage(entireState);
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
@@ -26,10 +31,18 @@ export default function recordingReducer(state = initialState.recording, action)
         conditions: u.constant({
           [actor.id]: {},
         }),
-        afterStage: u.constant({id: 'after'}),
+        beforeWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
+          id: 'before',
+        })),
         beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
           id: 'before',
         })),
+        afterWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
+          id: 'after',
+        })),
+        afterStage: u.constant({
+          id: 'after',
+        }),
         extent: {
           xmin: actor.position.x,
           xmax: actor.position.x,
@@ -41,9 +54,9 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const globalState = window.editorStore.getState();
-      const character = globalState.characters[action.characterId];
-      const stage = getCurrentStage(globalState);
+      const entireState = window.editorStore.getState();
+      const character = entireState.characters[action.characterId];
+      const stage = getCurrentStage(entireState);
 
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);
@@ -53,7 +66,9 @@ export default function recordingReducer(state = initialState.recording, action)
         phase: RECORDING_PHASE_SETUP,
         characterId: action.characterId,
         conditions: u.constant({}),
-        afterStage: u.constant({id: 'after'}),
+        beforeWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
+          id: 'before',
+        })),
         beforeStage: u.constant(objectAssign({}, stage, {
           actors: {
             dude: {
@@ -66,6 +81,10 @@ export default function recordingReducer(state = initialState.recording, action)
           },
           id: 'before',
         })),
+        afterWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
+          id: 'after',
+        })),
+        afterStage: u.constant({id: 'after'}),
         extent: {
           xmin: cx,
           xmax: cx,
@@ -77,7 +96,8 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.EDIT_RULE_RECORDING: {
-      const stage = getCurrentStage(window.editorStore.getState());
+      const entireState = window.editorStore.getState();
+      const stage = getCurrentStage(entireState);
       const {characterId, rule} = action;
       const offset = {
         x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
@@ -94,7 +114,9 @@ export default function recordingReducer(state = initialState.recording, action)
         actorId: rule.mainActorId,
         conditions: rule.conditions,
         beforeStage: u.constant(beforeStage),
+        beforeGlobals: u.constant(rule.beforeGlobals),
         afterStage: u.constant(afterStage),
+        afterGlobals: u.constant(rule.beforeGlobals), // APPLY GLOBALS HERE,
         extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
         prefs: {},
       }, nextState);

@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import TapToEditLabel from '../tap-to-edit-label';
+import ConnectedStagePicker from './connected-stage-picker';
 
 export default class VariableGridItem extends React.Component {
   static propTypes = {
@@ -22,7 +23,34 @@ export default class VariableGridItem extends React.Component {
   
   render() {
     const {value, definition, onChangeDefinition, onChangeValue, onBlurValue, onClick} = this.props;
+    const displayValue = (value !== undefined) ? value : definition.defaultValue;
     const disabled = this.context.selectedToolId === 'trash';
+
+    let content = null;
+
+    if (disabled) {
+      content = (
+        <div className="value">
+          {displayValue}
+        </div>
+      );
+    } else if (definition.type === 'number') {
+      content = (
+        <input
+          className="value"
+          value={displayValue}
+          onChange={(e) => onChangeValue(definition.id, e.target.value)}
+          onBlur={(e) => onBlurValue(definition.id, e.target.value)}
+        />
+      );
+    } else if (definition.type === 'stage') {
+      content = (
+        <ConnectedStagePicker
+          value={displayValue}
+          onChange={(e) => onChangeValue(definition.id, e.target.value)}
+        />
+      );
+    }
 
     return (
       <div
@@ -34,13 +62,7 @@ export default class VariableGridItem extends React.Component {
           value={definition.name}
           onChange={disabled ? null : (e) => onChangeDefinition(definition.id, {name: e.target.value})}
         />
-        <input
-          disabled={disabled}
-          className="value"
-          value={(value !== undefined) ? value : definition.defaultValue}
-          onChange={(e) => onChangeValue(definition.id, e.target.value)}
-          onBlur={(e) => onBlurValue(definition.id, e.target.value)}
-        />
+        {content}
       </div>
     );
   }

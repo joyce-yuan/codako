@@ -523,6 +523,18 @@ $rule-flow-color: #5BA4CD;
       font-size: 1.2em;
       font-weight: bold;
     }
+    .btn-group {
+      width: 100%;
+    }
+    .dropdown-toggle {
+      box-sizing: border-box;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dropdown-item {
+      box-sizing: border-box;
+    }
   }
 }
 

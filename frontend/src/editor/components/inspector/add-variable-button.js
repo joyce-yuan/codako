@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {createCharacterVariable} from '../../actions/characters-actions';
-import {createGlobal} from '../../actions/globals-actions';
+import {createGlobal} from '../../actions/world-actions';
 
 export default class VariablesAddButton extends React.Component {
   static propTypes = {

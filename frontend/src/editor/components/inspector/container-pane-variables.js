@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {changeActor} from '../../actions/stage-actions';
-import {upsertGlobal, deleteGlobal} from '../../actions/globals-actions';
+import {upsertGlobal, deleteGlobal} from '../../actions/world-actions';
 import {changeCharacter, deleteCharacterVariable} from '../../actions/characters-actions';
 import VariableGridItem from './variable-grid-item';
 import {selectToolId} from '../../actions/ui-actions';
@@ -18,7 +18,7 @@ export default class ContainerPaneVariables extends React.Component {
   static propTypes = {
     character: PropTypes.object,
     actor: PropTypes.object,
-    globals: PropTypes.object,
+    world: PropTypes.object,
     selectedActorPath: PropTypes.string,
     dispatch: PropTypes.func,
   };
@@ -64,13 +64,13 @@ export default class ContainerPaneVariables extends React.Component {
   
   // Globals
 
-  _onChangeGlobalDefinition = (id, changes) => {
-    this.props.dispatch(upsertGlobal(id, changes));
+  _onChangeGlobalDefinition = (globalId, changes) => {
+    this.props.dispatch(upsertGlobal(this.props.world.id, globalId, changes));
   }
 
-  _onClickGlobal = (id) => {
+  _onClickGlobal = (globalId) => {
     if (this.context.selectedToolId === TOOL_TRASH) {
-      this.props.dispatch(deleteGlobal(id));
+      this.props.dispatch(deleteGlobal(this.props.world.id, globalId));
       if (!event.shiftKey) {
         this.props.dispatch(selectToolId(TOOL_POINTER));
       }
@@ -98,7 +98,7 @@ export default class ContainerPaneVariables extends React.Component {
             value={actorValues[definition.id]}
             onChangeDefinition={this._onChangeVarDefinition}
             onChangeValue={this._onChangeVarValue}
-            onBlurValue={(id, value) => this._onChangeVarValue(id, coerceToType(value, 'number'))}
+            onBlurValue={(id, value) => this._onChangeVarValue(id, coerceToType(value, definition.type))}
             onClick={this._onClickVar}
           />
         )}
@@ -109,7 +109,7 @@ export default class ContainerPaneVariables extends React.Component {
   _renderWorldSection() {
     return (
       <div className="variables-grid">
-        {Object.values(this.props.globals).map((definition) =>
+        {Object.values(this.props.world.globals).map((definition) =>
           <VariableGridItem
             key={definition.id}
             definition={definition}
@@ -119,7 +119,7 @@ export default class ContainerPaneVariables extends React.Component {
               this._onChangeGlobalDefinition(id, {value})
             }
             onBlurValue={(id, value) =>
-              this._onChangeGlobalDefinition(id, {value: coerceToType(value, 'number')})
+              this._onChangeGlobalDefinition(id, {value: coerceToType(value, definition.type)})
             }
             onClick={this._onClickGlobal}
           />
