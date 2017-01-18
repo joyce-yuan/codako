@@ -1,5 +1,11 @@
 export const STAGE_CELL_SIZE = 40;
 
+export const WORLDS = {
+  ROOT: 'root',
+  BEFORE: 'before',
+  AFTER: 'after',
+};
+
 export const FLOW_BEHAVIORS = {
   FIRST: 'first',
   ALL: 'all',

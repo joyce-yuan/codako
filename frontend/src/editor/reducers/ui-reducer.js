@@ -1,20 +1,26 @@
-import * as Types from '../constants/action-types';
 import objectAssign from 'object-assign';
-import initialState from './initial-state';
 import u from 'updeep';
+
+import * as Types from '../constants/action-types';
+import {WORLDS} from '../constants/constants';
+import {nullActorPath, buildActorPath} from '../utils/stage-helpers';
+import initialState from './initial-state';
 
 export default function uiReducer(state = initialState.ui, action) {
   switch (action.type) {
     case Types.START_RECORDING: {
-      const {actorId, characterId} = window.editorStore.getState().recording;
+      const entireState = window.editorStore.getState();
+      const {actorId, characterId} = entireState.recording;
+      const current = entireState.ui.selectedActorPath;
+
       return objectAssign({}, state, {
         selectedCharacterId: characterId,
-        selectedActorPath: `after:${actorId}`,
+        selectedActorPath: buildActorPath(WORLDS.AFTER, current.stageId, actorId),
       });
     }
     case Types.FINISH_RECORDING: {
       return objectAssign({}, state, {
-        selectedActorPath: null,
+        selectedActorPath: nullActorPath(),
       });
     }
     case Types.SELECT_TOOL_ID:

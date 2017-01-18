@@ -195,10 +195,9 @@ export default function StageOperator(previousStage) {
     };
   }
 
-  function resetForRule(rule, {id, applyActions, offset}) {
+  function resetForRule(rule, {applyActions, offset}) {
     characters = window.editorStore.getState().characters;
     stage = deepClone(previousStage);
-    stage.id = id;
     stage.actors = {};
 
     for (const actor of Object.values(rule.actors)) {

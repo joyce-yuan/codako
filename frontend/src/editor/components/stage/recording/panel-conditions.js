@@ -1,9 +1,12 @@
 import React, {PropTypes} from 'react';
-import {updateRecordingCondition} from '../../../actions/recording-actions';
-import {pointIsInside} from '../../../utils/stage-helpers';
+
 import ActorBlock from './actor-block';
 import AppearanceBlock from './appearance-block';
 import VariableBlock from './variable-block';
+
+import {pointIsInside} from '../../../utils/stage-helpers';
+import {updateRecordingCondition} from '../../../actions/recording-actions';
+import {getCurrentStageForWorld} from '../../../utils/selectors';
 
 class AppearanceRow extends React.Component {
   static propTypes = {
@@ -76,14 +79,14 @@ class VariableRow extends React.Component {
 export default class RecordingConditions extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
-    conditions: PropTypes.object,
+    recording: PropTypes.object,
     characters: PropTypes.object,
-    stage: PropTypes.object,
-    extent: PropTypes.object,
   };
 
   render() {
-    const {extent, stage, conditions, characters, dispatch} = this.props;
+    const {recording, characters, dispatch} = this.props;
+    const {beforeWorld, conditions, extent} = recording;
+    const stage = getCurrentStageForWorld(beforeWorld);
 
     const rows = [];
     Object.values(stage.actors).forEach((a) => {

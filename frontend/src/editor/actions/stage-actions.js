@@ -3,82 +3,89 @@ import objectAssign from 'object-assign';
 
 import {selectStageId} from './ui-actions';
 
-export function createStage() {
+// stage collection actions
+
+export function createStage(worldId) {
   const stageId =  `${Date.now()}`;
   return (dispatch) => {
     dispatch({
       type: types.CREATE_STAGE,
+      worldId,
       stageId,
     });
     dispatch(selectStageId(stageId));
   };
 }
 
-export function deleteStageId(stageId) {
+export function deleteStageId(worldId, stageId) {
   return {
     type: types.DELETE_STAGE_ID,
+    worldId,
     stageId,
   };
 }
 
-// individual stage actions (Require stage ID)
+// individual stage actions (Require world id, act on current stage in that world)
 
-export function advanceGameState(stageId) {
+export function advanceGameState(worldId) {
   return {
     type: types.ADVANCE_GAME_STATE,
-    stageId,
+    worldId,
   };
 }
 
-export function stepBackGameState(stageId) {
+export function stepBackGameState(worldId) {
   return {
     type: types.STEP_BACK_GAME_STATE,
-    stageId,
+    worldId,
   };
 }
 
-export function saveInitialGameState(stageId, {thumbnail, actors}) {
+export function saveInitialGameState(worldId, {thumbnail, actors}) {
   return {
     type: types.SAVE_INITIAL_GAME_STATE,
-    stageId,
+    worldId,
     thumbnail,
     actors,
   };
 }
 
-export function restoreInitialGameState(stageId) {
+export function restoreInitialGameState(worldId) {
   return {
     type: types.RESTORE_INITIAL_GAME_STATE,
-    stageId,
+    worldId,
   };
 }
 
-export function updateStageSettings(stageId, settings) {
+export function updateStageSettings(worldId, stageId, settings) {
   return {
     type: types.UPDATE_STAGE_SETTINGS,
-    stageId, settings,
+    worldId,
+    stageId,
+    settings,
   };
 }
 
-export function recordKeyForGameState(stageId, key) {
+export function recordKeyForGameState(worldId, key) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
-    stageId,
+    worldId,
     keys: {[key]: true},
     clicks: {},
   };
 }
 
-export function recordClickForGameState(stageId, actorId) {
+export function recordClickForGameState({worldId, stageId, actorId}) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
+    worldId,
     stageId,
     keys: {},
     clicks: {[actorId]: true},
   };
 }
 
-export function createActor(stageId, character, initialValues) {
+export function createActor({worldId, stageId}, character, initialValues) {
   const newID = `${Date.now()}`;
 
   const newActor = objectAssign({
@@ -91,23 +98,26 @@ export function createActor(stageId, character, initialValues) {
 
   return {
     type: types.UPSERT_ACTOR,
+    worldId,
     stageId,
-    id: newID,
+    actorId: newID,
     values: newActor,
   };
 }
-export function changeActor(stageId, id, values) {
+export function changeActor({worldId, stageId, actorId}, values) {
   return {
     type: types.UPSERT_ACTOR,
+    worldId,
     stageId,
-    id,
+    actorId,
     values,
   };
 }
-export function deleteActor(stageId, id) {
+export function deleteActor({worldId, stageId, actorId}) {
   return {
     type: types.DELETE_ACTOR,
+    worldId,
     stageId,
-    id,
+    actorId,
   };
 }

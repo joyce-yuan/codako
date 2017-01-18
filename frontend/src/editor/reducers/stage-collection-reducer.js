@@ -3,9 +3,9 @@
 
 import objectAssign from 'object-assign';
 
-import stageReducer from './stage-reducer';
 import * as Types from '../constants/action-types';
 import initialStateStage from './initial-state-stage';
+import stageReducer from './stage-reducer';
 
 export default function stageCollectionReducer(state, action) {
   const nextState = {};

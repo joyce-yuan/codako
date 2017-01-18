@@ -7,7 +7,9 @@ import ContainerPaneRules from './container-pane-rules';
 import ContainerPaneVariables from './container-pane-variables';
 import AddRuleButton from './add-rule-button';
 import AddVariableButton from './add-variable-button';
-import {getCurrentStage} from '../../utils/selectors';
+import {getCurrentStageForWorld} from '../../utils/selectors';
+
+import * as CustomPropTypes from '../../constants/custom-prop-types';
 
 class Container extends React.Component {
   static propTypes = {
@@ -17,7 +19,7 @@ class Container extends React.Component {
     characters: PropTypes.object,
     character: PropTypes.object,
     evaluatedRuleIds: PropTypes.object,
-    selectedActorPath: PropTypes.string,
+    selectedActorPath: CustomPropTypes.WorldSelection,
     selectedToolId: PropTypes.string,
   };
 
@@ -99,35 +101,22 @@ class Container extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const stage = getCurrentStage(state);
-  const [stageId, actorId] = (state.ui.selectedActorPath || ":").split(':');
+function mapStateToProps({world, ui, characters, recording}) {
+  const {worldId, actorId} = ui.selectedActorPath;
 
   // find the focused actor
-  let actor = null;
-  for (const s of [stage, state.recording.beforeStage, state.recording.afterStage]) {
-    if (s.id === stageId) {
-      actor = (s.actors || {})[actorId];
-      break;
-    }
-  }
+  const focusedWorld = [recording.beforeWorld, recording.afterWorld].find(s => s.id === worldId) || world;
+  const focusedStage = getCurrentStageForWorld(world);
+  const focusedActor = (focusedStage.actors || {})[actorId];
 
-  // find the focused world
-  let world = state.world;
-  if (stageId === 'before') {
-    world = state.recording.beforeWorld;
-  } else if (stageId === 'after') {
-    world = state.recording.afterWorld;
-  }
-
-  return Object.assign({}, state.ui, {
-    actor: actor,
-    world: world,
-    characters: state.characters,
-    character: state.characters[state.ui.selectedCharacterId],
-    selectedToolId: state.ui.selectedToolId,
-    selectedActorPath: state.ui.selectedActorPath,
-    evaluatedRuleIds: stage.evaluatedRuleIds,
+  return Object.assign({}, ui, {
+    actor: focusedActor,
+    world: focusedWorld,
+    characters: characters,
+    character: characters[ui.selectedCharacterId],
+    selectedToolId: ui.selectedToolId,
+    selectedActorPath: ui.selectedActorPath,
+    evaluatedRuleIds: focusedStage.evaluatedRuleIds,
 });
 }
 

@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+import {getStages} from '../../utils/selectors';
 
 class StagePicker extends React.Component {
   static propTypes = {
@@ -41,7 +42,7 @@ class StagePicker extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    stages: state.stages,
+    stages: getStages(state),
   };
 }
 

@@ -3,8 +3,8 @@ import {connect} from 'react-redux';
 import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
 
 import StageSettings from './settings';
-import {MODALS} from '../../constants/constants';
-import {getCurrentStage} from '../../utils/selectors';
+import {MODALS, WORLDS} from '../../constants/constants';
+import {getCurrentStage, getStagesList} from '../../utils/selectors';
 import {selectStageId, dismissModal} from '../../actions/ui-actions';
 import {createStage, deleteStageId, updateStageSettings} from '../../actions/stage-actions';
 import {getStageScreenshot} from '../../utils/stage-helpers';
@@ -46,11 +46,11 @@ class Container extends React.Component {
   }
 
   _onSelectStage = (id) => {
-    this.props.dispatch(selectStageId(id));
+    this.props.dispatch(selectStageId(WORLDS.ROOT, id));
   }
 
   _onAddStage = () => {
-    this.props.dispatch(createStage());
+    this.props.dispatch(createStage(WORLDS.ROOT));
   }
 
   _onRemoveStage = () => {
@@ -60,8 +60,8 @@ class Container extends React.Component {
       const selectedIdx = stagesArray.findIndex(s => s.id === stage.id);
       const nextId = stagesArray[selectedIdx === 0 ? selectedIdx + 1 : selectedIdx - 1].id;
 
-      dispatch(selectStageId(nextId));
-      dispatch(deleteStageId(stage.id));
+      dispatch(selectStageId(WORLDS.ROOT, nextId));
+      dispatch(deleteStageId(WORLDS.ROOT, stage.id));
     }
   }
 
@@ -115,7 +115,7 @@ class Container extends React.Component {
             <StageSettings
               stage={stage}
               key={stage.id}
-              onChange={(settings) => dispatch(updateStageSettings(stage.id, settings))}
+              onChange={(settings) => dispatch(updateStageSettings(WORLDS.ROOT, stage.id, settings))}
             />
           </ModalBody>
         </div>
@@ -130,7 +130,7 @@ class Container extends React.Component {
 function mapStateToProps(state) {
   return {
     stage: getCurrentStage(state),
-    stagesArray: Object.values(state.stages).sort((a, b) => a.order - b.order),
+    stagesArray: getStagesList(state),
     open: state.ui.modal.openId === MODALS.STAGES,
   };
 }

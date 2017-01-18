@@ -11,13 +11,13 @@ export default function stageReducer(state, action) {
   switch (action.type) {
     case Types.UPSERT_ACTOR: {
       return u({
-        actors: u.updateIn(action.id, action.values),
+        actors: u.updateIn(action.actorId, action.values),
         history: u.constant([]),
       }, state);
     }
     case Types.DELETE_ACTOR: {
       return u({
-        actors: u.omit(action.id),
+        actors: u.omit(action.actorId),
         history: u.constant([]),
       }, state);
     }

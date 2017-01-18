@@ -1,4 +1,12 @@
 
+export function buildActorPath(worldId, stageId, actorId) {
+  return {worldId, stageId, actorId};
+}
+
+export function nullActorPath() {
+  return {worldId: null, stageId: null, actorId: null};
+}
+
 export function pointIsOutside({x, y}, {xmin, xmax, ymin, ymax}) {
   return (x < xmin || x > xmax || y < ymin || y > ymax);
 }
@@ -82,14 +90,4 @@ export function getStageScreenshot(stage) {
     context.drawImage(i, actor.position.x * 10, actor.position.y * 10, 10, 10);
   });
   return canvas.toDataURL();
-}
-
-export function createdActorsForRecording({beforeStage, afterStage, extent}) {
-  const beforeIds = Object.keys(beforeStage.actors);
-  const afterIds = Object.keys(afterStage.actors);
-  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
-
-  return createdIds.map((id) => afterStage.actors[id]).filter(a => 
-    pointIsInside(a.position, extent)
-  );
 }

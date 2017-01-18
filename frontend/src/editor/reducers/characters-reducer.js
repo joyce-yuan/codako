@@ -4,8 +4,9 @@ import objectAssign from 'object-assign';
 import initialState from './initial-state';
 import * as Types from '../constants/action-types';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
-import {findRule, pointIsInside, createdActorsForRecording} from '../utils/stage-helpers';
-import {actionsForRecording, extentByShiftingExtent} from '../utils/recording-helpers';
+import {findRule, pointIsInside} from '../utils/stage-helpers';
+import {actionsForRecording, extentByShiftingExtent, createdActorsForRecording} from '../utils/recording-helpers';
+import {getCurrentStageForWorld} from '../utils/selectors';
 
 export default function charactersReducer(state = initialState.characters, action) {
   switch (action.type) {
@@ -97,8 +98,9 @@ export default function charactersReducer(state = initialState.characters, actio
       const rules = JSON.parse(JSON.stringify(state[recording.characterId].rules));
 
       // locate the main actor in the recording to "re-center" the extent to it
-      const mainActor = Object.values(recording.beforeStage.actors).find(a => a.id === recording.actorId);
-      const allActors = createdActorsForRecording(recording).concat(Object.values(recording.beforeStage.actors));
+      const beforeStage = getCurrentStageForWorld(recording.beforeWorld);
+      const mainActor = Object.values(beforeStage.actors).find(a => a.id === recording.actorId);
+      const allActors = createdActorsForRecording(recording).concat(Object.values(beforeStage.actors));
       const recordingActors = {};
 
       for (const a of allActors) {

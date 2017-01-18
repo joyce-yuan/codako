@@ -3,14 +3,12 @@ import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
 import uiReducer from './ui-reducer';
 import charactersReducer from './characters-reducer';
-import stageCollectionReducer from './stage-collection-reducer';
 import recordingReducer from './recording-reducer';
 import worldReducer from './world-reducer';
 import {undoRedoReducerFactory} from '../utils/undo-redo';
 
 const reducerMap = {
   ui: uiReducer,
-  stages: stageCollectionReducer,
   world: worldReducer,
   characters: charactersReducer,
   recording: recordingReducer,

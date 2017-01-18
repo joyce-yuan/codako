@@ -3,6 +3,7 @@ import {updateRecordingActionPrefs} from '../../../actions/recording-actions';
 import {actionsForRecording} from '../../../utils/recording-helpers';
 import {applyVariableOperation} from '../../../utils/stage-helpers';
 import {changeActor} from '../../../actions/stage-actions';
+import {getCurrentStageForWorld} from '../../../utils/selectors';
 
 import ActorBlock from './actor-block';
 import ActorDeltaCanvas from './actor-delta-canvas';
@@ -22,7 +23,9 @@ export default class RecordingActions extends React.Component {
   }
 
   _onChangeVariableValue = (actorId, variableId, operation, value) => {
-    const {dispatch, recording: {beforeStage, afterStage}} = this.props;
+    const {dispatch, recording: {beforeWorld, afterWorld}} = this.props;
+    const beforeStage = getCurrentStageForWorld(beforeWorld);
+    const afterStage = getCurrentStageForWorld(afterWorld);
 
     const actor = beforeStage.actors[actorId];
     const after = applyVariableOperation(actor.variableValues[variableId], operation, value);
@@ -30,7 +33,10 @@ export default class RecordingActions extends React.Component {
   }
 
   _renderAction(a, idx) {
-    const {characters, recording: {beforeStage, afterStage, extent}} = this.props;
+    const {characters, recording: {beforeWorld, afterWorld, extent}} = this.props;
+    const beforeStage = getCurrentStageForWorld(beforeWorld);
+    const afterStage = getCurrentStageForWorld(afterWorld);
+
     const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
     const character = characters[actor.characterId];
 

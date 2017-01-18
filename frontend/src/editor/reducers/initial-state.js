@@ -1,12 +1,14 @@
 import stage from './initial-state-stage';
+import {nullActorPath} from '../utils/stage-helpers';
+import {WORLDS} from '../constants/constants';
 
 export default {
-  stages: {
-    [stage.id]: stage,
-  },
   characters: {},
   world: {
-    id: 'root',
+    id: WORLDS.ROOT,
+    stages: {
+      [stage.id]: stage,
+    },
     globals: {
       selectedStageId: {
         id: "selectedStageId",
@@ -33,7 +35,7 @@ export default {
   ui: {
     selectedToolId: 'pointer',
     selectedCharacterId: null,
-    selectedActorPath: null,
+    selectedActorPath: nullActorPath(),
     tutorial: {
       stepIndex: 0,
     },
@@ -68,11 +70,13 @@ export default {
       ignored: {},
     },
     prefs: {},
-    beforeStage: {
-      id: 'before',
+    beforeWorld: {
+      id: WORLDS.BEFORE,
+      stages: {},
     },
-    afterStage: {
-      id: 'after',
+    afterWorld: {
+      id: WORLDS.AFTER,
+      stages: {},
     },
   },
 };

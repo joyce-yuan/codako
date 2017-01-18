@@ -4,13 +4,14 @@ import classNames from 'classnames';
 import {Button, ButtonGroup} from 'reactstrap';
 import {updatePlaybackState} from '../../actions/ui-actions';
 import {getStageScreenshot} from '../../utils/stage-helpers';
+import {getCurrentStageForWorld} from '../../utils/selectors';
 import {advanceGameState, stepBackGameState, saveInitialGameState, restoreInitialGameState} from '../../actions/stage-actions';
 import {SPEED_OPTIONS} from '../../constants/constants';
 
 
 export default class StageControls extends React.Component {
   static propTypes = {
-    stage: PropTypes.object,
+    world: PropTypes.object,
     dispatch: PropTypes.func,
     speed: PropTypes.number,
     running: PropTypes.bool,
@@ -42,25 +43,30 @@ export default class StageControls extends React.Component {
   }
 
   _onTick = () => {
-    this.props.dispatch(advanceGameState(this.props.stage.id));
+    const {dispatch, world} = this.props;
+    dispatch(advanceGameState(world.id));
   }
 
   _onRestoreInitialGameState = () => {
+    const {dispatch, world} = this.props;
     if (window.confirm("Are you sure you want to reset the stage to the saved `Start` state?")) {
-      this.props.dispatch(restoreInitialGameState(this.props.stage.id));
+      dispatch(restoreInitialGameState(world.id));
     }
   }
 
   _onSaveInitialGameState = () => {
-    const {dispatch, stage} = this.props;
-    dispatch(saveInitialGameState(stage.id, {
+    const {dispatch, world} = this.props;
+    const stage = getCurrentStageForWorld(world);
+
+    dispatch(saveInitialGameState(world.id, {
       actors: stage.actors,
       thumbnail: getStageScreenshot(stage),
     }));
   }
 
   render() {
-    const {speed, dispatch, running, stage: {startThumbnail, id, history}} = this.props;
+    const {speed, dispatch, running, world} = this.props;
+    const {startThumbnail, history} = getCurrentStageForWorld(world);
 
     return (
       <div className="stage-controls">
@@ -90,7 +96,7 @@ export default class StageControls extends React.Component {
           <Button
             size="sm"
             disabled={history && history.length === 0}
-            onClick={() => dispatch(stepBackGameState(id))}
+            onClick={() => dispatch(stepBackGameState(world.id))}
           >
             <i className="fa fa-step-backward" /> Back
           </Button>{' '}
@@ -109,7 +115,7 @@ export default class StageControls extends React.Component {
           </Button>{' '}
           <Button
             size="sm"
-            onClick={() => dispatch(advanceGameState(id))}
+            onClick={() => dispatch(advanceGameState(world.id))}
           >
             <i className="fa fa-step-forward" /> Forward
           </Button>

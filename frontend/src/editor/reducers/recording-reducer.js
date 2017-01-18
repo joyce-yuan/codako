@@ -1,28 +1,43 @@
 import objectAssign from 'object-assign';
 import * as Types from '../constants/action-types';
-import stageReducer from './stage-reducer';
 import worldReducer from './world-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
 import StageOperator from '../utils/stage-operator';
-import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../constants/constants';
-import {getCurrentStage} from '../utils/selectors';
+import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD, WORLDS} from '../constants/constants';
+import {getCurrentStageForWorld} from '../utils/selectors';
 import {extentByShiftingExtent} from '../utils/recording-helpers';
 
-export default function recordingReducer(state = initialState.recording, action) {
+// helpers for creating recording worlds
 
+function worldByCloningWorld(world, newId) {
+  const clone = JSON.parse(JSON.stringify(world));
+  return u.constant(u({id: newId}, clone));
+}
+
+function worldByTransformingStage(world, newId, callback) {
+  const stage = getCurrentStageForWorld(world);
+  const clone = JSON.parse(JSON.stringify(world));
+
+  return u.constant(u({
+    id: newId,
+    stages: {
+      [stage.id]: u.constant(callback(clone.stages[stage.id]))
+    },
+  }, clone));
+}
+
+
+export default function recordingReducer(state = initialState.recording, action) {
   const nextState = objectAssign({}, state, {
-    beforeStage: stageReducer(state.beforeStage, action),
     beforeWorld: worldReducer(state.beforeWorld, action),
-    afterStage: stageReducer(state.afterStage, action),
     afterWorld: worldReducer(state.afterWorld, action),
   });
 
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
-      const entireState = window.editorStore.getState();
-      const stage = getCurrentStage(entireState);
+      const {world} = window.editorStore.getState();
       const {characterId, actor} = action;
       return u({
         phase: RECORDING_PHASE_SETUP,
@@ -31,18 +46,8 @@ export default function recordingReducer(state = initialState.recording, action)
         conditions: u.constant({
           [actor.id]: {},
         }),
-        beforeWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
-          id: 'before',
-        })),
-        beforeStage: u.constant(objectAssign(JSON.parse(JSON.stringify(stage)), {
-          id: 'before',
-        })),
-        afterWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
-          id: 'after',
-        })),
-        afterStage: u.constant({
-          id: 'after',
-        }),
+        beforeWorld: worldByCloningWorld(world, WORLDS.BEFORE),
+        afterWorld: worldByCloningWorld(world, WORLDS.AFTER),
         extent: {
           xmin: actor.position.x,
           xmax: actor.position.x,
@@ -54,23 +59,15 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const entireState = window.editorStore.getState();
-      const character = entireState.characters[action.characterId];
-      const stage = getCurrentStage(entireState);
-
+      const {characters, world} = window.editorStore.getState();
+      const character = characters[action.characterId];
+      const stage = getCurrentStageForWorld(world);
       const cx = Math.floor(stage.width / 2);
       const cy = Math.floor(stage.height / 2);
-      return u({
-        ruleId: null,
-        actorId: 'dude',
-        phase: RECORDING_PHASE_SETUP,
-        characterId: action.characterId,
-        conditions: u.constant({}),
-        beforeWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
-          id: 'before',
-        })),
-        beforeStage: u.constant(objectAssign({}, stage, {
-          actors: {
+
+      const resetActorsToDude = (recordingStage) => {
+        return u({
+          actors: u.constant({
             dude: {
               id: 'dude',
               variableValues: {},
@@ -78,13 +75,18 @@ export default function recordingReducer(state = initialState.recording, action)
               characterId: action.characterId,
               position: {x: cx, y: cy},
             },
-          },
-          id: 'before',
-        })),
-        afterWorld: u.constant(objectAssign(JSON.parse(JSON.stringify(entireState.world)), {
-          id: 'after',
-        })),
-        afterStage: u.constant({id: 'after'}),
+          }),
+        }, recordingStage);
+      };
+
+      return u({
+        ruleId: null,
+        actorId: 'dude',
+        phase: RECORDING_PHASE_SETUP,
+        characterId: action.characterId,
+        conditions: u.constant({}),
+        beforeWorld: worldByTransformingStage(world, WORLDS.BEFORE, resetActorsToDude),
+        afterWorld: worldByTransformingStage(world, WORLDS.AFTER, resetActorsToDude),
         extent: {
           xmin: cx,
           xmax: cx,
@@ -96,16 +98,14 @@ export default function recordingReducer(state = initialState.recording, action)
     }
 
     case Types.EDIT_RULE_RECORDING: {
-      const entireState = window.editorStore.getState();
-      const stage = getCurrentStage(entireState);
       const {characterId, rule} = action;
+
+      const {world} = window.editorStore.getState();
+      const stage = getCurrentStageForWorld(world);
       const offset = {
         x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
         y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
       };
-
-      const beforeStage = StageOperator(stage).resetForRule(rule, {offset, applyActions: false, id: 'before'});
-      const afterStage = StageOperator(stage).resetForRule(rule, {offset, applyActions: true, id: 'after'});
 
       return u({
         ruleId: rule.id,
@@ -113,10 +113,12 @@ export default function recordingReducer(state = initialState.recording, action)
         phase: RECORDING_PHASE_RECORD,
         actorId: rule.mainActorId,
         conditions: rule.conditions,
-        beforeStage: u.constant(beforeStage),
-        beforeGlobals: u.constant(rule.beforeGlobals),
-        afterStage: u.constant(afterStage),
-        afterGlobals: u.constant(rule.beforeGlobals), // APPLY GLOBALS HERE,
+        beforeWorld: worldByTransformingStage(world, WORLDS.BEFORE, (recordingStage) => {
+          return StageOperator(recordingStage).resetForRule(rule, {offset, applyActions: false});
+        }),
+        afterWorld: worldByTransformingStage(world, WORLDS.AFTER, (recordingStage) => {
+          return StageOperator(recordingStage).resetForRule(rule, {offset, applyActions: true});
+        }),
         extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
         prefs: {},
       }, nextState);
@@ -130,9 +132,7 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.START_RECORDING: {
       return u({
         phase: RECORDING_PHASE_RECORD,
-        afterStage: objectAssign(JSON.parse(JSON.stringify(nextState.beforeStage)), {
-          id: 'after',
-        }),
+        afterWorld: worldByCloningWorld(nextState.beforeWorld, WORLDS.BEFORE),
       }, nextState);
     }
     case Types.UPDATE_RECORDING_CONDITION: {
@@ -157,8 +157,9 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.SET_RECORDING_EXTENT: {
       // find the primary actor, make sure the extent still includes it
       const extent = objectAssign({}, action.extent);
-      for (const astage of [nextState.beforeStage, nextState.afterStage]) {
-        const mainActor = Object.values(astage.actors || {}).find(a => a.id === nextState.actorId);
+      for (const world of [nextState.beforeWorld, nextState.afterWorld]) {
+        const stage = getCurrentStageForWorld(world);
+        const mainActor = Object.values(stage.actors || {}).find(a => a.id === nextState.actorId);
         if (mainActor) {
           extent.xmin = Math.min(extent.xmin, mainActor.position.x);
           extent.ymin = Math.min(extent.ymin, mainActor.position.y);

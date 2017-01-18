@@ -7,13 +7,13 @@ import StageRecordingControls from './stage-recording-controls';
 import RecordingActions from './recording/panel-actions';
 import RecordingConditions from './recording/panel-conditions';
 
-import {getCurrentStage} from '../../utils/selectors';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
+import {getCurrentStageForWorld} from '../../utils/selectors';
 
 
 class StageContainer extends React.Component {
   static propTypes = {
-    stage: PropTypes.object,
+    world: PropTypes.object,
     characters: PropTypes.object,
     recording: PropTypes.object,
     playback: PropTypes.object,
@@ -21,7 +21,7 @@ class StageContainer extends React.Component {
   };
 
   render() {
-    const {stage, recording, playback, dispatch, characters} = this.props;
+    const {world, recording, playback, dispatch, characters} = this.props;
 
     let stageA = null;
     let stageB = null;
@@ -40,7 +40,8 @@ class StageContainer extends React.Component {
       if (recording.phase === RECORDING_PHASE_SETUP) {
         stageA = (
           <Stage
-            stage={recording.beforeStage}
+            world={recording.beforeWorld}
+            stage={getCurrentStageForWorld(recording.beforeWorld)}
             recordingExtent={recording.extent}
           />
         );
@@ -48,7 +49,8 @@ class StageContainer extends React.Component {
         stageA = (
           <Stage
             style={{marginRight: 2}}
-            stage={recording.beforeStage}
+            world={recording.beforeWorld}
+            stage={getCurrentStageForWorld(recording.beforeWorld)}
             recordingExtent={recording.extent}
             recordingCentered
           />
@@ -56,7 +58,8 @@ class StageContainer extends React.Component {
         stageB = (
           <Stage
             style={{marginLeft: 2}}
-            stage={recording.afterStage}
+            world={recording.afterWorld}
+            stage={getCurrentStageForWorld(recording.afterWorld)}
             recordingExtent={recording.extent}
             recordingCentered
           />
@@ -68,9 +71,7 @@ class StageContainer extends React.Component {
             </div>
             <RecordingConditions
               characters={characters}
-              conditions={recording.conditions}
-              stage={recording.beforeStage}
-              extent={recording.extent}
+              recording={recording}
               dispatch={dispatch}
             />
             <RecordingActions
@@ -86,11 +87,11 @@ class StageContainer extends React.Component {
     return ( 
       <div className="panel stages">
         <div className="stages-horizontal-flex">
-          {stageA || <Stage stage={stage} recording={null} />}
+          {stageA || <Stage world={world} stage={getCurrentStageForWorld(world)} recording={null} />}
           {stageB || <Stage style={{flex: 0}} />}
         </div>
         {actions || <div className="recording-specifics" style={{height: 0}} />}
-        {controls || <StageControls {...playback} dispatch={dispatch} stage={stage} />}
+        {controls || <StageControls {...playback} dispatch={dispatch} world={world} />}
       </div>
     );
   }
@@ -101,7 +102,7 @@ function mapStateToProps(state) {
     recording: state.recording,
     characters: state.characters,
     playback: state.ui.playback,
-    stage: getCurrentStage(state),
+    world: state.world,
   });
 }
 

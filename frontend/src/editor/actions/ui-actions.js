@@ -7,10 +7,10 @@ export function selectToolId(toolId) {
   };
 }
 
-export function selectStageId(stageId) {
+export function selectStageId(worldId, stageId) {
   return {
     type: types.SELECT_STAGE_ID,
-    stageId,
+    worldId, stageId,
   };
 }
 

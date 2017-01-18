@@ -31,7 +31,6 @@ export default class ScenarioStage extends React.Component {
     const ruleStage = StageOperator({actors: {}}).resetForRule(rule, {
       applyActions,
       offset: {x: -xmin, y: -ymin},
-      id: 'rule',
     });
     
     return (

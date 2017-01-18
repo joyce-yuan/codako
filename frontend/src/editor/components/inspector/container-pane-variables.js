@@ -5,6 +5,7 @@ import {changeCharacter, deleteCharacterVariable} from '../../actions/characters
 import VariableGridItem from './variable-grid-item';
 import {selectToolId} from '../../actions/ui-actions';
 import {TOOL_TRASH, TOOL_POINTER} from '../../constants/constants';
+import * as CustomPropTypes from '../../constants/custom-prop-types';
 
 function coerceToType(value, type) {
   if (type === 'number') {
@@ -19,7 +20,7 @@ export default class ContainerPaneVariables extends React.Component {
     character: PropTypes.object,
     actor: PropTypes.object,
     world: PropTypes.object,
-    selectedActorPath: PropTypes.string,
+    selectedActorPath: CustomPropTypes.WorldSelection,
     dispatch: PropTypes.func,
   };
 
@@ -50,12 +51,11 @@ export default class ContainerPaneVariables extends React.Component {
 
   _onChangeVarValue = (id, value) => {
     const {dispatch, selectedActorPath} = this.props;
-    if (!selectedActorPath) {
+    if (!selectedActorPath.actorId) {
       this._onChangeVarDefinition(id, {defaultValue: value});
       return;
     }
-    const [stageId, actorId] = selectedActorPath.split(':');
-    dispatch(changeActor(stageId, actorId, {
+    dispatch(changeActor(selectedActorPath, {
       variableValues: {
         [id]: value,
       },

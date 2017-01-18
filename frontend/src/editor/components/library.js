@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import classNames from 'classnames';
 import {Button} from 'reactstrap';
 
+import {nullActorPath} from '../utils/stage-helpers';
 import {TOOL_POINTER, TOOL_TRASH} from '../constants/constants';
 
 import {
@@ -105,7 +106,7 @@ class Library extends React.Component {
         dispatch(selectToolId(TOOL_POINTER));
       }
     } else {
-      dispatch(select(characterId, null));
+      dispatch(select(characterId, nullActorPath()));
     }
   }
 

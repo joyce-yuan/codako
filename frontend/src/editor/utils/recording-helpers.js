@@ -1,4 +1,5 @@
-import {getVariableValue, pointIsOutside, createdActorsForRecording} from '../utils/stage-helpers';
+import {getVariableValue, pointIsOutside, pointIsInside} from '../utils/stage-helpers';
+import {getCurrentStageForWorld} from '../utils/selectors';
 
 export function defaultOperationForVariableChange(before, after) {
   if (after === before + 1) {
@@ -65,7 +66,10 @@ export function actionsForVariables({beforeActor, afterActor, character, prefs})
 }
 
 
-export function actionsForRecording({beforeStage, afterStage, extent, prefs}, {characters}) {
+export function actionsForRecording({beforeWorld, afterWorld, extent, prefs}, {characters}) {
+  const beforeStage = getCurrentStageForWorld(beforeWorld);
+  const afterStage = getCurrentStageForWorld(afterWorld);
+
   if (!beforeStage.actors || !afterStage.actors) {
     return [];
   }
@@ -108,7 +112,7 @@ export function actionsForRecording({beforeStage, afterStage, extent, prefs}, {c
     }
   });
 
-  createdActorsForRecording({beforeStage, afterStage, extent}).forEach((actor) => {
+  createdActorsForRecording({beforeWorld, afterWorld, extent}).forEach((actor) => {
     actions.push({
       actorId: actor.id,
       type: 'create',
@@ -124,3 +128,16 @@ export function actionsForRecording({beforeStage, afterStage, extent, prefs}, {c
   return actions;
 }
 
+
+export function createdActorsForRecording({beforeWorld, afterWorld, extent}) {
+  const beforeStage = getCurrentStageForWorld(beforeWorld);
+  const afterStage = getCurrentStageForWorld(afterWorld);
+
+  const beforeIds = Object.keys(beforeStage.actors);
+  const afterIds = Object.keys(afterStage.actors);
+  const createdIds = afterIds.filter(id => !beforeIds.includes(id));
+
+  return createdIds.map((id) => afterStage.actors[id]).filter(a => 
+    pointIsInside(a.position, extent)
+  );
+}
