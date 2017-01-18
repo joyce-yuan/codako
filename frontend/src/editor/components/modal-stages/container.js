@@ -50,7 +50,8 @@ class Container extends React.Component {
   }
 
   _onAddStage = () => {
-    this.props.dispatch(createStage(WORLDS.ROOT));
+    const name = `Stage ${this.props.stagesArray.length + 1}`;
+    this.props.dispatch(createStage(WORLDS.ROOT, name));
   }
 
   _onRemoveStage = () => {

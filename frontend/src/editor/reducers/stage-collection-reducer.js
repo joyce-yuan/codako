@@ -15,7 +15,7 @@ export default function stageCollectionReducer(state, action) {
 
   switch (action.type) {
     case Types.CREATE_STAGE: {
-      nextState[action.stageId] = objectAssign({}, initialStateStage, {id: action.stageId});
+      nextState[action.stageId] = objectAssign({}, initialStateStage, {id: action.stageId, name: action.stageName});
       return nextState;
     }
     case Types.DELETE_STAGE_ID: {

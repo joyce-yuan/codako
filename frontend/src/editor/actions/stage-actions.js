@@ -5,13 +5,14 @@ import {selectStageId} from './ui-actions';
 
 // stage collection actions
 
-export function createStage(worldId) {
+export function createStage(worldId, stageName) {
   const stageId =  `${Date.now()}`;
   return (dispatch) => {
     dispatch({
       type: types.CREATE_STAGE,
       worldId,
       stageId,
+      stageName,
     });
     dispatch(selectStageId(stageId));
   };
