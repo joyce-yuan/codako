@@ -1,3 +1,4 @@
+/* eslint no-param-reassign: 0 */
 import * as Types from '../constants/action-types';
 import u from 'updeep';
 

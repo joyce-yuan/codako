@@ -57,9 +57,11 @@ export function fetchStages() {
 
 export function deleteStage(id) {
   return function(dispatch) {
-    makeRequest(`/stages/${id}`, {method: 'DELETE'}).then(() => {
-      dispatch(fetchStages());
-    });
+    if (window.confirm("Are you sure you want to delete this world? This action cannot be undone.")) {
+      makeRequest(`/stages/${id}`, {method: 'DELETE'}).then(() => {
+        dispatch(fetchStages());
+      });
+    }
   };
 }
 
