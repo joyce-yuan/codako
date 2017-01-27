@@ -1,12 +1,6 @@
 {
   "id": "5233a60cfd685f755e000002",
-  "evaluatedRuleIds": {},
-  "input": {
-    "keys": {},
-    "clicks": {}
-  },
   "name": "Stage 1",
-  "history": [],
   "actors": {},
   "background": "url(/editor/img/backgrounds/Layer0_2.png)",
   "width": 20,

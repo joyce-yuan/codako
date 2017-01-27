@@ -18,7 +18,6 @@ class Container extends React.Component {
     actor: PropTypes.object,
     characters: PropTypes.object,
     character: PropTypes.object,
-    evaluatedRuleIds: PropTypes.object,
     selectedActorPath: CustomPropTypes.WorldSelection,
     selectedToolId: PropTypes.string,
   };
@@ -40,7 +39,7 @@ class Container extends React.Component {
     return {
       characters: this.props.characters,
       selectedToolId: this.props.selectedToolId,
-      evaluatedRuleIds: this.props.evaluatedRuleIds,
+      evaluatedRuleIds: this.props.world.evaluatedRuleIds,
     };
   }
 
@@ -116,7 +115,6 @@ function mapStateToProps({world, ui, characters, recording}) {
     character: characters[ui.selectedCharacterId],
     selectedToolId: ui.selectedToolId,
     selectedActorPath: ui.selectedActorPath,
-    evaluatedRuleIds: focusedStage.evaluatedRuleIds,
 });
 }
 

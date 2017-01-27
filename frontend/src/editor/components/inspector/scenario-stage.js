@@ -1,10 +1,11 @@
 import React, {PropTypes} from 'react';
 
 import {STAGE_CELL_SIZE} from '../../constants/constants';
-import StageOperator from '../../utils/stage-operator';
+import WorldOperator from '../../utils/world-operator';
 import ActorSprite from '../sprites/actor-sprite';
 
 import {extentIgnoredPositions} from '../../utils/recording-helpers';
+import {getCurrentStageForWorld} from '../../utils/selectors';
 import RecordingIgnoredSprite from '../sprites/recording-ignored-sprite';
 
 export default class ScenarioStage extends React.Component {
@@ -21,17 +22,18 @@ export default class ScenarioStage extends React.Component {
 
   render() {
     const {rule, applyActions, maxWidth, maxHeight} = this.props;
-    const {characters} = this.context;
+    const {world, characters} = window.editorStore.getState();
 
     const {xmin, xmax, ymin, ymax} = rule.extent;
     const width = (xmax - xmin + 1) * STAGE_CELL_SIZE;
     const height = (ymax - ymin + 1) * STAGE_CELL_SIZE;
     const zoom = Math.min(maxWidth / width, maxHeight / height, 1);
 
-    const ruleStage = StageOperator({actors: {}}).resetForRule(rule, {
+    const ruleWorld = WorldOperator(world).resetForRule(rule, {
       applyActions,
       offset: {x: -xmin, y: -ymin},
     });
+    const ruleStage = getCurrentStageForWorld(ruleWorld);
     
     return (
       <div className="scenario-stage" style={{width, height, zoom}}>

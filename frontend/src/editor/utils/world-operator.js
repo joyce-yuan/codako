@@ -1,14 +1,20 @@
 import objectAssign from 'object-assign';
 import {shuffleArray, getVariableValue, applyVariableOperation, pointByAdding} from './stage-helpers';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
+import {getCurrentStageForWorld} from '../utils/selectors';
+import u from 'updeep';
 
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export default function StageOperator(previousStage) {
+export default function WorldOperator(previousWorld) {
   let characters = null;
   let stage = null;
+  let globals = null;
+  let actors = null;
+  let input = null;
+  let evaluatedRuleIds = {};
 
   function wrappedPosition({x, y}) {
     const o = {
@@ -58,14 +64,14 @@ export default function StageOperator(previousStage) {
     if (!position) {
       return null;
     }
-    return Object.values(stage.actors).filter((a) =>
+    return Object.values(actors).filter((a) =>
       a.position.x === position.x && a.position.y === position.y
     );
   }
 
   function ActorOperator(me) {
     function tickAllRules() {
-      const {characterId} = stage.actors[me.id];
+      const {characterId} = actors[me.id];
       const struct = characters[characterId];
       tickRulesTree(struct);
     }
@@ -79,14 +85,14 @@ export default function StageOperator(previousStage) {
 
       for (const rule of rules) {
         const applied = tickRule(rule);
-        stage.evaluatedRuleIds[rule.id] = applied;
-        stage.evaluatedRuleIds[struct.id] = applied;
+        evaluatedRuleIds[rule.id] = applied;
+        evaluatedRuleIds[struct.id] = applied;
         if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
           break;
         }
       }
 
-      return stage.evaluatedRuleIds[struct.id];
+      return evaluatedRuleIds[struct.id];
     }
 
     function tickRule(rule) {
@@ -103,10 +109,10 @@ export default function StageOperator(previousStage) {
 
     function checkEvent(trigger) {
       if (trigger.event === 'key') {
-        return (stage.input.keys[trigger.code]);
+        return (input.keys[trigger.code]);
       }
       if (trigger.event === 'click') {
-        return (stage.input.clicks[me.id]);
+        return (input.clicks[me.id]);
       }
       if (trigger.event === 'idle') {
         return true;
@@ -152,7 +158,7 @@ export default function StageOperator(previousStage) {
       for (const action of rule.actions) {
         if (action.type === 'create') {
           const nextID = Date.now();
-          stage.actors[nextID] = objectAssign(deepClone(action.actor), {
+          actors[nextID] = objectAssign(deepClone(action.actor), {
             id: nextID,
             position: wrappedPosition(pointByAdding(me.position, action.offset)),
             variableValues: {},
@@ -175,7 +181,7 @@ export default function StageOperator(previousStage) {
           if (action.type === 'move') {
             stageActor.position = wrappedPosition(pointByAdding(stageActor.position, action.delta));
           } else if (action.type === 'delete') {
-            delete stage.actors[stageActor.id];
+            delete actors[stageActor.id];
           } else if (action.type === 'appearance') {
             stageActor.appearance = action.to;
           } else if (action.type === 'variable') {
@@ -195,13 +201,16 @@ export default function StageOperator(previousStage) {
     };
   }
 
-  function resetForRule(rule, {applyActions, offset}) {
+  function resetForRule(rule, {offset, applyActions}) {
+    // read-only things
     characters = window.editorStore.getState().characters;
-    stage = deepClone(previousStage);
-    stage.actors = {};
+    stage = getCurrentStageForWorld(previousWorld);
 
+    // mutable things
+    globals = deepClone(previousWorld.globals);
+    actors = {};
     for (const actor of Object.values(rule.actors)) {
-      stage.actors[actor.id] = objectAssign(deepClone(actor), {
+      actors[actor.id] = objectAssign(deepClone(actor), {
         position: pointByAdding(actor.position, offset),
       });
     }
@@ -209,31 +218,75 @@ export default function StageOperator(previousStage) {
     // lay out the before state and apply any rules that apply to
     // the actors currently on the board
     if (applyActions && rule.actions) {
-      ActorOperator(stage.actors[rule.mainActorId]).applyRule(rule);
+      ActorOperator(actors[rule.mainActorId]).applyRule(rule);
     }
 
-    return stage;
+    return u({
+      globals: u.constant(globals),
+      stages: {
+        [stage.id]: {
+          actors: u.constant(actors),
+        },
+      },
+    }, previousWorld);
   }
 
   function tick() {
+    // read-only things
     characters = window.editorStore.getState().characters;
-    stage = deepClone(previousStage);
-    stage.evaluatedRuleIds = {};
+    stage = getCurrentStageForWorld(previousWorld);
+    input = previousWorld.input;
+    
+    const historyItem = {
+      input: previousWorld.input,
+      globals: previousWorld.globals,
+      evaluatedRuleIds: previousWorld.evaluatedRuleIds,
+      stages: {
+        [stage.id]: {
+          actors: stage.actors,
+        }
+      },
+    };
 
-    Object.values(stage.actors).forEach(actor =>
+    // mutable things
+    globals = deepClone(previousWorld.globals);
+    actors = deepClone(stage.actors);
+    evaluatedRuleIds = {};
+
+    Object.values(actors).forEach(actor =>
       ActorOperator(actor).tickAllRules()
     );
 
-    stage.input = {
-      keys: {},
-      clicks: {},
-    };
+    return u({
+      input: {
+        keys: {},
+        clicks: {},
+      },
+      stages: {
+        [stage.id]: {
+          actors: u.constant(actors),
+        }
+      },
+      globals: u.constant(globals),
+      evaluatedRuleIds: u.constant(evaluatedRuleIds),
+      history: (values) => [].concat(values.slice(values.length - 20), [historyItem]),
+    }, previousWorld);
+  }
 
-    return stage;
+  function untick() {
+    const history = previousWorld.history;
+    const historyItem = history[history.length - 1];
+    if (!historyItem) {
+      return previousWorld;
+    }
+    return u(historyItem, u({
+      history: history.slice(0, history.length - 1),
+    }, previousWorld));
   }
 
   return {
-    resetForRule,
     tick,
+    untick,
+    resetForRule,
   };
 }

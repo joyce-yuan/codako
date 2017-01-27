@@ -4,30 +4,37 @@ import worldReducer from './world-reducer';
 import initialState from './initial-state';
 import u from 'updeep';
 
-import StageOperator from '../utils/stage-operator';
+import WorldOperator from '../utils/world-operator';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD, WORLDS} from '../constants/constants';
 import {getCurrentStageForWorld} from '../utils/selectors';
 import {extentByShiftingExtent} from '../utils/recording-helpers';
 
-// helpers for creating recording worlds
 
-function worldByCloningWorld(world, newId) {
-  const clone = JSON.parse(JSON.stringify(world));
-  return u.constant(u({id: newId}, clone));
-}
-
-function worldByTransformingStage(world, newId, callback) {
+function stateForEditingRule(phase, rule) {
+  const {world} = window.editorStore.getState();
   const stage = getCurrentStageForWorld(world);
-  const clone = JSON.parse(JSON.stringify(world));
 
-  return u.constant(u({
-    id: newId,
-    stages: {
-      [stage.id]: u.constant(callback(clone.stages[stage.id]))
-    },
-  }, clone));
+  const offset = {
+    x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
+    y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
+  };
+
+  return {
+    ruleId: rule.id,
+    characterId: rule.actors[rule.mainActorId].characterId,
+    phase: phase,
+    actorId: rule.mainActorId,
+    conditions: u.constant(rule.conditions),
+    beforeWorld: u.constant(
+      WorldOperator(u({id: WORLDS.BEFORE}, world)).resetForRule(rule, {offset, applyActions: false})
+    ),
+    afterWorld: u.constant(
+      WorldOperator(u({id: WORLDS.AFTER}, world)).resetForRule(rule, {offset, applyActions: true})
+    ),
+    extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
+    prefs: u.constant({}),
+  };
 }
-
 
 export default function recordingReducer(state = initialState.recording, action) {
   const nextState = objectAssign({}, state, {
@@ -38,90 +45,48 @@ export default function recordingReducer(state = initialState.recording, action)
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
       const {world} = window.editorStore.getState();
-      const {characterId, actor} = action;
+      const {actor} = action;
       return u({
+        ruleId: null,
+        characterId: actor.characterId,
         phase: RECORDING_PHASE_SETUP,
         actorId: actor.id,
-        characterId,
-        conditions: u.constant({
-          [actor.id]: {},
-        }),
-        beforeWorld: worldByCloningWorld(world, WORLDS.BEFORE),
-        afterWorld: worldByCloningWorld(world, WORLDS.AFTER),
-        extent: {
+        conditions: u.constant({[actor.id]: []}),
+        beforeWorld: u.constant(u({id: WORLDS.BEFORE}, world)),
+        afterWorld: u.constant(u({id: WORLDS.AFTER}, world)),
+        extent: u.constant({
           xmin: actor.position.x,
           xmax: actor.position.x,
           ymin: actor.position.y,
           ymax: actor.position.y,
           ignored: {},
-        },
+        }),
+        prefs: u.constant({}),
       }, nextState);
     }
-
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
-      const {characters, world} = window.editorStore.getState();
+      const {characters} = window.editorStore.getState();
       const character = characters[action.characterId];
-      const stage = getCurrentStageForWorld(world);
-      const cx = Math.floor(stage.width / 2);
-      const cy = Math.floor(stage.height / 2);
 
-      const resetActorsToDude = (recordingStage) => {
-        return u({
-          actors: u.constant({
-            dude: {
-              id: 'dude',
-              variableValues: {},
-              appearance: Object.keys(character.spritesheet.appearances)[0],
-              characterId: action.characterId,
-              position: {x: cx, y: cy},
-            },
-          }),
-        }, recordingStage);
-      };
-
-      return u({
-        ruleId: null,
-        actorId: 'dude',
-        phase: RECORDING_PHASE_SETUP,
-        characterId: action.characterId,
-        conditions: u.constant({}),
-        beforeWorld: worldByTransformingStage(world, WORLDS.BEFORE, resetActorsToDude),
-        afterWorld: worldByTransformingStage(world, WORLDS.AFTER, resetActorsToDude),
-        extent: {
-          xmin: cx,
-          xmax: cx,
-          ymin: cy,
-          ymax: cy,
+      const initialRule = {
+        mainActorId: 'dude',
+        actions: [],
+        conditions: {dude: []},
+        extent: {xmin: 0, ymin: 0, xmax: 0, ymax: 0, ignored: {}},
+        actors: {
+          dude: {
+            id: 'dude',
+            variableValues: {},
+            appearance: Object.keys(character.spritesheet.appearances)[0],
+            characterId: action.characterId,
+            position: {x: 0, y: 0},
+          },
         },
-        prefs: {},
-      }, nextState);
-    }
-
-    case Types.EDIT_RULE_RECORDING: {
-      const {characterId, rule} = action;
-
-      const {world} = window.editorStore.getState();
-      const stage = getCurrentStageForWorld(world);
-      const offset = {
-        x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
-        y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
       };
-
-      return u({
-        ruleId: rule.id,
-        characterId,
-        phase: RECORDING_PHASE_RECORD,
-        actorId: rule.mainActorId,
-        conditions: rule.conditions,
-        beforeWorld: worldByTransformingStage(world, WORLDS.BEFORE, (recordingStage) => {
-          return StageOperator(recordingStage).resetForRule(rule, {offset, applyActions: false});
-        }),
-        afterWorld: worldByTransformingStage(world, WORLDS.AFTER, (recordingStage) => {
-          return StageOperator(recordingStage).resetForRule(rule, {offset, applyActions: true});
-        }),
-        extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
-        prefs: {},
-      }, nextState);
+      return u(stateForEditingRule(RECORDING_PHASE_SETUP, initialRule), nextState);
+    }
+    case Types.EDIT_RULE_RECORDING: {
+      return u(stateForEditingRule(RECORDING_PHASE_RECORD, action.rule), nextState);
     }
     case Types.FINISH_RECORDING: {
       return objectAssign({}, initialState.recording);
@@ -132,7 +97,7 @@ export default function recordingReducer(state = initialState.recording, action)
     case Types.START_RECORDING: {
       return u({
         phase: RECORDING_PHASE_RECORD,
-        afterWorld: worldByCloningWorld(nextState.beforeWorld, WORLDS.BEFORE),
+        afterWorld: u.constant(u({id: WORLDS.AFTER}, nextState.beforeWorld)),
       }, nextState);
     }
     case Types.UPDATE_RECORDING_CONDITION: {

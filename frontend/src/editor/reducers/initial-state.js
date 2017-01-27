@@ -28,7 +28,14 @@ export default {
         value: 0,
         type: "number",
       },
-    }
+    },
+    input: {
+      keys: {},
+      clicks: {}
+    },
+
+    history: [],
+    evaluatedRuleIds: {},
   },
   undoStack: [],
   redoStack: [],

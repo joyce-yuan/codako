@@ -66,7 +66,7 @@ export default class StageControls extends React.Component {
 
   render() {
     const {speed, dispatch, running, world} = this.props;
-    const {startThumbnail, history} = getCurrentStageForWorld(world);
+    const {startThumbnail} = getCurrentStageForWorld(world);
 
     return (
       <div className="stage-controls">
@@ -95,7 +95,7 @@ export default class StageControls extends React.Component {
         <div className="center" data-tutorial-id="controls">
           <Button
             size="sm"
-            disabled={history && history.length === 0}
+            disabled={world.history && world.history.length === 0}
             onClick={() => dispatch(stepBackGameState(world.id))}
           >
             <i className="fa fa-step-backward" /> Back
