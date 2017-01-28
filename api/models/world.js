@@ -1,12 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
-  const Stage = sequelize.define('stage', {
+  const World = sequelize.define('world', {
     name: Sequelize.STRING,
     thumbnail: Sequelize.STRING,
     data: Sequelize.BLOB,
   }, {
     classMethods: {
       associate: ({User}) => {
-        Stage.belongsTo(User, {
+        World.belongsTo(User, {
           onDelete: "CASCADE",
           foreignKey: {
             allowNull: false,
@@ -28,5 +28,5 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return Stage;
+  return World;
 };

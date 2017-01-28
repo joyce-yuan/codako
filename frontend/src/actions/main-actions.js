@@ -47,35 +47,35 @@ export function login({username, password}, redirectTo) {
   };
 }
 
-export function fetchStages() {
+export function fetchWorlds() {
   return function(dispatch) {
-    makeRequest('/stages').then((stages) => {
-      dispatch({type: types.STAGES_CHANGED, stages});
+    makeRequest('/worlds').then((worlds) => {
+      dispatch({type: types.WORLDS_CHANGED, worlds});
     });
   };
 }
 
-export function deleteStage(id) {
+export function deleteWorld(id) {
   return function(dispatch) {
     if (window.confirm("Are you sure you want to delete this world? This action cannot be undone.")) {
-      makeRequest(`/stages/${id}`, {method: 'DELETE'}).then(() => {
-        dispatch(fetchStages());
+      makeRequest(`/worlds/${id}`, {method: 'DELETE'}).then(() => {
+        dispatch(fetchWorlds());
       });
     }
   };
 }
 
-export function duplicateStage(id) {
+export function duplicateWorld(id) {
   return function(dispatch) {
-    makeRequest(`/stages/${id}/duplicate`, {method: 'POST'}).then(() => {
-      dispatch(fetchStages());
+    makeRequest(`/worlds/${id}/duplicate`, {method: 'POST'}).then(() => {
+      dispatch(fetchWorlds());
     });
   };
 }
 
-export function createStage() {
+export function createWorld() {
   return function(dispatch) {
-    makeRequest(`/stages`, {method: 'POST'}).then((created) => {
+    makeRequest(`/worlds`, {method: 'POST'}).then((created) => {
       dispatch(push(`/editor/${created.id}`));
     });
   };

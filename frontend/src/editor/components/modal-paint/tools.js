@@ -183,7 +183,7 @@ class PixelSelectionTool extends PixelTool {
     };
   }
 
-  selectionPixelsForProps(props) {
+  selectionPixelsForProps() {
     // override in subclasses
   }
 

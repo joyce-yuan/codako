@@ -2,10 +2,10 @@ import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Container, Row, Col} from 'reactstrap';
-import {fetchStages, deleteStage, duplicateStage, createStage} from '../actions/main-actions';
+import {fetchWorlds, deleteWorld, duplicateWorld, createWorld} from '../actions/main-actions';
 import timeago from 'timeago.js';
 
-class StageOptionsMenu extends React.Component {
+class WorldOptionsMenu extends React.Component {
   static propTypes = {
     onDuplicate: PropTypes.func,
     onDelete: PropTypes.func,
@@ -29,42 +29,42 @@ class StageOptionsMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu right>
           <DropdownItem onClick={this.props.onDuplicate}>
-            Duplicate Stage
+            Duplicate World
           </DropdownItem>
           <DropdownItem divider />
           <DropdownItem onClick={this.props.onDelete}>
-            Delete Stage
+            Delete World
           </DropdownItem>
         </DropdownMenu>
       </ButtonDropdown>
     );
   }
 }
-class StageCard extends React.Component {
+class WorldCard extends React.Component {
   static propTypes = {
-    stage: PropTypes.object,
+    world: PropTypes.object,
     onDuplicate: PropTypes.func,
     onDelete: PropTypes.func,
   };
   
   render() {
-    const {stage} = this.props;
+    const {world} = this.props;
 
     return (
-      <div className="card stage-card">
-        <Link to={`/editor/${stage.id}`}>
-          <img className="card-img-top stage-thumbnail" src={stage.thumbnail} />
+      <div className="card world-card">
+        <Link to={`/editor/${world.id}`}>
+          <img className="card-img-top world-thumbnail" src={world.thumbnail} />
         </Link>
         <div className="card-block">
-          <StageOptionsMenu
+          <WorldOptionsMenu
             onDuplicate={this.props.onDuplicate}
             onDelete={this.props.onDelete}
           />
-          <Link to={`/editor/${stage.id}`}>
-            <h4 className="card-title">{stage.name}</h4>
+          <Link to={`/editor/${world.id}`}>
+            <h4 className="card-title">{world.name}</h4>
           </Link>
           <small className="card-text text-muted">
-            Last updated {new timeago().format(stage.updatedAt)}
+            Last updated {new timeago().format(world.updatedAt)}
           </small>
         </div>
       </div>
@@ -72,34 +72,40 @@ class StageCard extends React.Component {
   }
 }
 
-class StageList extends React.Component {
+class WorldList extends React.Component {
   static propTypes = {
-    stages: PropTypes.array,
-    onDuplicateStage: PropTypes.func,
-    onDeleteStage: PropTypes.func,
+    worlds: PropTypes.array,
+    onDuplicateWorld: PropTypes.func,
+    onDeleteWorld: PropTypes.func,
   };
 
   render() {
-    const {stages, onDeleteStage, onDuplicateStage} = this.props;
+    const {worlds, onDeleteWorld, onDuplicateWorld} = this.props;
+    
+    let msg = null;
+    if (!worlds) {
+      msg = "Loading...";
+    }
+    if (worlds.length === 0) {
+      msg = "Create your first world to get started!";
+    }
 
-    if (!stages) {
+    if (msg) {
       return (
         <Container>
-          <p>
-            Loading...
-          </p>
+          <p>{msg}</p>
         </Container>
       );
     }
 
     return (
-      <div className="stage-list">
-        {stages.map((s) =>
-          <StageCard
+      <div className="world-list">
+        {worlds.map((s) =>
+          <WorldCard
             key={s.id}
-            stage={s}
-            onDuplicate={() => onDuplicateStage(s)}
-            onDelete={() => onDeleteStage(s)}
+            world={s}
+            onDuplicate={() => onDuplicateWorld(s)}
+            onDelete={() => onDeleteWorld(s)}
           />
         )}
       </div>
@@ -110,7 +116,7 @@ class StageList extends React.Component {
 class DashboardPage extends React.Component {
   static propTypes = {
     user: PropTypes.object,
-    stages: PropTypes.array,
+    worlds: PropTypes.array,
     dispatch: PropTypes.func,
   };
 
@@ -119,12 +125,12 @@ class DashboardPage extends React.Component {
   }
 
   componentDidMount() {
-    // for now, always fetch stages again when the dashboard is loaded.
-    this.props.dispatch(fetchStages());
+    // for now, always fetch worlds again when the dashboard is loaded.
+    this.props.dispatch(fetchWorlds());
   }
 
   render() {
-    const {user, stages, dispatch} = this.props;
+    const {user, worlds, dispatch} = this.props;
     return (
       <Container style={{marginTop: 30}} className="dashboard">
         <Row>
@@ -139,16 +145,16 @@ class DashboardPage extends React.Component {
                 size="sm"
                 color="success"
                 className="float-xs-right"
-                onClick={() => dispatch(createStage())}
+                onClick={() => dispatch(createWorld())}
               >
-                New Stage
+                New World
               </Button>
-              <h5>My Stages</h5>
+              <h5>My Worlds</h5>
               <hr/>
-              <StageList
-                stages={stages}
-                onDeleteStage={(s) => dispatch(deleteStage(s.id))}
-                onDuplicateStage={(s) => dispatch(duplicateStage(s.id))}
+              <WorldList
+                worlds={worlds}
+                onDeleteWorld={(s) => dispatch(deleteWorld(s.id))}
+                onDuplicateWorld={(s) => dispatch(duplicateWorld(s.id))}
               />
             </div>
           </Col>
@@ -161,7 +167,7 @@ class DashboardPage extends React.Component {
 function mapStateToProps(state) {
   return {
     user: state.user,
-    stages: state.stages,
+    worlds: state.worlds,
   };
 }
 

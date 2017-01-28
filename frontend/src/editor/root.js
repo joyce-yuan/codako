@@ -51,8 +51,8 @@ export default class EditorRoot extends React.Component {
   }
 
   loadStage = () => {
-    return makeRequest(`/stages/${this.props.stageId}/state`).then((savedState) => {
-      const state = u(savedState, initialState);
+    return makeRequest(`/stages/${this.props.stageId}/data`).then((savedData) => {
+      const state = u(savedData, initialState);
       const editorStore = window.editorStore = configureStore(state);
       editorStore.subscribe(this._onSaveDebounced);
       this.setState({editorStore, loaded: true});
@@ -95,11 +95,11 @@ export default class EditorRoot extends React.Component {
       stages: u.map({history: u.constant([])}),
     }, this.state.editorStore.getState());
 
-    makeRequest(`/stages/${this.props.stageId}`, {
+    makeRequest(`/worlds/${this.props.stageId}`, {
       method: 'PUT',
       json: {
         thumbnail: getStageScreenshot(getCurrentStage(savedState)),
-        state: savedState,
+        data: savedState,
       },
     }).then(() => {
       this.setState({saving: false});

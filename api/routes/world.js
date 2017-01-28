@@ -2,61 +2,61 @@ const Joi = require('joi');
 const db = require('../database');
 const Boom = require('boom');
 
-const StageShape = Joi.object().keys({
+const WorldShape = Joi.object().keys({
   name: Joi.string(),
   thumbnail: Joi.string(),
-  state: Joi.object(),
+  data: Joi.object(),
 });
 
 module.exports = (server) => {
   server.route({
     method: 'GET',
-    path: `/stages`,
+    path: `/worlds`,
     config: {
-      description: `stages`,
-      tags: ['stages'],
+      description: `worlds`,
+      tags: ['worlds'],
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
-      db.Stage.findAll({where: {userId: user.id}}).then((stages) => {
-        reply(stages.map(s => s.serialize()));
+      db.World.findAll({where: {userId: user.id}}).then((worlds) => {
+        reply(worlds.map(s => s.serialize()));
       });
     },
   });
 
   server.route({
     method: 'GET',
-    path: `/stages/{objectId}/state`,
+    path: `/worlds/{objectId}/data`,
     config: {
-      description: `stages`,
-      tags: ['stages'],
+      description: `worlds`,
+      tags: ['worlds'],
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
       const {objectId} = request.params;
-      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) => {
-        reply(JSON.parse(stage.data));
+      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) => {
+        reply(JSON.parse(world.data));
       });
     },
   });
 
   server.route({
     method: ['POST'],
-    path: `/stages`,
+    path: `/worlds`,
     config: {
-      description: `Create stage`,
-      tags: ['stages'],
+      description: `Create world`,
+      tags: ['worlds'],
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
-      db.Stage.create({
+      db.World.create({
         userId: user.id,
         name: "Untitled",
         data: "{}",
         thumbnail: '#',
       })
-      .then((stage) => {
-        reply(stage.serialize());
+      .then((world) => {
+        reply(world.serialize());
       })
       .catch((err) => {
         reply(Boom.badRequest(err.toString));
@@ -66,21 +66,21 @@ module.exports = (server) => {
 
   server.route({
     method: ['POST'],
-    path: `/stages/{objectId}/duplicate`,
+    path: `/worlds/{objectId}/duplicate`,
     config: {
-      description: `Duplicate a stage`,
-      tags: ['stages'],
+      description: `Duplicate a world`,
+      tags: ['worlds'],
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
       const {objectId} = request.params;
 
-      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) =>
-        db.Stage.create({
+      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) =>
+        db.World.create({
           userId: user.id,
-          name: `${stage.name} Copy`,
-          data: stage.data,
-          thumbnail: stage.thumbnail,
+          name: `${world.name} Copy`,
+          data: world.data,
+          thumbnail: world.thumbnail,
         })
         .then((clone) => {
           reply(clone.serialize());
@@ -94,24 +94,24 @@ module.exports = (server) => {
 
   server.route({
     method: ['PUT'],
-    path: `/stages/{objectId}`,
+    path: `/worlds/{objectId}`,
     config: {
-      description: `Update stage`,
-      tags: ['stages'],
+      description: `Update world`,
+      tags: ['worlds'],
       validate: {
-        payload: StageShape,
+        payload: WorldShape,
       },
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
       const {objectId} = request.params;
 
-      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) => {
-        stage.name = request.payload.name || stage.name;
-        stage.thumbnail = request.payload.thumbnail || stage.thumbnail;
-        stage.data = request.payload.state ? JSON.stringify(request.payload.state) : stage.data;
+      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) => {
+        world.name = request.payload.name || world.name;
+        world.thumbnail = request.payload.thumbnail || world.thumbnail;
+        world.data = request.payload.data ? JSON.stringify(request.payload.data) : world.data;
 
-        return stage.save().then((saved) => {
+        return world.save().then((saved) => {
           reply(saved.serialize());
         });
       })
@@ -123,10 +123,10 @@ module.exports = (server) => {
 
   server.route({
     method: 'DELETE',
-    path: `/stages/{objectId}`,
+    path: `/worlds/{objectId}`,
     config: {
-      description: `Delete stage`,
-      tags: ['stages'],
+      description: `Delete world`,
+      tags: ['worlds'],
       validate: {
         params: {
           objectId: Joi.number().integer(),
@@ -137,8 +137,8 @@ module.exports = (server) => {
       const {user} = request.auth.credentials;
       const {objectId} = request.params;
 
-      db.Stage.findOne({where: {userId: user.id, id: objectId}}).then((stage) =>
-        stage.destroy().then(() => {
+      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) =>
+        world.destroy().then(() => {
           reply({success: true});
         })
       ).catch((err) => {

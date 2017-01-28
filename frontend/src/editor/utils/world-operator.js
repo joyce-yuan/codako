@@ -73,7 +73,7 @@ export default function WorldOperator(previousWorld) {
     function tickAllRules() {
       const actor = actors[me.id];
       if (!actor) {
-        return;
+        return; // actor was deleted by another rule
       }
       const struct = characters[actor.characterId];
       tickRulesTree(struct);
