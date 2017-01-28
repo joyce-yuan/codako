@@ -71,8 +71,11 @@ export default function WorldOperator(previousWorld) {
 
   function ActorOperator(me) {
     function tickAllRules() {
-      const {characterId} = actors[me.id];
-      const struct = characters[characterId];
+      const actor = actors[me.id];
+      if (!actor) {
+        return;
+      }
+      const struct = characters[actor.characterId];
       tickRulesTree(struct);
     }
 
@@ -163,7 +166,7 @@ export default function WorldOperator(previousWorld) {
             position: wrappedPosition(pointByAdding(me.position, action.offset)),
             variableValues: {},
           });
-        } else {
+        } else if (action.actorId) {
           // find the actor on the stage that matches
           const actionActor = rule.actors[action.actorId];
           const actionActorConditions = rule.conditions[action.actorId];
@@ -191,6 +194,11 @@ export default function WorldOperator(previousWorld) {
           } else {
             throw new Error("Not sure how to apply action", action);
           }
+        } else if (action.type === 'global') {
+          const global = globals[action.global];
+          global.value = applyVariableOperation(global.value, action.operation, action.value);
+        } else {
+          throw new Error("Not sure how to apply action", action);
         }
       }
     }

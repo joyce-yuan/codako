@@ -61,7 +61,7 @@ class VariableRow extends React.Component {
         <div className="left">
           <ActorBlock character={character} actor={actor} />
           variable
-          <VariableBlock character={character} variableId={variableId} />
+          <VariableBlock name={character.variables[variableId].name} />
           is
           <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
             <option value="<">&lt;</option>

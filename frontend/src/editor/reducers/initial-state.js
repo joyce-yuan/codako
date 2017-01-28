@@ -80,10 +80,12 @@ export default {
     beforeWorld: {
       id: WORLDS.BEFORE,
       stages: {},
+      globals: {},
     },
     afterWorld: {
       id: WORLDS.AFTER,
       stages: {},
+      globals: {},
     },
   },
 };

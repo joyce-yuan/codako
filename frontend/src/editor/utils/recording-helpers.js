@@ -1,13 +1,24 @@
 import {getVariableValue, pointIsOutside, pointIsInside} from '../utils/stage-helpers';
 import {getCurrentStageForWorld} from '../utils/selectors';
 
-export function defaultOperationForVariableChange(before, after) {
+export function defaultOperationForValueChange(before, after) {
   if (after === before + 1) {
     return 'add';
   } else if (after === before - 1) {
     return 'subtract';
   }
   return 'set';
+}
+
+function operandForValueChange(before, after, op) {
+  if (op === 'add') {
+    return after - before;
+  } else if (op === 'set') {
+    return after;
+  } else if (op === 'subtract') {
+    return before - after;
+  }
+  throw new Error("Unknown op");
 }
 
 export function extentIgnoredPositions(extent) {
@@ -45,21 +56,35 @@ export function actionsForVariables({beforeActor, afterActor, character, prefs})
       continue;
     }
 
-    const op = prefs[vkey] || defaultOperationForVariableChange(before, after);
-    let value = null;
-    if (op === 'add') {
-      value = after - before;
-    } else if (op === 'set') {
-      value = after;
-    } else if (op === 'subtract') {
-      value = before - after;
-    }
+    const op = prefs[vkey] || defaultOperationForValueChange(before, after);
+
     actions.push({
       actorId: beforeActor.id,
       type: 'variable',
       operation: op,
       variable: vkey,
-      value: value,
+      value: operandForValueChange(before, after, op),
+    });
+  }
+  return actions;
+}
+
+export function actionsForGlobals({beforeGlobals, afterGlobals, prefs}) {
+  const actions = [];
+  for (const gkey of Object.keys(beforeGlobals)) {
+    const before = beforeGlobals[gkey].value;
+    const after = afterGlobals[gkey].value;
+    if (before === after) {
+      continue;
+    }
+
+    const op = prefs[gkey] || defaultOperationForValueChange(before, after);
+
+    actions.push({
+      type: 'global',
+      operation: op,
+      global: gkey,
+      value: operandForValueChange(before, after, op),
     });
   }
   return actions;
@@ -125,6 +150,12 @@ export function actionsForRecording({beforeWorld, afterWorld, extent, prefs}, {c
     }));
   });
   
+  actions.push(...actionsForGlobals({
+    beforeGlobals: beforeWorld.globals,
+    afterGlobals: afterWorld.globals,
+    prefs: prefs['globals'] || {},
+  }));
+
   return actions;
 }
 

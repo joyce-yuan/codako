@@ -11,6 +11,43 @@ import ActorPositionCanvas from './actor-position-canvas';
 import VariableBlock from './variable-block';
 import AppearanceBlock from './appearance-block';
 
+class VariableActionPicker extends React.Component {
+  static propTypes = {
+    operation: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    onChangeOperation: PropTypes.func,
+    onChangeValue: PropTypes.func,
+  }
+
+  render() {
+    const {operation, value, onChangeOperation, onChangeValue} = this.props;
+
+    return (
+      <span>
+        <select
+          value={operation}
+          className="variable-operation-select"
+          onChange={(e) => onChangeOperation(e.target.value)}
+        >
+          <option value="add">Add</option>
+          <option value="subtract">Subtract</option>
+          <option value="set">Put</option>
+        </select>
+        <input
+          type="text"
+          key={`${value}`}
+          defaultValue={value}
+          className="variable-value-input"
+          onFocus={(e) => e.target.select()}
+          onKeyDown={(e) => e.keyCode === 13 ? e.target.blur() : null}
+          onBlur={(e) => onChangeValue(e.target.value)}  
+        />
+        {{set: 'into', add: 'to', subtract: 'from'}[operation]}
+      </span>
+    );
+  }
+}
+
 export default class RecordingActions extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -37,76 +74,79 @@ export default class RecordingActions extends React.Component {
     const beforeStage = getCurrentStageForWorld(beforeWorld);
     const afterStage = getCurrentStageForWorld(afterWorld);
 
-    const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
-    const character = characters[actor.characterId];
+    if (a.actorId) {
+      const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
+      const character = characters[actor.characterId];
+      if (a.type === 'move') {
+        return (
+          <li key={idx}>
+            Move
+            <ActorBlock actor={actor} character={character} />
+            to
+            <ActorDeltaCanvas delta={a.delta} />
+          </li>
+        );
+      }
+      if (a.type === 'create') {
+        return (
+          <li key={idx}>
+            Create a
+            <ActorBlock actor={actor} character={character} />
+            at
+            <ActorPositionCanvas position={actor.position} extent={extent} />
+          </li>
+        );
+      }
+      if (a.type === 'delete') {
+        return (
+          <li key={idx}>
+            Remove
+            <ActorBlock actor={actor} character={character} />
+            from the stage
+          </li>
+        );
+      }
+      if (a.type === 'variable') {
+        return (
+          <li key={idx}>
+            <VariableActionPicker
+              value={a.value}
+              operation={a.operation}
+              onChangeValue={(v) => this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)}
+              onChangeOperation={(op) => this._onChangeVariableOperation('globals', a.variable, op)}
+            />
+            <VariableBlock name={character.variables[a.variable].name} />
+            of
+            <ActorBlock character={character} actor={actor} />
+          </li>
+        );
+      }
+      if (a.type === 'appearance') {
+        return (
+          <li key={idx}>
+            Change appearance of
+            <ActorBlock character={character} actor={actor} />
+            to
+            <AppearanceBlock character={character} appearanceId={a.to} />
+          </li>
+        );
+      }
+    }
 
-    if (a.type === 'move') {
+    if (a.type === 'global') {
       return (
         <li key={idx}>
-          Move
-          <ActorBlock actor={actor} character={character} />
-          to
-          <ActorDeltaCanvas delta={a.delta} />
-        </li>
-      );
-    }
-    if (a.type === 'create') {
-      return (
-        <li key={idx}>
-          Create a
-          <ActorBlock actor={actor} character={character} />
-          at
-          <ActorPositionCanvas position={actor.position} extent={extent} />
-        </li>
-      );
-    }
-    if (a.type === 'delete') {
-      return (
-        <li key={idx}>
-          Remove
-          <ActorBlock actor={actor} character={character} />
-          from the stage
-        </li>
-      );
-    }
-    if (a.type === 'variable') {
-      return (
-        <li key={idx}>
-          <select
-            value={a.operation}
-            className="variable-operation-select"
-            onChange={(e) => this._onChangeVariableOperation(a.actorId, a.variable, e.target.value)}
-          >
-            <option value="add">Add</option>
-            <option value="subtract">Subtract</option>
-            <option value="set">Put</option>
-          </select>
-          <input
-            type="text"
-            key={`${a.variable}${a.value}`}
-            defaultValue={a.value}
-            className="variable-value-input"
-            onFocus={(e) => e.target.select()}
-            onKeyDown={(e) => e.keyCode === 13 ? e.target.blur() : null}
-            onBlur={(e) => this._onChangeVariableValue(a.actorId, a.variable, a.operation, e.target.value)}  
+          <VariableActionPicker
+            value={a.value}
+            operation={a.operation}
+            onChangeValue={(v) => this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)}
+            onChangeOperation={(op) => this._onChangeVariableOperation('globals', a.variable, op)}
           />
-          {{set: 'into', add: 'to', subtract: 'from'}[a.operation]}
-          <VariableBlock character={character} variableId={a.variable} />
-          of
-          <ActorBlock character={character} actor={actor} />
+          <VariableBlock name={a.global} />
         </li>
       );
     }
-    if (a.type === 'appearance') {
-      return (
-        <li key={idx}>
-          Change appearance of
-          <ActorBlock character={character} actor={actor} />
-          to
-          <AppearanceBlock character={character} appearanceId={a.to} />
-        </li>
-      );
-    }
+
     throw new Error(`Unknown action type: ${a.type}`);
   }
 
