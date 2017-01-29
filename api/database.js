@@ -32,10 +32,8 @@ function readModelsInDirectory(sequelize, dirname) {
 
 let sequelize = null;
 
-if (process.env.DB_HOSTNAME) {
-  sequelize = new Sequelize('codako', process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOSTNAME,
-    dialect: "mysql",
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
     charset: 'utf8',
     logging: false,
     pool: {
