@@ -3,6 +3,7 @@ const path = require('path');
 
 const CHARACTERS_DIR = './presets-characters';
 
+
 function b64Image(filepath) {
   const data = fs.readFileSync(filepath).toString('base64');
   return `data:image/png;base64,${data}`;
