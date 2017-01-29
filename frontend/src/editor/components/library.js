@@ -1,10 +1,10 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
-import {Button} from 'reactstrap';
+import {Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 
 import {nullActorPath} from '../utils/stage-helpers';
-import {TOOL_POINTER, TOOL_TRASH} from '../constants/constants';
+import {TOOL_POINTER, TOOL_TRASH, MODALS} from '../constants/constants';
 
 import {
   createCharacter,
@@ -18,11 +18,13 @@ import {
 import {
   select,
   selectToolId,
+  showModal,
   paintCharacterAppearance,
 } from '../actions/ui-actions';
 
 import Sprite from './sprites/sprite';
 import TapToEditLabel from './tap-to-edit-label';
+
 
 
 class LibraryItem extends React.Component {
@@ -96,6 +98,7 @@ class Library extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+    this.state = {characterDropdownOpen: false};
   }
 
   _onClickCharacter = (event, characterId) => {
@@ -184,6 +187,10 @@ class Library extends React.Component {
     this.props.dispatch(paintCharacterAppearance(newCharacterId, 'idle'));
   }
 
+  _onExploreCharacters = () => {
+    this.props.dispatch(showModal(MODALS.EXPLORE_CHARACTERS));
+  }
+
   _onCreateAppearance = () => {
     const {ui, characters, dispatch} = this.props;
     const char = characters[ui.selectedCharacterId];
@@ -201,14 +208,24 @@ class Library extends React.Component {
         <div className="panel library" data-tutorial-id="characters">
           <div className="header">
             <h2>Library</h2>
-            <Button
+            <ButtonDropdown
               size="sm"
+              isOpen={this.state.characterDropdownOpen}
               data-tutorial-id="characters-add-button"
-              disabled={false}
-              onClick={this._onCreateCharacter}
+              toggle={() => this.setState({characterDropdownOpen: !this.state.characterDropdownOpen})}
             >
-              <i className="fa fa-plus" />
-            </Button>
+              <DropdownToggle caret>
+                <i className="fa fa-plus" />
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem onClick={this._onCreateCharacter}>
+                  Draw new Character...
+                </DropdownItem>
+                <DropdownItem onClick={this._onExploreCharacters}>
+                  Explore Characters...
+                </DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
           </div>
           {this.renderCharactersPanel()}
         </div>

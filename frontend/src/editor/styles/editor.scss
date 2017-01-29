@@ -49,6 +49,7 @@ $rule-flow-color: #5BA4CD;
 }
 
 .sprite {
+  image-rendering: pixelated;
   &.outlined {
   	filter: drop-shadow(2px 0 0.5px $outline-color)
   		drop-shadow(-2px 0 0.5px $outline-color)
@@ -854,5 +855,38 @@ button.btn.selected:active {
         text-align: center;
       }
     }
+  }
+}
+
+.character-cards {
+  max-height: 500px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .character-card {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 50%;
+
+    .name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      margin-top: 2px;
+      border-bottom: 1px solid #eee;
+    }
+    .appearances {
+      img {
+        margin-right: 10px;
+      }
+    }
+    .actions {
+      float: right;
+    }
+    
   }
 }

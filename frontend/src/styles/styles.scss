@@ -53,11 +53,11 @@ body {
 }
 
 .dashboard {
-  .stage-list {
+  .world-list {
     margin-left: -10px;
     margin-right: -10px;
 
-    .stage-card {
+    .world-card {
       display: inline-block;
       margin-left: 10px;
       margin-right: 10px;
@@ -66,7 +66,7 @@ body {
         float: right;
       }
     }
-    .stage-thumbnail {
+    .world-thumbnail {
       background: #ccc;
       width: 100%;
       height: 150px;

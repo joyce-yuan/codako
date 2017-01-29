@@ -20,6 +20,7 @@ import InspectorContainer from './components/inspector/container';
 import PaintContainer from './components/modal-paint/container';
 import KeypickerContainer from './components/modal-keypicker/container';
 import StagesContainer from './components/modal-stages/container';
+import ExploreCharactersContainer from './components/modal-explore-characters/container';
 
 import './styles/editor.scss';
 
@@ -51,7 +52,7 @@ export default class EditorRoot extends React.Component {
   }
 
   loadStage = () => {
-    return makeRequest(`/stages/${this.props.stageId}/data`).then((savedData) => {
+    return makeRequest(`/worlds/${this.props.stageId}/data`).then((savedData) => {
       const state = u(savedData, initialState);
       const editorStore = window.editorStore = configureStore(state);
       editorStore.subscribe(this._onSaveDebounced);
@@ -139,6 +140,7 @@ export default class EditorRoot extends React.Component {
             <PaintContainer />
             <KeypickerContainer />
             <StagesContainer />
+            <ExploreCharactersContainer />
           </div>
         </div>
       </Provider>
