@@ -17,7 +17,7 @@ const server = new Hapi.Server({
     },
     routes: {
       cors: {
-        origin: ['*.lvh.me:3000', '*.codako.com'],
+        origin: ['*.lvh.me:3000', '*.codako.com', '*.codako.org'],
       },
     },
   },
