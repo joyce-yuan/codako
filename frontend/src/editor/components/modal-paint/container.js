@@ -308,14 +308,14 @@ class Container extends React.Component {
               onClick={this._onUndo}
               disabled={undoStack.length === 0}
             >
-              <img src="/editor/img/icon_undo.png" />
+              <img src={require('../../img/icon_undo.png')} />
             </Button>
             <Button
               className="icon"
               onClick={this._onRedo}
               disabled={redoStack.length === 0}
             >
-              <img src="/editor/img/icon_redo.png" />
+              <img src={require('../../img/icon_redo.png')} />
             </Button>
             <ButtonDropdown
               isOpen={this.state.dropdownOpen}

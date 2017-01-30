@@ -19,7 +19,7 @@ export function createCharacter(newId) {
       spritesheet: {
         width: 40,
         appearances: {
-          'idle': ['/editor/img/splat.png'],
+          'idle': [require('../img/splat.png')],
         },
         appearanceNames:{
           'idle': 'Idle',
@@ -79,7 +79,7 @@ export function createCharacterAppearance(characterId, newAppearanceId, newAppea
     characterId: characterId,
     values: {
       spritesheet: {
-        appearances: {[newAppearanceId]: [newAppearanceData || '/editor/img/splat.png']},
+        appearances: {[newAppearanceId]: [newAppearanceData || require('../img/splat.png')]},
         appearanceNames: {[newAppearanceId]: 'Untitled'},
       },
     },

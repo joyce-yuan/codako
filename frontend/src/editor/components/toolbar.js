@@ -34,7 +34,7 @@ class Toolbar extends React.Component {
         data-tutorial-id={`toolbar-tool-${toolId}`}
         onClick={() => dispatch(actions.selectToolId(toolId))}
       >
-        <img src={`/editor/img/sidebar_${toolId}.png`} />
+        <img src={require(`../img/sidebar_${toolId}.png`)} />
       </Button>
     );
   }
@@ -50,7 +50,7 @@ class Toolbar extends React.Component {
 
         <div style={{display: 'flex', alignItems: 'center'}}>
           <Button onClick={() => dispatch(actions.showModal(MODALS.STAGES))}>
-            <img src="/editor/img/sidebar_choose_background.png" />
+            <img src={require('../img/sidebar_choose_background.png')} />
           </Button>
           <div className="title" onClick={() => dispatch(actions.showModal(MODALS.STAGES))}>
             {stageName || "Untitled Stage"}            

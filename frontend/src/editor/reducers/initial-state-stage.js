@@ -1,8 +1,8 @@
-{
+export default {
   "id": "5233a60cfd685f755e000002",
   "name": "Stage 1",
   "actors": {},
-  "background": "url(/editor/img/backgrounds/Layer0_2.png)",
+  "background": `url(${require('../img/backgrounds/Layer0_2.png')})`,
   "width": 20,
   "height": 13,
   "wrapX": true,

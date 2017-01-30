@@ -1,4 +1,4 @@
-{
+export default {
     "jizye5ng66r": {
         "id": "jizye5ng66r",
         "name": "Flag",
