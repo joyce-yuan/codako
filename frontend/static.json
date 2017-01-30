@@ -1,4 +1,17 @@
 {
   "root": "dist",
-  "clean_urls": true
+  "clean_urls": true,
+  "routes": {
+    "/**.png": "/",
+    "/**.svg": "/",
+    "/**.ttf": "/",
+    "/**.css": "/",
+    "/**.css.map": "/",
+    "/**.js": "/",
+    "/**.js.map": "/",
+    "/**.cur": "/",
+    "/**.woff": "/",
+    "/**.woff2": "/",
+    "/**": "index.html"
+  }
 }
