@@ -2,6 +2,8 @@ import * as types from '../constants/action-types';
 import objectAssign from 'object-assign';
 import xhr from 'xhr';
 
+const API_ROOT = (window.location.host.includes('codako') ? `://api.codako.com` : `http://api.lvh.me:4310`);
+
 export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {}) {
   const {dispatch} = window.store;
 
@@ -14,7 +16,7 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
   const user = window.store.getState().user || {};
 
   return new Promise((resolve, reject) => {
-    xhr(`http://api.lvh.me:4310${path}`, {
+    xhr(`${API_ROOT}${path}`, {
       method,
       body: json ? JSON.stringify(json) : body,
       headers: objectAssign({
