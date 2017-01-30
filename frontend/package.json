@@ -28,7 +28,7 @@
     "open:cover": "npm run test:cover && open coverage/index.html",
     "analyze-bundle": "babel-node ./tools/analyzeBundle.js"
   },
-  "author": "",
+  "author": "Ben Gotow",
   "license": "MIT",
   "dependencies": {
     "bootstrap": "4.0.0-alpha.5",
