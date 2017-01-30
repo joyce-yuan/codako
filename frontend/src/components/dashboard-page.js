@@ -85,8 +85,7 @@ class WorldList extends React.Component {
     let msg = null;
     if (!worlds) {
       msg = "Loading...";
-    }
-    if (worlds.length === 0) {
+    } else if (worlds.length === 0) {
       msg = "Create your first world to get started!";
     }
 
