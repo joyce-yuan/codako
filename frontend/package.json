@@ -7,6 +7,7 @@
   },
   "scripts": {
     "preinstall": "node tools/nodeVersionCheck.js",
+    "postinstall": "babel-node tools/build.js",
     "setup": "node tools/setup/setupMessage.js && npm install && node tools/setup/setup.js",
     "remove-demo": "babel-node tools/removeDemo.js",
     "start-message": "babel-node tools/startMessage.js",
@@ -48,9 +49,7 @@
     "redux-thunk": "2.1.0",
     "timeago.js": "2.0.4",
     "updeep": "1.0.0",
-    "xhr": "2.3.3"
-  },
-  "devDependencies": {
+      "xhr": "2.3.3",
     "autoprefixer": "6.5.1",
     "babel-cli": "6.16.0",
     "babel-core": "6.17.0",
@@ -77,7 +76,7 @@
     "eslint-plugin-jsx-a11y": "3.0.2",
     "eslint-plugin-react": "6.8.0",
     "eslint-watch": "2.1.14",
-    "extract-text-webpack-plugin": "1.0.1",
+    "extract-text-webpack-plugin": "2.0.0-beta.4",
     "file-loader": "0.9.0",
     "html-webpack-plugin": "2.24.0",
     "isparta": "4.0.0",
@@ -100,7 +99,7 @@
     "sinon-chai": "2.8.0",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
-    "webpack": "1.13.2",
+    "webpack": "2.1.0-beta.25",
     "webpack-bundle-analyzer": "1.5.3",
     "webpack-dev-middleware": "1.8.4",
     "webpack-hot-middleware": "2.13.0",
