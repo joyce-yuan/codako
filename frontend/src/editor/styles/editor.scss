@@ -50,6 +50,7 @@ $rule-flow-color: #5BA4CD;
 
 .sprite {
   image-rendering: pixelated;
+
   &.outlined {
   	filter: drop-shadow(2px 0 0.5px $outline-color)
   		drop-shadow(-2px 0 0.5px $outline-color)
@@ -176,8 +177,18 @@ $rule-flow-color: #5BA4CD;
         position: relative;
         background-color: #222;
         transition: box-shadow 200ms, flex 400ms ease-out;
+
         &.running-true {
           box-shadow:0 0 0 4px $tint-color;
+          .animated {
+            transition-timing-function: linear;
+            transition-property: top, left;
+          }
+        }
+        &.running-false {
+          .animated {
+            transition-property: none;
+          }
         }
 
         .stage {

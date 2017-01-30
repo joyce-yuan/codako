@@ -11,6 +11,7 @@ export default class ActorSprite extends React.Component {
     draggable: PropTypes.bool,
     onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
+    transitionDuration: PropTypes.number,
   }
 
   _onDragStart = (event) => {
@@ -30,7 +31,7 @@ export default class ActorSprite extends React.Component {
   }
 
   render() {
-    const {actor, character, selected, draggable} = this.props;
+    const {actor, character, selected, draggable, transitionDuration} = this.props;
     return (
       <div
         draggable={draggable}
@@ -38,8 +39,10 @@ export default class ActorSprite extends React.Component {
         onDragStart={this._onDragStart}
         onClick={this.props.onClick}
         onDoubleClick={this.props.onDoubleClick}
+        className="animated"
         style={{
           position: 'absolute',
+          transitionDuration: `${transitionDuration}ms`, 
           left: actor.position.x * STAGE_CELL_SIZE,
           top: actor.position.y * STAGE_CELL_SIZE,
         }}

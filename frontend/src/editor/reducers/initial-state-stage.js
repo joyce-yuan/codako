@@ -3,7 +3,7 @@ export default {
   "name": "Stage 1",
   "actors": {},
   "background": `url(${require('../img/backgrounds/Layer0_2.png')})`,
-  "width": 20,
+  "width": 22,
   "height": 13,
   "wrapX": true,
   "wrapY": true,

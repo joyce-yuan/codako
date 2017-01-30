@@ -76,11 +76,10 @@ export function recordKeyForGameState(worldId, key) {
   };
 }
 
-export function recordClickForGameState({worldId, stageId, actorId}) {
+export function recordClickForGameState(worldId, actorId) {
   return {
     type: types.INPUT_FOR_GAME_STATE,
     worldId,
-    stageId,
     keys: {},
     clicks: {[actorId]: true},
   };

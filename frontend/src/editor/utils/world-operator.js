@@ -266,10 +266,10 @@ export default function WorldOperator(previousWorld) {
     );
 
     return u({
-      input: {
+      input: u.constant({
         keys: {},
         clicks: {},
-      },
+      }),
       stages: {
         [stage.id]: {
           actors: u.constant(actors),

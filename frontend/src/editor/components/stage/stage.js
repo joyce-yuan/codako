@@ -29,7 +29,10 @@ class Stage extends React.Component {
     selectedToolId: PropTypes.string,
     selectedActorPath: CustomPropTypes.WorldSelection,
     characters: PropTypes.object,
-    running: PropTypes.bool,
+    playback: PropTypes.shape({
+      running: PropTypes.bool,
+      speed: PropTypes.number,
+    }),
   };
 
   constructor(props, context) {
@@ -42,7 +45,7 @@ class Stage extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.running && this._el) {
+    if (this.props.playback.running && this._el) {
       this._el.focus();
     }
 
@@ -67,7 +70,7 @@ class Stage extends React.Component {
   }
 
   _onBlur = () => {
-    if (this.props.running) {
+    if (this.props.playback.running) {
       this._el.focus();
     }
   }
@@ -292,7 +295,7 @@ class Stage extends React.Component {
   }
 
   render() {
-    const {selectedToolId, characters, selectedActorPath, running, recordingExtent, style, stage, world} = this.props;
+    const {selectedToolId, characters, selectedActorPath, playback, recordingExtent, style, stage, world} = this.props;
 
     if (!stage) {
       return (
@@ -314,7 +317,7 @@ class Stage extends React.Component {
         style={style}
         ref={(el) => this._scrollEl = el}
         data-stage-wrap-id={world.id}
-        className={`stage-scroll-wrap tool-${selectedToolId} running-${running}`}
+        className={`stage-scroll-wrap tool-${selectedToolId} running-${playback.running}`}
       >
         <div
           ref={(el) => this._el = el}
@@ -347,6 +350,7 @@ class Stage extends React.Component {
                   selected={actor === selected}
                   onClick={(event) => this._onClickActor(actor, event)}
                   onDoubleClick={() => this._onSelectActor(actor)}
+                  transitionDuration={playback.speed}
                   character={character}
                   actor={actor}
                 />
@@ -364,7 +368,7 @@ function mapStateToProps(state) {
   return Object.assign({}, {
     selectedActorPath: state.ui.selectedActorPath,
     selectedToolId: state.ui.selectedToolId,
-    running: state.ui.playback.running,
+    playback: state.ui.playback,
     characters: state.characters,
   });
 }
