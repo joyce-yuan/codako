@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
 export default class StageSettings extends React.Component {
   static propTypes = {
@@ -7,7 +8,10 @@ export default class StageSettings extends React.Component {
   };
 
   render() {
-    const {stage: {width, height, wrapX, wrapY, name}, onChange} = this.props;
+    const {stage: {width, height, wrapX, wrapY, name, background}, onChange} = this.props;
+
+    const backgroundAsURL = (/url\((.*)\)/.exec(background) || [])[1];
+    const backgroundAsColor = backgroundAsURL ? null : background;
 
     return (
       <div>
@@ -42,7 +46,7 @@ export default class StageSettings extends React.Component {
         <fieldset className="form-group">
           <legend className="col-form-legend">Wrapping</legend>
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <label className="form-check-label" htmlFor="wrapX">
+            <label className="form-check-label" htmlFor="wrapX" style={{flex: 1}}>
               <input
                 style={{marginRight: 5}}
                 className="form-check-input"
@@ -53,7 +57,7 @@ export default class StageSettings extends React.Component {
               />
               Wrap Horizontally
             </label>
-            <label className="form-check-label" htmlFor="wrapY">
+            <label className="form-check-label" htmlFor="wrapY" style={{flex: 1}}>
               <input
                 style={{marginRight: 5, marginLeft: 0}}
                 className="form-check-input"
@@ -64,6 +68,51 @@ export default class StageSettings extends React.Component {
               />
               Wrap Vertically
             </label>
+          </div>
+        </fieldset>
+        <fieldset className="form-group">
+          <legend className="col-form-legend">Background</legend>
+          <div style={{display: 'flex', flexDirection: 'row'}}>
+            <div style={{flex: 1}}>
+              <label className="form-check-label">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  style={{marginRight: 5}}
+                  checked={!!backgroundAsColor}
+                  onChange={() => onChange({background: "black"})}
+                  name="bgradio"
+                />
+                Color
+              </label>
+              <input
+                type="text"
+                defaultValue={backgroundAsColor}
+                onBlur={(e) => { if (e.target.value) { onChange({background: e.target.value}) }}}
+              />
+              {/*<PixelColorPicker
+                color={backgroundAsColor}
+                onColorChange={(color) => onChange({background: color})}
+              />*/}
+            </div>
+            <div style={{flex: 1}}>
+              <label className="form-check-label">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  style={{marginRight: 5}}
+                  checked={!!backgroundAsURL}
+                  onChange={() => onChange({background: "url(http://www.lvh.me:3000/Layer0_2.png)"})}
+                  name="bgradio"
+                />
+                Image
+              </label>
+              <input
+                type="text"
+                defaultValue={backgroundAsURL}
+                onBlur={(e) => { if (e.target.value) { onChange({background: `url(${e.target.value})`})}}}
+              />
+            </div>
           </div>
         </fieldset>
       </div>

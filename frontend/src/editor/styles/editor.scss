@@ -455,18 +455,6 @@ $rule-flow-color: #5BA4CD;
       margin-right: 2px;
       border: 1px solid rgba(0,0,0,0.2);
     }
-    .colors {
-      .color {
-        padding: 3px;
-        margin-right: 2px;
-        margin-bottom: 3px;
-        width: 27px;
-        height: 25px;
-        border: 1px solid rgba(0,0,0,0.2);
-        cursor: pointer;
-        outline: 0;
-      }
-    }
 
     .tools {
       .tool {
@@ -880,6 +868,20 @@ button.btn.selected:active {
         text-align: center;
       }
     }
+  }
+}
+
+.pixel-color-picker {
+  max-width: 116px;
+  .color {
+    padding: 3px;
+    margin-right: 2px;
+    margin-bottom: 3px;
+    width: 27px;
+    height: 25px;
+    border: 1px solid rgba(0,0,0,0.2);
+    cursor: pointer;
+    outline: 0;
   }
 }
 

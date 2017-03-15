@@ -30,7 +30,7 @@ export default class PixelColorPicker extends React.Component {
     const {color, onColorChange} = this.props;
 
     return (
-      <div className="colors">
+      <div className="pixel-color-picker">
         <div className="active-swatch" style={{backgroundColor: color}} />
         {ColorOptions.map(option =>
           <button
