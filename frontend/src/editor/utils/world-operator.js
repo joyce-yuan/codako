@@ -5,6 +5,12 @@ import {getCurrentStageForWorld} from '../utils/selectors';
 import u from 'updeep';
 
 function deepClone(obj) {
+  if (obj === null) {
+    return null;
+  }
+  if (obj === undefined) {
+    return undefined;
+  }
   return JSON.parse(JSON.stringify(obj));
 }
 

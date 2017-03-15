@@ -75,7 +75,7 @@ export default class RecordingActions extends React.Component {
     const afterStage = getCurrentStageForWorld(afterWorld);
 
     if (a.actorId) {
-      const actor = beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
+      const actor = a.actor || beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
       const character = characters[actor.characterId];
       if (a.type === 'move') {
         return (

@@ -100,10 +100,9 @@ export default function charactersReducer(state = initialState.characters, actio
       // locate the main actor in the recording to "re-center" the extent to it
       const beforeStage = getCurrentStageForWorld(recording.beforeWorld);
       const mainActor = Object.values(beforeStage.actors).find(a => a.id === recording.actorId);
-      const allActors = createdActorsForRecording(recording).concat(Object.values(beforeStage.actors));
       const recordingActors = {};
 
-      for (const a of allActors) {
+      for (const a of Object.values(beforeStage.actors)) {
         if (pointIsInside(a.position, recording.extent)) {
           recordingActors[a.id] = objectAssign({}, a, {
             position: {

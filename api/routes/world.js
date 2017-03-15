@@ -35,6 +35,10 @@ module.exports = (server) => {
       const {user} = request.auth.credentials;
       const {objectId} = request.params;
       db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) => {
+        if (!world) {
+          reply(Boom.notFound("Sorry, this would could not be found."));
+          return;
+        }
         reply(JSON.parse(world.data));
       });
     },

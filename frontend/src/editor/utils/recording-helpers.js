@@ -91,14 +91,18 @@ export function actionsForGlobals({beforeGlobals, afterGlobals, prefs}) {
 }
 
 
-export function actionsForRecording({beforeWorld, afterWorld, extent, prefs}, {characters}) {
+export function actionsForRecording({beforeWorld, afterWorld, extent, prefs, actorId}, {characters}) {
   const beforeStage = getCurrentStageForWorld(beforeWorld);
   const afterStage = getCurrentStageForWorld(afterWorld);
-
+  
   if (!beforeStage.actors || !afterStage.actors) {
     return [];
   }
 
+  const beforeMainActor = beforeStage.actors[actorId];
+  if (!beforeMainActor) {
+    throw new Error("Could not find main actor");
+  }
   const actions = [];
 
   Object.values(beforeStage.actors).forEach((beforeActor) => {
@@ -139,8 +143,10 @@ export function actionsForRecording({beforeWorld, afterWorld, extent, prefs}, {c
 
   createdActorsForRecording({beforeWorld, afterWorld, extent}).forEach((actor) => {
     actions.push({
+      actor: actor,
       actorId: actor.id,
       type: 'create',
+      offset: {x: actor.position.x - beforeMainActor.position.x, y: actor.position.y - beforeMainActor.position.y},
     });
     actions.push(...actionsForVariables({
       beforeActor: null,
