@@ -59,7 +59,7 @@ module.exports = (server) => {
         reply(world.serialize());
       })
       .catch((err) => {
-        reply(Boom.badRequest(err.toString));
+        reply(Boom.badRequest(err.toString()));
       });
     },
   });
@@ -87,7 +87,7 @@ module.exports = (server) => {
         })
       )
       .catch((err) => {
-        reply(Boom.badRequest(err.toString));
+        reply(Boom.badRequest(err.toString()));
       });
     },
   });
@@ -116,7 +116,7 @@ module.exports = (server) => {
         });
       })
       .catch((err) => {
-        reply(Boom.badRequest(err.toString));
+        reply(Boom.badRequest(err.toString()));
       });
     },
   });
