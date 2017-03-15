@@ -116,7 +116,7 @@ export default class EditorRoot extends React.Component {
     if (!loaded) {
       return (
         <div className="editor">
-          <h1 style={{margin: 'auto'}}>Loading...</h1>
+          <div className="loading">Loading...</div>
         </div>
       );
     }

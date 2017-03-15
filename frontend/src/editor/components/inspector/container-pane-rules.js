@@ -93,7 +93,7 @@ export default class ContainerPaneRules extends React.Component {
         <div className="empty">Please select a character.</div>
       );
     }
-    if (character.rules.length === 0) {
+    if (!character.rules || character.rules.length === 0) {
       return (
         <div className="empty">
           This character doesn&#39;t have any rules.

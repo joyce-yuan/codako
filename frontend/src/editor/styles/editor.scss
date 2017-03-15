@@ -85,6 +85,14 @@ $rule-flow-color: #5BA4CD;
   background: url(../img/background.png) top left;
   padding-top: 15px;
 
+  .loading {
+    margin: auto;
+    margin-top: 200px;
+    font-size: 20px;
+    text-align: center;
+    opacity: 0.7;
+  }
+
   .btn, .dropdown-menu {
     font-size: 0.9rem;
   }
@@ -300,6 +308,9 @@ $rule-flow-color: #5BA4CD;
       .center {
         text-align: center;
       }
+      .right {
+        flex-shrink: 0;
+      }
       .left {
         text-align: left;
         position: relative;
@@ -333,6 +344,9 @@ $rule-flow-color: #5BA4CD;
         white-space: nowrap;
         padding-left: 12px;
         color: #aaa;
+        flex-shrink: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
