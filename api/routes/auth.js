@@ -57,4 +57,25 @@ module.exports = (server) => {
       });
     },
   });
+
+  server.route({
+    method: ['GET'],
+    path: `/users/{username}`,
+    config: {
+      description: `Retrieve another user's account`,
+      tags: ['auth'],
+      auth: {
+        strategy: 'api-consumer',
+        mode: 'optional',
+      },
+    },
+    handler: (request, reply) => {
+      db.User.findOne({
+        where: {username: request.params.username},
+      }).then((user) => {
+        reply(user.serialize());
+      });
+    },
+  });
+
 };

@@ -20,6 +20,7 @@ module.exports = (sequelize, Sequelize) => {
           name: this.name,
           id: this.id,
           userId: this.userId,
+          user: this.user ? this.user.serialize() : null,
           thumbnail: this.thumbnail,
           createdAt: this.createdAt,
           updatedAt: this.updatedAt,

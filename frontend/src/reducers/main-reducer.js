@@ -4,14 +4,23 @@ import objectAssign from 'object-assign';
 
 export default function mainReducer(state, action) {
   switch (action.type) {
-    case Types.USER_CHANGED: {
+    case Types.SET_ME: {
       return objectAssign({}, state, {
-        user: action.user,
+        me: action.me,
       });
     }
-    case Types.WORLDS_CHANGED: {
+    case Types.UPSERT_PROFILE: {
       return objectAssign({}, state, {
-        worlds: action.worlds,
+        profiles: objectAssign({}, state.profile, {[action.profile.username]: action.profile}),
+      });
+    }
+    case Types.UPSERT_WORLDS: {
+      const hash = objectAssign({}, state.worlds);
+      for (const w of action.worlds) {
+        hash[w.id] = w;
+      }
+      return objectAssign({}, state, {
+        worlds: hash,
       });
     }
     case Types.NETWORK_ACTIVITY: {

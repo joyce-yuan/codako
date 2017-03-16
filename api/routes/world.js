@@ -9,37 +9,61 @@ const WorldShape = Joi.object().keys({
 });
 
 module.exports = (server) => {
+  // Public:
+
+  server.route({
+    method: 'GET',
+    path: `/worlds/{objectId}`,
+    config: {
+      description: `worlds`,
+      tags: ['worlds'],
+      auth: {
+        strategy: 'api-consumer',
+        mode: 'optional',
+      },
+    },
+    handler: (request, reply) => {
+      // const {user} = request.auth.credentials;
+      const {objectId} = request.params;
+      db.World.findOne({where: {id: objectId}, include: {model: db.User}}).then((world) => {
+        if (!world) {
+          reply(Boom.notFound("Sorry, this would could not be found."));
+          return;
+        }
+        reply(Object.assign({}, world.serialize(), {data: JSON.parse(world.data)}));
+      });
+    },
+  });
+
+  // Auth Required:
+
   server.route({
     method: 'GET',
     path: `/worlds`,
     config: {
       description: `worlds`,
       tags: ['worlds'],
+      auth: {
+        strategy: 'api-consumer',
+        mode: 'optional',
+      },
     },
     handler: (request, reply) => {
-      const {user} = request.auth.credentials;
-      db.World.findAll({where: {userId: user.id}}).then((worlds) => {
-        reply(worlds.map(s => s.serialize()));
-      });
-    },
-  });
-
-  server.route({
-    method: 'GET',
-    path: `/worlds/{objectId}/data`,
-    config: {
-      description: `worlds`,
-      tags: ['worlds'],
-    },
-    handler: (request, reply) => {
-      const {user} = request.auth.credentials;
-      const {objectId} = request.params;
-      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) => {
-        if (!world) {
-          reply(Boom.notFound("Sorry, this would could not be found."));
-          return;
+      let userPromise = null;
+      if (request.query.user === 'me') {
+        if (request.auth.credentials && request.auth.credentials.user) {
+          userPromise = Promise.resolve(request.auth.credentials.user);
+        } else {
+          return reply(Boom.notFound("Sorry, you must sign in."));
         }
-        reply(JSON.parse(world.data));
+      } else {
+        userPromise = db.User.find({where: {username: request.query.user}});
+      }
+
+      userPromise.then((user) => {
+        db.World.findAll({where: {userId: user.id}, include: {model: db.User}}).then((worlds) => {
+          reply(worlds.map(s => s.serialize()));
+        });
       });
     },
   });

@@ -9,8 +9,8 @@ const DEFAULT_POST_AUTH_PATH = '/dashboard';
 export function logout() {
   return function(dispatch) {
     dispatch({
-      type: types.USER_CHANGED,
-      user: null,
+      type: types.SET_ME,
+      me: null,
     });
     dispatch(push('/'));
   };
@@ -23,8 +23,8 @@ export function register({username, password, email}, redirectTo) {
       json: {username, password, email},
     }).then((user) => {
       dispatch({
-        type: types.USER_CHANGED,
-        user: objectAssign(user, {password}),
+        type: types.SET_ME,
+        me: objectAssign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
@@ -39,18 +39,34 @@ export function login({username, password}, redirectTo) {
       },
     }).then((user) => {
       dispatch({
-        type: types.USER_CHANGED,
-        user: objectAssign(user, {password}),
+        type: types.SET_ME,
+        me: objectAssign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
   };
 }
 
-export function fetchWorlds() {
+export function fetchUser(username) {
   return function(dispatch) {
-    makeRequest('/worlds').then((worlds) => {
-      dispatch({type: types.WORLDS_CHANGED, worlds});
+    makeRequest(`/users/${username}`).then((profile) => {
+      dispatch({type: types.UPSERT_PROFILE, profile});
+    });
+  };
+}
+
+export function fetchWorldsForUser(userId) {
+  return function(dispatch) {
+    makeRequest(`/worlds?user=${userId}`).then((worlds) => {
+      dispatch({type: types.UPSERT_WORLDS, worlds});
+    });
+  };
+}
+
+export function fetchWorld(id) {
+  return function(dispatch) {
+    makeRequest(`/worlds/${id}`).then((world) => {
+      dispatch({type: types.UPSERT_WORLDS, worlds: [world]});
     });
   };
 }
@@ -59,7 +75,7 @@ export function deleteWorld(id) {
   return function(dispatch) {
     if (window.confirm("Are you sure you want to delete this world? This action cannot be undone.")) {
       makeRequest(`/worlds/${id}`, {method: 'DELETE'}).then(() => {
-        dispatch(fetchWorlds());
+        dispatch(fetchWorldsForUser('me'));
       });
     }
   };
@@ -68,7 +84,7 @@ export function deleteWorld(id) {
 export function duplicateWorld(id) {
   return function(dispatch) {
     makeRequest(`/worlds/${id}/duplicate`, {method: 'POST'}).then(() => {
-      dispatch(fetchWorlds());
+      dispatch(fetchWorldsForUser('me'));
     });
   };
 }

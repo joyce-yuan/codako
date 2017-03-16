@@ -7,8 +7,8 @@ let value = Cookies.get(KEY);
 export const sessionStorageMiddleware = store => next => action => {
   const result = next(action);
 
-  const {user} = store.getState();
-  const nextValue = JSON.stringify({user});
+  const {me} = store.getState();
+  const nextValue = JSON.stringify({me});
   if (value !== nextValue) {
     Cookies.set(KEY, nextValue);
     value = nextValue;

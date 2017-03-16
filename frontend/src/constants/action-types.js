@@ -1,3 +1,4 @@
 export const NETWORK_ACTIVITY = 'NETWORK_ACTIVITY';
-export const USER_CHANGED = 'USER_CHANGED';
-export const WORLDS_CHANGED = 'WORLDS_CHANGED';
+export const SET_ME = 'SET_ME';
+export const UPSERT_PROFILE = 'UPSERT_PROFILE';
+export const UPSERT_WORLDS = 'UPSERT_WORLDS';

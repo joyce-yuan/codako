@@ -59,11 +59,11 @@ const attach = (directory) => {
 server.register([Inert, Vision, HapiBasicAuth], (err) => {
   if (err) { throw err; }
 
-  attach('./routes/');
-  attach('./decorators/');
-
   server.auth.strategy('api-consumer', 'basic', { validateFunc: validate });
   server.auth.default('api-consumer');
+
+  attach('./routes/');
+  attach('./decorators/');
 
   server.start((startErr) => {
     if (startErr) { throw startErr; }

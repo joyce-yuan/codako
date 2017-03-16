@@ -47,14 +47,15 @@ class NavUserMenu extends React.Component {
 
 class App extends React.Component {
   static propTypes = {
-    user: PropTypes.object,
+    me: PropTypes.object,
     children: PropTypes.element,
     network: PropTypes.object,
     dispatch: PropTypes.func,
   };
 
   _renderNav = () => {
-    const {user, dispatch} = this.props;
+    const {me, dispatch} = this.props;
+
     return (
       <div className="navbar">
         <div className="container">
@@ -68,8 +69,8 @@ class App extends React.Component {
             </li>
           </ul>
           <ul className="nav navbar-nav float-xs-right">
-            {user ? (
-              <NavUserMenu user={user} dispatch={dispatch} />
+            {me ? (
+              <NavUserMenu user={me} dispatch={dispatch} />
             ) : ([
               <li className="nav-item" key="sign-in">
                 <Link to="/login"><Button >Sign in</Button></Link>
@@ -128,7 +129,7 @@ class App extends React.Component {
 
 function mapStateToProps(state) {
   return Object.assign({}, {
-    user: state.user,
+    me: state.me,
     network: state.network,
   });
 }

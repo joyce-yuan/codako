@@ -4,7 +4,7 @@ import EditorRoot from '../editor/root';
 export default class EditorPage extends React.Component {
   static propTypes = {
     params: PropTypes.shape({
-      stageId: PropTypes.string,
+      worldId: PropTypes.string,
     }),
   }
 
@@ -20,7 +20,7 @@ export default class EditorPage extends React.Component {
 
   render() {
     return (
-      <EditorRoot stageId={this.props.params.stageId} />
+      <EditorRoot worldId={this.props.params.worldId} />
     );
   }
 }

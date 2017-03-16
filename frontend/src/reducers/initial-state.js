@@ -2,8 +2,9 @@ import * as session from '../helpers/session-storage';
 import objectAssign from 'object-assign';
 
 export default objectAssign({
-  user: null,
-  stages: null,
+  me: null,
+  profiles: {},
+  worlds: null,
   network: {
     error: null,
     pending: 0,
