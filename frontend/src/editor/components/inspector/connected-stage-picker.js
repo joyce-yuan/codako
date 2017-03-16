@@ -22,6 +22,7 @@ class StagePicker extends React.Component {
 
     return (
       <ButtonDropdown
+        size="sm"
         isOpen={this.state.open}
         toggle={() => this.setState({open: !this.state.open})}
       >

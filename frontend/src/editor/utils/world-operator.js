@@ -48,6 +48,10 @@ export default function WorldOperator(previousWorld) {
         if (actor.appearance !== other.appearance) {
           return false;
         }
+      } else if (id === 'transform') {
+        if (actor.transform !== other.transform) {
+          return false;
+        }
       } else {
         const actorValue = getVariableValue(actor, characters[actor.characterId], id);
         const otherValue = getVariableValue(other, characters[actor.characterId], id);
@@ -193,6 +197,8 @@ export default function WorldOperator(previousWorld) {
             delete actors[stageActor.id];
           } else if (action.type === 'appearance') {
             stageActor.appearance = action.to;
+          } else if (action.type === 'transform') {
+            stageActor.transform = action.to;
           } else if (action.type === 'variable') {
             const current = getVariableValue(stageActor, characters[stageActor.characterId], action.variable);
             const next = applyVariableOperation(current, action.operation, action.value);

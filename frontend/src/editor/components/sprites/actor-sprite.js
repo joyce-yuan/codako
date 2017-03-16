@@ -50,6 +50,7 @@ export default class ActorSprite extends React.Component {
         <Sprite
           className={selected ? 'outlined' : ''}
           appearance={actor.appearance}
+          transform={actor.transform}
           spritesheet={character.spritesheet}
         />
       </div>

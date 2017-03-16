@@ -1,8 +1,6 @@
 import React, {PropTypes} from 'react';
 
-import ActorBlock from './actor-block';
-import AppearanceBlock from './appearance-block';
-import VariableBlock from './variable-block';
+import {TransformBlock, AppearanceBlock, VariableBlock, ActorBlock} from './blocks';
 
 import {pointIsInside} from '../../../utils/stage-helpers';
 import {updateRecordingCondition} from '../../../actions/recording-actions';
@@ -30,6 +28,35 @@ class AppearanceRow extends React.Component {
           <ActorBlock character={character} actor={actor} />
           appearance is
           <AppearanceBlock character={character} appearanceId={appearance} />
+        </div>
+        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
+      </li>
+    );
+  }
+}
+
+class TransformRow extends React.Component {
+  static propTypes = {
+    actor: PropTypes.object,
+    character: PropTypes.object,
+    enabled: PropTypes.bool,
+    onChange: PropTypes.func,
+    transform: PropTypes.string,
+  };
+
+  static defaultProps = {
+    enabled: false,
+  }
+
+  render() {
+    const {transform, actor, character, enabled, onChange} = this.props;
+
+    return (
+      <li className={`enabled-${this.props.enabled}`}>
+        <div className="left">
+          <ActorBlock character={character} actor={actor} />
+          is facing
+          <TransformBlock character={character} appearanceId={actor.appearance} transform={transform} />
         </div>
         <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
       </li>
@@ -92,36 +119,48 @@ export default class RecordingConditions extends React.Component {
     Object.values(stage.actors).forEach((a) => {
       const saved = conditions[a.id] || {};
 
-      if (pointIsInside(a.position, extent)) {
-        const key = 'appearance';
+      if (!pointIsInside(a.position, extent)) {
+        return;
+      }
+      rows.push(
+        <TransformRow
+          key={`${a.id}-transform`}
+          character={characters[a.characterId]}
+          actor={a}
+          transform={a.transform}
+          onChange={(enabled) =>
+            dispatch(updateRecordingCondition(a.id, 'transform', {enabled}))
+          }
+          {...saved['transform']}
+        />
+      );
+      rows.push(
+        <AppearanceRow
+          key={`${a.id}-appearance`}
+          character={characters[a.characterId]}
+          actor={a}
+          appearance={a.appearance}
+          onChange={(enabled) =>
+            dispatch(updateRecordingCondition(a.id, 'appearance', {enabled}))
+          }
+          {...saved['appearance']}
+        />
+      );
+
+      for (const vkey of Object.keys(a.variableValues)) {
         rows.push(
-          <AppearanceRow
-            key={`${a.id}-appearance`}
+          <VariableRow
+            key={`${a.id}-var-${vkey}`}
             character={characters[a.characterId]}
             actor={a}
-            appearance={a.appearance}
-            onChange={(enabled) =>
-              dispatch(updateRecordingCondition(a.id, key, {enabled}))
+            variableId={vkey}
+            variableValue={a.variableValues[vkey]}
+            onChange={(enabled, comparator) =>
+              dispatch(updateRecordingCondition(a.id, vkey, {enabled, comparator}))
             }
-            {...saved[key]}
+            {...saved[vkey]}
           />
         );
-
-        for (const vkey of Object.keys(a.variableValues)) {
-          rows.push(
-            <VariableRow
-              key={`${a.id}-var-${vkey}`}
-              character={characters[a.characterId]}
-              actor={a}
-              variableId={vkey}
-              variableValue={a.variableValues[vkey]}
-              onChange={(enabled, comparator) =>
-                dispatch(updateRecordingCondition(a.id, vkey, {enabled, comparator}))
-              }
-              {...saved[vkey]}
-            />
-          );
-        }
       }
     });
 

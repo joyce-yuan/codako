@@ -128,7 +128,7 @@ export default class EditorRoot extends React.Component {
             <div className="editor-horizontal-flex">
               <Toolbar />
             </div>
-            <div className="editor-horizontal-flex" style={{flex: 1}}>
+            <div className="editor-horizontal-flex" style={{flex: '1 1 85vh'}}>
               <div className="stage-container">
                 <StageContainer />
                 <Library />

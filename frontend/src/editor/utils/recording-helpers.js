@@ -125,12 +125,15 @@ export function actionsForRecording({beforeWorld, afterWorld, extent, prefs, act
           },
         });
       }
-      if (beforeActor.appearance !== afterActor.appearance) {
-        actions.push({
-          actorId: beforeActor.id,
-          type: 'appearance',
-          to: afterActor.appearance,
-        });
+
+      for (const key of ['transform', 'appearance']) {
+        if (beforeActor[key] !== afterActor[key]) {
+          actions.push({
+            actorId: beforeActor.id,
+            type: key,
+            to: afterActor[key],
+          });
+        }
       }
       actions.push(...actionsForVariables({beforeActor, afterActor, character, prefs: prefs[beforeActor.id] || {}}));
     } else {

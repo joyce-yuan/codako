@@ -507,7 +507,7 @@ $rule-flow-color: #5BA4CD;
   align-items: baseline;
 
   .variable-box {
-    width: 70px;
+    width: 110px;
     padding: 5px;
     padding-top: 0;
     background-color: #c6c6c6;
@@ -531,14 +531,18 @@ $rule-flow-color: #5BA4CD;
       border: 0;
       background-color: white;
       text-align: center;
-      width: 70px;
+      width: 110px;
       height: 36px;
       padding: 3px 0;
       font-size: 1.2em;
       font-weight: bold;
     }
+
     .btn-group {
       width: 100%;
+    }
+    .dropdown-menu {
+      min-width: 100%;
     }
     .dropdown-toggle {
       box-sizing: border-box;
@@ -548,6 +552,13 @@ $rule-flow-color: #5BA4CD;
     }
     .dropdown-item {
       box-sizing: border-box;
+    }
+    .dropdown-menu.with-sprites {
+      .dropdown-item {
+        width: 50%;
+        display: inline-block;
+        padding: 5px;
+      }
     }
   }
 }

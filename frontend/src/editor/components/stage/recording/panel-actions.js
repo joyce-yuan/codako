@@ -5,11 +5,9 @@ import {applyVariableOperation} from '../../../utils/stage-helpers';
 import {changeActor} from '../../../actions/stage-actions';
 import {getCurrentStageForWorld} from '../../../utils/selectors';
 
-import ActorBlock from './actor-block';
 import ActorDeltaCanvas from './actor-delta-canvas';
 import ActorPositionCanvas from './actor-position-canvas';
-import VariableBlock from './variable-block';
-import AppearanceBlock from './appearance-block';
+import {TransformBlock, AppearanceBlock, VariableBlock, ActorBlock} from './blocks';
 
 class VariableActionPicker extends React.Component {
   static propTypes = {
@@ -128,6 +126,16 @@ export default class RecordingActions extends React.Component {
             <ActorBlock character={character} actor={actor} />
             to
             <AppearanceBlock character={character} appearanceId={a.to} />
+          </li>
+        );
+      }
+      if (a.type === 'transform') {
+        return (
+          <li key={idx}>
+            Turn 
+            <ActorBlock character={character} actor={actor} />
+            to face
+            <TransformBlock character={character} appearanceId={actor.appearance} transform={a.to} />
           </li>
         );
       }
