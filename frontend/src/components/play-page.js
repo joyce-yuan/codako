@@ -66,7 +66,6 @@ class PlayPage extends React.Component {
           </Col>
           <Col sm={5}>
             <Button
-              size="sm"
               color="success"
               className="float-xs-right with-counter"
               onClick={this._onFork}
@@ -76,7 +75,6 @@ class PlayPage extends React.Component {
               <div className="counter">{world.forkCount}</div>
             </Button>
             <Button
-              size="sm"
               disabled
               className="float-xs-right with-counter"
               style={{marginRight: 5}}

@@ -9,6 +9,7 @@ import initialState from './reducers/initial-state';
 import {getStageScreenshot} from './utils/stage-helpers';
 import {getCurrentStage} from './utils/selectors';
 
+
 export default class StoreProvider extends React.Component {
   static propTypes = {
     world: PropTypes.object,
@@ -41,7 +42,8 @@ export default class StoreProvider extends React.Component {
 
   getStateForStore = (world) => {
     const savedState = world.data;
-    savedState.metadata = {
+
+    savedState.world.metadata = {
       name: world.name,
       id: world.id,
     };
@@ -74,12 +76,12 @@ export default class StoreProvider extends React.Component {
   }
 
   _onSave = () => {
-    if (this.state.saving && !this._saveTimeout) {
+    if (this._saving && !this._saveTimeout) {
       this._onSaveDebounced();
       return;
     }
 
-    this.setState({saving: true});
+    this._saving = true;
 
     const savedState = u({
       undoStack: u.constant([]),
@@ -89,13 +91,14 @@ export default class StoreProvider extends React.Component {
 
     this.props.onSave({
       thumbnail: getStageScreenshot(getCurrentStage(savedState)),
+      name: savedState.world.metadata.name,
       data: savedState,
     }).then(() => {
       if (!this._mounted) { return; }
-      this.setState({saving: false});
+      this._saving = false;
     }).catch((e) => {
       if (!this._mounted) { return; }
-      this.setState({saving: false});
+      this._saving = false;
       alert(`Codako was unable to save changes to your world. Your internet connection may be offline. \n(Detail: ${e.message})`);
     });
   }

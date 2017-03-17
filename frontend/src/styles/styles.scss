@@ -33,7 +33,7 @@ body {
 .btn.with-counter {
   position: relative;
   .counter-inline {
-    padding: 0 0.6rem;
+    padding: 0 1.0rem;
     display: inline-block;
   }
   .counter {
@@ -44,10 +44,10 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    padding: 0.25rem 0.6rem;
+    padding: 0.5rem 1.0rem;
     font-weight: bold;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 }
 
@@ -70,6 +70,23 @@ body {
   }
   a:hover {
     color: #4078c0;
+  }
+}
+
+.faq {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  h4 {
+    margin-top:50px;
+    padding-bottom:10px;
+    border-bottom: 1px solid #ccc;
+  }
+  h5 {
+    margin-top:50px;
+    margin-bottom:10px;
+    &:first-child {
+      margin-top:20px;
+    }
   }
 }
 

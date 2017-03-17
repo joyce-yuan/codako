@@ -31,3 +31,11 @@ export function deleteGlobal(worldId, globalId) {
     globalId,
   };
 }
+
+export function updateWorldMetadata(worldId, metadata) {
+  return {
+    type: types.UPDATE_WORLD_METADATA,
+    worldId,
+    metadata
+  };
+}

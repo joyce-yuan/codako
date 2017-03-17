@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from 'reactstrap';
-// import {Link} from 'react-router';
+import {Link} from 'react-router';
 
 const HomePage = () => {
   return (
@@ -106,7 +106,7 @@ const HomePage = () => {
                 the required email address, nickname and password. 20 years ago, I learned to
                 program using Apple's KidSIM, and Codako is my effort to bring back the platform
                 that inspired me in my childhood. For more about why I've built Codako,
-                see the <a href="/#/parents">FAQ for Parents</a>
+                see the <Link to={'/faq'}>FAQ for Parents</Link>
               </p>
             </div>
             <div className="offset-md-2 col-md-3">

@@ -55,7 +55,7 @@ const LocalStorageAdapter = {
   save: function (json) {
     this._value.data = json.data;
     window.localStorage.setItem(this.props.params.worldId, JSON.stringify(this._value));
-    return Promise.resolve();
+    return Promise.resolve(this._value);
   },
 };
 
@@ -119,7 +119,19 @@ class EditorPage extends React.Component {
   loadWorld(props) {
     this.getAdapter(props).load.call(this, props).then((world) => {
       if (!this._mounted) { return; }
-      this.setState({world, loaded: true});
+
+      try {
+        this.setState({world, loaded: true});
+      } catch (err1) {
+        delete world.data.ui;
+        delete world.data.recording;
+        try {
+          this.setState({world, loaded: true, retry: 1});
+        } catch (err2) {
+          this.setState({world: null, error: err2.toString(), loaded: true});
+        }
+      }
+
     }).catch((error) => {
       if (!this._mounted) { return; }
       this.setState({error: error.message, loaded: true});
@@ -134,7 +146,7 @@ class EditorPage extends React.Component {
   }
 
   render() {
-    const {world, loaded, error} = this.state; 
+    const {world, loaded, error, retry} = this.state; 
 
     if (error || !loaded) {
       return (
@@ -144,7 +156,7 @@ class EditorPage extends React.Component {
 
     return (
       <StoreProvider
-        key={world.id}
+        key={`${world.id}${retry}`}
         world={world}
         onSave={(json) => this.getAdapter(this.props).save.call(this, json)}
       >

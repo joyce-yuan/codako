@@ -67,6 +67,9 @@ class App extends React.Component {
             <li className="nav-item">
               <Link className="nav-link" to="/about">About</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/faq">Parents</Link>
+            </li>
           </ul>
           <ul className="nav navbar-nav float-xs-right">
             {me ? (

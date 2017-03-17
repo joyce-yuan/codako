@@ -51,7 +51,7 @@ export default function recordingReducer(state = initialState.recording, action)
         characterId: actor.characterId,
         phase: RECORDING_PHASE_SETUP,
         actorId: actor.id,
-        conditions: u.constant({[actor.id]: []}),
+        conditions: u.constant({[actor.id]: {}}),
         beforeWorld: u.constant(u({id: WORLDS.BEFORE}, world)),
         afterWorld: u.constant(u({id: WORLDS.AFTER}, world)),
         extent: u.constant({
@@ -71,7 +71,7 @@ export default function recordingReducer(state = initialState.recording, action)
       const initialRule = {
         mainActorId: 'dude',
         actions: [],
-        conditions: {dude: []},
+        conditions: {dude: {}},
         extent: {xmin: 0, ymin: 0, xmax: 0, ymax: 0, ignored: {}},
         actors: {
           dude: {

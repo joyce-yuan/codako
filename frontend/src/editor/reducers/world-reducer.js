@@ -19,6 +19,9 @@ export default function worldReducer(state, action) {
     case Types.SELECT_STAGE_ID: {
       return u({globals: {selectedStageId: {value: action.stageId}}}, state);
     }
+    case Types.UPDATE_WORLD_METADATA: {
+      return u({metadata: action.metadata}, state);
+    }
     case Types.UPSERT_GLOBAL: {
       return u({globals: {[action.globalId]: action.changes}}, state);
     }

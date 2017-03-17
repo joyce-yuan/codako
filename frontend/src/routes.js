@@ -12,6 +12,7 @@ import DashboardPage from './components/dashboard-page';
 import LoginPage from './components/login-page';
 import JoinPage from './components/join-page';
 import JoinSendWorldsPage from './components/join-send-worlds-page';
+import FAQPage from './components/faq-page';
 
 function requireAuth(nextState, replace) {
   if (!window.store.getState().me) {
@@ -28,6 +29,7 @@ export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage} />
     <Route path="about" component={AboutPage} />
+    <Route path="faq" component={FAQPage} />
     <Route path="login" component={LoginPage} />
     <Route path="join" component={JoinPage} />
     <Route path="join-send-world" component={JoinSendWorldsPage} />

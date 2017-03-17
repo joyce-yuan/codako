@@ -18,6 +18,11 @@ export default function uiReducer(state = initialState.ui, action) {
         selectedActorPath: buildActorPath(WORLDS.AFTER, current.stageId, actorId),
       });
     }
+    case Types.CANCEL_RECORDING: {
+      return objectAssign({}, state, {
+        selectedActorPath: nullActorPath(),
+      });
+    }
     case Types.FINISH_RECORDING: {
       return objectAssign({}, state, {
         selectedActorPath: nullActorPath(),
