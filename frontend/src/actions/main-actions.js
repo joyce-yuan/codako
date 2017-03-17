@@ -109,8 +109,6 @@ export function uploadLocalStorageWorld(storageKey) {
       return;
     }
 
-    debugger;
-
     console.log("Creating a new world");
     makeRequest(`/worlds`, {dispatch, method: 'POST'}).then((created) => {
       console.log("Uploading localstorage data to world");
