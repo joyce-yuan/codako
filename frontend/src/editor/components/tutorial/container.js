@@ -161,15 +161,15 @@ class TutorialContainer extends React.Component {
     if (step.soundURL) {
       this._audio = new Audio(step.soundURL);
       this._audio.addEventListener('playing', () => {
-        if (this.props.stepIndex !== stepIndex) { return; }
+        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
         this.setState({playing: true});
       });
       this._audio.addEventListener('pause', () => {
-        if (this.props.stepIndex !== stepIndex) { return; }
+        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
         this.setState({playing: false});
       });
       this._audio.addEventListener('ended', () => {
-        if (this.props.stepIndex !== stepIndex) { return; }
+        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
         this.setState({playing: false});
         this._advancer.onAudioEnded();
       });

@@ -11,6 +11,7 @@ import NotFoundPage from './components/not-found-page';
 import DashboardPage from './components/dashboard-page';
 import LoginPage from './components/login-page';
 import JoinPage from './components/join-page';
+import JoinSendWorldsPage from './components/join-send-worlds-page';
 
 function requireAuth(nextState, replace) {
   if (!window.store.getState().me) {
@@ -29,11 +30,12 @@ export default (
     <Route path="about" component={AboutPage} />
     <Route path="login" component={LoginPage} />
     <Route path="join" component={JoinPage} />
+    <Route path="join-send-world" component={JoinSendWorldsPage} />
 
     <Route path="play/:worldId" component={PlayPage} />
+    <Route path="editor/:worldId" component={EditorPage} />
     <Route path="u/:username" component={ProfilePage} />
 
-    <Route path="editor/:worldId" component={EditorPage} onEnter={requireAuth} />
     <Route path="dashboard" component={DashboardPage} onEnter={requireAuth} />
 
     <Route path="*" component={NotFoundPage}/>

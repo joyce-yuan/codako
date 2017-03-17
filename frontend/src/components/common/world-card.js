@@ -45,6 +45,16 @@ export default class WorldCard extends React.Component {
             <h4 className="card-title">{world.name}</h4>
           </Link>
           <small className="card-text text-muted">
+            {
+              world.forkParent && (
+                <div>
+                  {`Forked from `}
+                  <Link to={`/u/${world.forkParent.user.username}`}>{world.forkParent.user.username}</Link>
+                  {`/`}
+                  <Link to={`/play/${world.forkParent.id}`}>{world.forkParent.name}</Link>
+                </div>
+              )
+            }
             Last updated {new timeago().format(world.updatedAt)}
           </small>
         </div>

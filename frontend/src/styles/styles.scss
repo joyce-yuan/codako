@@ -30,6 +30,27 @@ body {
   }
 }
 
+.btn.with-counter {
+  position: relative;
+  .counter-inline {
+    padding: 0 0.6rem;
+    display: inline-block;
+  }
+  .counter {
+    display: inline-block;
+    background: white;
+    color: black;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.25rem 0.6rem;
+    font-weight: bold;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+}
+
 .page-container {
   display: flex;
   flex-direction: column;
@@ -117,6 +138,20 @@ body {
   }
 }
 
+.play {
+  .header {
+    margin-bottom: 15px;
+    h4 {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.page-message {
+  text-align: center;
+  font-size: 24px;
+  padding: 150px;
+}
 
 .home-region {
   padding-top: 45px;
@@ -137,6 +172,7 @@ body {
   width: 100%;
   padding-top: 10px;
   padding-bottom: 30px;
+  margin-top:50px;
 }
 .footer .navbar {
   position: relative;

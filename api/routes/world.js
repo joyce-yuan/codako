@@ -8,6 +8,8 @@ const WorldShape = Joi.object().keys({
   data: Joi.object(),
 });
 
+const WorldIncludes = [db.User, {as: 'forkParent', model: db.World, include: [db.User]}];
+
 module.exports = (server) => {
   // Public:
 
@@ -23,13 +25,16 @@ module.exports = (server) => {
       },
     },
     handler: (request, reply) => {
-      // const {user} = request.auth.credentials;
       const {objectId} = request.params;
-      db.World.findOne({where: {id: objectId}, include: {model: db.User}}).then((world) => {
+      db.World.findOne({where: {id: objectId}, include: WorldIncludes}).then((world) => {
         if (!world) {
-          reply(Boom.notFound("Sorry, this would could not be found."));
+          reply(Boom.notFound("Sorry, this world could not be found."));
           return;
         }
+
+        world.playCount += 1;
+        world.save();
+
         reply(Object.assign({}, world.serialize(), {data: JSON.parse(world.data)}));
       });
     },
@@ -61,7 +66,7 @@ module.exports = (server) => {
       }
 
       userPromise.then((user) => {
-        db.World.findAll({where: {userId: user.id}, include: {model: db.User}}).then((worlds) => {
+        db.World.findAll({where: {userId: user.id}, include: WorldIncludes}).then((worlds) => {
           reply(worlds.map(s => s.serialize()));
         });
       });
@@ -77,11 +82,30 @@ module.exports = (server) => {
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
-      db.World.create({
-        userId: user.id,
-        name: "Untitled",
-        data: "{}",
-        thumbnail: '#',
+
+      let fetchSource = Promise.resolve(null);
+      if (request.query.from) {
+        fetchSource = db.World.findOne({where: {id: request.query.from}});
+      }
+
+      fetchSource.then((sourceWorld) => {
+        if (sourceWorld) {
+          sourceWorld.forkCount += 1;
+          sourceWorld.save();
+          return db.World.create({
+            userId: user.id,
+            name: sourceWorld.name,
+            data: sourceWorld.data,
+            thumbnail: sourceWorld.thumbnail,
+            forkParentId: sourceWorld.id,
+          });
+        }
+        return db.World.create({
+          userId: user.id,
+          name: "Untitled",
+          data: "{}",
+          thumbnail: '#',
+        });
       })
       .then((world) => {
         reply(world.serialize());
@@ -135,6 +159,10 @@ module.exports = (server) => {
       const {objectId} = request.params;
 
       db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) => {
+        if (!world) {
+          reply(Boom.notFound("No world with that ID exists for that user."));
+          return Promise.resolve();
+        }
         world.name = request.payload.name || world.name;
         world.thumbnail = request.payload.thumbnail || world.thumbnail;
         world.data = request.payload.data ? JSON.stringify(request.payload.data) : world.data;

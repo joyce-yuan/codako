@@ -89,10 +89,41 @@ export function duplicateWorld(id) {
   };
 }
 
-export function createWorld() {
+export function createWorld({from} = {}) {
   return function(dispatch) {
-    makeRequest(`/worlds`, {method: 'POST'}).then((created) => {
+    makeRequest(`/worlds?from=${from}`, {method: 'POST'}).then((created) => {
       dispatch(push(`/editor/${created.id}`));
+    });
+  };
+}
+
+export function uploadLocalStorageWorld(storageKey) {
+  return function(dispatch) {
+    let json = null;
+    try {
+      const world = JSON.parse(window.localStorage.getItem(storageKey));
+      json = {name: world.name, data: world.data, thumbnail: world.thumbnail};
+    } catch (err) {
+      alert("Sorry, your world could not be uploaded. " + err.toString());
+      dispatch(replace(`/dashboard`));
+      return;
+    }
+
+    debugger;
+
+    console.log("Creating a new world");
+    makeRequest(`/worlds`, {dispatch, method: 'POST'}).then((created) => {
+      console.log("Uploading localstorage data to world");
+
+      makeRequest(`/worlds/${created.id}`, {dispatch, method: 'PUT', json}).then(() => {
+        console.log("Removing localstorage, redirecting to world");
+        window.localStorage.setItem(storageKey, JSON.stringify({uploadedAsId: created.id}));
+
+        dispatch({type: types.UPSERT_WORLDS, worlds: [
+          objectAssign({}, created, json),
+        ]});
+        dispatch(replace(`/editor/${created.id}`));
+      });
     });
   };
 }

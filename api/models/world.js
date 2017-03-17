@@ -1,11 +1,27 @@
 module.exports = (sequelize, Sequelize) => {
-  const World = sequelize.define('world', {
+  return sequelize.define('world', {
     name: Sequelize.STRING,
     thumbnail: Sequelize.STRING,
     data: Sequelize.BLOB,
+    playCount: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    forkCount: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
   }, {
     classMethods: {
-      associate: ({User}) => {
+      associate: ({World, User}) => {
+        World.belongsTo(World, {
+          as: 'forkParent',
+          foreignKey: 'forkParentId',
+        });
+        World.hasMany(World, {
+          as: 'forks',
+          foreignKey: 'forkParentId',
+        });
         World.belongsTo(User, {
           onDelete: "CASCADE",
           foreignKey: {
@@ -20,6 +36,9 @@ module.exports = (sequelize, Sequelize) => {
           name: this.name,
           id: this.id,
           userId: this.userId,
+          playCount: this.playCount,
+          forkCount: this.forkCount,
+          forkParent: this.forkParent ? this.forkParent.serialize() : null,
           user: this.user ? this.user.serialize() : null,
           thumbnail: this.thumbnail,
           createdAt: this.createdAt,
@@ -28,6 +47,4 @@ module.exports = (sequelize, Sequelize) => {
       }
     },
   });
-
-  return World;
 };

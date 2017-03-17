@@ -7,6 +7,8 @@ $trash-hover-color: #d05959;
 $rule-event-color: #5BC15C;
 $rule-flow-color: #5BA4CD;
 
+$create-account-notice-color: #e6dac1;
+
 @mixin cursor($name) {
   cursor: url(../img/cursor_#{$name}.cur) 0 0, auto;
   cursor: -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0, url(../img/cursor_#{$name}.cur) 0 0, auto;
@@ -122,21 +124,6 @@ $rule-flow-color: #5BA4CD;
     user-select: none;
   }
 
-  .undo-redo-controls {
-    input[type=range] {
-      margin-right: 10px;
-      width: 150px;
-      opacity: 0;
-      transform: translate3d(0,10px,0);
-      transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
-    }
-    &.showing-slider-true {
-      input[type=range] {
-      transform: translate3d(0,0,0);
-        opacity: 1;
-      }
-    }
-  }
   .toolbar {
     order: 0;
     height:50px;
@@ -145,16 +132,60 @@ $rule-flow-color: #5BA4CD;
     display: flex;
     flex-direction: row;
 
-    .title {
-      font-size: 20px;
+    .button-group {
+      display: inline-block;
+      margin-right: 10px;
+
+      button {
+        margin-right: 0;
+        border-radius: 0;
+        border-right-width: 0;
+        outline: 0;
+        padding: 0;
+        margin-right: 5px;
+        box-sizing: content-box;
+        &:first-child {
+          border-top-left-radius: 0.25rem;
+          border-bottom-left-radius: 0.25rem;
+        }
+        &:last-child {
+          border-top-right-radius: 0.25rem;
+          border-bottom-right-radius: 0.25rem;
+          border-right-width: 1px;
+          margin-right: 0;
+        }
+        img {
+          padding: 0 2px;
+        }
+      }
     }
-    button {
-      outline: 0;
-      padding: 0;
-      margin-right: 5px;
+
+    .dropdown-toggle {
+      padding: 0 10px;
+      .title {
+        font-size: 20px;
+        vertical-align: middle;
+      }
     }
-    button:last-child {
-      margin-right: 0;
+
+    .create-account-notice {
+      background: repeating-linear-gradient(
+        -45deg,
+        $create-account-notice-color,
+        $create-account-notice-color 10px,
+        darken($create-account-notice-color, 5%) 10px,
+        darken($create-account-notice-color, 5%) 20px
+      );
+      color: rgba(0,0,0,0.8);
+      padding: 2px;
+      display: inline-block;
+      border: 1px solid darken($create-account-notice-color, 20%);
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      font-weight: bold;
+      span {
+        padding: 0 10px;
+      }
     }
   }
 }

@@ -2,13 +2,15 @@
 
 import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
+import u from 'updeep';
 
 import configureStore from './store/configureStore';
 import StageContainer from './components/stage/container';
+import initialState from './reducers/initial-state';
 
 import './styles/editor.scss';
 
-export default class EditorRoot extends React.Component {
+export default class PlayerRoot extends React.Component {
   static propTypes = {
     world: PropTypes.object,
   };
@@ -17,7 +19,8 @@ export default class EditorRoot extends React.Component {
     super(props);
 
     const {world, characters} = props.world.data;
-    this._editorStore = window.editorStore = configureStore({world, characters});
+    const state = u({world, characters}, initialState);
+    this._editorStore = window.editorStore = configureStore(state);
   }
 
   render() {

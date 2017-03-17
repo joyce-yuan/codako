@@ -48,6 +48,7 @@ module.exports = (server) => {
     config: {
       description: `characters`,
       tags: ['characters'],
+      auth: false,
     },
     handler: (request, reply) => {
       reply(characters);

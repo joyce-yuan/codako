@@ -8,43 +8,47 @@ import configureStore from './store/configureStore';
 import initialState from './reducers/initial-state';
 import {getStageScreenshot} from './utils/stage-helpers';
 import {getCurrentStage} from './utils/selectors';
-import {makeRequest} from '../helpers/api';
 
-export default class WorldStoreProvider extends React.Component {
+export default class StoreProvider extends React.Component {
   static propTypes = {
-    worldId: PropTypes.string,
+    world: PropTypes.object,
     children: PropTypes.node,
+    onSave: PropTypes.func,
   };
 
   constructor(props, context) {
     super(props, context);
 
     this._saveTimeout = null;
-    this.state = {
-      editorStore: null,
-      saving: false,
-      loaded: false,
-    };
+    this.state = this.getStateForStore(props.world);
   }
 
   componentDidMount() {
-    this.loadWorld(this.props.worldId);
+    this._mounted = true;
     window.addEventListener("beforeunload", this._onBeforeUnload);
   }
   
   componentWillReceiveProps(nextProps) {
-    if (nextProps.worldId !== this.props.worldId) {
-      this.loadWorld(nextProps.worldId);
+    if (nextProps.world.id !== this.props.world.id) {
+      this.setState(this.getStateForStore(nextProps.world));
     }
   }
 
-  loadWorld = () => {
-    return makeRequest(`/worlds/${this.props.worldId}`).then((world) => {
-      const state = u(world.data, initialState);
-      const editorStore = window.editorStore = configureStore(state);
-      editorStore.subscribe(this._onSaveDebounced);
-      this.setState({editorStore, loaded: true});
-    });
+  componentWillUnmount() {
+    this._mounted = false;
+    this._onBeforeUnload({});
+  }
+
+  getStateForStore = (world) => {
+    const savedState = world.data;
+    savedState.metadata = {
+      name: world.name,
+      id: world.id,
+    };
+
+    const editorStore = window.editorStore = configureStore(u(savedState, initialState));
+    editorStore.subscribe(this._onSaveDebounced);
+    return {editorStore, loaded: true};
   }
 
   _onBeforeUnload = (event) => {
@@ -83,30 +87,21 @@ export default class WorldStoreProvider extends React.Component {
       stages: u.map({history: u.constant([])}),
     }, this.state.editorStore.getState());
 
-    makeRequest(`/worlds/${this.props.worldId}`, {
-      method: 'PUT',
-      json: {
-        thumbnail: getStageScreenshot(getCurrentStage(savedState)),
-        data: savedState,
-      },
+    this.props.onSave({
+      thumbnail: getStageScreenshot(getCurrentStage(savedState)),
+      data: savedState,
     }).then(() => {
+      if (!this._mounted) { return; }
       this.setState({saving: false});
     }).catch((e) => {
+      if (!this._mounted) { return; }
       this.setState({saving: false});
       alert(`Codako was unable to save changes to your world. Your internet connection may be offline. \n(Detail: ${e.message})`);
     });
   }
 
   render() {
-    const {loaded, editorStore} = this.state;
-
-    if (!loaded) {
-      return (
-        <div className="editor">
-          <div className="loading">Loading...</div>
-        </div>
-      );
-    }
+    const {editorStore} = this.state;
 
     return (
       <Provider store={editorStore}>

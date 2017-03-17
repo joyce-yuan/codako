@@ -13,7 +13,7 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
     delta: 1,
   });
 
-  const me = window.store.getState().me || {};
+  const me = window.store.getState().me;
 
   return new Promise((resolve, reject) => {
     xhr(`${API_ROOT}${path}`, {
@@ -21,7 +21,7 @@ export function makeRequest(path, {method = 'GET', headers = {}, json, body} = {
       body: json ? JSON.stringify(json) : body,
       headers: objectAssign({
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(me.username + ':' + me.password)}`,
+        'Authorization': me && `Basic ${btoa(me.username + ':' + me.password)}`,
       }, headers),
     }, (err, response, responseBody) => {
       if (err) {

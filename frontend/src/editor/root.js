@@ -1,7 +1,6 @@
 /* eslint-disable import/default */
 
-import React, {PropTypes} from 'react';
-import WorldStoreProvider from './world-store-provider';
+import React from 'react';
 
 import Toolbar from './components/toolbar';
 import Library from './components/library';
@@ -17,37 +16,30 @@ import ExploreCharactersContainer from './components/modal-explore-characters/co
 
 import './styles/editor.scss';
 
+
 export default class EditorRoot extends React.Component {
-  static propTypes = {
-    worldId: PropTypes.string,
-  };
-
   render() {
-    const {worldId} = this.props;
-
     return (
-      <WorldStoreProvider worldId={worldId}>
-        <div className="editor">
-          <div className="editor-centered-flex">
-            <div className="editor-horizontal-flex">
-              <Toolbar />
-            </div>
-            <div className="editor-horizontal-flex" style={{flex: '1 1 85vh'}}>
-              <div className="stage-container">
-                <StageContainer />
-                <Library />
-              </div>
-              <InspectorContainer />
-            </div>
-
-            <TutorialContainer />
-            <PaintContainer />
-            <KeypickerContainer />
-            <StagesContainer />
-            <ExploreCharactersContainer />
+      <div className="editor">
+        <div className="editor-centered-flex">
+          <div className="editor-horizontal-flex">
+            <Toolbar />
           </div>
+          <div className="editor-horizontal-flex" style={{flex: '1 1 85vh'}}>
+            <div className="stage-container">
+              <StageContainer />
+              <Library />
+            </div>
+            <InspectorContainer />
+          </div>
+
+          <TutorialContainer />
+          <PaintContainer />
+          <KeypickerContainer />
+          <StagesContainer />
+          <ExploreCharactersContainer />
         </div>
-      </WorldStoreProvider>
+      </div>
     );
   }
 }

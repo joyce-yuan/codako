@@ -12,10 +12,6 @@ class UndoRedoControls extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      showingSlider: false,
-      mouseover: false,
-    };
   }
 
   componentDidMount() {
@@ -44,55 +40,15 @@ class UndoRedoControls extends React.Component {
     }
   }
 
-  _onSlideUndoRedo = (event) => {
-    const dest = event.target.value;
-    let current = this.props.undoDepth;
-    while (dest < current) {
-      this._dispatch(undo());
-      current -= 1;
-    }
-    while (dest > current) {
-      this._dispatch(redo());
-      current += 1;
-    }
-  }
-
-  _onHideDebounced = () => {
-    clearTimeout(this._hideTimeout);
-    this._hideTimeout = setTimeout(() => {
-      if (this.state.mouseover) {
-        this._onHideDebounced();
-        return;
-      }
-      this.setState({showingSlider: false});
-    }, 1000);
-  }
-
   _dispatch = (action) => {
-    if (!this.state.showingSlider) {
-      this.setState({showingSlider: true});
-    }
-    this._onHideDebounced();
     this.props.dispatch(action);
   }
 
   render() {
     const {undoDepth, redoDepth} = this.props;
-    const {showingSlider} = this.state;
 
     return (
-      <div
-        className={`undo-redo-controls showing-slider-${showingSlider}`}
-        onMouseEnter={() => this.setState({mouseover: true})}
-        onMouseLeave={() => { this.setState({mouseover: false}); this._onHideDebounced(); }}
-      >
-        <input 
-          type="range"
-          max={undoDepth + redoDepth}
-          min={0}
-          value={undoDepth}
-          onChange={this._onSlideUndoRedo}
-        />
+      <div className={`button-group`}>
         <Button
           className="icon"
           onClick={() => this._dispatch(undo())}

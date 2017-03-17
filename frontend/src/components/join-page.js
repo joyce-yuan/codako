@@ -13,6 +13,7 @@ class JoinPage extends React.Component {
     networkError: CustomPropTypes.BoomNetworkError,
     location: PropTypes.shape({
       state: PropTypes.shape({
+        why: PropTypes.string,
         redirectTo: PropTypes.string,
       }),
     }),
@@ -25,17 +26,17 @@ class JoinPage extends React.Component {
   _onSubmit = (event) => {
     event.preventDefault();
 
-    const {dispatch} = this.props;
+    const {dispatch, location} = this.props;
     dispatch(register({
       email: this.refs.email.value,
       password: this.refs.pass.value,
       username: this.refs.username.value,
-    }));
+    }, location.state && location.state.redirectTo));
   }
 
   render() {
     const {location, networkError} = this.props;
-    const redirectPresent = location.state && location.state.redirectTo;
+    const redirectPresent = location.state && location.state.redirectTo && !location.state.why;
 
     let message = '';
     let messageClass = null;
@@ -53,7 +54,7 @@ class JoinPage extends React.Component {
         <Row>
           <Col size={12}>
             <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
-              <h3>Join Codako</h3>
+              <h3>Join Codako{location.state.why}</h3>
               <p>
                 The best way to design, build, and ship software.
               </p>
@@ -61,7 +62,7 @@ class JoinPage extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col sm={{ size: 5, offset: 2 }}>
+          <Col sm={{ size: 7 }} lg={{ size: 5, offset: 2 }}>
             <div className="card">
               {message && (
                 <div className={`card card-inverse card-${messageClass} card-block text-xs-center`}>
@@ -102,7 +103,7 @@ class JoinPage extends React.Component {
               </form>
             </div>
           </Col>
-          <Col sm={{ size: 3 }}>
+          <Col sm={{size: 5}} lg={{ size: 3 }}>
             <div className="card">
               <div className="card-header">
                 Featured

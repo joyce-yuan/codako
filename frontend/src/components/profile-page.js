@@ -47,7 +47,7 @@ class ProfilePage extends React.Component {
                 worlds={worlds}
                 onDeleteWorld={(s) => dispatch(deleteWorld(s.id))}
                 onDuplicateWorld={(s) => dispatch(duplicateWorld(s.id))}
-                canEdit={profile.id === me.id}
+                canEdit={me && me.id === profile.id}
               />
             </div>
           </Col>

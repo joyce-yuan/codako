@@ -90,7 +90,7 @@ class App extends React.Component {
       <footer className="footer">
         <div className="container">
           <div className="row">
-            <div className="col-md-8">
+            <div className="col-md-12">
               © 2017
               {' '}
               <a href="http://www.foundry376.com/">Foundry376</a>, LLC. All Rights Reserved.
