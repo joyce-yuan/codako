@@ -22,8 +22,7 @@ class HomePage extends React.Component {
                 <h2>Create your own games!</h2>
                 <div>
                   <p>
-                    Codako was inspired by the KidSIM research of the 1990's, and is targeted
-                    at young learners ages 6-12 learning to program for the first time.
+                    Codako is a game programming tool designed for young learners ages 6-12.
                   </p>
                   <br />
                   <Button onClick={() => dispatch(forkWorld('tutorial'))}>

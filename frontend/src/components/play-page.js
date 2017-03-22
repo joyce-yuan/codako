@@ -44,8 +44,8 @@ class PlayPage extends React.Component {
     return (
       <Container style={{marginTop: 30}} className="play">
         <Row>
-          <Col sm={7}>
-            <div className="header">
+          <Col sm={12} className="header">
+            <div className="world-path">
               <h4><Link to={`/u/${world.user.username}`}>{world.user.username}</Link>/<Link>{world.name}</Link></h4>
               {world.forkParent && (<small className="text-muted">
                 {`Remixed from `}
@@ -55,25 +55,23 @@ class PlayPage extends React.Component {
               </small>
               )}
             </div>
-          </Col>
-          <Col sm={5}>
-            <Button
-              color="success"
-              className="float-xs-right with-counter"
-              onClick={this._onFork}
-            >
-              Remix this Game
-              <div className="counter-inline">{world.forkCount}</div>
-              <div className="counter">{world.forkCount}</div>
-            </Button>
             <Button
               disabled
-              className="float-xs-right with-counter"
+              className="with-counter"
               style={{marginRight: 5}}
             >
               Plays
               <div className="counter-inline">{world.playCount}</div>
               <div className="counter">{world.playCount}</div>
+            </Button>
+            <Button
+              color="success"
+              className="with-counter"
+              onClick={this._onFork}
+            >
+              Remix this Game
+              <div className="counter-inline">{world.forkCount}</div>
+              <div className="counter">{world.forkCount}</div>
             </Button>
           </Col>
         </Row>
@@ -89,9 +87,12 @@ class PlayPage extends React.Component {
                 {world.user.username}
               </Link>
             </h4>*/}
-            <p style={{background: 'rgba(238, 211, 144, 0.54)', padding: 10, textAlign: 'center'}}>
-              Codako is a free online tool for creating games! <a onClick={this._onFork} href="#">Remix this game</a> to make your own like it or <Link to={'/explore'}>explore more games</Link>.
-            </p>
+            <div className="play-tutorial-cta">
+              <div className="message">
+                Codako is a free online tool for creating games! <a onClick={this._onFork} href="#">Remix this game</a> to make your own like it or <Link to={'/explore'}>explore more games</Link>.
+              </div>
+              <img className="tutorial-cta-girl" src={require('../img/get-started-girl.png')} />
+            </div>
           </Col>
         </Row>
       </Container>

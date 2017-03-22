@@ -24,6 +24,44 @@ body {
   }
 }
 
+.play.container {
+  .stage-container {
+    min-width:400px;
+  }
+}
+.play-tutorial-cta {
+  background: rgba(238, 211, 144, 0.54);
+  padding: 10px 15%;
+  padding-bottom: 0;
+  text-align: center;
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+
+  .message {
+    flex: 1;
+    margin-top: -10px;
+  }
+  img.tutorial-cta-girl {
+    padding-left: 50px;
+    zoom: 0.65;
+  }
+}
+@media (min-width: 1200px) {
+  .play-tutorial-cta {
+    flex-direction: column;
+    padding: 10px;
+    padding-bottom: 0;
+    .message {
+      margin-top: 0;
+    }
+    img.tutorial-cta-girl {
+      padding-top: 20px;
+      padding-left: 150px;
+    }
+  }
+}
+
 .btn-secondary {
   background-image: linear-gradient(#fcfcfc, #eee);
 }
@@ -173,9 +211,15 @@ body {
 
 .play {
   .header {
+    display: flex;
+    align-items: center;
     margin-bottom: 15px;
-    h4 {
-      margin-bottom: 0;
+
+    .world-path {
+      flex: 1;
+      h4 {
+        margin-bottom: 0;
+      }
     }
   }
 }

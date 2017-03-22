@@ -13,7 +13,7 @@ export default class FAQPage extends React.Component {
             <h3>For Parents</h3>
             <p>
               Codako is a programming environment that aims to teach children and
-              young adults the basics of programming.
+              young adults (ages 6-12) the basics of programming.
             </p>
             <h4>Frequently Asked Questions</h4>
           </Col>
@@ -22,40 +22,20 @@ export default class FAQPage extends React.Component {
           <Col md={6}>
             <h5>Q: Is Codako free?</h5>
             <p>
-              Yes, Codako is completely free to play and learn. It was developed because
-              other solutions were becoming outdated, and is part of the not-for-profit
-              education initiative at <a href="http://Foundry376.com/">Foundry376</a>.
-              At some point in the future, there may be an optional subscription available
-              which allows you to store more worlds if costs become significant.
+              Yes! Codako is completely free to play and learn. 20 years ago, I learned to
+              program using Apple's KidSIM, and Codako is my effort to bring back the platform
+              that inspired me in my childhood.
             </p>
 
-            <h5>Q: Who developed Codako?</h5>
+            <h5>Q: Where did the idea for Codako come from?</h5>
             <p>
-              Codako was developed by Ben Gotow, founder and principal at Foundry376 in
-              Nashville, TN. The core concepts behind the "programming by demonstration"
+              The core concepts behind Codako's "<a href="http://www.sigchi.org/chi95/proceedings/papers/ac1bdy.htm" target="_blank">programming by demonstration</a>"
               environment were developed and extensively tested by Apple's Advanced
-              Research Group in the 1990's, and Codako is a modern re-envisioning of their
-              platform merged with the "share and remix" concept of Github "Gists".
-            </p>
-
-            <h5>Q: Is Codako COPPA complaint?</h5>
-            <p>
-              COPPA is federal legislation that governs how data about children can be
-              collected and stored. Codako does not require any information that might
-              identify your child. Sign up requires an email address and nickname, but
-              you do not need to reveal you child's identity in any way. Your child
-              will never be asked for personally identifying information while they
-              play with Codako.
-            </p>
-          </Col>
-          <Col md={6}>
-            <h5>Q: How does the site work?</h5>
-            <p>
-              Codako runs in a web browser and all of your game information is stored in
-              the cloud. There's nothing to download, and no plugins are required. From
-              a technical perspective, Codako is written in Coffeescript and HTML5 with
-              the AngularJS and EaselJS frameworks. The Codako backend is a NodeJS app
-              running on Heroku, with MongoDB for data storage.
+              Research Group in the 1990's and published as
+              &nbsp;<a href="http://www.sigchi.org/chi95/proceedings/papers/ac1bdy.htm" target="_blank">KidSIM</a>,
+              &nbsp;<a href="https://www.macintoshrepository.org/5645-cocoa-dr3">Cocoa DR3</a>, and later
+              &nbsp;<a href="https://en.wikipedia.org/wiki/Stagecast_Creator" target="_blank">Stagecast Creator.</a>
+              &nbsp;Codako is a modern re-envisioning of KidSIM merged with the "share and remix" concept of Github "Gists".
             </p>
             <h5>Q: Why does my child need an account?</h5>
             <p>
@@ -70,6 +50,24 @@ export default class FAQPage extends React.Component {
               evolving significantly as the platform develops.
             </p>
 
+          </Col>
+          <Col md={6}>
+            <h5>Q: How does the site work?</h5>
+            <p>
+              Codako runs in a web browser and all of your game information is stored in
+              the cloud. There's nothing to download, and no plugins are required. From
+              a technical perspective, Codako is written in ES2016 JavaScript (React, Redux)
+              and HTML5. The Codako backend is a NodeJS application running on Heroku.
+            </p>
+            <h5>Q: Is Codako COPPA complaint?</h5>
+            <p>
+              COPPA is federal legislation that governs how data about children can be
+              collected and stored. Codako does not require any information that might
+              identify your child. Sign up requires an email address and nickname, but
+              you do not need to reveal you child's identity in any way. Your child
+              will never be asked for personally identifying information while they
+              play with Codako.
+            </p>
             <h5>Q: I'd like to use Codako in my school!</h5>
             <p>
               Great! I'd love for you to use Codako. Reach out to me at <a href="mailto: ben@foundry376.com">ben@foundry376.com</a> so
