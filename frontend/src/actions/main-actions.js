@@ -81,20 +81,28 @@ export function deleteWorld(id) {
   };
 }
 
-export function duplicateWorld(id) {
+export function createWorld({from, fork} = {}) {
   return function(dispatch) {
-    makeRequest(`/worlds/${id}/duplicate`, {method: 'POST'}).then(() => {
-      dispatch(fetchWorldsForUser('me'));
+    const f = fork ? 'fork=true' : '';
+    makeRequest(`/worlds?from=${from}&${f}`, {method: 'POST'}).then((created) => {
+      dispatch(push(`/editor/${created.id}`));
     });
   };
 }
 
-export function createWorld({from} = {}) {
+export function forkWorld(id) {
   return function(dispatch) {
-    makeRequest(`/worlds?from=${from}`, {method: 'POST'}).then((created) => {
-      dispatch(push(`/editor/${created.id}`));
-    });
-  };
+    if (window.store.getState().me) {
+      dispatch(createWorld({from: id, fork: true}));
+    } else {
+      makeRequest(`/worlds/${id}`).then((world) => {
+        const storageKey = `ls-${Date.now()}`;
+        const storageWorld = objectAssign({}, world, {id: storageKey});
+        localStorage.setItem(storageKey, JSON.stringify(storageWorld));
+        dispatch(push(`/editor/${storageKey}?localstorage=true`));
+      });
+    }
+  }
 }
 
 export function uploadLocalStorageWorld(storageKey) {

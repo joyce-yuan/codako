@@ -3,7 +3,7 @@ import { Route, IndexRoute } from 'react-router';
 
 import App from './components/app';
 import HomePage from './components/home-page';
-import AboutPage from './components/about-page';
+import ExplorePage from './components/explore-page';
 import PlayPage from './components/play-page';
 import ProfilePage from './components/profile-page';
 import EditorPage from './components/editor-page';
@@ -28,7 +28,7 @@ function requireAuth(nextState, replace) {
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage} />
-    <Route path="about" component={AboutPage} />
+    <Route path="explore" component={ExplorePage} />
     <Route path="faq" component={FAQPage} />
     <Route path="login" component={LoginPage} />
     <Route path="join" component={JoinPage} />

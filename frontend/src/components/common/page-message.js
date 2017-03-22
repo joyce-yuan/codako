@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react';
 export default class PageMessage extends React.Component {
   static propTypes = {
     text: PropTypes.string,
+    size: PropTypes.string,
   };
 
   constructor(props, context) {
@@ -11,7 +12,7 @@ export default class PageMessage extends React.Component {
 
   render() {
     return (
-      <div className="page-message">
+      <div className={`page-message ${this.props.size}`}>
         {this.props.text}
       </div>
     );

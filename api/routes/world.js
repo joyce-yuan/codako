@@ -10,6 +10,7 @@ const WorldShape = Joi.object().keys({
 
 const WorldIncludes = [db.User, {as: 'forkParent', model: db.World, include: [db.User]}];
 
+
 module.exports = (server) => {
   // Public:
 
@@ -25,7 +26,10 @@ module.exports = (server) => {
       },
     },
     handler: (request, reply) => {
-      const {objectId} = request.params;
+      let {objectId} = request.params;
+      if (objectId === 'tutorial') {
+        objectId = process.env.TUTORIAL_WORLD_ID;
+      }
       db.World.findOne({where: {id: objectId}, include: WorldIncludes}).then((world) => {
         if (!world) {
           reply(Boom.notFound("Sorry, this world could not be found."));
@@ -36,6 +40,28 @@ module.exports = (server) => {
         world.save();
 
         reply(Object.assign({}, world.serialize(), {data: JSON.parse(world.data)}));
+      });
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: `/worlds/explore`,
+    config: {
+      description: `worlds`,
+      tags: ['worlds'],
+      auth: {
+        strategy: 'api-consumer',
+        mode: 'optional',
+      },
+    },
+    handler: (request, reply) => {
+      db.World.findAll({
+        limit: 50,
+        order: 'world.playCount DESC',
+        include: WorldIncludes,
+      }).then((worlds) => {
+        reply(worlds.map(w => w.serialize()));
       });
     },
   });
@@ -82,22 +108,29 @@ module.exports = (server) => {
     },
     handler: (request, reply) => {
       const {user} = request.auth.credentials;
+      const {fork} = request.query;
+      let {from} = request.query;
 
       let fetchSource = Promise.resolve(null);
-      if (request.query.from) {
-        fetchSource = db.World.findOne({where: {id: request.query.from}});
+      if (from) {
+        if (from === 'tutorial') {
+          from = process.env.TUTORIAL_WORLD_ID;
+        }
+        fetchSource = db.World.findOne({where: {id: from}});
       }
 
       fetchSource.then((sourceWorld) => {
         if (sourceWorld) {
-          sourceWorld.forkCount += 1;
-          sourceWorld.save();
+          if (fork) {
+            sourceWorld.forkCount += 1;
+            sourceWorld.save();
+          }
           return db.World.create({
             userId: user.id,
             name: sourceWorld.name,
             data: sourceWorld.data,
             thumbnail: sourceWorld.thumbnail,
-            forkParentId: sourceWorld.id,
+            forkParentId: fork ? sourceWorld.id : null,
           });
         }
         return db.World.create({
@@ -110,34 +143,6 @@ module.exports = (server) => {
       .then((world) => {
         reply(world.serialize());
       })
-      .catch((err) => {
-        reply(Boom.badRequest(err.toString()));
-      });
-    },
-  });
-
-  server.route({
-    method: ['POST'],
-    path: `/worlds/{objectId}/duplicate`,
-    config: {
-      description: `Duplicate a world`,
-      tags: ['worlds'],
-    },
-    handler: (request, reply) => {
-      const {user} = request.auth.credentials;
-      const {objectId} = request.params;
-
-      db.World.findOne({where: {userId: user.id, id: objectId}}).then((world) =>
-        db.World.create({
-          userId: user.id,
-          name: `${world.name} Copy`,
-          data: world.data,
-          thumbnail: world.thumbnail,
-        })
-        .then((clone) => {
-          reply(clone.serialize());
-        })
-      )
       .catch((err) => {
         reply(Boom.badRequest(err.toString()));
       });

@@ -1,15 +1,13 @@
 import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
-import {push} from 'react-router-redux';
 import Button from 'reactstrap/lib/Button';
 import Row from 'reactstrap/lib/Row';
 import Col from 'reactstrap/lib/Col';
 import Container from 'reactstrap/lib/Container';
-import objectAssign from 'object-assign';
 
 import PlayerRoot from '../editor/player-root';
-import {fetchWorld, createWorld} from '../actions/main-actions';
+import {fetchWorld, forkWorld} from '../actions/main-actions';
 import PageMessage from './common/page-message';
 
 class PlayPage extends React.Component {
@@ -31,16 +29,7 @@ class PlayPage extends React.Component {
   }
 
   _onFork = () => {
-    const {dispatch, params, me, world} = this.props;
-
-    if (me) {
-      dispatch(createWorld({from: params.worldId}));
-    } else {
-      const storageKey = `ls-${Date.now()}`;
-      const storageWorld = objectAssign({}, world, {id: storageKey});
-      localStorage.setItem(storageKey, JSON.stringify(storageWorld));
-      dispatch(push(`/editor/${storageKey}?localstorage=true`));
-    }
+    this.props.dispatch(forkWorld(this.props.params.worldId));
   }
 
   render() {
@@ -59,7 +48,7 @@ class PlayPage extends React.Component {
             <div className="header">
               <h4><Link to={`/u/${world.user.username}`}>{world.user.username}</Link>/<Link>{world.name}</Link></h4>
               {world.forkParent && (<small className="text-muted">
-                {`Forked from `}
+                {`Remixed from `}
                 <Link to={`/u/${world.forkParent.user.username}`}>{world.forkParent.user.username}</Link>
                 {`/`}
                 <Link to={`/play/${world.forkParent.id}`}>{world.forkParent.name}</Link>
@@ -73,7 +62,7 @@ class PlayPage extends React.Component {
               className="float-xs-right with-counter"
               onClick={this._onFork}
             >
-              Fork
+              Remix this Game
               <div className="counter-inline">{world.forkCount}</div>
               <div className="counter">{world.forkCount}</div>
             </Button>
@@ -101,7 +90,7 @@ class PlayPage extends React.Component {
               </Link>
             </h4>*/}
             <p style={{background: 'rgba(238, 211, 144, 0.54)', padding: 10, textAlign: 'center'}}>
-              Codako is a free online tool for creating games! <a onClick={this._onFork} href="#">Fork this game</a> to make your own like it or <Link to={'/explore'}>explore more games</Link>.
+              Codako is a free online tool for creating games! <a onClick={this._onFork} href="#">Remix this game</a> to make your own like it or <Link to={'/explore'}>explore more games</Link>.
             </p>
           </Col>
         </Row>

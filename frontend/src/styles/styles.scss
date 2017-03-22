@@ -10,6 +10,20 @@ body {
   padding: 0;
 }
 
+.navbar-nav .nav-item + .nav-item {
+  margin-left: 1.4rem;
+}
+
+.tutorial-cta {
+  background: #f7f3dd;
+  padding-bottom: 0;
+  padding-right: 0;
+  img.tutorial-cta-girl {
+    padding-left: 50px;
+    zoom: 0.65;
+  }
+}
+
 .btn-secondary {
   background-image: linear-gradient(#fcfcfc, #eee);
 }
@@ -90,47 +104,49 @@ body {
   }
 }
 
-.dashboard {
-  .world-list {
-    margin-left: -10px;
-    margin-right: -10px;
+.world-list {
+  margin-left: -10px;
+  margin-right: -10px;
 
-    .world-card {
-      display: inline-block;
-      margin-left: 10px;
-      margin-right: 10px;
-      width: calc(50% - 20px);
-      .btn-group {
-        float: right;
-      }
-    }
-    .world-thumbnail {
-      background: #ccc;
-      background-size: cover;
-      background-position: center;
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-      text-align: center;
-      font-size: 20px;
-      color: white;
-    }
-
-    .world-thumbnail > div {
-      opacity: 0;
-      background: rgba(0,0,0,0.2);
-      height: 100%;
-
-      a {
-        color: white; 
-        display: inline-block;
-        padding: 60px 15px;
-      }
-      &:hover {
-        opacity: 1;
-      }
+  .world-card {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: calc(33% - 20px);
+    .btn-group {
+      float: right;
     }
   }
+  .world-thumbnail {
+    background: #ccc;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    text-align: center;
+    font-size: 20px;
+    color: white;
+  }
+
+  .world-thumbnail > div {
+    opacity: 0;
+    background: rgba(0,0,0,0.2);
+    height: 100%;
+
+    a {
+      color: white; 
+      display: inline-block;
+      padding: 60px 15px;
+    }
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.col-md-9 .world-list .world-card {
+  width: calc(50% - 20px);
 }
 
 .network-bar {
@@ -168,6 +184,10 @@ body {
   text-align: center;
   font-size: 24px;
   padding: 150px;
+  &.sm {
+  font-size: 16px;
+  padding: 50px;
+  }
 }
 
 .home-region {

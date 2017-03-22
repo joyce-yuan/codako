@@ -4,51 +4,8 @@ import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 
 import Button from 'reactstrap/lib/Button';
-import NavDropdown from 'reactstrap/lib/NavDropdown';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 import {logout} from '../actions/main-actions';
-
-class NavUserMenu extends React.Component {
-  static propTypes = {
-    dispatch: PropTypes.func,
-    user: PropTypes.object,
-  };
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      open: false,
-    };
-  }
-
-  _onVisitDashboard = () => {
-    this.props.dispatch(logout());
-  }
-
-  render() {
-    const {user} = this.props;
-    const {open} = this.state;
-
-    return (
-      <NavDropdown
-        isOpen={open}
-        toggle={() => this.setState({open: !open})}
-      >
-        <DropdownToggle nav caret>
-          {user.username}
-        </DropdownToggle>
-        <DropdownMenu right>
-          <DropdownItem onClick={() => this.props.dispatch(push('/dashboard'))}>Dashboard</DropdownItem>
-          <DropdownItem divider />
-          <DropdownItem onClick={() => this.props.dispatch(logout())}>Log Out</DropdownItem>
-        </DropdownMenu>
-      </NavDropdown>
-    );
-  }
-}
 
 class App extends React.Component {
   static propTypes = {
@@ -70,16 +27,21 @@ class App extends React.Component {
               <IndexLink className="nav-link" to="/">Home</IndexLink>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/about">About</Link>
+              <Link className="nav-link" to="/faq">Parents</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/faq">Parents</Link>
+              <Link className="nav-link" to="/explore">Explore</Link>
             </li>
           </ul>
           <ul className="nav navbar-nav float-xs-right">
-            {me ? (
-              <NavUserMenu user={me} dispatch={dispatch} />
-            ) : ([
+            {me ? ([
+              <li className="nav-item" key="dashboard">
+                <Link className="nav-link" to="/dashboard">My Games</Link>
+              </li>,
+              <li className="nav-item" key="logout">
+                <a className="nav-link" href="#" onClick={() => dispatch(logout())}>Log Out ({me.username})</a>
+              </li>,
+            ]) : ([
               <li className="nav-item" key="sign-in">
                 <Link to="/login"><Button >Sign in</Button></Link>
               </li>,

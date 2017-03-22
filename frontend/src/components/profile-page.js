@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import Row from 'reactstrap/lib/Row';
 import Col from 'reactstrap/lib/Col';
 import Container from 'reactstrap/lib/Container';
-import {fetchWorldsForUser, fetchUser, deleteWorld, duplicateWorld} from '../actions/main-actions';
+import {fetchWorldsForUser, fetchUser, deleteWorld, createWorld} from '../actions/main-actions';
 
 import WorldList from './common/world-list';
 
@@ -48,7 +48,7 @@ class ProfilePage extends React.Component {
               <WorldList
                 worlds={worlds}
                 onDeleteWorld={(s) => dispatch(deleteWorld(s.id))}
-                onDuplicateWorld={(s) => dispatch(duplicateWorld(s.id))}
+                onDuplicateWorld={(s) => dispatch(createWorld({from: s.id}))}
                 canEdit={me && me.id === profile.id}
               />
             </div>

@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Container from 'reactstrap/lib/Container';
 
 import WorldCard from './world-card';
+import PageMessage from './page-message';
 
 export default class WorldList extends React.Component {
   static propTypes = {
@@ -15,15 +16,15 @@ export default class WorldList extends React.Component {
     
     let msg = null;
     if (!worlds) {
-      msg = "Loading... ";
+      msg = <PageMessage text="Loading..." size="sm" />;
     } else if (worlds.length === 0) {
-      msg = "Create your first world to get started!";
+      msg = <PageMessage text="You haven't created any game worlds yet." size="sm" />;
     }
 
     if (msg) {
       return (
         <Container>
-          <p>{msg}</p>
+          {msg}
         </Container>
       );
     }
