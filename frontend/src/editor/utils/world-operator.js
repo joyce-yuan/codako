@@ -92,14 +92,15 @@ export default function WorldOperator(previousWorld) {
     function tickRulesTree(struct, behavior = FLOW_BEHAVIORS.FIRST) {
       let rules = [].concat(struct.rules);
 
-      evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
-
       if (behavior === FLOW_BEHAVIORS.RANDOM) {
         rules = shuffleArray(rules);
       }
 
+      // perf note: avoid creating empty evaluatedRuleIds entries if no rules are evaluated
+
       for (const rule of rules) {
         const applied = tickRule(rule);
+        evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
         evaluatedRuleIds[me.id][rule.id] = applied;
         evaluatedRuleIds[me.id][struct.id] = applied;
         if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
@@ -107,7 +108,7 @@ export default function WorldOperator(previousWorld) {
         }
       }
 
-      return evaluatedRuleIds[me.id][struct.id];
+      return evaluatedRuleIds[me.id] && evaluatedRuleIds[me.id][struct.id];
     }
 
     function tickRule(rule) {

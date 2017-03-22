@@ -90,6 +90,9 @@ export function hsvToRgb(h, s, v) {
 const tempCanvas = document.createElement('canvas');
 
 export function getDataURLFromImageData(imageData) {
+  if (!imageData) {
+    return null;
+  }
   tempCanvas.width = imageData.width;
   tempCanvas.height = imageData.height;
   const tempContext = tempCanvas.getContext('2d');
