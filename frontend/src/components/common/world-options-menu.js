@@ -1,5 +1,8 @@
 import React, {PropTypes} from 'react';
-import {ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 export default class WorldOptionsMenu extends React.Component {
   static propTypes = {

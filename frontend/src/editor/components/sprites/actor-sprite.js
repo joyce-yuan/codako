@@ -32,6 +32,7 @@ export default class ActorSprite extends React.Component {
 
   render() {
     const {actor, character, selected, draggable, transitionDuration} = this.props;
+
     return (
       <div
         draggable={draggable}

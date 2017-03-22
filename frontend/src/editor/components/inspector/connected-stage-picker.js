@@ -1,6 +1,10 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import {getStages} from '../../utils/selectors';
 
 class StagePicker extends React.Component {

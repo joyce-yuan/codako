@@ -1,5 +1,7 @@
 import React, {PropTypes} from 'react';
-import {Nav, NavItem, NavLink} from 'reactstrap';
+import Nav from 'reactstrap/lib/Nav';
+import NavLink from 'reactstrap/lib/NavLink';
+import NavItem from 'reactstrap/lib/NavItem';
 import classNames from 'classnames';
 import {connect} from 'react-redux';
 
@@ -24,7 +26,7 @@ class Container extends React.Component {
 
   static childContextTypes = {
     characters: PropTypes.object,
-    evaluatedRuleIds: PropTypes.object,
+    evaluatedRuleIdsForActor: PropTypes.object,
     selectedToolId: PropTypes.string,
   };
 
@@ -36,10 +38,12 @@ class Container extends React.Component {
   }
 
   getChildContext() {
+    const {characters, selectedToolId, world, actor} = this.props;
+
     return {
-      characters: this.props.characters,
-      selectedToolId: this.props.selectedToolId,
-      evaluatedRuleIds: this.props.world.evaluatedRuleIds,
+      characters: characters,
+      selectedToolId: selectedToolId,
+      evaluatedRuleIdsForActor: actor ? world.evaluatedRuleIds[actor.id] : {},
     };
   }
 

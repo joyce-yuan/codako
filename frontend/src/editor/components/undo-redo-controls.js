@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
 import {undo, redo} from '../utils/undo-redo';
 import {connect} from 'react-redux';
 

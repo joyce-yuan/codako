@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import classNames from 'classnames';
-import {Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
 
 import * as actions from '../actions/ui-actions';
 import {updateWorldMetadata} from '../actions/world-actions';

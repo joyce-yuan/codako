@@ -1,6 +1,10 @@
 import React, {PropTypes} from 'react';
 
-import {ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+
 import {createCharacterEventContainer, createCharacterFlowContainer} from '../../actions/characters-actions';
 import {setupRecordingForCharacter, setupRecordingForActor} from '../../actions/recording-actions';
 import {pickCharacterRuleEventKey} from '../../actions/ui-actions';

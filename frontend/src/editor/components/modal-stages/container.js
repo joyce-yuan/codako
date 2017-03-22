@@ -1,6 +1,9 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, ModalBody, ModalFooter} from 'reactstrap';
+import Modal from 'reactstrap/lib/Modal';
+import ModalBody from 'reactstrap/lib/ModalBody';
+import ModalFooter from 'reactstrap/lib/ModalFooter';
+import Button from 'reactstrap/lib/Button';
 
 import StageSettings from './settings';
 import {MODALS, WORLDS} from '../../constants/constants';

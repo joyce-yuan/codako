@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Container, Row, Col} from 'reactstrap';
+import Row from 'reactstrap/lib/Row';
+import Col from 'reactstrap/lib/Col';
+import Container from 'reactstrap/lib/Container';
 import {fetchWorldsForUser, fetchUser, deleteWorld, duplicateWorld} from '../actions/main-actions';
 
 import WorldList from './common/world-list';

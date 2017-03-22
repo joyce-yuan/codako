@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {TOOL_POINTER, TOOL_IGNORE_SQUARE} from '../../constants/constants';
 import classNames from 'classnames';
 import {selectToolId} from '../../actions/ui-actions';
-import {Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
 
 class StageRecordingTools extends React.Component {
   static propTypes = {

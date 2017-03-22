@@ -1,8 +1,11 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button, Container, Row, Col} from 'reactstrap';
-import {fetchWorldsForUser, deleteWorld, duplicateWorld, createWorld} from '../actions/main-actions';
+import Button from 'reactstrap/lib/Button';
+import Col from 'reactstrap/lib/Col';
+import Row from 'reactstrap/lib/Row';
+import Container from 'reactstrap/lib/Container';
 
+import {fetchWorldsForUser, deleteWorld, duplicateWorld, createWorld} from '../actions/main-actions';
 import WorldList from './common/world-list';
 
 class DashboardPage extends React.Component {

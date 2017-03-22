@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import PixelColorPicker from '../modal-paint/pixel-color-picker';
+// import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
 export default class StageSettings extends React.Component {
   static propTypes = {
@@ -88,7 +88,7 @@ export default class StageSettings extends React.Component {
               <input
                 type="text"
                 defaultValue={backgroundAsColor}
-                onBlur={(e) => { if (e.target.value) { onChange({background: e.target.value}) }}}
+                onBlur={(e) => { if (e.target.value) { onChange({background: e.target.value}); }}}
               />
               {/*<PixelColorPicker
                 color={backgroundAsColor}
@@ -110,7 +110,7 @@ export default class StageSettings extends React.Component {
               <input
                 type="text"
                 defaultValue={backgroundAsURL}
-                onBlur={(e) => { if (e.target.value) { onChange({background: `url(${e.target.value})`})}}}
+                onBlur={(e) => { if (e.target.value) { onChange({background: `url(${e.target.value})`}); }}}
               />
             </div>
           </div>

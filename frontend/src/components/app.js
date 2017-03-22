@@ -2,7 +2,12 @@ import React, {PropTypes} from 'react';
 import {Link, IndexLink} from 'react-router';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
-import {Button, NavDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+
+import Button from 'reactstrap/lib/Button';
+import NavDropdown from 'reactstrap/lib/NavDropdown';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 import {logout} from '../actions/main-actions';
 
@@ -36,7 +41,7 @@ class NavUserMenu extends React.Component {
           {user.username}
         </DropdownToggle>
         <DropdownMenu right>
-          <DropdownItem onClick={() => this.props.dispatch(push('dashboard'))}>Dashboard</DropdownItem>
+          <DropdownItem onClick={() => this.props.dispatch(push('/dashboard'))}>Dashboard</DropdownItem>
           <DropdownItem divider />
           <DropdownItem onClick={() => this.props.dispatch(logout())}>Log Out</DropdownItem>
         </DropdownMenu>

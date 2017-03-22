@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Container} from 'reactstrap';
+import Container from 'reactstrap/lib/Container';
 
 // Since this component is simple and static, there's no parent container for it.
 const AboutPage = () => {

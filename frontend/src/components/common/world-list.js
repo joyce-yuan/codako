@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Container} from 'reactstrap';
+import Container from 'reactstrap/lib/Container';
 
 import WorldCard from './world-card';
 

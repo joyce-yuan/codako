@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
 
 import {updateTutorialState} from '../../actions/ui-actions';
 import {getCurrentStage} from '../../utils/selectors';

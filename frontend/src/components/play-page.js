@@ -2,7 +2,10 @@ import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
-import {Button, Container, Row, Col} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
+import Row from 'reactstrap/lib/Row';
+import Col from 'reactstrap/lib/Col';
+import Container from 'reactstrap/lib/Container';
 import objectAssign from 'object-assign';
 
 import PlayerRoot from '../editor/player-root';

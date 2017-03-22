@@ -1,5 +1,9 @@
 import React, {PropTypes} from 'react';
-import {ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 import {createCharacterVariable} from '../../actions/characters-actions';
 import {createGlobal} from '../../actions/world-actions';
 

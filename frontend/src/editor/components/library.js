@@ -1,7 +1,12 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames';
-import {Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+
+import Button from 'reactstrap/lib/Button';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 
 import {nullActorPath} from '../utils/stage-helpers';
 import {TOOL_POINTER, TOOL_TRASH, MODALS} from '../constants/constants';

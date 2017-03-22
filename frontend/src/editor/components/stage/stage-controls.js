@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 import classNames from 'classnames';
 
-import {Button, ButtonGroup} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
+import ButtonGroup from 'reactstrap/lib/ButtonGroup';
 import {updatePlaybackState} from '../../actions/ui-actions';
 import {getStageScreenshot} from '../../utils/stage-helpers';
 import {getCurrentStageForWorld} from '../../utils/selectors';

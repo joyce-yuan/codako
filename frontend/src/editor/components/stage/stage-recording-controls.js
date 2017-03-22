@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 
-import {Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
 import {cancelRecording, startRecording, finishRecording} from '../../actions/recording-actions';
 import {RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD} from '../../constants/constants';
 import {actionsForRecording} from '../../utils/recording-helpers';

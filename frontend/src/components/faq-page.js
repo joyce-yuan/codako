@@ -1,5 +1,7 @@
 import React from 'react';
-import {Container, Row, Col} from 'reactstrap';
+import Col from 'reactstrap/lib/Col';
+import Row from 'reactstrap/lib/Row';
+import Container from 'reactstrap/lib/Container';
 
 
 export default class FAQPage extends React.Component {

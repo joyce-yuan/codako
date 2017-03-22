@@ -1,6 +1,14 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Button, Modal, ModalBody, ModalFooter, DropdownMenu, DropdownToggle, ButtonDropdown, DropdownItem} from 'reactstrap';
+import Modal from 'reactstrap/lib/Modal';
+import ModalBody from 'reactstrap/lib/ModalBody';
+import ModalFooter from 'reactstrap/lib/ModalFooter';
+import Button from 'reactstrap/lib/Button';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+
 import objectAssign from 'object-assign';
 
 import * as Tools from './tools';

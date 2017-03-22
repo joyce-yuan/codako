@@ -5,7 +5,7 @@ import initialState from './initial-state';
 import * as Types from '../constants/action-types';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 import {findRule, pointIsInside} from '../utils/stage-helpers';
-import {actionsForRecording, extentByShiftingExtent, createdActorsForRecording} from '../utils/recording-helpers';
+import {actionsForRecording, extentByShiftingExtent} from '../utils/recording-helpers';
 import {getCurrentStageForWorld} from '../utils/selectors';
 
 export default function charactersReducer(state = initialState.characters, action) {

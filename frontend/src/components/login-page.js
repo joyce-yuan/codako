@@ -1,7 +1,10 @@
 import React, {PropTypes} from 'react';
 import {withRouter, Link} from 'react-router';
 import {connect} from 'react-redux';
-import {Container, Row, Col, Button} from 'reactstrap';
+import Button from 'reactstrap/lib/Button';
+import Container from 'reactstrap/lib/Container';
+import Row from 'reactstrap/lib/Row';
+import Col from 'reactstrap/lib/Col';
 
 import * as CustomPropTypes from '../constants/custom-prop-types';
 import {login} from '../actions/main-actions';
