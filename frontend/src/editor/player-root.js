@@ -13,6 +13,9 @@ import './styles/editor.scss';
 export default class PlayerRoot extends React.Component {
   static propTypes = {
     world: PropTypes.object,
+    characters: PropTypes.object,
+    playback: PropTypes.object,
+    dispatch: PropTypes.func,
   };
 
   constructor(props) {
@@ -27,12 +30,9 @@ export default class PlayerRoot extends React.Component {
     return (
       <Provider store={this._editorStore}>
         <div className="stage-container" style={{height: 585}}>
-          <StageContainer />
+          <StageContainer readonly />
         </div>
       </Provider>
     );
   }
 }
-
-
-

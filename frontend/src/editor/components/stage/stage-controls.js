@@ -12,6 +12,8 @@ import {SPEED_OPTIONS} from '../../constants/constants';
 
 export default class StageControls extends React.Component {
   static propTypes = {
+    readonly: PropTypes.bool,
+
     world: PropTypes.object,
     dispatch: PropTypes.func,
     speed: PropTypes.number,
@@ -65,61 +67,93 @@ export default class StageControls extends React.Component {
     }));
   }
 
+  _renderRestartControl() {
+    const {startThumbnail} = getCurrentStageForWorld(this.props.world);
+    return (
+      <div className="left">
+        <div className="start-thumbnail restart-button" onClick={this._onRestoreInitialGameState}>
+          <img src={startThumbnail} />
+          <div className="label">
+            <i className="fa fa-fast-backward" /> Restart
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  _renderInitialStateControls() {
+    const {startThumbnail} = getCurrentStageForWorld(this.props.world);
+
+    return (
+      <div className="left">
+        <div className="start-thumbnail">
+          <img src={startThumbnail} />
+        </div>
+        <div className="start-buttons">
+          <Button
+            size="sm"
+            onClick={this._onRestoreInitialGameState}
+          >
+            <i className="fa fa-arrow-up" />
+          </Button>
+          <Button
+            size="sm"
+            onClick={this._onSaveInitialGameState}
+          >
+            <i className="fa fa-arrow-down" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   render() {
-    const {speed, dispatch, running, world} = this.props;
-    const {startThumbnail} = getCurrentStageForWorld(world);
+    const {speed, dispatch, running, world, readonly} = this.props;
 
     return (
       <div className="stage-controls">
-        <div className="left">
-          <div className="start-thumbnail">
-            <img src={startThumbnail} />
-          </div>
-          <div className="start-buttons">
-            <Button
-              size="sm"
-              onClick={this._onRestoreInitialGameState}
-            >
-              <i className="fa fa-arrow-up" />
-            </Button>
-            <Button
-              size="sm"
-              onClick={this._onSaveInitialGameState}
-            >
-              <i className="fa fa-arrow-down" />
-            </Button>
-          </div>
-        </div>
+        {readonly ? this._renderRestartControl() : this._renderInitialStateControls()}
 
         <div style={{flex: 1}} />
 
         <div className="center" data-tutorial-id="controls">
-          <Button
-            size="sm"
-            disabled={world.history && world.history.length === 0}
-            onClick={() => dispatch(stepBackGameState(world.id))}
-          >
-            <i className="fa fa-step-backward" /> Back
-          </Button>{' '}
+          {
+            (!readonly) && (
+              <Button
+                size="sm"
+                disabled={world.history && world.history.length === 0}
+                onClick={() => dispatch(stepBackGameState(world.id))}
+              >
+                <i className="fa fa-step-backward" /> Back
+              </Button>
+            )
+          }
+          {' '}
           <Button
             className={classNames({'selected': !running})}
             onClick={() => dispatch(updatePlaybackState({running: false}))}
           >
             <i className="fa fa-stop" /> Stop
-          </Button>{' '}
+          </Button>
+          {' '}
           <Button
             data-tutorial-id="run"
             className={classNames({'selected': running})}
             onClick={() => dispatch(updatePlaybackState({running: true}))}
           >
             <i className="fa fa-play" /> Run
-          </Button>{' '}
-          <Button
-            size="sm"
-            onClick={() => dispatch(advanceGameState(world.id))}
-          >
-            <i className="fa fa-step-forward" /> Forward
           </Button>
+          {' '}
+          {
+            (!readonly) && (
+              <Button
+                size="sm"
+                onClick={() => dispatch(advanceGameState(world.id))}
+              >
+                <i className="fa fa-step-forward" /> Forward
+              </Button>
+            )
+          }
         </div>
 
         <div style={{flex: 1}} />

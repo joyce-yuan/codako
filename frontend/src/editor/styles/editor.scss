@@ -366,6 +366,7 @@ $create-account-notice-color: #e6dac1;
           background: $stage-default-background;
         }
       }
+
       .start-buttons {
         position: absolute;
         z-index: 1;
@@ -377,7 +378,25 @@ $create-account-notice-color: #e6dac1;
           padding: 0 7px;
         }
       }
+      
+      .start-thumbnail.restart-button {      
+        cursor: pointer;
+        &:hover img {
+          filter: brightness(80%);
+        }
+
+        .label {
+          position: absolute;
+          z-index: 1;
+          width: 100%;
+          text-align: center;
+          top: 30%;
+          color: white;
+          font-size: .875rem;
+        }
+      }
     }
+
     .message {
       white-space: nowrap;
       padding-left: 12px;

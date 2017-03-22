@@ -13,6 +13,8 @@ import {getCurrentStageForWorld} from '../../utils/selectors';
 
 class StageContainer extends React.Component {
   static propTypes = {
+    readonly: PropTypes.bool,
+
     world: PropTypes.object,
     characters: PropTypes.object,
     recording: PropTypes.object,
@@ -21,7 +23,7 @@ class StageContainer extends React.Component {
   };
 
   render() {
-    const {world, recording, playback, dispatch, characters} = this.props;
+    const {world, recording, playback, dispatch, characters, readonly} = this.props;
 
     let stageA = null;
     let stageB = null;
@@ -87,11 +89,11 @@ class StageContainer extends React.Component {
     return ( 
       <div className="panel stages">
         <div className="stages-horizontal-flex">
-          {stageA || <Stage world={world} stage={getCurrentStageForWorld(world)} recording={null} />}
+          {stageA || <Stage world={world} stage={getCurrentStageForWorld(world)} recording={null} readonly={readonly} />}
           {stageB || <Stage style={{flex: 0}} />}
         </div>
         {actions || <div className="recording-specifics" style={{height: 0}} />}
-        {controls || <StageControls {...playback} dispatch={dispatch} world={world} />}
+        {controls || <StageControls {...playback} dispatch={dispatch} world={world} readonly={readonly} />}
       </div>
     );
   }

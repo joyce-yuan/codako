@@ -19,6 +19,8 @@ import * as CustomPropTypes from '../../constants/custom-prop-types';
 
 class Stage extends React.Component {
   static propTypes = {
+    readonly: PropTypes.bool,
+
     world: PropTypes.object,
     stage: PropTypes.object,
     style: PropTypes.object,
@@ -299,7 +301,7 @@ class Stage extends React.Component {
   }
 
   render() {
-    const {selectedToolId, characters, selectedActorPath, playback, recordingExtent, style, stage, world} = this.props;
+    const {selectedToolId, characters, selectedActorPath, playback, recordingExtent, style, stage, world, readonly} = this.props;
 
     if (!stage) {
       return (
@@ -354,7 +356,7 @@ class Stage extends React.Component {
 
               return (
                 <ActorSprite
-                  draggable
+                  draggable={!readonly}
                   key={`${actor.id}-${didWrap}`}
                   selected={actor === selected}
                   onClick={(event) => this._onClickActor(actor, event)}
