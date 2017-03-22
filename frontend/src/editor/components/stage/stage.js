@@ -38,6 +38,7 @@ class Stage extends React.Component {
   constructor(props, context) {
     super(props, context);
     this._lastFiredExtent = null;
+    this._lastActorPositions = {};
     this.state = {
       top: 0,
       left: 0,
@@ -170,7 +171,6 @@ class Stage extends React.Component {
 
   _onDropSprite = (event) => {
     const {stage, characters, dispatch, recordingExtent} = this.props;
-
     const {actorId, characterId} = JSON.parse(event.dataTransfer.getData('sprite'));
     const position = this._getPositionForEvent(event);
 
@@ -181,6 +181,10 @@ class Stage extends React.Component {
     if (actorId) {
       if (event.altKey) {
         const actor = stage.actors[actorId];
+        if (actor.position.x === position.x && actor.position.y === position.y) {
+          // attempting to drop in the same place we started the drag, don't do anything
+          return;
+        }
         const character = characters[actor.characterId];
         const clonedActor = objectAssign({}, actor, {position});
         dispatch(createActor(this._stagePath(), character, clonedActor));
@@ -343,10 +347,15 @@ class Stage extends React.Component {
           {
             Object.values(stage.actors).map((actor) => {
               const character = characters[actor.characterId];
+
+              const lastPosition = this._lastActorPositions[actor.id] || {x: Math.NaN, y: Math.NaN};
+              const didWrap = Math.abs(lastPosition.x - actor.position.x) > 6 || Math.abs(lastPosition.y - actor.position.y) > 6;
+              this._lastActorPositions[actor.id] = objectAssign({}, actor.position);
+
               return (
                 <ActorSprite
-                  key={actor.id}
                   draggable
+                  key={`${actor.id}-${didWrap}`}
                   selected={actor === selected}
                   onClick={(event) => this._onClickActor(actor, event)}
                   onDoubleClick={() => this._onSelectActor(actor)}

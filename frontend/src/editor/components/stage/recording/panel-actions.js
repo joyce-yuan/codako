@@ -73,8 +73,20 @@ export default class RecordingActions extends React.Component {
     const afterStage = getCurrentStageForWorld(afterWorld);
 
     if (a.actorId) {
-      const actor = a.actor || beforeStage.actors[a.actorId] || afterStage.actors[a.actorId];
-      const character = characters[actor.characterId];
+      const actor = beforeStage.actors[a.actorId];
+      const afterActor = afterStage.actors[a.actorId];
+      const character = characters[(actor || afterActor).characterId];
+
+      if (a.type === 'create') {
+        return (
+          <li key={idx}>
+            Create a
+            <ActorBlock actor={a.actor} character={character} />
+            at
+            <ActorPositionCanvas position={a.actor.position} extent={extent} />
+          </li>
+        );
+      }
       if (a.type === 'move') {
         return (
           <li key={idx}>
@@ -82,16 +94,6 @@ export default class RecordingActions extends React.Component {
             <ActorBlock actor={actor} character={character} />
             to
             <ActorDeltaCanvas delta={a.delta} />
-          </li>
-        );
-      }
-      if (a.type === 'create') {
-        return (
-          <li key={idx}>
-            Create a
-            <ActorBlock actor={actor} character={character} />
-            at
-            <ActorPositionCanvas position={actor.position} extent={extent} />
           </li>
         );
       }
@@ -125,7 +127,7 @@ export default class RecordingActions extends React.Component {
             Change appearance of
             <ActorBlock character={character} actor={actor} />
             to
-            <AppearanceBlock character={character} appearanceId={a.to} />
+            <AppearanceBlock character={character} appearanceId={a.to} transform={afterActor.transform} />
           </li>
         );
       }
@@ -135,7 +137,7 @@ export default class RecordingActions extends React.Component {
             Turn 
             <ActorBlock character={character} actor={actor} />
             to face
-            <TransformBlock character={character} appearanceId={actor.appearance} transform={a.to} />
+            <TransformBlock character={character} appearanceId={afterActor.appearance} transform={a.to} />
           </li>
         );
       }

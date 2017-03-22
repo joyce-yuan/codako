@@ -41,12 +41,14 @@ export default class StoreProvider extends React.Component {
   }
 
   getStateForStore = (world) => {
-    const savedState = world.data;
-
-    savedState.world.metadata = {
-      name: world.name,
-      id: world.id,
-    };
+    const savedState = u({
+      world: {
+        metadata: {
+          name: world.name,
+          id: world.id,
+        },
+      },
+    }, world.data);
 
     const editorStore = window.editorStore = configureStore(u(savedState, initialState));
     editorStore.subscribe(this._onSaveDebounced);

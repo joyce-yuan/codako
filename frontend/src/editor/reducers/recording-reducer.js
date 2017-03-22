@@ -14,9 +14,11 @@ function stateForEditingRule(phase, rule) {
   const {world} = window.editorStore.getState();
   const stage = getCurrentStageForWorld(world);
 
+  const ex = rule.extent.xmax - rule.extent.xmin;
+  const ey = rule.extent.ymax - rule.extent.ymin;
   const offset = {
-    x: Math.round((stage.width / 2 - (rule.extent.xmax - rule.extent.xmin) / 2)),
-    y: Math.round((stage.height / 2 - (rule.extent.ymax - rule.extent.ymin) / 2)),
+    x: Math.round(stage.width / 2 + ex / 2),
+    y: Math.round(stage.height / 2 + ey / 2),
   };
 
   return {

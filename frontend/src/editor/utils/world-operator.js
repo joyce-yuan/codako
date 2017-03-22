@@ -92,20 +92,22 @@ export default function WorldOperator(previousWorld) {
     function tickRulesTree(struct, behavior = FLOW_BEHAVIORS.FIRST) {
       let rules = [].concat(struct.rules);
 
+      evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
+
       if (behavior === FLOW_BEHAVIORS.RANDOM) {
         rules = shuffleArray(rules);
       }
 
       for (const rule of rules) {
         const applied = tickRule(rule);
-        evaluatedRuleIds[rule.id] = applied;
-        evaluatedRuleIds[struct.id] = applied;
+        evaluatedRuleIds[me.id][rule.id] = applied;
+        evaluatedRuleIds[me.id][struct.id] = applied;
         if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
           break;
         }
       }
 
-      return evaluatedRuleIds[struct.id];
+      return evaluatedRuleIds[me.id][struct.id];
     }
 
     function tickRule(rule) {
@@ -168,6 +170,25 @@ export default function WorldOperator(previousWorld) {
     }
 
     function applyRule(rule) {
+      // step 1: match the actors in the rule to actors on the stage, because
+      // they may move and change as we process the actions
+      const stageActorForId = {};
+      for (const ruleActorId of Object.keys(rule.actors)) {
+        const actionActor = rule.actors[ruleActorId];
+        const actionActorConditions = rule.conditions[ruleActorId];
+
+        const stagePosition = wrappedPosition(pointByAdding(me.position, actionActor.position));
+        const stageCandidates = actorsAtPosition(stagePosition);
+        if (!stageCandidates) {
+          throw new Error(`Couldn't apply rule because a generated position was not valid.`);
+        }
+        const stageActor = stageCandidates.find(a => actorsMatch(a, actionActor, actionActorConditions));
+        if (!stageActor) {
+          throw new Error(`Couldn't find an actor for performing rule: ${JSON.stringify(rule)}. Candidates: ${JSON.stringify(stageCandidates)}`);
+        }
+        stageActorForId[ruleActorId] = stageActor;
+      }
+
       for (const action of rule.actions) {
         if (action.type === 'create') {
           const nextID = Date.now();
@@ -178,19 +199,10 @@ export default function WorldOperator(previousWorld) {
           });
         } else if (action.actorId) {
           // find the actor on the stage that matches
-          const actionActor = rule.actors[action.actorId];
-          const actionActorConditions = rule.conditions[action.actorId];
-
-          const stagePosition = wrappedPosition(pointByAdding(me.position, actionActor.position));
-          const stageCandidates = actorsAtPosition(stagePosition);
-          if (!stageCandidates) {
-            throw new Error(`Couldn't apply action because the position is not valid.`);
-          }
-          const stageActor = stageCandidates.find(a => actorsMatch(a, actionActor, actionActorConditions));
+          const stageActor = stageActorForId[action.actorId];
           if (!stageActor) {
-            throw new Error(`Couldn't find the actor for performing rule: ${JSON.stringify(rule)}. Candidates: ${JSON.stringify(stageCandidates)}`);
+            throw new Error(`Action ${JSON.stringify(action)} references an actor which is not in rule.actors (${action.actorId}`);
           }
-
           if (action.type === 'move') {
             stageActor.position = wrappedPosition(pointByAdding(stageActor.position, action.delta));
           } else if (action.type === 'delete') {

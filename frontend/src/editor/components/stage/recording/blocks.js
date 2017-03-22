@@ -21,12 +21,13 @@ export class AppearanceBlock extends React.Component {
   static propTypes = {
     character: PropTypes.object,
     appearanceId: PropTypes.string,
+    transform: PropTypes.string,
   };
   render() {
-    const {character, appearanceId} = this.props;
+    const {character, appearanceId, transform} = this.props;
     return (
       <code>
-        <Sprite spritesheet={character.spritesheet} appearance={appearanceId} />
+        <Sprite spritesheet={character.spritesheet} appearance={appearanceId} transform={transform} />
         {character.spritesheet.appearanceNames[appearanceId]}
       </code>
     );
