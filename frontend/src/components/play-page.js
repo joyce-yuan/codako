@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
+import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Button from 'reactstrap/lib/Button';
 import Row from 'reactstrap/lib/Row';
@@ -28,8 +29,27 @@ class PlayPage extends React.Component {
     this.props.dispatch(fetchWorld(this.props.params.worldId));
   }
 
-  _onFork = () => {
-    this.props.dispatch(forkWorld(this.props.params.worldId));
+  _renderEditButton = () => {
+    const {dispatch, me, world} = this.props;
+
+    let label = 'Remix this Game';
+    let cmd = () => dispatch(forkWorld(world.id));
+    if (me && me.id === world.userId) {
+      label = 'Open in Editor';
+      cmd = () => dispatch(push(`/editor/${world.id}`));
+    }
+
+    return (
+      <Button
+        color="success"
+        className="with-counter"
+        onClick={cmd}
+      >
+        {label} 
+        <div className="counter-inline">{world.forkCount}</div>
+        <div className="counter">{world.forkCount}</div>
+      </Button>
+    );
   }
 
   render() {
@@ -64,15 +84,7 @@ class PlayPage extends React.Component {
               <div className="counter-inline">{world.playCount}</div>
               <div className="counter">{world.playCount}</div>
             </Button>
-            <Button
-              color="success"
-              className="with-counter"
-              onClick={this._onFork}
-            >
-              Remix this Game
-              <div className="counter-inline">{world.forkCount}</div>
-              <div className="counter">{world.forkCount}</div>
-            </Button>
+            {this._renderEditButton()}
           </Col>
         </Row>
         <Row>
