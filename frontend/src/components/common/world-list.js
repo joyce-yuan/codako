@@ -15,7 +15,7 @@ export default class WorldList extends React.Component {
     
     let msg = null;
     if (!worlds) {
-      msg = "Loading...";
+      msg = "Loading... ";
     } else if (worlds.length === 0) {
       msg = "Create your first world to get started!";
     }
