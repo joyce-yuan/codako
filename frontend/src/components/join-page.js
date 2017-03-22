@@ -57,9 +57,9 @@ class JoinPage extends React.Component {
         <Row>
           <Col size={12}>
             <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
-              <h3>Join Codako{location.state.why}</h3>
+              <h3>Join Codako{location.state && location.state.why}</h3>
               <p>
-                The best way to design, build, and ship software.
+                Create and share games with others around the world.
               </p>
             </div>
           </Col>
@@ -79,7 +79,7 @@ class JoinPage extends React.Component {
                   <label htmlFor="username">Username</label>
                   <input className={`form-control ${message.includes('username') ? 'form-control-danger' : ''}`} id="username" ref="username" />
                   <small className="form-text text-muted">
-                    This will be your username — you don't need to use your real name!
+                    Don't use your real name!
                   </small>
                 </div>
                 <div className={`form-group ${message.includes('email') ? 'has-danger' : ''}`}>
@@ -94,7 +94,7 @@ class JoinPage extends React.Component {
                   <label htmlFor="password">Password</label>
                   <input className="form-control" id="password" ref="pass" type="password" />
                   <small className="form-text text-muted">
-                    Use at least one lowercase letter, one numeral, and six characters.
+                    Remember it - don't tell anyone else!
                   </small>
                 </div>
                 <hr />
@@ -112,10 +112,10 @@ class JoinPage extends React.Component {
                 Featured
               </div>
               <div className="card-block">
-                <ul>
-                  <li>Great communication</li>
-                  <li>Frictionless development</li>
-                  <li>Open source community</li>
+                <ul style={{paddingLeft: 10}}>
+                  <li>Learn early programming concepts without writing code</li>
+                  <li>Share your work and learn from others</li>
+                  <li>No downloads - create games in your broswer!</li>
                 </ul>
               </div>
             </div>
