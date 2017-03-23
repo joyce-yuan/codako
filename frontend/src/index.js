@@ -19,7 +19,6 @@ if (!Object.values) {
 import routes from './routes';
 import configureStore from './store/configureStore';
 
-require('./favicon.ico');
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/styles.scss';
 import './styles/font-awesome.min.css';
