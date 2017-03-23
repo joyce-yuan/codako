@@ -57,7 +57,7 @@ export function fetchUser(username) {
 
 export function fetchWorldsForUser(userId) {
   return function(dispatch) {
-    makeRequest(`/worlds?user=${userId}`).then((worlds) => {
+    makeRequest(`/worlds`, {query: {user: userId}}).then((worlds) => {
       dispatch({type: types.UPSERT_WORLDS, worlds});
     });
   };
@@ -83,8 +83,7 @@ export function deleteWorld(id) {
 
 export function createWorld({from, fork} = {}) {
   return function(dispatch) {
-    const f = fork ? 'fork=true' : '';
-    makeRequest(`/worlds?from=${from}&${f}`, {method: 'POST'}).then((created) => {
+    makeRequest(`/worlds`, {query: {from, fork}, method: 'POST'}).then((created) => {
       dispatch(push(`/editor/${created.id}`));
     });
   };
@@ -118,10 +117,10 @@ export function uploadLocalStorageWorld(storageKey) {
     }
 
     console.log("Creating a new world");
-    makeRequest(`/worlds`, {dispatch, method: 'POST'}).then((created) => {
+    makeRequest(`/worlds`, {method: 'POST'}).then((created) => {
       console.log("Uploading localstorage data to world");
 
-      makeRequest(`/worlds/${created.id}`, {dispatch, method: 'PUT', json}).then(() => {
+      makeRequest(`/worlds/${created.id}`, {method: 'PUT', json}).then(() => {
         console.log("Removing localstorage, redirecting to world");
         window.localStorage.setItem(storageKey, JSON.stringify({uploadedAsId: created.id}));
 
