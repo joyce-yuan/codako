@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
   return sequelize.define('world', {
     name: Sequelize.STRING,
-    thumbnail: Sequelize.STRING,
+    thumbnail: Sequelize.BLOB,
     data: Sequelize.BLOB,
     playCount: {
       type: Sequelize.INTEGER,
