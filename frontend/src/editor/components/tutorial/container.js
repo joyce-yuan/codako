@@ -33,6 +33,10 @@ class TutorialAdvancer {
       }, 500);
       this._unsub = () => clearInterval(interval);
     }
+
+    if (step.onEnter) {
+      step.onEnter(window.editorStore.dispatch);
+    }
   }
 
   onAudioEnded() {
@@ -140,13 +144,14 @@ class TutorialContainer extends React.Component {
 
   render() {
     const {stepSet, stepIndex} = this.props;
-    if (!stepSet) {
+    const step = stepSet && tutorialSteps[stepSet][stepIndex];
+
+    if (!step) {
       return (
-        <div/>
+        <div />
       );
     }
 
-    const step = tutorialSteps[stepSet][stepIndex];
     return (
       <div>
         <div className="tutorial-container">
@@ -154,7 +159,9 @@ class TutorialContainer extends React.Component {
           <div className="copy" >
             {step.text}
             <br />
-            <Button color="primary" onClick={this._onNextStep}>Next</Button>
+          </div>
+          <div className="next">
+            <Button size="sm" onClick={this._onNextStep}>Continue</Button>
           </div>
         </div>
 

@@ -61,10 +61,7 @@ export default class Girl extends React.Component {
   render() {
     return (
       <div className="girl-container">
-        <div
-          className={`girl girl-${this._flattenedFrames()[this.state.frameIndex]}`}
-          style={{position:'relative', top:-108, left:350}}
-        />
+        <div className={`girl girl-${this._flattenedFrames()[this.state.frameIndex]}`} />
       </div>
     );
   }

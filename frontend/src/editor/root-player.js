@@ -7,6 +7,7 @@ import u from 'updeep';
 import configureStore from './store/configureStore';
 import StageContainer from './components/stage/container';
 import initialState from './reducers/initial-state';
+import {restoreInitialGameState} from './actions/stage-actions';
 
 import './styles/editor.scss';
 
@@ -24,6 +25,11 @@ export default class RootPlayer extends React.Component {
     const {world, characters} = props.world.data;
     const state = u({world, characters}, initialState);
     this._editorStore = window.editorStore = configureStore(state);
+
+    // immediately dispatch actions to reset every stage to the initial play state
+    Object.keys(state.world.stages).forEach((stageId) => {
+      this._editorStore.dispatch(restoreInitialGameState(state.world.id, stageId));
+    });
   }
 
   render() {

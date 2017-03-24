@@ -42,19 +42,21 @@ export function stepBackGameState(worldId) {
   };
 }
 
-export function saveInitialGameState(worldId, {thumbnail, actors}) {
+export function saveInitialGameState(worldId, stageId, {thumbnail, actors}) {
   return {
     type: types.SAVE_INITIAL_GAME_STATE,
     worldId,
+    stageId,
     thumbnail,
     actors,
   };
 }
 
-export function restoreInitialGameState(worldId) {
+export function restoreInitialGameState(worldId, stageId) {
   return {
     type: types.RESTORE_INITIAL_GAME_STATE,
     worldId,
+    stageId,
   };
 }
 

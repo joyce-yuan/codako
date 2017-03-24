@@ -52,8 +52,10 @@ export default class StageControls extends React.Component {
 
   _onRestoreInitialGameState = () => {
     const {dispatch, world} = this.props;
+    const stage = getCurrentStageForWorld(world);
+
     if (window.confirm("Are you sure you want to reset the stage to the saved `Start` state?")) {
-      dispatch(restoreInitialGameState(world.id));
+      dispatch(restoreInitialGameState(world.id, stage.id));
     }
   }
 
@@ -61,7 +63,7 @@ export default class StageControls extends React.Component {
     const {dispatch, world} = this.props;
     const stage = getCurrentStageForWorld(world);
 
-    dispatch(saveInitialGameState(world.id, {
+    dispatch(saveInitialGameState(world.id, stage.id, {
       actors: stage.actors,
       thumbnail: getStageScreenshot(stage),
     }));

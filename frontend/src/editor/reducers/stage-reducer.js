@@ -33,6 +33,9 @@ export default function stageReducer(state, action) {
       }, state);
     }
     case Types.RESTORE_INITIAL_GAME_STATE: {
+      if (!state.startActors || Object.keys(state.startActors).length === 0) {
+        return state;
+      }
       return u({
         actors: u.constant(state.startActors),
       }, state);

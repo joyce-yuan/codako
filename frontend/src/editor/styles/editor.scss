@@ -852,30 +852,50 @@ button.btn.selected:active {
   }
 }
 
-
 .tutorial-container {
-  background-color: white;
-  border: 3px solid rgb(204, 204, 204);
-  width: 550px;
-  height: 120px;
+  background-color: azure;
+  border-top: 3px solid lightblue;
+  width: 100%;
   bottom: 0px;
   right: 0px;
   position: fixed;
   z-index: 2000;
+  display: flex;
+  padding-left: 10px;
+  padding-right: 130px;
+  flex-direction: row;
+  align-items: center;
 
   .girl-container {
     height:0;
-    overflow:visible;
-    position:absolute;
+    right: -30px;
+    top: -110px;
+    overflow: visible;
+    position: absolute;
     pointer-events: none;
   }
 
   .copy {
-    margin-right:160px;
-    padding:5px;
-    font-size:14px;
+    padding: 5px;
+    font-size: 13px;
     overflow-y: auto;
-    height:110px;
+    flex: 1;
+  }
+  .next {
+    padding: 5px;
+    text-align: right;
+  }
+}
+@media(min-width: 1000px) {
+  .tutorial-container {
+    flex-direction: column;
+    align-items: inherit;
+    border-left: 3px solid lightblue;
+    width: 550px;
+    .girl-container {
+      top: inherit;
+      bottom: 185px;
+    }
   }
 }
 
