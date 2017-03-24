@@ -84,7 +84,13 @@ export function deleteWorld(id) {
 export function createWorld({from, fork} = {}) {
   return function(dispatch) {
     makeRequest(`/worlds`, {query: {from, fork}, method: 'POST'}).then((created) => {
-      dispatch(push(`/editor/${created.id}`));
+      let qs = '';
+      if (from === 'tutorial') {
+        qs = '?tutorial=base';
+      } else if (fork) {
+        qs = '?tutorial=fork';
+      }
+      dispatch(push(`/editor/${created.id}${qs}`));
     });
   };
 }
@@ -98,7 +104,7 @@ export function forkWorld(id) {
         const storageKey = `ls-${Date.now()}`;
         const storageWorld = objectAssign({}, world, {id: storageKey});
         localStorage.setItem(storageKey, JSON.stringify(storageWorld));
-        dispatch(push(`/editor/${storageKey}?localstorage=true`));
+        dispatch(push(`/editor/${storageKey}?localstorage=true&tutorial=fork`));
       });
     }
   }

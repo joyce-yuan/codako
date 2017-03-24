@@ -12,7 +12,7 @@ export const poseFrames = {
   'folded-talking': ['folded-talking-1', 'folded-talking-2', 'folded-talking-3', 'folded-talking-4'],
 };
 
-export const tutorialSteps = [
+const baseTutorialSteps = [
   {
     pose: 'sitting-talking',
     text: `Hi there! Welcome to Codako. Click here to start the tutorial!`,
@@ -53,8 +53,8 @@ export const tutorialSteps = [
     text: `You can move the hero around with the arrow keys. Go ahead and try it!`,
     soundURL: '/editor/sounds/tutorial/tutorial-05.mp3',
     waitsFor: {
-      stateMatching: (state, stage) => Object.keys(stage.input.keys).length > 0,
-      delay: 10000,
+      stateMatching: (state) => Object.keys(state.world.input.keys).length > 0,
+      delay: 7000,
     },
   },
   {
@@ -68,7 +68,7 @@ export const tutorialSteps = [
     pose: 'standing-pointing',
     text: `This is called the stage - it's where we design our game world.`,
     soundURL: '/editor/sounds/tutorial/tutorial-07.mp3',
-    annotation: {selectors: ['.stage'], style: 'outline'},
+    annotation: {selectors: ['.stages-horizontal-flex'], style: 'outline'},
   },
   {
     pose: ['standing-pointing', 'standing-talking'],
@@ -274,7 +274,7 @@ export const tutorialSteps = [
   {
     pose: ['excited', 'sitting-talking', 'sitting-talking'],
     text: `Wow that was great! We taught the hero how to climb up over the block,
-    and now we can use the arrow keys to gide him to the exit.`,
+    and now we can use the arrow keys to get him to the exit.`,
     soundURL: '/editor/sounds/tutorial/tutorial-29.mp3',
   },
   {
@@ -325,7 +325,7 @@ export const tutorialSteps = [
     showing him how to walk right, because the picture shows him starting in the first square,
     and ending in the second square.`,
     soundURL: '/editor/sounds/tutorial/tutorial-34.mp3',
-    annotation: {selectors: ['.rule-container.event:first-child'], style: 'outline'},
+    annotation: {selectors: ['.rule-container.group-event:first-child'], style: 'outline'},
   },
   {
     pose: ['standing-pointing', 'folded-talking'],
@@ -373,7 +373,7 @@ export const tutorialSteps = [
     text: `Great! There's our new green block. Let's put our climbing rule in there
     so the hero will only climb when we press that key.`,
     soundURL: '/editor/sounds/tutorial/tutorial-40.mp3',
-    annotation: {selectors: ['.rule-container.event:first-child'], style: 'outline'},
+    annotation: {selectors: ['.rule-container.group-event:first-child'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
@@ -382,12 +382,12 @@ export const tutorialSteps = [
     annotation: {
       style: 'arrow',
       selectors: [
-        '.rule-container.event:last-child .rule:first-child',
-        '.rule-container.event:first-child .rules-list',
+        '.rule-container.group-event:last-child .rule:first-child',
+        '.rule-container.group-event:first-child .rules-list',
       ],
     },
     waitsFor: {
-      elementMatching: '.rule-container.event:first-child li',
+      elementMatching: '.rule-container.group-event:first-child li',
     },
   },
   {
@@ -581,3 +581,10 @@ export const tutorialSteps = [
 //       $scope.highlight('#linkto-Examples', {temporary: true})
 //   }
 // ]
+
+const forkTutorialSteps = [];
+
+export const tutorialSteps = {
+  base: baseTutorialSteps,
+  fork: forkTutorialSteps,
+}

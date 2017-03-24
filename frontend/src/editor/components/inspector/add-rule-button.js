@@ -67,7 +67,7 @@ export default class RuleAddButton extends React.Component {
             <span className="badge rule-flow" /> Add Flow Container
           </DropdownItem>
           <DropdownItem divider />
-          <DropdownItem onClick={() => this._onCreateEventContainer('key')}>
+          <DropdownItem data-tutorial-id="inspector-add-rule-key" onClick={() => this._onCreateEventContainer('key')}>
             <span className="badge rule-event" /> When a Key is Pressed...
           </DropdownItem>
           <DropdownItem onClick={() => this._onCreateEventContainer('click')}>

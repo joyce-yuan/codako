@@ -6,10 +6,16 @@ export default class DisclosureTriangle extends React.Component {
     onClick: PropTypes.func,
   };
 
+  _onClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    this.props.onClick(e);
+  }
+
   render() {
     return (
       <div
-        onClick={this.props.onClick}
+        onClick={this._onClick}
         className={`triangle ${this.props.collapsed ? 'disclosed': ''}`}
       />
     );

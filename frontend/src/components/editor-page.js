@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {replace} from 'react-router-redux';
-import EditorRoot from '../editor/root';
+import RootEditor from '../editor/root-editor';
 import StoreProvider from '../editor/store-provider';
 import {makeRequest} from '../helpers/api';
 import {connect} from 'react-redux';
@@ -123,12 +123,13 @@ class EditorPage extends React.Component {
       try {
         this.setState({world, loaded: true});
       } catch (err1) {
+        world.data = JSON.parse(JSON.stringify(world.data));
         delete world.data.ui;
         delete world.data.recording;
         try {
           this.setState({world, loaded: true, retry: 1});
         } catch (err2) {
-          this.setState({world: null, error: err2.toString(), loaded: true});
+          this.setState({world: null, error: err1.toString(), loaded: true});
         }
       }
 
@@ -160,7 +161,7 @@ class EditorPage extends React.Component {
         world={world}
         onSave={(json) => this.getAdapter(this.props).save.call(this, json)}
       >
-        <EditorRoot />
+        <RootEditor />
       </StoreProvider>
     );
   }

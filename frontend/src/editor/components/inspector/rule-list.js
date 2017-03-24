@@ -6,6 +6,9 @@ import ContentFlowGroup from './content-flow-group';
 
 import {TOOL_TRASH, CONTAINER_TYPES} from '../../constants/constants';
 
+const DROP_INDEX_NA = 1000;
+const DROP_INDEX_INSIDE_BUT_INDETERMINATE = -1;
+
 class RuleDropPlaceholder extends React.Component {
   render() {
     return (<div style={{height: 30}} />);
@@ -58,14 +61,20 @@ export default class RuleList extends React.Component {
   _dropIndexForRuleDragEvent(event) {
     const hasRuleId = event.dataTransfer.types.includes('rule-id');
     if (!hasRuleId) {
-      return -1;
+      return DROP_INDEX_NA;
     }
 
     const all = Array.from(this._el.children).filter(c => c.classList.contains('rule-container'));
     for (let i = 0; i < all.length; i ++) {
       const {top, height} = all[i].getBoundingClientRect();
-      if (top + height * 0.5 > event.clientY) {
+      if (event.clientY < top + Math.min(50, height * 0.33)) {
         return i;
+      }
+
+      // create a dead zone within the item. This is crucial for the drop-zones
+      // within the item (ala nested rule list).
+      if (event.clientY < top + Math.max(height - 50, height * 0.66)) {
+        return DROP_INDEX_INSIDE_BUT_INDETERMINATE;
       }
     }
 
@@ -81,6 +90,9 @@ export default class RuleList extends React.Component {
 
   _onRuleDoubleClick = (event, rule) => {
     event.stopPropagation();
+    if (rule.type === CONTAINER_TYPES.EVENT || rule.type === CONTAINER_TYPES.FLOW) {
+      return;
+    }
     this.context.onRuleReRecord(rule);
   }
 
@@ -104,10 +116,11 @@ export default class RuleList extends React.Component {
     clearTimeout(this._leaveTimeout);
 
     const dropIndex = this._dropIndexForRuleDragEvent(event);
-    if (dropIndex === -1) {
+    if (dropIndex === DROP_INDEX_NA) {
       return;
     }
 
+    event.stopPropagation();
     event.preventDefault();
     this.setState({dropIndex});
   }
@@ -115,7 +128,7 @@ export default class RuleList extends React.Component {
   _onDragLeave = () => {
     this._leaveTimeout = setTimeout(() => {
       this.setState({dropIndex: -1});
-    }, 50);
+    }, 1);
   }
 
   _onDrop = (event) => {

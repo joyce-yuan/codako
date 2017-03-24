@@ -7,7 +7,7 @@ import Row from 'reactstrap/lib/Row';
 import Col from 'reactstrap/lib/Col';
 import Container from 'reactstrap/lib/Container';
 
-import PlayerRoot from '../editor/player-root';
+import RootPlayer from '../editor/root-player';
 import {fetchWorld, forkWorld} from '../actions/main-actions';
 import PageMessage from './common/page-message';
 
@@ -89,7 +89,7 @@ class PlayPage extends React.Component {
         </Row>
         <Row>
           <Col xl={9}>
-            <PlayerRoot world={world} />
+            <RootPlayer world={world} />
           </Col>
           <Col xl={3} style={{marginTop: 30}}>
             {/*<h4>

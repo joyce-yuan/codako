@@ -76,9 +76,8 @@ export function pickCharacterRuleEventKey(characterId, ruleId, initialKeyCode) {
   };
 }
 
-export function updateTutorialState({stepIndex}) {
+export function updateTutorialState(values) {
   return {
-    type: types.UPDATE_TUTORIAL_STATE,
-    stepIndex,
+    type: types.UPDATE_TUTORIAL_STATE, values,
   };
 }

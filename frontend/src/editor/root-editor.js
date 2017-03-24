@@ -17,7 +17,7 @@ import ExploreCharactersContainer from './components/modal-explore-characters/co
 import './styles/editor.scss';
 
 
-export default class EditorRoot extends React.Component {
+export default class RootEditor extends React.Component {
   render() {
     return (
       <div className="editor">

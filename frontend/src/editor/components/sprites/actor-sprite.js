@@ -43,6 +43,7 @@ export default class ActorSprite extends React.Component {
         className="animated"
         style={{
           position: 'absolute',
+          zIndex: selected ? 2 : undefined,
           transitionDuration: `${transitionDuration}ms`, 
           left: actor.position.x * STAGE_CELL_SIZE,
           top: actor.position.y * STAGE_CELL_SIZE,

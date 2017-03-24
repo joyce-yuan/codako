@@ -10,7 +10,7 @@ import initialState from './reducers/initial-state';
 
 import './styles/editor.scss';
 
-export default class PlayerRoot extends React.Component {
+export default class RootPlayer extends React.Component {
   static propTypes = {
     world: PropTypes.object,
     characters: PropTypes.object,

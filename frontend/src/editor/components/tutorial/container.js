@@ -4,77 +4,10 @@ import Button from 'reactstrap/lib/Button';
 
 import {updateTutorialState} from '../../actions/ui-actions';
 import {getCurrentStage} from '../../utils/selectors';
-import {tutorialSteps, poseFrames} from '../../constants/tutorial';
+import {tutorialSteps} from '../../constants/tutorial';
+
 import TutorialAnnotation from './annotation';
-
-import '../../styles/girl.scss';
-
-class Girl extends React.Component {
-  static propTypes = {
-    pose: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-    playing: PropTypes.bool,
-  }
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      frameIndex: 0,
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.playing) {
-      this.startTimer();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.pose !== this.props.pose) {
-      this.setState({frameIndex: 0});
-    }
-    if (nextProps.playing && !this.props.playing) {
-      this.startTimer();
-    }
-    if (!nextProps.playing && this.props.playing) {
-      this.setState({frameIndex: 0});
-      this.stopTimer();
-    }
-  }
-
-  componentWillUnmount() {
-    this.stopTimer();
-  }
-
-  _flattenedFrames() {
-    if (this.props.pose instanceof Array) {
-      return [].concat(...(this.props.pose.map(key => poseFrames[key])));
-    }
-    return poseFrames[this.props.pose];
-  }
-
-  startTimer() {
-    this._timer = setInterval(() => {
-      const frameCount = this._flattenedFrames().length;
-      this.setState({frameIndex: (this.state.frameIndex + 1) % frameCount});
-    }, 1000);
-  }
-
-  stopTimer() {
-    clearTimeout(this._timer);
-    this._timer = null;
-  }
-
-  render() {
-    return (
-      <div className="girl-container">
-        <div
-          className={`girl girl-${this._flattenedFrames()[this.state.frameIndex]}`}
-          style={{position:'relative', top:-108, left:350}}
-        />
-      </div>
-    );
-  }
-}
+import Girl from './girl';
 
 class TutorialAdvancer {
   constructor(step, callback) {
@@ -90,10 +23,20 @@ class TutorialAdvancer {
         }
       });
     }
+
+    if (this._waitsFor.elementMatching) {
+      const interval = setInterval(() => {
+        if (document.querySelector(this._waitsFor.elementMatching)) {
+          this._timer = setTimeout(this._callback, this._waitsFor.delay || 250);
+          this._unsub();
+        }
+      }, 500);
+      this._unsub = () => clearInterval(interval);
+    }
   }
 
   onAudioEnded() {
-    if (this._waitsFor.stateMatching) {
+    if (this._waitsFor.stateMatching || this._waitsFor.elementMatching) {
       return;
     }
     this._callback();
@@ -110,6 +53,7 @@ class TutorialAdvancer {
 
 class TutorialContainer extends React.Component {
   static propTypes = {
+    stepSet: PropTypes.string,
     stepIndex: PropTypes.number,
     dispatch: PropTypes.func,
   };
@@ -123,7 +67,16 @@ class TutorialContainer extends React.Component {
 
   componentDidMount() {
     this._startCurrentStep();
-    this.props.dispatch(updateTutorialState({stepIndex: 0}));
+
+    const pageQueryParams = location.search.split(/[?&]/g).map(p => p.split('='));
+    const pageQueryStepSet = (pageQueryParams.find(p => p[0] === 'tutorial') || [])[1];
+
+    if (pageQueryStepSet && !this.props.stepSet) {
+      this.props.dispatch(updateTutorialState({
+        stepSet: pageQueryStepSet,
+        stepIndex: 0,
+      }));
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -150,9 +103,12 @@ class TutorialContainer extends React.Component {
   _startCurrentStep() {
     this._detatchForCurrentStep();
 
-    const stepIndex = this.props.stepIndex;
-    const step = tutorialSteps[stepIndex];
+    const {stepSet, stepIndex} = this.props;
+    if (!stepSet) {
+      return;
+    }
 
+    const step = tutorialSteps[stepSet][stepIndex];
     if (!step) {
       return;
     }
@@ -183,7 +139,14 @@ class TutorialContainer extends React.Component {
   }
 
   render() {
-    const step = tutorialSteps[this.props.stepIndex];
+    const {stepSet, stepIndex} = this.props;
+    if (!stepSet) {
+      return (
+        <div/>
+      );
+    }
+
+    const step = tutorialSteps[stepSet][stepIndex];
     return (
       <div>
         <div className="tutorial-container">
