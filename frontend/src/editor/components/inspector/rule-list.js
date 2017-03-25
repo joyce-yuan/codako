@@ -35,6 +35,7 @@ export default class RuleList extends React.Component {
     this.state = {
       dragIndex: -1,
       dropIndex: -1,
+      hovering: false,
     };
   }
 
@@ -150,9 +151,22 @@ export default class RuleList extends React.Component {
     this.setState({dragIndex: -1, dropIndex: -1});
   }
 
+  _onMouseOver = (event, rule) => {
+    event.stopPropagation();
+    this.setState({hovering: rule.id});
+
+  }
+
+  _onMouseOut = (event) => {
+    event.stopPropagation();
+    if (this.state.hovering) {
+      this.setState({hovering: false});
+    }
+  }
+
   render() {
     const {collapsed, rules} = this.props;
-    const {dropIndex, dragIndex} = this.state;
+    const {dropIndex, dragIndex, hovering} = this.state;
 
     if (collapsed || !rules) {
       return <span />;
@@ -165,11 +179,13 @@ export default class RuleList extends React.Component {
           draggable
           key={r.id}
           data-rule-id={r.id}
-          className={`rule-container ${r.type}`}
+          className={`rule-container ${r.type} ${(hovering === r.id) && 'hovering'}`}
           onClick={(event) => this._onRuleClicked(event, r)}
           onDoubleClick={(event) => this._onRuleDoubleClick(event, r)}
           onDragStart={(event) => this._onDragStart(event, r)}
           onDragEnd={(event) => this._onDragEnd(event, r)}
+          onMouseOver={(event) => this._onMouseOver(event, r)}
+          onMouseOut={(event) => this._onMouseOut(event, r)}
         >
           <ContentComponent rule={r} />
         </li>

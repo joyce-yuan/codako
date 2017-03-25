@@ -801,9 +801,9 @@ $create-account-notice-color: #e6dac1;
 }
 .tool-trash {
   .rules-list .rule-container {
-    &.group-event:hover,
-    &.group-flow:hover,
-    &.rule:hover {
+    &.group-event.hovering,
+    &.group-flow.hovering,
+    &.rule.hovering {
       background-color: $trash-hover-color;
     }
   }
