@@ -122,12 +122,16 @@ export default class RuleList extends React.Component {
 
     event.stopPropagation();
     event.preventDefault();
-    this.setState({dropIndex});
+    if (dropIndex !== this.state.dropIndex) {
+      this.setState({dropIndex});
+    }
   }
 
   _onDragLeave = () => {
     this._leaveTimeout = setTimeout(() => {
-      this.setState({dropIndex: -1});
+      if (this.state.dropIndex !== -1) {
+        this.setState({dropIndex: -1});
+      }
     }, 1);
   }
 
@@ -160,6 +164,7 @@ export default class RuleList extends React.Component {
         <li
           draggable
           key={r.id}
+          data-rule-id={r.id}
           className={`rule-container ${r.type}`}
           onClick={(event) => this._onRuleClicked(event, r)}
           onDoubleClick={(event) => this._onRuleDoubleClick(event, r)}
