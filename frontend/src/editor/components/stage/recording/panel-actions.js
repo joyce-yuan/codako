@@ -165,7 +165,7 @@ export default class RecordingActions extends React.Component {
     const actions = actionsForRecording(recording, {characters});
 
     return (
-      <div style={{flex: 1, marginLeft: 3}}>
+      <div className="panel-actions" style={{flex: 1, marginLeft: 3}}>
         <h2>It should...</h2>
         <ul>
           {actions.map((a, idx) => this._renderAction(a, idx))}

@@ -22,6 +22,7 @@ class Container extends React.Component {
     character: PropTypes.object,
     selectedActorPath: CustomPropTypes.WorldSelection,
     selectedToolId: PropTypes.string,
+    isRecording: PropTypes.bool,
   };
 
   static childContextTypes = {
@@ -52,7 +53,7 @@ class Container extends React.Component {
   }
 
   render() {
-    const {character, world, actor, dispatch, selectedActorPath} = this.props;
+    const {character, world, actor, dispatch, selectedActorPath, isRecording} = this.props;
     const {activeTab} = this.state;
 
     const ContentContainer = {
@@ -89,6 +90,7 @@ class Container extends React.Component {
               character={character}
               actor={actor}
               dispatch={dispatch}
+              isRecording={isRecording}
             />
           </div>
         </Nav>
@@ -119,6 +121,7 @@ function mapStateToProps({world, ui, characters, recording}) {
     character: characters[ui.selectedCharacterId],
     selectedToolId: ui.selectedToolId,
     selectedActorPath: ui.selectedActorPath,
+    isRecording: (recording.characterId !== null),
 });
 }
 

@@ -370,7 +370,7 @@ class Container extends React.Component {
           </ModalBody>
           <ModalFooter>
             <Button key="cancel" onClick={this._onClose}>Close without Saving</Button>{' '}
-            <Button key="save" data-tutorial-id="paint-save-and-close" onClick={this._onCloseAndSave}>Save Changes</Button>
+            <Button color="primary" key="save" data-tutorial-id="paint-save-and-close" onClick={this._onCloseAndSave}>Save Changes</Button>
           </ModalFooter>
         </div>
       </Modal>

@@ -38,6 +38,10 @@ class Container extends React.Component {
     const {dispatch, characterId, ruleId, characters} = this.props;
     const rules = JSON.parse(JSON.stringify(characters[characterId].rules));
 
+    if (!this.state.keyCode) {
+      return window.alert("Uhoh - press a key on your keyboard or choose one in the picture to continue.");
+    }
+
     const [rule] = findRule({rules}, ruleId);
     rule.code = this.state.keyCode;
 
@@ -63,16 +67,14 @@ class Container extends React.Component {
         </ModalBody>
         <ModalFooter>
           <Button
-            key="cancel"
             onClick={this._onClose}>
             Cancel
           </Button>
           {' '}
           <Button
-            key="save"
-            data-tutorial-id="keypicker-save"
+            data-tutorial-id="keypicker-done"
             onClick={this._onCloseAndSave}>
-            Save
+            Done
           </Button>
         </ModalFooter>
       </Modal>

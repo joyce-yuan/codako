@@ -770,8 +770,9 @@ $create-account-notice-color: #e6dac1;
         user-select: none;
         position: relative;
         display: inline-block;
-        background:url(../img/checker.png);
-        border:1px solid #bbb;
+        background: url(../img/board-grid.png) top left, url(../img/checker.png);
+        background-size: 40px, 8px;
+        border: 1px solid #bbb;
         box-sizing:content-box;
         vertical-align: middle;
       }

@@ -34,6 +34,11 @@ export default class StageControls extends React.Component {
     this._ensureTimer(nextProps);
   }
 
+  componentWillUnmount() {
+    clearTimeout(this._timer);
+    this._timer = null;
+  }
+
   _ensureTimer(props = this.props) {
     if (props.running && (!this._timer || this._timerSpeed !== props.speed)) {
       clearTimeout(this._timer);
@@ -139,11 +144,11 @@ export default class StageControls extends React.Component {
           </Button>
           {' '}
           <Button
-            data-tutorial-id="run"
+            data-tutorial-id="play"
             className={classNames({'selected': running})}
             onClick={() => dispatch(updatePlaybackState({running: true}))}
           >
-            <i className="fa fa-play" /> Run
+            <i className="fa fa-play" /> Play
           </Button>
           {' '}
           {

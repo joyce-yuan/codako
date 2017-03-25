@@ -14,6 +14,7 @@ export default class RuleAddButton extends React.Component {
     character: PropTypes.object,
     actor: PropTypes.object,
     dispatch: PropTypes.func,
+    isRecording: PropTypes.bool,
   };
 
   constructor(props) {
@@ -47,7 +48,7 @@ export default class RuleAddButton extends React.Component {
   }
 
   render() {
-    const {character} = this.props;
+    const {character, isRecording} = this.props;
 
     return (
       <ButtonDropdown
@@ -55,7 +56,7 @@ export default class RuleAddButton extends React.Component {
         data-tutorial-id="inspector-add-rule"
         toggle={() => this.setState({open: !this.state.open})}
       >
-        <DropdownToggle caret disabled={!character}>
+        <DropdownToggle caret disabled={!character || isRecording}>
           <i className="fa fa-tasks" /> Add
         </DropdownToggle>
         <DropdownMenu right>

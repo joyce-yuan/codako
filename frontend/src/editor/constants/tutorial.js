@@ -45,16 +45,16 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `Click the 'Run' button to start my game.`,
+    text: `Click the 'Play' button to start my game.`,
     soundURL: '/editor/sounds/tutorial/tutorial-04.mp3',
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state) => state.ui.playback.running === true, 
     },
   },
   {
     pose: 'standing-talking',
-    text: `You can move the hero around with the arrow keys. Go ahead and try it!`,
+    text: `You can move the hero around with the arrow keys on the keyboard. Go ahead and try it!`,
     soundURL: '/editor/sounds/tutorial/tutorial-05.mp3',
     waitsFor: {
       stateMatching: (state) => Object.keys(state.world.input.keys).length > 0,
@@ -102,7 +102,7 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `When you're done, click the blue button down here.`,
+    text: `When you're done, click the blue Save button.`,
     soundURL: '/editor/sounds/tutorial/tutorial-11.mp3',
     annotation: {selectors: ['[data-tutorial-id=paint-save-and-close]'], style: 'outline'},
     waitsFor: {
@@ -140,10 +140,10 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `Let's see how your bridge does! Click 'Run' again and try using the arrow keys
+    text: `Let's see how your bridge does! Click 'Play' again and try using the arrow keys
     to walk over the lava. If you can't get to the other side, try moving the bridge pieces around.`,
     soundURL: '/editor/sounds/tutorial/tutorial-14.mp3',
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         return Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr' && a.position.x === 9);
@@ -255,7 +255,7 @@ const baseTutorialSteps = [
     pose: 'sitting-talking',
     text: `Great! See how that created an instruction? Now he knows what he should do!`,
     soundURL: '/editor/sounds/tutorial/tutorial-26.mp3',
-    annotation: {selectors: ['.recording-specifics .action'], style: 'outline'},
+    annotation: {selectors: ['.recording-specifics .panel-actions li'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
@@ -268,9 +268,9 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `Press 'Run'! If we did it right, our hero should climb the block now.`,
+    text: `Press 'Play'! If we did it right, our hero should climb the block now.`,
     soundURL: '/editor/sounds/tutorial/tutorial-28.mp3',
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
@@ -366,9 +366,9 @@ const baseTutorialSteps = [
   {
     pose: 'standing-pointing',
     text: `Okay. What key should make him jump? Maybe the space bar? Press a key you want
-    to use and then click the done button.`,
+    to use and then click the "Done" button.`,
     soundURL: '/editor/sounds/tutorial/tutorial-39.mp3',
-    annotation: {selectors: ['[data-tutorial-id=keypicker-save]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=keypicker-done]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state) => state.ui.keypicker.characterId === null
     },
@@ -391,6 +391,10 @@ const baseTutorialSteps = [
         '.rule-container.group-event:first-child .rules-list',
       ],
     },
+  },
+  {
+    pose: 'standing-pointing',
+    text: `Drag and drop the climbing rule into the empty space inside our new green block.`,
     waitsFor: {
       elementMatching: '.rule-container.group-event:first-child li',
     },
@@ -403,9 +407,9 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `Click the 'Run' button to start the game. Try climbing over the barrier now.`,
+    text: `Click the 'Play' button to start the game. Try climbing over the barrier now.`,
     soundURL: '/editor/sounds/tutorial/tutorial-43.mp3',
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
@@ -501,13 +505,13 @@ const baseTutorialSteps = [
   },
   {
     pose: 'excited',
-    text: `Press 'Run'! Walk the hero toward the boulder and let's see if it falls.`,
+    text: `Press 'Play'! Walk the hero toward the boulder and let's see if it falls.`,
     soundURL: '/editor/sounds/tutorial/tutorial-54.mp3',
     onEnter: (dispatch) => {
       dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 13, y: 5}}));
       dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 9, y: 9}}));
     },
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         const boulder = Object.values(stage.actors).find(a => a.characterId === 'oou4u6jemi');
@@ -594,7 +598,7 @@ const baseTutorialSteps = [
     },
   },
   {
-    text: `Okay let's try running it again. This time when our hero walks toward the
+    text: `Okay let's try playing it again. This time when our hero walks toward the
     ledge, the boulder should slip off and fall! Can you get him past the boulder
     before it blocks his path?`,
     soundURL: '/editor/sounds/tutorial/tutorial-63.mp3',
@@ -603,7 +607,7 @@ const baseTutorialSteps = [
       dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 13, y: 5}}));
       dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 4, y: 9}}));
     },
-    annotation: {selectors: ['[data-tutorial-id=run]'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
