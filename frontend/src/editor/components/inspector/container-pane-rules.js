@@ -31,6 +31,48 @@ export default class ContainerPaneRules extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.character.rules !== this.props.character.rules) {
+      // look for a newly created rule or conatainer
+      const flatten = (rules) => {
+        const result = [];
+        for (const rule of rules) {
+          result.push(rule);
+          if (rule.rules) {
+            result.push(...flatten(rule.rules));
+          }
+        }
+        return result;
+      };
+
+      const oldIds = flatten(prevProps.character.rules).map(r => r.id);
+      const nextIds = flatten(this.props.character.rules).map(r => r.id);
+      if (oldIds.length >= nextIds.length) {
+        return;
+      }
+      const newId = nextIds.find(id => !oldIds.includes(id));
+      this._scrollToRuleId(newId);
+    }
+  }
+
+  _scrollToRuleId(ruleId) {
+    const el = document.querySelector(`[data-rule-id="${ruleId}"]`);
+    if (!el) { return; }
+
+    const container = this._scrollContainerEl;
+    const scrollTopTarget = Math.round(Math.min(el.offsetTop, container.scrollHeight - container.clientHeight));
+
+    const step = () => {
+      if (container.scrollTop !== scrollTopTarget) {
+        const d = Math.abs(scrollTopTarget - container.scrollTop);
+        const dsign = Math.sign(scrollTopTarget - container.scrollTop);
+        container.scrollTop = Math.round(container.scrollTop) + dsign * Math.max(Math.min(40, d / 10.0), 1);
+        window.requestAnimationFrame(step);
+      }
+    };
+    step();
+  }
+
   _onRuleReRecord = (rule) => {
     this.props.dispatch(editRuleRecording({
       characterId: this.props.character.id,
@@ -102,7 +144,7 @@ export default class ContainerPaneRules extends React.Component {
       );
     }
     return (
-      <div className="scroll-container">
+      <div className="scroll-container" ref={(el) => this._scrollContainerEl = el}>
         <div className="scroll-container-contents">
           <RuleList rules={character.rules} />
         </div>
