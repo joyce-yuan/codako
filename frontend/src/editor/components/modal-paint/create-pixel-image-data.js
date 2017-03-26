@@ -61,6 +61,12 @@ export default function CreatePixelImageData() {
   };
 
   this.fillPixelRGBA = (xx, yy, r, g, b, a) => {
+    if ((xx < 0) || (xx >= this.width)) {
+      return;
+    }
+    if ((yy < 0) || (yy >= this.height)) {
+      return;
+    }
     this.data[(yy * this.width + xx) * 4 + 0] = r / 1;
     this.data[(yy * this.width + xx) * 4 + 1] = g / 1;
     this.data[(yy * this.width + xx) * 4 + 2] = b / 1;
