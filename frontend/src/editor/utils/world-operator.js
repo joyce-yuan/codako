@@ -178,7 +178,7 @@ export default function WorldOperator(previousWorld) {
     function getActionActorIds(rule) {
       const requiredActorIds = {};
       for (const action of rule.actions) {
-        if (action.actorId) { requiredActorIds[action.actorId] = true; }
+        if (action.actorId && rule.actors[action.actorId]) { requiredActorIds[action.actorId] = true; }
       }
       return requiredActorIds;
     }

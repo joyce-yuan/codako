@@ -25,10 +25,11 @@ export class AppearanceBlock extends React.Component {
   };
   render() {
     const {character, appearanceId, transform} = this.props;
+    const name = character.spritesheet.appearanceNames[appearanceId] || "";
     return (
       <code>
         <Sprite spritesheet={character.spritesheet} appearance={appearanceId} transform={transform} />
-        {character.spritesheet.appearanceNames[appearanceId]}
+        {name.trim()}
       </code>
     );
   }
@@ -58,7 +59,7 @@ export class VariableBlock extends React.Component {
   render() {
     const {name} = this.props;
     return (
-      <code>{name}</code>
+      <code>{(name || "").trim()}</code>
     );
   }
 }

@@ -25,7 +25,9 @@ export class AppearanceConditionRow extends React.Component {
           appearance is
           <AppearanceBlock character={character} appearanceId={appearance} />
         </div>
-        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
+        {onChange && (
+          <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
+        )}
       </li>
     );
   }
@@ -54,7 +56,9 @@ export class TransformConditionRow extends React.Component {
           is facing
           <TransformBlock character={character} appearanceId={actor.appearance} transform={transform} />
         </div>
-        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
+        {onChange && (
+          <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
+        )}
       </li>
     );
   }
@@ -86,14 +90,20 @@ export class VariableConditionRow extends React.Component {
           variable
           <VariableBlock name={character.variables[variableId].name} />
           is
-          <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
-            <option value="<">&lt;</option>
-            <option value="=">=</option>
-            <option value=">">&gt;</option>
-          </select>
+          {onChange ? (
+            <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
+              <option value="<">&lt;</option>
+              <option value="=">=</option>
+              <option value=">">&gt;</option>
+            </select>
+          ) : (
+            ` ${comparator} `
+          )}
           {variableValue}
         </div>
-        <div onClick={() => onChange(!enabled, comparator)} className="condition-toggle"><div /></div>
+        {onChange && (
+          <div onClick={() => onChange(!enabled, comparator)} className="condition-toggle"><div /></div>
+        )}
       </li>
     );
   }
