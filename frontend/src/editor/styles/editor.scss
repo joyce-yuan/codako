@@ -645,7 +645,8 @@ $create-account-notice-color: #e6dac1;
     text-shadow: 0px 1px rgba(255,255,255,0.4);
     background-color: transparent;
     border:1px solid transparent;
-    width:160px;
+    vertical-align: middle;
+    width: 185px;
   }
 
   input.name {
@@ -732,16 +733,20 @@ $create-account-notice-color: #e6dac1;
 
     .triangle {
       cursor: pointer;
-      display:inline-block;
+      display: inline-block;
       width: 0px;
       height: 0px;
       margin-left:2px;
       border-style: solid;
       border-width: 10.4px 6px 0 6px;
       border-color: rgba(0,0,0,0.4) transparent transparent transparent;
+      opacity: 0;
       &.disclosed {
         border-width: 6px 0 6px 10.4px;
         border-color: transparent transparent transparent rgba(0,0,0,0.4);
+      }
+      &.enabled {
+        opacity: 1;
       }
     }
   }
@@ -759,6 +764,20 @@ $create-account-notice-color: #e6dac1;
       margin-left:3px;
       margin-right:3px;
       background-color: #E8B432;
+    }
+    .conditions {
+      background-color:rgba(0,0,0,0.1);
+      border-top: 1px solid rgba(0,0,0,0.2);
+      border-left: 1px solid rgba(0,0,0,0.2);
+      font-size: 13px;
+      padding: 2px;
+      code {
+        background-color: transparent;
+        img {
+          zoom: 0.50;
+          margin-right: 10px;
+        }
+      }
     }
     .scenario {
       display: flex;
@@ -882,7 +901,7 @@ button.btn.selected:active {
     overflow-y: auto;
     flex: 1;
   }
-  .next {
+  .controls {
     padding: 5px;
     text-align: right;
   }

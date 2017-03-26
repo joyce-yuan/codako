@@ -1,107 +1,11 @@
 import React, {PropTypes} from 'react';
 
-import {TransformBlock, AppearanceBlock, VariableBlock, ActorBlock} from './blocks';
+import {TransformConditionRow, AppearanceConditionRow, VariableConditionRow} from './condition-rows';
 
 import {pointIsInside} from '../../../utils/stage-helpers';
 import {updateRecordingCondition} from '../../../actions/recording-actions';
 import {getCurrentStageForWorld} from '../../../utils/selectors';
 
-class AppearanceRow extends React.Component {
-  static propTypes = {
-    actor: PropTypes.object,
-    character: PropTypes.object,
-    enabled: PropTypes.bool,
-    onChange: PropTypes.func,
-    appearance: PropTypes.string,
-  };
-
-  static defaultProps = {
-    enabled: false,
-  }
-
-  render() {
-    const {appearance, actor, character, enabled, onChange} = this.props;
-
-    return (
-      <li className={`enabled-${this.props.enabled}`}>
-        <div className="left">
-          <ActorBlock character={character} actor={actor} />
-          appearance is
-          <AppearanceBlock character={character} appearanceId={appearance} />
-        </div>
-        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
-      </li>
-    );
-  }
-}
-
-class TransformRow extends React.Component {
-  static propTypes = {
-    actor: PropTypes.object,
-    character: PropTypes.object,
-    enabled: PropTypes.bool,
-    onChange: PropTypes.func,
-    transform: PropTypes.string,
-  };
-
-  static defaultProps = {
-    enabled: false,
-  }
-
-  render() {
-    const {transform, actor, character, enabled, onChange} = this.props;
-
-    return (
-      <li className={`enabled-${this.props.enabled}`}>
-        <div className="left">
-          <ActorBlock character={character} actor={actor} />
-          is facing
-          <TransformBlock character={character} appearanceId={actor.appearance} transform={transform} />
-        </div>
-        <div onClick={() => onChange(!enabled)} className="condition-toggle"><div /></div>
-      </li>
-    );
-  }
-}
-
-class VariableRow extends React.Component {
-  static propTypes = {
-    actor: PropTypes.object,
-    character: PropTypes.object,
-    enabled: PropTypes.bool,
-    onChange: PropTypes.func,
-    variableId: PropTypes.string,
-    variableValue: PropTypes.number,
-    comparator: PropTypes.string,
-  };
-
-  static defaultProps = {
-    comparator: '=',
-    enabled: false,
-  }
-
-  render() {
-    const {actor, character, enabled, onChange, variableId, variableValue, comparator} = this.props;
-
-    return (
-      <li className={`enabled-${this.props.enabled}`}>
-        <div className="left">
-          <ActorBlock character={character} actor={actor} />
-          variable
-          <VariableBlock name={character.variables[variableId].name} />
-          is
-          <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
-            <option value="<">&lt;</option>
-            <option value="=">=</option>
-            <option value=">">&gt;</option>
-          </select>
-          {variableValue}
-        </div>
-        <div onClick={() => onChange(!enabled, comparator)} className="condition-toggle"><div /></div>
-      </li>
-    );
-  }
-}
 
 export default class RecordingConditions extends React.Component {
   static propTypes = {
@@ -123,7 +27,7 @@ export default class RecordingConditions extends React.Component {
         return;
       }
       rows.push(
-        <TransformRow
+        <TransformConditionRow
           key={`${a.id}-transform`}
           character={characters[a.characterId]}
           actor={a}
@@ -135,7 +39,7 @@ export default class RecordingConditions extends React.Component {
         />
       );
       rows.push(
-        <AppearanceRow
+        <AppearanceConditionRow
           key={`${a.id}-appearance`}
           character={characters[a.characterId]}
           actor={a}
@@ -149,7 +53,7 @@ export default class RecordingConditions extends React.Component {
 
       for (const vkey of Object.keys(a.variableValues)) {
         rows.push(
-          <VariableRow
+          <VariableConditionRow
             key={`${a.id}-var-${vkey}`}
             character={characters[a.characterId]}
             actor={a}

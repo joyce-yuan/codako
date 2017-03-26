@@ -4,6 +4,11 @@ export default class DisclosureTriangle extends React.Component {
   static propTypes = {
     collapsed: PropTypes.bool,
     onClick: PropTypes.func,
+    enabled: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    enabled: true,
   };
 
   _onClick = (e) => {
@@ -16,7 +21,7 @@ export default class DisclosureTriangle extends React.Component {
     return (
       <div
         onClick={this._onClick}
-        className={`triangle ${this.props.collapsed ? 'disclosed': ''}`}
+        className={`triangle ${this.props.collapsed ? 'disclosed': ''} ${this.props.enabled ? 'enabled': ''}`}
       />
     );
   }

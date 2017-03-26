@@ -32,7 +32,7 @@ export default class ContainerPaneRules extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.character.rules !== this.props.character.rules) {
+    if (prevProps.character && this.props.character && prevProps.character.rules !== this.props.character.rules) {
       // look for a newly created rule or conatainer
       const flatten = (rules) => {
         const result = [];

@@ -20,6 +20,10 @@ export default class ScenarioStage extends React.Component {
     characters: PropTypes.object,
   };
 
+  shouldComponentUpdate(nextProps) {
+    return (nextProps.rule !== this.props.rule || nextProps.applyActions !== this.props.applyActions);
+  }
+
   render() {
     const {rule, applyActions, maxWidth, maxHeight} = this.props;
     const {world, characters} = window.editorStore.getState();
