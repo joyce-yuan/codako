@@ -9,7 +9,7 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 
 import {nullActorPath} from '../utils/stage-helpers';
-import {TOOL_POINTER, TOOL_TRASH, MODALS} from '../constants/constants';
+import {TOOL_POINTER, TOOL_RECORD, TOOL_PAINT, TOOL_TRASH, MODALS} from '../constants/constants';
 
 import {
   createCharacter,
@@ -19,6 +19,10 @@ import {
   createCharacterAppearance,
   deleteCharacterAppearance,
 } from '../actions/characters-actions';
+
+import {
+  setupRecordingForCharacter
+} from '../actions/recording-actions';
 
 import {
   select,
@@ -31,6 +35,9 @@ import Sprite from './sprites/sprite';
 import TapToEditLabel from './tap-to-edit-label';
 
 
+function defaultAppearanceId(spritesheet) {
+  return Object.keys(spritesheet.appearances)[0];
+}
 
 class LibraryItem extends React.Component {
   static propTypes = {
@@ -82,7 +89,7 @@ class LibraryItem extends React.Component {
         <Sprite
           spritesheet={spritesheet}
           frame={0}
-          appearance={appearance || Object.keys(spritesheet.appearances)[0]}
+          appearance={appearance || defaultAppearanceId(spritesheet)}
         />
         <TapToEditLabel
           className="name"
@@ -113,6 +120,13 @@ class Library extends React.Component {
       if (!event.shiftKey) {
         dispatch(selectToolId(TOOL_POINTER));
       }
+    } else if (ui.selectedToolId === TOOL_PAINT) {
+      const character = this.props.characters[characterId];
+      dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
+      dispatch(selectToolId(TOOL_POINTER));
+    } else if (ui.selectedToolId === TOOL_RECORD) {
+      dispatch(setupRecordingForCharacter({characterId}));
+      dispatch(selectToolId(TOOL_POINTER));
     } else {
       dispatch(select(characterId, nullActorPath()));
     }
@@ -125,6 +139,9 @@ class Library extends React.Component {
       if (!event.shiftKey) {
         dispatch(selectToolId(TOOL_POINTER));
       }
+    } else if (ui.selectedToolId === TOOL_PAINT) {
+      dispatch(paintCharacterAppearance(characterId, appearanceId));
+      dispatch(selectToolId(TOOL_POINTER));
     }
   }
 
@@ -198,8 +215,8 @@ class Library extends React.Component {
 
   _onCreateAppearance = () => {
     const {ui, characters, dispatch} = this.props;
-    const char = characters[ui.selectedCharacterId];
-    const appearance = Object.values(char.spritesheet.appearances)[0];
+    const {spritesheet} = characters[ui.selectedCharacterId];
+    const appearance = spritesheet.appearances[defaultAppearanceId(spritesheet)];
 
     const newAppearanceId = `${Date.now()}`;
     const newAppearanceData = appearance ? appearance[0] : null;
