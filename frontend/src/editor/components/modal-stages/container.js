@@ -28,6 +28,11 @@ class Container extends React.Component {
     this._scrollToSelectedStage();
   }
 
+  shouldComponentUpdate(nextProps) {
+    // Avoid re-rendering the contents of the modal if we aren't visible
+    return (this.props.open || nextProps.open);
+  }
+
   componentDidUpdate() {
     window.requestAnimationFrame(() => {
       this._scrollToSelectedStage();
