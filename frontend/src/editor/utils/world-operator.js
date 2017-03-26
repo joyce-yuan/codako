@@ -137,30 +137,35 @@ export default function WorldOperator(previousWorld) {
     }
 
     function checkRuleScenario(rule) {
+      const ruleActionActorIds = getActionActorIds(rule);
+
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
-          if (rule.extent.ignored[`${x},${y}`]) {
-            continue;
-          }
           const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
+          const ignoreExtraActors = rule.extent.ignored[`${x},${y}`];
+
           const stagePosition = wrappedPosition(pointByAdding(me.position, {x, y}));
           const stageActors = actorsAtPosition(stagePosition);
-
           if (stageActors === null) {
             return false; // offscreen?
           }
 
-          // if we don't have a descriptor for each item in the search set, no match
-          if (stageActors.length !== ruleActors.length) {
+          // optimization for common case of no match
+          if (!ignoreExtraActors && (stageActors.length !== ruleActors.length)) {
             return false;
           }
 
-          // make sure the descriptors and actors all match, one to one
+          // make sure the descriptors on stage satisfy the rule
           const stageRemaining = [].concat(stageActors);
           const ruleRemaining = [].concat(ruleActors);
           for (const s of stageRemaining) {
             const idx = ruleRemaining.findIndex(r => actorsMatch(s, r, rule.conditions[r.id]));
             if (idx === -1) {
+              // if the square is marked as ignored, the only actors we need are the ones
+              // in the square involved in actions.
+              if (ignoreExtraActors && !ruleActionActorIds[s.id]) {
+                continue;
+              }
               return false;
             }
             ruleRemaining.splice(idx, 1);
@@ -170,11 +175,20 @@ export default function WorldOperator(previousWorld) {
       return true;
     }
 
+    function getActionActorIds(rule) {
+      const requiredActorIds = {};
+      for (const action of rule.actions) {
+        if (action.actorId) { requiredActorIds[action.actorId] = true; }
+      }
+      return requiredActorIds;
+    }
+
     function applyRule(rule) {
       // step 1: match the actors in the rule to actors on the stage, because
-      // they may move and change as we process the actions
+      // they may move and change as we process the actions. We only need the
+      // actors that are involved in actions
       const stageActorForId = {};
-      for (const ruleActorId of Object.keys(rule.actors)) {
+      for (const ruleActorId of Object.keys(getActionActorIds(rule))) {
         const actionActor = rule.actors[ruleActorId];
         const actionActorConditions = rule.conditions[ruleActorId];
 
