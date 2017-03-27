@@ -35,7 +35,7 @@ let sequelize = null;
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     charset: 'utf8',
-    logging: true,
+    logging: false,
     pool: {
       min: 1,
       max: 15,
@@ -50,7 +50,7 @@ if (process.env.DATABASE_URL) {
   sequelize = new Sequelize('codako', '', '', {
     storage: path.join(STORAGE_DIR, `codako.sqlite`),
     dialect: "sqlite",
-    logging: true,
+    logging: false,
   });
 }
 
