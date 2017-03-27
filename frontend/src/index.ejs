@@ -10,12 +10,7 @@
     This is an example of how to add features to index.html for only one environment.
     To track JavaScript errors via TrackJS, sign up for a free trial at TrackJS.com and enter your token in /webpack.config.prod.js on line 55.
    -->
-  <% if (htmlWebpackPlugin.options.sentryURL) { %>
   <script src="https://cdn.ravenjs.com/3.13.1/raven.min.js" crossorigin="anonymous"></script>
-  <script>
-  Raven.config('<%= htmlWebpackPlugin.options.sentryURL %>').install()
-  </script>
-  <% } %>
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +21,11 @@
   <title>Codako - Create your own games!</title>
 </head>
 <body>
+  <% if (htmlWebpackPlugin.options.sentryURL) { %>
+  <script>
+    Raven.config('<%= htmlWebpackPlugin.options.sentryURL %>').install()
+  </script>
+  <% } %>
 <div id="app"></div>
 </body>
 </html>
