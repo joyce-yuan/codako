@@ -3,6 +3,7 @@ import {nullActorPath} from '../utils/stage-helpers';
 import {WORLDS} from '../constants/constants';
 
 export default {
+  version: 1,
   characters: {},
   world: {
     id: WORLDS.ROOT,

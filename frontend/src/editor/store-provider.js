@@ -4,8 +4,8 @@ import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
 import u from 'updeep';
 
+import initialData from './reducers/initial-state';
 import configureStore from './store/configureStore';
-import initialState from './reducers/initial-state';
 import {getStageScreenshot} from './utils/stage-helpers';
 import {getCurrentStage} from './utils/selectors';
 
@@ -41,18 +41,22 @@ export default class StoreProvider extends React.Component {
   }
 
   getStateForStore = (world) => {
-    const savedState = u({
-      world: {
-        metadata: {
-          name: world.name,
-          id: world.id,
-        },
-      },
-    }, world.data);
+    const {data, name, id} = world;
 
-    const editorStore = window.editorStore = configureStore(u(savedState, initialState));
-    editorStore.subscribe(this._onSaveDebounced);
-    return {editorStore, loaded: true};
+    // perform migrations here as necessary
+    const fullState = u({
+      world: {
+        metadata: {name, id},
+      },
+    }, data || initialData);
+
+    const store = window.editorStore = configureStore(fullState);
+    store.subscribe(this._onSaveDebounced);
+
+    return {
+      editorStore: store,
+      loaded: true,
+    };
   }
 
   _onBeforeUnload = (event) => {

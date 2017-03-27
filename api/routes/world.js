@@ -39,7 +39,9 @@ module.exports = (server) => {
         world.playCount += 1;
         world.save();
 
-        reply(Object.assign({}, world.serialize(), {data: JSON.parse(world.data)}));
+        reply(Object.assign({}, world.serialize(), {
+          data: world.data ? JSON.parse(world.data) : null,
+        }));
       });
     },
   });
@@ -136,7 +138,7 @@ module.exports = (server) => {
         return db.World.create({
           userId: user.id,
           name: "Untitled",
-          data: "{}",
+          data: null,
           thumbnail: '#',
         });
       })

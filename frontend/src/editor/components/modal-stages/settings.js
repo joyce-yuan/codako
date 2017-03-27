@@ -102,7 +102,7 @@ export default class StageSettings extends React.Component {
                   type="radio"
                   style={{marginRight: 5}}
                   checked={!!backgroundAsURL}
-                  onChange={() => onChange({background: "url(http://www.lvh.me:3000/Layer0_2.png)"})}
+                  onChange={() => onChange({background: "url(/Layer0_2.png)"})}
                   name="bgradio"
                 />
                 Image
