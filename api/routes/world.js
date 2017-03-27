@@ -60,7 +60,7 @@ module.exports = (server) => {
     handler: (request, reply) => {
       db.World.findAll({
         limit: 50,
-        order: 'world.playCount DESC',
+        order: '"world"."playCount" DESC',
         include: WorldIncludes,
       }).then((worlds) => {
         reply(worlds.map(w => w.serialize()));
