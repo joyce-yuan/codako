@@ -129,7 +129,7 @@ export default function charactersReducer(state = initialState.characters, actio
       }
 
       const idleContainer = rules.find(r => r.event === 'idle') || {rules};
-      idleContainer.rules.push(objectAssign(recordedRule, {
+      idleContainer.rules.unshift(objectAssign(recordedRule, {
         id: `${Date.now()}`,
         name: 'Untitled Rule',
       }));

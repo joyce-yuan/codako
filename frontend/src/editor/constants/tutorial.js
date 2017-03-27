@@ -19,21 +19,17 @@ const baseTutorialBoulderPath = {worldId: 'root', stageId: 'root', actorId: '148
 const baseTutorialSteps = [
   {
     pose: 'sitting-talking',
-    text: `Hi there! Welcome to Codako. Click here to start the tutorial!`,
+    text: `Hi there! I'm Preethi, and this is a game I've been working on. Want to help
+    me finish it? Click "Start Lesson" over here!`,
     soundURL: '/editor/sounds/tutorial/tutorial-01.mp3',
     annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
     waitsFor: {
-      stateMatching: () => false, // user must click to start
+      button: 'Start Lesson: Playback',
     },
   },
-  {
-    pose: 'sitting-talking',
-    text: `I'm Preethi, and this is a game I've been working on! It takes place
-    in a cave where the hero has to avoid the lava and escape. I'm not quite
-    done yet, but let me show you what I have so far!`,
-    soundURL: '/editor/sounds/tutorial/tutorial-02.mp3',
-    annotation: null,
-  },
+
+  // LESSON 1: Starting, playing basic game
+
   {
     pose: ['standing-pointing', 'standing-talking'],
     text: `These are the buttons that start and stop the game. When you play a normal
@@ -64,10 +60,18 @@ const baseTutorialSteps = [
   {
     pose: ['ashamed', 'folded-talking'],
     text: `Oops—you can't get to the exit yet! I need to make a bridge over the lava
-    so the hero can walk across. Want to help me add the bridge? Let's do it together.
-    Okay. Let's see...`,
+    so the hero can walk across. Want to help me add the bridge? Click here to start
+    the next lesson.
+  `,
     soundURL: '/editor/sounds/tutorial/tutorial-06.mp3',
+    annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
+    waitsFor: {
+      button: 'Start Lesson: Creating a Bridge',
+    },
   },
+
+  // LESSON 2: Adding a character
+
   {
     pose: 'standing-pointing',
     text: `This is called the stage - it's where we design our game world.`,
@@ -76,16 +80,16 @@ const baseTutorialSteps = [
   },
   {
     pose: ['standing-pointing', 'standing-talking'],
-    text: `This is the character library. It shows all of the game pieces we've made.
-    You get to draw your own game pieces, so they can be anything you want!
-    I've already drawn dirt and lava since this is a cave world. To make a bridge for
-    our hero to get over the lava, we need to make a new bridge piece.`,
+    text: `This is the character library. It shows all of the game pieces we've
+    made. You get to draw your own, so they can be anything you want!
+    I've already made dirt and lava since this is a cave game. To help our
+    hero over the lava, we need to make a new bridge piece.`,
     soundURL: '/editor/sounds/tutorial/tutorial-08.mp3',
     annotation: {selectors: ['[data-tutorial-id=characters]'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
-    text: `Go ahead and click on the + sign in the library. You can help me draw it!`,
+    text: `Go ahead and click on the + sign in the library and choose "Draw a new Character."`,
     soundURL: '/editor/sounds/tutorial/tutorial-09.mp3',
     annotation: {selectors: ['[data-tutorial-id=characters-add-button]'], style: 'outline'},
     waitsFor: {
@@ -111,11 +115,11 @@ const baseTutorialSteps = [
   },
   {
     pose: ['standing-talking', 'standing-pointing', 'standing-talking'],
-    text: `Wow! That looks cool. See how that bridge block is down in our library now?
-    Move the mouse over the bridge piece and drag it up into our game world. You can
-    drag pieces around the world to set it up the way you want.`,
+    text: `Nice! The bridge piece is in our library now. Move the mouse over it
+    and drag it up into our game world to add it to our level. You can
+    drag-and-drop pieces around the world to set it up the way you want.`,
     soundURL: '/editor/sounds/tutorial/tutorial-12.mp3',
-    annotation: {selectors: ['[data-tutorial-id=characters] .item.active'], style: 'outline'},
+    annotation: {selectors: ['[data-tutorial-id=characters] .item:last-child'], style: 'outline'},
   },
   {
     pose: 'standing-pointing',
@@ -127,7 +131,7 @@ const baseTutorialSteps = [
   {
     pose: 'standing-pointing',
     text: 'Drag five blocks out from the library to create a bridge over the lava.',
-    annotation: null,
+    annotation: {selectors: ['.stages-horizontal-flex .background'], style: 'outline', options: {width: 40 * 5, height: 34, offsetTop: 40 * 10 + 6, offsetLeft: 40 * 4}},
     waitsFor: {
       stateMatching: (state, stage) => {
         const counts = {};
@@ -152,16 +156,21 @@ const baseTutorialSteps = [
   },
   {
     pose: ['excited','standing-confused','standing-pointing'],
-    text: `Great job - you made it over! It doesn't look like our hero can make
-    it to the exit, though. I forgot - I never told him how to climb over that rock! Since we're
-    creating this game, we can decide what he should do. Let's teach him to climb over the rock
-    so he can get to the exit.`,
+    text: `Great job - you made it over! Next, we need to teach our hero to climb so he can
+    get over that boulder. Click here to start the next lesson.`,
     soundURL: '/editor/sounds/tutorial/tutorial-15.mp3',
+    annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
+    waitsFor: {
+      button: 'Start Lesson: Recording a Rule',
+    },
   },
+  
+  // LESSON 3: Creating a new rule
+
   {
     pose: ['folded-talking','standing-pointing'],
-    text: `Okay - let's see. Click on the recording tool in the toolbar. We can create a
-    rule for our character that teaches him what to do when he's next to a obstacle.`,
+    text: `In Codako, rules define how the game works. Click the recording tool in the toolbar. We'll 
+    create a new rule that teaches our hero how to climb a boulder.`,
     soundURL: '/editor/sounds/tutorial/tutorial-16.mp3',
     annotation: {selectors: ['[data-tutorial-id=toolbar-tool-record]'], style: 'outline'},
     onEnter: (dispatch) => {
@@ -173,7 +182,7 @@ const baseTutorialSteps = [
   },
   {
     pose: ['standing-pointing', 'standing-talking'],
-    text: `Now click on our hero - we want to show him how to climb, so this rule is for him.`,
+    text: `Okay, now click on our hero - we want to show him how to climb, so this rule is for him.`,
     soundURL: '/editor/sounds/tutorial/tutorial-17.mp3',
     annotation: {selectors: ['[data-stage-character-id=aamlcui8uxr]'], style: 'outline'},
     onEnter: (dispatch) => {
@@ -271,6 +280,9 @@ const baseTutorialSteps = [
     text: `Press 'Play'! If we did it right, our hero should climb the block now.`,
     soundURL: '/editor/sounds/tutorial/tutorial-28.mp3',
     annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
+    onEnter: (dispatch) => {
+      dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 2, y: 9}}));
+    },
     waitsFor: {
       stateMatching: (state, stage) => {
         const main = Object.values(stage.actors).find(a => a.characterId === 'aamlcui8uxr');
@@ -280,16 +292,19 @@ const baseTutorialSteps = [
   },
   {
     pose: ['excited', 'sitting-talking', 'sitting-talking'],
-    text: `Wow that was great! We taught the hero how to climb up over the rock,
-    and now we can use the arrow keys to get him to the exit.`,
+    text: `Wow that was great! We taught the hero how to climb up over the rock.
+    Now we can use the arrow keys to get him to the exit.`,
     soundURL: '/editor/sounds/tutorial/tutorial-29.mp3',
   },
   {
     pose: 'standing-confused',
-    text: `You know, since we're making a game we should probably have our hero
-    climb when you press the space bar. Right now, he climbs all by himself and
-    we might not want him to!`,
+    text: `Hmm... Since we're making a game we should probably make our hero wait to
+    climb until you press the space bar. Want to help me change that?`,
     soundURL: '/editor/sounds/tutorial/tutorial-30.mp3',
+    annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
+    waitsFor: {
+      button: 'Start Lesson: Event Containers',
+    },
   },
   {
     pose: 'standing-pointing',
@@ -309,8 +324,8 @@ const baseTutorialSteps = [
     annotation: {
       style: 'arrow',
       selectors: [
-        '.rules-list li:first-child',
-        '.rules-list li:last-child',
+        '.scroll-container-contents > .rules-list > li:first-child',
+        '.scroll-container-contents > .rules-list > li:last-child',
       ],
     },
     waitsFor: {
@@ -419,11 +434,13 @@ const baseTutorialSteps = [
   },
   {
     pose: 'excited',
-    text: `Nice - it worked! This game is getting fun! To make it harder, let's make
-    this boulder fall off the mountain as the hero walks by. The person playing the
-    game will have to dodge the boulder to get to the exit! The boulder doesn't do anything
-    yet. Want to help me?`,
+    text: `Nice - it worked! This game is getting fun! Want to make it harder? I was thinking
+    that boulder on the ledge could fall when the hero walked by.`,
     soundURL: '/editor/sounds/tutorial/tutorial-44.mp3',
+    annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
+    waitsFor: {
+      button: "Start Lesson: Falling Boulder",
+    },
   },
   {
     pose: 'folded-talking',

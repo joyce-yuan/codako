@@ -108,9 +108,9 @@ export default class ContentRule extends React.Component {
           onChange={this._onNameChange}
         />
         {conditions.length > 0 && !collapsed && (
-          <div className="conditions">
+          <ul className="conditions">
             {conditions}
-          </div>
+          </ul>
         )}
       </div>
     );

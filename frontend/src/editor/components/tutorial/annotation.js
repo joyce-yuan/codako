@@ -23,6 +23,7 @@ export default class TutorialAnnotation extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.reposition);
+    document.addEventListener('scroll', this.onSomeElementScrolled, true);
 
     this.animateForSelectors(this.props.selectors);
     this.draw();
@@ -43,7 +44,14 @@ export default class TutorialAnnotation extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.reposition);
+    document.removeEventListener('scroll', this.onSomeElementScrolled, true);
     this.disconnectFromSelectors();
+  }
+
+  onSomeElementScrolled = (event) => {
+    if (event.target !== document) {
+      window.requestAnimationFrame(this.reposition);
+    }
   }
 
   animateForSelectors(selectors) {
@@ -92,18 +100,18 @@ export default class TutorialAnnotation extends React.Component {
     const res = window.devicePixelRatio || 1;
     const options = this.props.options || {};
 
-    const top = Math.min(...targetRects.map(rect => rect.top)) - MARGIN_Y;
-    const left = Math.min(...targetRects.map(rect => rect.left)) - MARGIN_X;
-    const width = Math.max(...targetRects.map(rect => rect.right)) - left + MARGIN_X;
-    const height = Math.max(...targetRects.map(rect => rect.bottom)) - top + MARGIN_Y;
+    const top = Math.min(...targetRects.map(rect => rect.top)) - MARGIN_Y + (options.offsetTop || 0);
+    const left = Math.min(...targetRects.map(rect => rect.left)) - MARGIN_X + (options.offsetLeft || 0);
+    const width = (options.width || (Math.max(...targetRects.map(rect => rect.right))) - left) + MARGIN_X;
+    const height = (options.height || (Math.max(...targetRects.map(rect => rect.bottom))) - top) + MARGIN_Y;
 
     this._el.style.opacity = 1;
     this._el.style.top = `${top}px`;
     this._el.style.left = `${left}px`;
-    this._el.style.width = `${options.width || width}px`;
-    this._el.style.height = `${options.height || height}px`;
-    this._el.width = (options.width || width) * res;
-    this._el.height = (options.height || height) * res;
+    this._el.style.width = `${width}px`;
+    this._el.style.height = `${height}px`;
+    this._el.width = width * res;
+    this._el.height = height * res;
 
     this.targetRelativeBounds = targetRects.map((r) => {
       return {top: r.top - top, left: r.left - left, width: r.width, height: r.height, right: r.right - left, bottom: r.bottom - top};
@@ -127,8 +135,10 @@ export default class TutorialAnnotation extends React.Component {
       height: this._el.height / scale,
     };
     if (this.props.style === 'arrow') {
+      if (this.targetEls.length !== 2) { return; }
       this.drawArrow(ctx, env);
     } else if (this.props.style === 'outline') {
+      if (this.targetEls.length !== 1) { return; }
       this.drawOutline(ctx, env);
     }
   }

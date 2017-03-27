@@ -14,33 +14,38 @@ class TutorialAdvancer {
     this._waitsFor = step.waitsFor || {};
     this._callback = callback;
 
+    if (step.onEnter) {
+      step.onEnter(window.editorStore.dispatch);
+    }
+
     if (this._waitsFor.stateMatching) {
-      this._unsub = window.editorStore.subscribe(() => {
+      const tryState = () => {
         const state = window.editorStore.getState();
         if (this._waitsFor.stateMatching(state, getCurrentStage(state))) {
           this._timer = setTimeout(this._callback, this._waitsFor.delay || 750);
           this._unsub();
         }
-      });
+      };
+      this._unsub = window.editorStore.subscribe(tryState);
+      tryState();
     }
 
     if (this._waitsFor.elementMatching) {
-      const interval = setInterval(() => {
+      const tryElements = () => {
         if (document.querySelector(this._waitsFor.elementMatching)) {
           this._timer = setTimeout(this._callback, this._waitsFor.delay || 250);
           this._unsub();
         }
-      }, 500);
+      };
+      const interval = setInterval(tryElements, 500);
       this._unsub = () => clearInterval(interval);
+      tryElements();
     }
 
-    if (step.onEnter) {
-      step.onEnter(window.editorStore.dispatch);
-    }
   }
 
   onAudioEnded() {
-    if (this._waitsFor.stateMatching || this._waitsFor.elementMatching) {
+    if (this._waitsFor.stateMatching || this._waitsFor.elementMatching || this._waitsFor.button) {
       return;
     }
     this._callback();
@@ -116,8 +121,11 @@ class TutorialContainer extends React.Component {
     if (!step) {
       return;
     }
-    this._advancer = new TutorialAdvancer(step, () => this._onNextStep());
 
+    this._advancer = new TutorialAdvancer(step, () => {
+      this._onNextStep();
+    });
+    
     if (step.soundURL) {
       this._audio = new Audio(step.soundURL);
       this._audio.addEventListener('playing', () => {
@@ -142,8 +150,16 @@ class TutorialContainer extends React.Component {
     dispatch(updateTutorialState({stepIndex: stepIndex + 1}));
   }
 
+  _onPrevStep = () => {
+    const {dispatch, stepIndex} = this.props;
+    if (stepIndex > 0) {
+      dispatch(updateTutorialState({stepIndex: stepIndex - 1}));
+    }
+  }
+
   render() {
     const {stepSet, stepIndex} = this.props;
+    const {playing} = this.state;
     const step = stepSet && tutorialSteps[stepSet][stepIndex];
 
     if (!step) {
@@ -155,13 +171,27 @@ class TutorialContainer extends React.Component {
     return (
       <div>
         <div className="tutorial-container">
-          <Girl pose={step.pose} playing={this.state.playing} />
-          <div className="copy" >
+          <Girl pose={step.pose} playing={playing} />
+          <div className="copy">
             {step.text}
             <br />
           </div>
-          <div className="next">
-            <Button size="sm" onClick={this._onNextStep}>Continue</Button>
+          <div className="controls">
+            {
+              (step.waitsFor && step.waitsFor.button) ? (
+                <Button size="sm" color="primary" onClick={this._onNextStep}>{step.waitsFor.button}</Button>
+              ) : (
+                <div className="playback">
+                  <i className="fa fa-step-backward" onClick={this._onPrevStep} />
+                  <i
+                    className={`fa ${playing ? 'fa-pause' : 'fa-play'}`}
+                    onClick={() => this._audio && (playing ? this._audio.pause() : this._audio.play())}
+                  />
+                  <i className="fa fa-step-forward" onClick={this._onNextStep} />
+                </div>
+              )
+            }
+            
           </div>
         </div>
 
