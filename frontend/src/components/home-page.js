@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import Button from 'reactstrap/lib/Button';
 
-import {forkWorld} from '../actions/main-actions';
+import {createWorld} from '../actions/main-actions';
 
 class HomePage extends React.Component {
   static propTypes = {
@@ -25,7 +25,7 @@ class HomePage extends React.Component {
                     Codako is a game programming tool designed for young learners ages 6-12.
                   </p>
                   <br />
-                  <Button onClick={() => dispatch(forkWorld('tutorial'))}>
+                  <Button onClick={() => dispatch(createWorld({from: 'tutorial'}))}>
                     Try it Now
                   </Button>
                 </div>

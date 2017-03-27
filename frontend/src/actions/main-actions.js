@@ -83,31 +83,30 @@ export function deleteWorld(id) {
 
 export function createWorld({from, fork} = {}) {
   return function(dispatch) {
-    makeRequest(`/worlds`, {query: {from, fork}, method: 'POST'}).then((created) => {
-      let qs = '';
-      if (from === 'tutorial') {
-        qs = '?tutorial=base';
-      } else if (fork) {
-        qs = '?tutorial=fork';
-      }
-      dispatch(push(`/editor/${created.id}${qs}`));
-    });
-  };
-}
+    let qs = '';
+    if (from === 'tutorial') {
+      qs = 'tutorial=base';
+    } else if (fork) {
+      qs = 'tutorial=fork';
+    }
 
-export function forkWorld(id) {
-  return function(dispatch) {
     if (window.store.getState().me) {
-      dispatch(createWorld({from: id, fork: true}));
+      makeRequest(`/worlds`, {query: {from, fork}, method: 'POST'}).then((created) => {
+        dispatch(push(`/editor/${created.id}?${qs}`));
+      });
     } else {
-      makeRequest(`/worlds/${id}`).then((world) => {
+      if (!from) {
+        alert("You need to create an account to create worlds from scratch!");
+        return;
+      }
+      makeRequest(`/worlds/${from}`).then((world) => {
         const storageKey = `ls-${Date.now()}`;
         const storageWorld = objectAssign({}, world, {id: storageKey});
         localStorage.setItem(storageKey, JSON.stringify(storageWorld));
-        dispatch(push(`/editor/${storageKey}?localstorage=true&tutorial=fork`));
+        dispatch(push(`/editor/${storageKey}?localstorage=true&${qs}`));
       });
     }
-  }
+  };
 }
 
 export function uploadLocalStorageWorld(storageKey) {

@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {replace} from 'react-router-redux';
+import {replace, push} from 'react-router-redux';
 import RootEditor from '../editor/root-editor';
 import StoreProvider from '../editor/store-provider';
 import {makeRequest} from '../helpers/api';
@@ -76,6 +76,7 @@ class EditorPage extends React.Component {
 
   static childContextTypes = {
     usingLocalStorage: PropTypes.bool,
+    saveWorldAndExit: PropTypes.func,
   };
 
   static layoutConsiderations = {
@@ -98,11 +99,13 @@ class EditorPage extends React.Component {
   getChildContext() {
     return {
       usingLocalStorage: this.getAdapter(this.props) === LocalStorageAdapter,
+      saveWorldAndExit: this.saveWorldAndExit,
     };
   }
 
   componentDidMount() {
     this._mounted = true;
+    window.addEventListener("beforeunload", this._onBeforeUnload);
     this.loadWorld(this.props);
   }
 
@@ -114,6 +117,14 @@ class EditorPage extends React.Component {
 
   componentWillUnmount() {
     this._mounted = false;
+    window.removeEventListener("beforeunload", this._onBeforeUnload);
+  }
+
+  getAdapter(props) {
+    if (props.location.query.localstorage) {
+      return LocalStorageAdapter;
+    }
+    return APIAdapter;
   }
 
   loadWorld(props) {
@@ -139,11 +150,52 @@ class EditorPage extends React.Component {
     });
   }
 
-  getAdapter(props) {
-    if (props.location.query.localstorage) {
-      return LocalStorageAdapter;
+  saveWorld() {
+    const json = this.storeProvider.getWorldSaveData();
+    const fn = this.getAdapter(this.props).save;
+
+    clearTimeout(this._saveTimeout);
+    this._saveTimeout = null;
+
+    if (this._savePromise) {
+      this.saveWorldSoon();
+      return this._savePromise;
     }
-    return APIAdapter;
+
+    this._savePromise = fn.call(this, json).then(() => {
+      if (!this._mounted) { return; }
+      this._savePromise = null;
+    }).catch((e) => {
+      if (!this._mounted) { return; }
+      this._savePromise = null;
+      alert(`Codako was unable to save changes to your world. Your internet connection may be offline. \n(Detail: ${e.message})`);
+      throw new Error(e);
+    });
+
+    return this._savePromise;
+  }
+
+  saveWorldSoon = () => {
+    this._saveTimeout = setTimeout(() => {
+      this.saveWorld();
+    }, 2000);
+  }
+
+  saveWorldAndExit = () => {
+    this.saveWorld().then(() => {
+      this.props.dispatch(push('/dashboard'));
+    });
+  }
+
+  _onBeforeUnload = () => {
+    if (this._saveTimeout) {
+      this.saveWorld();
+
+      const msg = 'Your changes are still saving. Are you sure you want to close the editor?';
+      event.returnValue = msg; // Gecko, Trident, Chrome 34+
+      return msg; // Gecko, WebKit, Chrome <34
+    }
+    return undefined;
   }
 
   render() {
@@ -157,9 +209,10 @@ class EditorPage extends React.Component {
 
     return (
       <StoreProvider
+        ref={(r) => this.storeProvider = r}
         key={`${world.id}${retry}`}
         world={world}
-        onSave={(json) => this.getAdapter(this.props).save.call(this, json)}
+        onWorldChanged={this.saveWorldSoon}
       >
         <RootEditor />
       </StoreProvider>

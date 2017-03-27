@@ -8,7 +8,7 @@ import Col from 'reactstrap/lib/Col';
 import Container from 'reactstrap/lib/Container';
 
 import RootPlayer from '../editor/root-player';
-import {fetchWorld, forkWorld} from '../actions/main-actions';
+import {fetchWorld, createWorld} from '../actions/main-actions';
 import PageMessage from './common/page-message';
 
 class PlayPage extends React.Component {
@@ -33,7 +33,7 @@ class PlayPage extends React.Component {
     const {dispatch, me, world} = this.props;
 
     let label = 'Remix this Game';
-    let cmd = () => dispatch(forkWorld(world.id));
+    let cmd = () => dispatch(createWorld({from: world.id, fork: true}));
     if (me && me.id === world.userId) {
       label = 'Open in Editor';
       cmd = () => dispatch(push(`/editor/${world.id}`));

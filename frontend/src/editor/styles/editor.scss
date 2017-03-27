@@ -85,7 +85,7 @@ $create-account-notice-color: #e6dac1;
   flex: 1;
   font-size: 14px;
   background: url(../img/background.png) top left;
-  padding-top: 15px;
+  padding-top: 6px;
 
   .loading {
     margin: auto;
@@ -159,8 +159,9 @@ $create-account-notice-color: #e6dac1;
       }
     }
 
-    .dropdown-toggle {
+    .btn {
       padding: 0 10px;
+      height: 40px;
       .title {
         font-size: 20px;
         vertical-align: middle;
@@ -168,10 +169,18 @@ $create-account-notice-color: #e6dac1;
     }
 
     .world-name {
-      max-width: 300px;
+      max-width: 330px;
+      min-width: 170px;
       font-size: 25px;
-      line-height: 40px;
-      padding-left: 4px;
+      line-height: 38px;
+      padding: 0 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-left: 1px solid transparent;
+      background: rgba(255,255,255,0.3);
+      &:hover, &:active {
+        border: 1px solid rgba(0,0,0,0.2);
+        border-left: 1px solid transparent;
+      }
     }
 
     .create-account-notice {

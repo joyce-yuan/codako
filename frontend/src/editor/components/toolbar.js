@@ -2,7 +2,12 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import classNames from 'classnames';
+
 import Button from 'reactstrap/lib/Button';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
 
 import * as actions from '../actions/ui-actions';
 import {updateWorldMetadata} from '../actions/world-actions';
@@ -21,10 +26,12 @@ class Toolbar extends React.Component {
 
   static contextTypes = {
     usingLocalStorage: PropTypes.bool,
+    saveWorldAndExit: PropTypes.func,
   };
 
   constructor(props, context) {
     super(props, context);
+    this.state = {open: false};
   }
 
   _renderTool = (toolId) => {
@@ -76,7 +83,24 @@ class Toolbar extends React.Component {
     }
 
     return (
-      <div>
+      <div style={{display: 'flex', alignItems: 'center'}}>
+        <ButtonDropdown
+          isOpen={this.state.open}
+          toggle={() => this.setState({open: !this.state.open})}
+        >
+          <DropdownToggle>
+            <i className="fa fa-ellipsis-v" />
+          </DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem onClick={this.props.onDuplicate}>
+              Tips &amp; Tricks Videos...
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem onClick={this.context.saveWorldAndExit}>
+              Save &amp; Exit
+            </DropdownItem>
+          </DropdownMenu>
+        </ButtonDropdown>
         <TapToEditLabel
           className="world-name"
           value={metadata.name}
