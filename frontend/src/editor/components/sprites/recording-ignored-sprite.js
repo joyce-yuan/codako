@@ -12,7 +12,7 @@ export default class RecordingIgnoredSprite extends React.Component {
       <div style={{
         position: 'absolute',
         pointerEvents: 'none',
-        background: 'url(/editor/img/ignored_square.png) top left no-repeat',
+        background: `url(${require('../../img/ignored_square.png')}) top left no-repeat`,
         width: STAGE_CELL_SIZE,
         height: STAGE_CELL_SIZE,
         left: this.props.x * STAGE_CELL_SIZE,

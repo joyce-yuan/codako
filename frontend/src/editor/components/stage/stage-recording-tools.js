@@ -25,7 +25,7 @@ class StageRecordingTools extends React.Component {
         })}
         onClick={() => dispatch(selectToolId(selected ? TOOL_POINTER : TOOL_IGNORE_SQUARE))}
       >
-        <img src={`/editor/img/ignored_square.png`} />
+        <img src={require('../../img/ignored_square.png')} />
       </Button>
     );
   }

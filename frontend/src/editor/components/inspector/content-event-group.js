@@ -44,6 +44,11 @@ export default class ContentEventGroup extends React.Component {
     const {rule} = this.props;
     const {collapsed} = this.state;
 
+    const iconSrc = {
+      key: require('../../img/icon_event_key.png'),
+      click: require('../../img/icon_event_click.png'),
+    }[rule.event];
+
     return (
       <div>
         <div className="header">
@@ -54,7 +59,7 @@ export default class ContentEventGroup extends React.Component {
               collapsed={collapsed}
             />
           </div>
-          <img className="icon" src={`/editor/img/icon_event_${rule.event}.png`} />
+          <img className="icon" src={iconSrc} />
           <div
             className="name"
             onDoubleClick={() => this.context.onRulePickKey(rule.id)}

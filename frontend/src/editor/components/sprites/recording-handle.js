@@ -24,7 +24,7 @@ export default class RecordingHandle extends React.Component {
         data-stage-handle={side}
         onDragStart={this._onDragStart}
         className={`handle-${side}`}
-        src={`/editor/img/tiles/handle_${side}.png`}
+        src={require(`../..//img/tiles/handle_${side}.png`)}
         style={{
           position: 'absolute',
           width: STAGE_CELL_SIZE,

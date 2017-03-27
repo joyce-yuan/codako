@@ -37,7 +37,7 @@ class ProfilePage extends React.Component {
         <Row>
           <Col md={3}>
             <div className="dashboard-sidebar">
-              <img src={"/img/profile-placeholder.png"} style={{maxWidth: '100%'}} />
+              <img src={require("../img/profile-placeholder.png")} style={{maxWidth: '100%'}} />
               <h4>{profile.username}</h4>
             </div>
           </Col>

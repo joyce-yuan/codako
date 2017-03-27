@@ -343,7 +343,7 @@ class Stage extends React.Component {
             position: 'absolute',
             width: stage.width * STAGE_CELL_SIZE,
             height: stage.height * STAGE_CELL_SIZE,
-            background: `url(/editor/img/board-grid.png) top left, ${stage.background}`,
+            background: `url(${require('../../img/board-grid.png')}) top left, ${stage.background}`,
             backgroundSize: '40px, cover',
           }} />
           {
