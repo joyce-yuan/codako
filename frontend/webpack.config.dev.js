@@ -33,7 +33,7 @@ export default {
         removeComments: true,
         collapseWhitespace: true
       },
-      inject: true
+      inject: true,
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: false,
