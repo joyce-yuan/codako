@@ -254,6 +254,7 @@ const baseTutorialSteps = [
       stateMatching: ({recording}) => {
         const beforeStage = getCurrentStageForWorld(recording.beforeWorld);
         const afterStage = getCurrentStageForWorld(recording.afterWorld);
+        if (!beforeStage || !afterStage) { return false; }
         const before = Object.values(beforeStage.actors).find(a => a.characterId === 'aamlcui8uxr');
         const after = Object.values(afterStage.actors).find(a => a.characterId === 'aamlcui8uxr');
         return before && after && (after.position.x === before.position.x + 1) && (after.position.y === before.position.y - 1); 
@@ -366,14 +367,14 @@ const baseTutorialSteps = [
     soundURL: '/editor/sounds/tutorial/tutorial-37.mp3',
     annotation: {selectors: ['[data-tutorial-id=inspector-add-rule]'], style: 'outline'},
     waitsFor: {
-      elementMatching: '.dropdown-toggle.active [data-tutorial-id=inspector-add-rule-key]',
+      elementMatching: '.btn-group.open [data-tutorial-id=inspector-add-rule-key]',
     },
   },
   {
     pose: 'standing-pointing',
     text: `Choose 'When a Key is Pressed' from the menu.`,
     soundURL: '/editor/sounds/tutorial/tutorial-38.mp3',
-    annotation: {selectors: ['.dropdown-toggle.active [data-tutorial-id=inspector-add-rule-key]'], style: 'outline'},
+    annotation: {selectors: ['.btn-group.open [data-tutorial-id=inspector-add-rule-key]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state) => state.ui.keypicker.characterId === 'aamlcui8uxr'
     },
@@ -417,7 +418,7 @@ const baseTutorialSteps = [
   {
     pose: ['excited', 'sitting-talking'],
     text: `We've just told our hero that he should only climb when you press
-    the key. Move the hero back to the left side of the stage and let's try this out!`,
+    that key. Move the hero back to the left side of the stage and let's try this out!`,
     soundURL: '/editor/sounds/tutorial/tutorial-42.mp3',
   },
   {
@@ -435,7 +436,7 @@ const baseTutorialSteps = [
   {
     pose: 'excited',
     text: `Nice - it worked! This game is getting fun! Want to make it harder? I was thinking
-    that boulder on the ledge could fall when the hero walked by.`,
+    that boulder on the ledge could fall when the hero walks by.`,
     soundURL: '/editor/sounds/tutorial/tutorial-44.mp3',
     annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
     waitsFor: {
@@ -501,8 +502,9 @@ const baseTutorialSteps = [
     waitsFor: {
       stateMatching: (state) => {
         const after = getCurrentStageForWorld(state.recording.afterWorld);
+        if (!after) { return false; }
         const boulder = Object.values(after.actors).find(a => a.characterId === 'oou4u6jemi');
-        return (boulder.position.x <= 14);
+        return (boulder.position.x < 14);
       },
     },
   },
@@ -525,14 +527,14 @@ const baseTutorialSteps = [
     text: `Press 'Play'! Walk the hero toward the boulder and let's see if it falls.`,
     soundURL: '/editor/sounds/tutorial/tutorial-54.mp3',
     onEnter: (dispatch) => {
-      dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 13, y: 5}}));
+      dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 14, y: 5}}));
       dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 9, y: 9}}));
     },
     annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {
       stateMatching: (state, stage) => {
         const boulder = Object.values(stage.actors).find(a => a.characterId === 'oou4u6jemi');
-        return (state.ui.playback.running === true) && boulder && boulder.position.x < 13;
+        return (state.ui.playback.running === true) && boulder && boulder.position.x < 14;
       }
     },
   },
@@ -552,7 +554,7 @@ const baseTutorialSteps = [
   },
   {
     pose: 'standing-pointing',
-    text: `Switch to the recording tool again. Let's teach the boulder to fall!`,
+    text: `Switch to the recording tool again and click the boulder. Let's give it a gravity rule!`,
     soundURL: '/editor/sounds/tutorial/tutorial-56.mp3',
     annotation: {selectors: ['[data-tutorial-id=toolbar-tool-record]'], style: 'outline'},
     waitsFor: {
@@ -593,6 +595,7 @@ const baseTutorialSteps = [
     waitsFor: {
       stateMatching: (state) => {
         const after = getCurrentStageForWorld(state.recording.afterWorld);
+        if (!after) { return false; }
         const boulder = Object.values(after.actors).find(a => a.characterId === 'oou4u6jemi');
         return (boulder.position.y > 5);
       },
@@ -600,8 +603,8 @@ const baseTutorialSteps = [
   },
   {
     pose: 'folded-talking',
-    text: `Great! That will do the trick. The boulder will fall down until it reaches
-    the ground. Once it's on the ground the picture on the left won't match - there won't
+    text: `Nice! The boulder will fall down until it reaches the ground. Once it's on
+    the ground the picture on the left won't match - there won't
     be any empty space for it to fall into!`,
     soundURL: '/editor/sounds/tutorial/tutorial-61.mp3',
   },
@@ -621,8 +624,8 @@ const baseTutorialSteps = [
     soundURL: '/editor/sounds/tutorial/tutorial-63.mp3',
     pose: 'sitting-talking',
     onEnter: (dispatch) => {
-      dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 13, y: 5}}));
-      dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 4, y: 9}}));
+      dispatch(changeActor(baseTutorialBoulderPath, {position: {x: 14, y: 5}}));
+      dispatch(changeActor(baseTutorialCharacterPath, {position: {x: 2, y: 9}}));
     },
     annotation: {selectors: ['[data-tutorial-id=play]'], style: 'outline'},
     waitsFor: {

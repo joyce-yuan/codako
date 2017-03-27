@@ -89,5 +89,5 @@ export function getStageScreenshot(stage) {
     i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
     context.drawImage(i, actor.position.x * 10, actor.position.y * 10, 10, 10);
   });
-  return canvas.toDataURL();
+  return canvas.toDataURL('image/jpeg', 0.75);
 }

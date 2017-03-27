@@ -766,6 +766,7 @@ $create-account-notice-color: #e6dac1;
       background-color: #E8B432;
     }
     .conditions {
+      list-style-type: none;
       background-color:rgba(0,0,0,0.1);
       border-top: 1px solid rgba(0,0,0,0.2);
       border-left: 1px solid rgba(0,0,0,0.2);
@@ -904,6 +905,13 @@ button.btn.selected:active {
   .controls {
     padding: 5px;
     text-align: right;
+    i {
+      padding: 6px 4px;
+      color: rgba(0,0,0,0.3);
+    }
+    i:hover, i:active {
+      color: rgba(0,0,0,0.6);
+    }
   }
 }
 @media(min-width: 1000px) {
