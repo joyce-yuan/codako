@@ -70,7 +70,7 @@ export default class StageControls extends React.Component {
 
     dispatch(saveInitialGameState(world.id, stage.id, {
       actors: stage.actors,
-      thumbnail: getStageScreenshot(stage),
+      thumbnail: getStageScreenshot(stage, {size: 160}),
     }));
   }
 

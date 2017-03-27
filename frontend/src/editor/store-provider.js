@@ -92,7 +92,7 @@ export default class StoreProvider extends React.Component {
     }, this.state.editorStore.getState());
 
     this.props.onSave({
-      thumbnail: getStageScreenshot(getCurrentStage(savedState)),
+      thumbnail: getStageScreenshot(getCurrentStage(savedState), {size: 400}),
       name: savedState.world.metadata.name,
       data: savedState,
     }).then(() => {

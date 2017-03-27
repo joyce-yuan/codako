@@ -99,7 +99,7 @@ class Container extends React.Component {
                   className={`stage-item ${(stage.id === s.id) && 'selected'}`}
                   onClick={() => this._onSelectStage(s.id)}
                 >
-                  <img src={getStageScreenshot(s)} />
+                  <img src={getStageScreenshot(s, {size: 320})} />
                   <h3>{s.name || "Untitled"}</h3>  
                 </div>
               )}

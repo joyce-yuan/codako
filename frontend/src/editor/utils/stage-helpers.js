@@ -68,11 +68,15 @@ export function findRule(node, id) {
   return null;
 }
 
-export function getStageScreenshot(stage) {
+export function getStageScreenshot(stage, {size}) {
   const {characters} = window.editorStore.getState();
+
+  const scale = Math.min(size / (stage.width * 40), size / (stage.height * 40));
+  const pxPerSquare = Math.round(40 * scale);
+
   const canvas = document.createElement('canvas');
-  canvas.width = stage.width * 10;
-  canvas.height = stage.height * 10;
+  canvas.width = stage.width * pxPerSquare;
+  canvas.height = stage.height * pxPerSquare;
   const context = canvas.getContext('2d');
 
   if (stage.background.includes('url(')) {
@@ -87,7 +91,8 @@ export function getStageScreenshot(stage) {
   Object.values(stage.actors).forEach(actor => {
     const i = new Image();
     i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
-    context.drawImage(i, actor.position.x * 10, actor.position.y * 10, 10, 10);
+    context.drawImage(i, Math.floor(actor.position.x * pxPerSquare), Math.floor(actor.position.y * pxPerSquare), pxPerSquare, pxPerSquare);
   });
-  return canvas.toDataURL('image/jpeg', 0.75);
+
+  return canvas.toDataURL('image/jpeg', 0.80);
 }

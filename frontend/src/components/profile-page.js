@@ -68,7 +68,9 @@ function mapStateToProps(state, ownProps) {
       username: 'loading',
       id: '',
     },
-    worlds: state.worlds && Object.values(state.worlds).filter(w => profile && w.userId === profile.id).sort((a, b) => a.updatedAt - b.updatedAt),
+    worlds: state.worlds && Object.values(state.worlds)
+      .filter(w => profile && w.userId === profile.id)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   };
 }
 
