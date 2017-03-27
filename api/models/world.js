@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
           forkCount: this.forkCount,
           forkParent: this.forkParent ? this.forkParent.serialize() : null,
           user: this.user ? this.user.serialize() : null,
-          thumbnail: this.thumbnail,
+          thumbnail: this.thumbnail ? this.thumbnail.toString() : null,
           createdAt: this.createdAt,
           updatedAt: this.updatedAt,
         };
