@@ -25,7 +25,7 @@ class HomePage extends React.Component {
                     Codako is a game programming tool designed for young learners ages 6-12.
                   </p>
                   <br />
-                  <Button onClick={() => dispatch(createWorld({from: 'tutorial'}))}>
+                  <Button size="lg" onClick={() => dispatch(createWorld({from: 'tutorial'}))}>
                     Try it Now
                   </Button>
                 </div>
