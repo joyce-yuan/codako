@@ -38,7 +38,7 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-md-4">
-                <h3><i className="fa fa-globe"/> Create Worlds</h3>
+                <h3><i className="fa fa-globe"/> Create Games</h3>
                 <p>
                   Use Codako's built-in drawing tools to create characters and place
                   them into your game world. You can create mario-style adventure games,
@@ -56,8 +56,8 @@ class HomePage extends React.Component {
               <div className="col-md-4">
                 <h3><i className="fa fa-foursquare"/> Learn Core Concepts</h3>
                 <p>
-                  Codako introduces many programming concepts, without young learners
-                  needing to write actual code. It lays a foundation of understanding that
+                  Codako introduces young learners to programming concepts, but doesn't
+                  require reading or writing code. It lays a foundation of understanding that
                   students can carry with them as they learn to program.
                 </p>
               </div>
@@ -74,9 +74,7 @@ class HomePage extends React.Component {
                   Codako is heavily inspired by the KidSIM research conducted by Apple's
                   Advanced Technologies Group in the late 1990s, which identified the
                   potential programming-by-demonstration environments had for engaging
-                  and teaching core concepts to young learners. Codako's web foundation
-                  introduces new oppotunities and new challenges, and we're looking for
-                  partners to help conduct another round of research.
+                  and teaching core concepts.
                 </p>
               </div>
               <div className="offset-md-2 col-md-3">
@@ -95,10 +93,9 @@ class HomePage extends React.Component {
               <div className="offset-md-1 col-md-7">
                 <h3>Advanced concepts, no downloads</h3>
                 <p>
-                  Codako was designed to be simple, and students can learn about advanced features
-                  as they need them. It supports variables, events, control flow blocks, and more!
-                  It was built from the ground up on HTML5 and Javascript run on anything with a
-                  modern browser. No downloads or plugins are required.
+                  Codako is easy to pick up, and supports variables, events, control flow concepts,
+                  and more. It leverages the latest HTML5 and JavaScript, so no
+                  downloads or plugins are required.
                 </p>
               </div>
             </div>
