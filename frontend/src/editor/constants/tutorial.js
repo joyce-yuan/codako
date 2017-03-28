@@ -656,7 +656,7 @@ const baseTutorialSteps = [
 const forkTutorialSteps = [
   {
     pose: 'sitting-talking',
-    text: `Hi there! I've copied this game to your account, so you can edit it as much as you want.
+    text: `Hi there! I've copied this game to your account so you can edit it as much as you want.
       Want me to show you around?`,
     soundURL: '/editor/sounds/tutorial/tutorial-01.mp3',
     annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
