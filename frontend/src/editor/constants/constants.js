@@ -15,6 +15,7 @@ export const FLOW_BEHAVIORS = {
 export const MODALS = {
   STAGES: 'STAGES',
   STAGE_SETTINGS: 'STAGE_SETTINGS',
+  VIDEOS: 'VIDEOS',
 };
 
 export const CONTAINER_TYPES = {

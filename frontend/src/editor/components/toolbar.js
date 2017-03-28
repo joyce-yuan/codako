@@ -16,17 +16,19 @@ import {TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT, MODALS} from '../cons
 import UndoRedoControls from './undo-redo-controls';
 import TapToEditLabel from './tap-to-edit-label';
 
+
 class Toolbar extends React.Component {
   static propTypes = {
     stageName: PropTypes.string,
     metadata: PropTypes.object,
     selectedToolId: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
+    isInTutorial: PropTypes.bool,
   };
 
   static contextTypes = {
     usingLocalStorage: PropTypes.bool,
-    saveWorldAndExit: PropTypes.func,
+    saveWorldAnd: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -59,7 +61,7 @@ class Toolbar extends React.Component {
   }
 
   _renderLeft() {
-    const {metadata} = this.props;
+    const {metadata, isInTutorial} = this.props;
 
     if (this.context.usingLocalStorage) {
       return (
@@ -93,11 +95,19 @@ class Toolbar extends React.Component {
             <i className="fa fa-ellipsis-v" />
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem onClick={this.props.onDuplicate}>
+            <DropdownItem onClick={() => this.props.dispatch(actions.showModal(MODALS.VIDEOS))}>
               Tips &amp; Tricks Videos...
             </DropdownItem>
+            {!isInTutorial && (
+              <DropdownItem onClick={() => {
+                alert("Your current game will be saved - you can open it later from 'My Games'.");
+                this.context.saveWorldAnd('tutorial');
+              }}>
+                Start Tutorial...
+              </DropdownItem>
+            )}
             <DropdownItem divider />
-            <DropdownItem onClick={this.context.saveWorldAndExit}>
+            <DropdownItem onClick={() => this.context.saveWorldAnd('exit')}>
               Save &amp; Exit
             </DropdownItem>
           </DropdownMenu>
@@ -143,6 +153,7 @@ function mapStateToProps(state) {
     selectedToolId: state.ui.selectedToolId,
     stageName: getCurrentStage(state).name,
     metadata: state.world.metadata,
+    isInTutorial: state.ui.tutorial.stepSet === 'base',
   };
 }
 

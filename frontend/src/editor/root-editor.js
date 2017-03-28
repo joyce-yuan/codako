@@ -9,6 +9,7 @@ import StageContainer from './components/stage/container';
 import TutorialContainer from './components/tutorial/container';
 import InspectorContainer from './components/inspector/container';
 
+import VideosContainer from './components/modal-videos/container';
 import PaintContainer from './components/modal-paint/container';
 import KeypickerContainer from './components/modal-keypicker/container';
 import StagesContainer from './components/modal-stages/container';
@@ -37,6 +38,7 @@ export default class RootEditor extends React.Component {
           <PaintContainer />
           <KeypickerContainer />
           <StagesContainer />
+          <VideosContainer />
           <ExploreCharactersContainer />
         </div>
       </div>

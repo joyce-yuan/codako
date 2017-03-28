@@ -1,9 +1,11 @@
 import React, {PropTypes} from 'react';
 import {replace, push} from 'react-router-redux';
+import {connect} from 'react-redux';
+
 import RootEditor from '../editor/root-editor';
+import {createWorld} from '../actions/main-actions';
 import StoreProvider from '../editor/store-provider';
 import {makeRequest} from '../helpers/api';
-import {connect} from 'react-redux';
 
 import PageMessage from './common/page-message';
 
@@ -76,7 +78,7 @@ class EditorPage extends React.Component {
 
   static childContextTypes = {
     usingLocalStorage: PropTypes.bool,
-    saveWorldAndExit: PropTypes.func,
+    saveWorldAnd: PropTypes.func,
   };
 
   static layoutConsiderations = {
@@ -99,7 +101,7 @@ class EditorPage extends React.Component {
   getChildContext() {
     return {
       usingLocalStorage: this.getAdapter(this.props) === LocalStorageAdapter,
-      saveWorldAndExit: this.saveWorldAndExit,
+      saveWorldAnd: this.saveWorldAnd,
     };
   }
 
@@ -181,9 +183,14 @@ class EditorPage extends React.Component {
     }, 2000);
   }
 
-  saveWorldAndExit = () => {
+  saveWorldAnd = (dest) => {
     this.saveWorld().then(() => {
-      this.props.dispatch(push('/dashboard'));
+      if (dest === 'exit') {
+        this.props.dispatch(push('/dashboard'));
+      }
+      if (dest === 'tutorial') {
+        this.props.dispatch(createWorld({from: 'tutorial'}));
+      }
     });
   }
 
