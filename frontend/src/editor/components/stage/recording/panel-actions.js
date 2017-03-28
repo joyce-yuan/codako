@@ -144,6 +144,19 @@ export default class RecordingActions extends React.Component {
     }
 
     if (a.type === 'global') {
+      const valueType = afterWorld.globals[a.global].type;
+      if (valueType === 'stage') {
+        return (
+        <li key={idx}>
+          Set
+          <VariableBlock name={"Current Stage"} />
+          to
+          <code>
+            {afterWorld.stages[a.value] && afterWorld.stages[a.value].name}
+          </code>
+        </li>
+        )
+      }
       return (
         <li key={idx}>
           <VariableActionPicker

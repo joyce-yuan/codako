@@ -16,7 +16,7 @@ export default class StageSettings extends React.Component {
     return (
       <div>
         <fieldset className="form-group">
-          <legend className="col-form-legend">Stage Name</legend>
+          <legend className="col-form-legend">Name</legend>
           <input
             type="text"
             placeholder="Untitled"
@@ -26,7 +26,7 @@ export default class StageSettings extends React.Component {
           />
         </fieldset>
         <fieldset className="form-group">
-          <legend className="col-form-legend">Stage Size</legend>
+          <legend className="col-form-legend">Size</legend>
           <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
             <input
               className="form-control"

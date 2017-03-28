@@ -185,11 +185,10 @@ class EditorPage extends React.Component {
 
   saveWorldAnd = (dest) => {
     this.saveWorld().then(() => {
-      if (dest === 'exit') {
-        this.props.dispatch(push('/dashboard'));
-      }
       if (dest === 'tutorial') {
         this.props.dispatch(createWorld({from: 'tutorial'}));
+      } else {
+        this.props.dispatch(push(dest));
       }
     });
   }

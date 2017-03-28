@@ -105,6 +105,17 @@ export function actionsForRecording({beforeWorld, afterWorld, extent, prefs, act
   }
   const actions = [];
 
+  actions.push(...actionsForGlobals({
+    beforeGlobals: beforeWorld.globals,
+    afterGlobals: afterWorld.globals,
+    prefs: prefs['globals'] || {},
+  }));
+
+  // If the stage has changed, no other actions can be taken
+  if (beforeWorld.globals.selectedStageId.value !== afterWorld.globals.selectedStageId.value) {
+    return actions;
+  }
+
   Object.values(beforeStage.actors).forEach((beforeActor) => {
     if (pointIsOutside(beforeActor.position, extent)) {
       return;
@@ -159,12 +170,6 @@ export function actionsForRecording({beforeWorld, afterWorld, extent, prefs, act
     }));
   });
   
-  actions.push(...actionsForGlobals({
-    beforeGlobals: beforeWorld.globals,
-    afterGlobals: afterWorld.globals,
-    prefs: prefs['globals'] || {},
-  }));
-
   return actions;
 }
 

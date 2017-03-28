@@ -95,6 +95,10 @@ class Toolbar extends React.Component {
             <i className="fa fa-ellipsis-v" />
           </DropdownToggle>
           <DropdownMenu>
+            <DropdownItem onClick={() => this.context.saveWorldAnd(`/play/${metadata.id}`)}>
+              Switch to Player View...
+            </DropdownItem>
+            <DropdownItem divider />
             <DropdownItem onClick={() => this.props.dispatch(actions.showModal(MODALS.VIDEOS))}>
               Tips &amp; Tricks Videos...
             </DropdownItem>
@@ -107,7 +111,7 @@ class Toolbar extends React.Component {
               </DropdownItem>
             )}
             <DropdownItem divider />
-            <DropdownItem onClick={() => this.context.saveWorldAnd('exit')}>
+            <DropdownItem onClick={() => this.context.saveWorldAnd('/dashboard')}>
               Save &amp; Exit
             </DropdownItem>
           </DropdownMenu>
