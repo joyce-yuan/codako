@@ -85,6 +85,7 @@ class Toolbar extends React.Component {
     return (
       <div style={{display: 'flex', alignItems: 'center'}}>
         <ButtonDropdown
+          data-tutorial-id="main-menu"
           isOpen={this.state.open}
           toggle={() => this.setState({open: !this.state.open})}
         >

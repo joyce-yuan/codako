@@ -51,6 +51,7 @@ class UndoRedoControls extends React.Component {
       <div className={`button-group`}>
         <Button
           className="icon"
+          data-tutorial-id="undo-button"
           onClick={() => this._dispatch(undo())}
           disabled={undoDepth === 0}
         >

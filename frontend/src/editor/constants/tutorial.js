@@ -32,10 +32,9 @@ const baseTutorialSteps = [
 
   {
     pose: ['standing-pointing', 'standing-talking'],
-    text: `These are the buttons that start and stop the game. When you play a normal
-    game, you can't pause and rewind, but since we're creating our own game,
-    we can pause it and rewind whenever we want. It's helpful to go back when something
-    doesn't work the way you thought it would.`,
+    text: `These buttons start and stop the game. When you play normal games you can't pause and rewind,
+      but we're writing our own game! Rewinding makes it easier to see what's happening when the game
+      doesn't work the way we expect it to.`,
     soundURL: '/editor/sounds/tutorial/tutorial-03.mp3',
     annotation: {selectors: ['[data-tutorial-id=controls]'], style: 'outline'},
   },
@@ -74,7 +73,7 @@ const baseTutorialSteps = [
 
   {
     pose: 'standing-pointing',
-    text: `This is called the stage - it's where we design our game world.`,
+    text: `This is the stage - it's where we design our game world.`,
     soundURL: '/editor/sounds/tutorial/tutorial-07.mp3',
     annotation: {selectors: ['.stages-horizontal-flex'], style: 'outline'},
   },
@@ -645,12 +644,82 @@ const baseTutorialSteps = [
   {
     pose: 'sitting-looking',
     text: `That's it for the tutorial. If you want to learn more, you can find
-    videos and examples from your games dashboard!`,
+      videos and other resources in the main menu!`,
     soundURL: '/editor/sounds/tutorial/tutorial-65.mp3',
+    annotation: {selectors: ['[data-tutorial-id=main-menu]'], style: 'outline'},
+    waitsFor: {
+      button: 'End Tutorial',
+    },
   }
-]
+];
 
-const forkTutorialSteps = [];
+const forkTutorialSteps = [
+  {
+    pose: 'sitting-talking',
+    text: `Hi there! I've copied this game to your account, so you can edit it as much as you want.
+      Want me to show you around?`,
+    soundURL: '/editor/sounds/tutorial/tutorial-01.mp3',
+    annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},
+    waitsFor: {
+      button: 'Start Lesson: Walkthrough',
+    },
+  },
+  {
+    pose: ['standing-pointing', 'standing-talking'],
+    text: `These buttons start and stop the game. When you play normal games you can't pause and rewind,
+      but Codako let's you write our own games! Rewinding makes it easier to see what's happening when the game
+      doesn't work the way you expect it to.`,
+    soundURL: '/editor/sounds/tutorial/tutorial-03.mp3',
+    annotation: {selectors: ['[data-tutorial-id=controls]'], style: 'outline'},
+    waitsFor: {
+      button: 'Next',
+    },
+  },
+  {
+    pose: ['standing-pointing', 'standing-talking'],
+    text: `This is the character library. It shows all of the game pieces we've
+    made. You can draw your own or add existing ones by clicking the "+" icon.`,
+    soundURL: '/editor/sounds/tutorial/tutorial-08.mp3',
+    annotation: {selectors: ['[data-tutorial-id=characters]'], style: 'outline'},
+    waitsFor: {
+      button: 'Next',
+    },
+  },
+  {
+    pose: 'standing-pointing',
+    text: `This is the stage - it's where we design our game world. You can drag and drop
+    pieces around, and add new ones by dragging them from the character library.`,
+    soundURL: '/editor/sounds/tutorial/tutorial-07.mp3',
+    annotation: {selectors: ['.stages-horizontal-flex'], style: 'outline'},
+    waitsFor: {
+      button: 'Next',
+    },
+  },
+  {
+    pose: ['folded-talking','standing-pointing'],
+    text: `Rules define how the game works. You can double-click a character to see it's rules,
+    and create new rules by choosing the recording tool in the toolbar and then clicking a
+    piece on the stage.`,
+    soundURL: '/editor/sounds/tutorial/tutorial-16.mp3',
+    annotation: {selectors: ['[data-tutorial-id=toolbar-tool-record]'], style: 'outline'},
+    waitsFor: {
+      button: 'Next',
+    },
+  },
+  {
+    pose: ['folded-talking','standing-pointing'],
+    text: `Go ahead and try changing the game! If you make a mistake, you can undo any change by pressing the Undo button.`,
+    soundURL: '/editor/sounds/tutorial/tutorial-16.mp3',
+    annotation: {selectors: ['[data-tutorial-id=undo-button]'], style: 'outline'},
+  },
+  {
+    text: `For more learning resources, look in the main menu.`,
+    annotation: {selectors: ['[data-tutorial-id=main-menu]'], style: 'outline'},
+    waitsFor: {
+      button: 'End Walkthrough',
+    },
+  }
+];
 
 export const tutorialSteps = {
   base: baseTutorialSteps,
