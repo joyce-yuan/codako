@@ -49,7 +49,7 @@ export default function WorldOperator(previousWorld) {
           return false;
         }
       } else if (id === 'transform') {
-        if (actor.transform !== other.transform) {
+        if ((actor.transform || "none") !== (other.transform || "none")) {
           return false;
         }
       } else {
@@ -137,39 +137,41 @@ export default function WorldOperator(previousWorld) {
     }
 
     function checkRuleScenario(rule) {
-      const ruleActionActorIds = getActionActorIds(rule);
+      const ruleRequiredActorIds = getActionActorIds(rule);
+      const ruleUnmatched = Object.values(rule.actors);
 
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x ++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y ++) {
-          const ruleActors = Object.values(rule.actors).filter(({position}) => position.x === x && position.y === y);
           const ignoreExtraActors = rule.extent.ignored[`${x},${y}`];
 
           const stagePosition = wrappedPosition(pointByAdding(me.position, {x, y}));
+          const ruleActors = ruleUnmatched.filter(r => r.position.x === x && r.position.y === y);
           const stageActors = actorsAtPosition(stagePosition);
+          
           if (stageActors === null) {
             return false; // offscreen?
           }
 
-          // optimization for common case of no match
-          if (!ignoreExtraActors && (stageActors.length !== ruleActors.length)) {
+          if (stageActors.length !== ruleActors.length && !ignoreExtraActors) {
             return false;
           }
 
           // make sure the descriptors on stage satisfy the rule
-          const stageRemaining = [].concat(stageActors);
-          const ruleRemaining = [].concat(ruleActors);
-          for (const s of stageRemaining) {
-            const idx = ruleRemaining.findIndex(r => actorsMatch(s, r, rule.conditions[r.id]));
-            if (idx === -1) {
-              // if the square is marked as ignored, the only actors we need are the ones
-              // in the square involved in actions.
-              if (ignoreExtraActors && !ruleActionActorIds[s.id]) {
-                continue;
-              }
+          for (const s of stageActors) {
+            const idx = ruleUnmatched.findIndex(r =>
+              r.position.x === x && r.position.y === y && actorsMatch(s, r, rule.conditions[r.id])
+            );
+            if (idx !== -1) {
+              ruleUnmatched.splice(idx, 1);
+            } else if (!ignoreExtraActors) {
               return false;
             }
-            ruleRemaining.splice(idx, 1);
           }
+        }
+      }
+      for (const ruleActor of ruleUnmatched) {
+        if (ruleRequiredActorIds[ruleActor.id]) {
+          return false;
         }
       }
       return true;
@@ -180,6 +182,10 @@ export default function WorldOperator(previousWorld) {
       for (const action of rule.actions) {
         if (action.actorId && rule.actors[action.actorId]) { requiredActorIds[action.actorId] = true; }
       }
+      for (const actorId of Object.keys(rule.conditions)) {
+        requiredActorIds[actorId] = true;
+      }
+      
       return requiredActorIds;
     }
 
