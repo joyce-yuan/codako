@@ -3,6 +3,7 @@ import {getCurrentStageForWorld} from '../utils/selectors';
 import {changeActor} from '../actions/stage-actions';
 import {stopPlayback} from '../actions/ui-actions';
 
+
 export const poseFrames = {
   'sitting-looking': ['sitting-looking'],
   'sitting-talking': ['sitting-talking-1', 'sitting-talking-2', 'sitting-talking-4', 'sitting-talking-5'],
