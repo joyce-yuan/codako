@@ -26,12 +26,14 @@ export default class TutorialAnnotation extends React.Component {
     document.addEventListener('scroll', this.onSomeElementScrolled, true);
 
     this.animateForSelectors(this.props.selectors);
+    this.reposition(null, this.props);
     this.draw();
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.selectors !== nextProps.selectors) {
       this.animateForSelectors(nextProps.selectors);
+      this.reposition(null, nextProps);
     }
   }
 
@@ -77,8 +79,6 @@ export default class TutorialAnnotation extends React.Component {
         this.setState({fraction: this.state.fraction + 0.007});
       }, 1 / 20.0);
     }
-
-    this.reposition();
   }
 
   disconnectFromSelectors() {
@@ -91,19 +91,19 @@ export default class TutorialAnnotation extends React.Component {
     return this.targetEls.length && this.targetEls.every(el => !!el);
   }
   
-  reposition = () => {
+  reposition = (e, props = this.props) => {
     if (!this.allTargetsPresent()) {
       this._el.style.opacity = 0;
       return;
     }
     const targetRects = this.targetEls.map(el => el.getBoundingClientRect());
     const res = window.devicePixelRatio || 1;
-    const options = this.props.options || {};
+    const options = props.options || {};
 
     const top = Math.min(...targetRects.map(rect => rect.top)) - MARGIN_Y + (options.offsetTop || 0);
     const left = Math.min(...targetRects.map(rect => rect.left)) - MARGIN_X + (options.offsetLeft || 0);
-    const width = (options.width || (Math.max(...targetRects.map(rect => rect.right))) - left) + MARGIN_X;
-    const height = (options.height || (Math.max(...targetRects.map(rect => rect.bottom))) - top) + MARGIN_Y;
+    const width = options.width ? (options.width + MARGIN_X * 2) : (Math.max(...targetRects.map(rect => rect.right)) - left + MARGIN_X);
+    const height = options.height ? (options.height + MARGIN_Y * 2) : (Math.max(...targetRects.map(rect => rect.bottom)) - top + MARGIN_Y);
 
     this._el.style.opacity = 1;
     this._el.style.top = `${top}px`;
