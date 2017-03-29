@@ -7,7 +7,7 @@
   },
   "scripts": {
     "preinstall": "node tools/nodeVersionCheck.js",
-    "postinstall": "babel-node tools/build.js",
+    "postinstall": "npm rebuild node-sass && babel-node tools/build.js",
     "setup": "node tools/setup/setupMessage.js && npm install && node tools/setup/setup.js",
     "remove-demo": "babel-node tools/removeDemo.js",
     "start-message": "babel-node tools/startMessage.js",
