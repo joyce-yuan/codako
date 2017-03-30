@@ -4,6 +4,8 @@ import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 import {getCurrentStageForWorld} from '../utils/selectors';
 import u from 'updeep';
 
+let IDSeed = Date.now();
+
 function deepClone(obj) {
   if (obj === null) {
     return null;
@@ -59,10 +61,10 @@ export default function WorldOperator(previousWorld) {
         if ((condition.comparator === '=') && (actorValue / 1 !== otherValue / 1)) {
           return false;
         }
-        if ((condition.comparator === '>') && (actorValue / 1 <= otherValue / 1)) {
+        if ((condition.comparator === '>=') && (actorValue / 1 < otherValue / 1)) {
           return false;
         }
-        if ((condition.comparator === '<') && (actorValue / 1 >= otherValue / 1)) {
+        if ((condition.comparator === '<=') && (actorValue / 1 > otherValue / 1)) {
           return false;
         }
       }
@@ -212,7 +214,7 @@ export default function WorldOperator(previousWorld) {
 
       for (const action of rule.actions) {
         if (action.type === 'create') {
-          const nextID = Date.now();
+          const nextID = `a${IDSeed++}`;
           actors[nextID] = objectAssign(deepClone(action.actor), {
             id: nextID,
             position: wrappedPosition(pointByAdding(me.position, action.offset)),
@@ -332,9 +334,20 @@ export default function WorldOperator(previousWorld) {
     if (!historyItem) {
       return previousWorld;
     }
-    return u(historyItem, u({
+
+    const historyStageKey = Object.keys(historyItem.stages)[0];
+
+    return u({
+      input: u.constant(historyItem.input),
+      globals: u.constant(historyItem.globals),
+      stages: {
+        [historyStageKey]: {
+          actors: u.constant(historyItem.stages[historyStageKey].actors),
+        },
+      },
+      evaluatedRuleIds: u.constant(historyItem.evaluatedRuleIds),
       history: history.slice(0, history.length - 1),
-    }, previousWorld));
+    }, previousWorld);
   }
 
   return {

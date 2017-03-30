@@ -61,12 +61,22 @@ export default class ContainerPaneRules extends React.Component {
 
     const container = this._scrollContainerEl;
     const scrollTopTarget = Math.round(Math.min(el.offsetTop, container.scrollHeight - container.clientHeight));
-
+    const scrollId = this._scrollId = Date.now();
+      
+    let lastAssigned = null;
     const step = () => {
+      if ((lastAssigned !== null) && (container.scrollTop !== lastAssigned)) {
+        // user has interrupted the scrolling somehow, abort!
+        return;
+      }
+      if (this._scrollId !== scrollId) {
+        // another scroll has started, this one is no longer current
+        return;
+      }
       if (container.scrollTop !== scrollTopTarget) {
         const d = Math.abs(scrollTopTarget - container.scrollTop);
         const dsign = Math.sign(scrollTopTarget - container.scrollTop);
-        container.scrollTop = Math.round(container.scrollTop) + dsign * Math.max(Math.min(40, d / 10.0), 1);
+        container.scrollTop = lastAssigned = Math.round(container.scrollTop) + dsign * Math.max(Math.min(40, d / 10.0), 1);
         window.requestAnimationFrame(step);
       }
     };
