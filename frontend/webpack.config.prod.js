@@ -39,13 +39,13 @@ export default {
       template: 'src/index.ejs',
       minify: {
         removeComments: true,
-        collapseWhitespace: true,
+        collapseWhitespace: false,
         removeRedundantAttributes: true,
         useShortDoctype: true,
         removeEmptyAttributes: true,
         removeStyleLinkTypeAttributes: true,
         keepClosingSlash: true,
-        minifyJS: true,
+        minifyJS: false, // temporary, so I can debug
         minifyCSS: true,
         minifyURLs: true
       },
