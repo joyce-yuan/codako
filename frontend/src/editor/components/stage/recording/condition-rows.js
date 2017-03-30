@@ -92,9 +92,9 @@ export class VariableConditionRow extends React.Component {
           is
           {onChange ? (
             <select value={comparator} onChange={(e) => onChange(enabled, e.target.value)}>
-              <option value="<">&lt;</option>
+              <option value="<=">&lt;=</option>
               <option value="=">=</option>
-              <option value=">">&gt;</option>
+              <option value=">=">&gt;=</option>
             </select>
           ) : (
             ` ${comparator} `
