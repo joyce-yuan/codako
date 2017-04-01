@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import objectAssign from 'object-assign';
+
 
 export default class Sprite extends React.Component {
   static propTypes = {
@@ -20,7 +20,7 @@ export default class Sprite extends React.Component {
       data = appearances[appearance][frame || 0];
     }
 
-    const style = objectAssign({
+    const style = Object.assign({
       width: width,
       height: width,
       display: 'inline-block',

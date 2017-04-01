@@ -1,5 +1,5 @@
 import * as types from '../constants/action-types';
-import objectAssign from 'object-assign';
+
 import xhr from 'xhr';
 
 const API_ROOT = (window.location.host.includes('codako') ? `//api.codako.org` : `http://api.lvh.me:4310`);
@@ -25,7 +25,7 @@ export function makeRequest(path, {method = 'GET', query = {}, headers = {}, jso
     xhr(`${API_ROOT}${path}${(qs.length > 0) ? `?` : ''}${qs.join('&')}`, {
       method,
       body: json ? JSON.stringify(json) : body,
-      headers: objectAssign({
+      headers: Object.assign({
         'Content-Type': 'application/json',
         'Authorization': me && `Basic ${btoa(me.username + ':' + me.password)}`,
       }, headers),

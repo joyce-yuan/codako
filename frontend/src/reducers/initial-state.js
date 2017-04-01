@@ -1,7 +1,7 @@
 import * as session from '../helpers/session-storage';
-import objectAssign from 'object-assign';
 
-export default objectAssign({
+
+export default Object.assign({
   me: null,
   profiles: {},
   worlds: null,

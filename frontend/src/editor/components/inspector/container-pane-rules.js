@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import objectAssign from 'object-assign';
+
 import {TOOL_POINTER} from '../../constants/constants';
 import {changeCharacter} from '../../actions/characters-actions';
 import {pickCharacterRuleEventKey, selectToolId} from '../../actions/ui-actions';
@@ -128,7 +128,7 @@ export default class ContainerPaneRules extends React.Component {
   _onRuleChanged = (ruleId, changes) => {
     const rules = JSON.parse(JSON.stringify(this.props.character.rules));
     const [rule] = findRule({rules}, ruleId);
-    objectAssign(rule, changes);
+    Object.assign(rule, changes);
     this.props.dispatch(changeCharacter(this.props.character.id, {rules}));
   }
 

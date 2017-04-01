@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import objectAssign from 'object-assign';
+
 
 import ActorSprite from '../sprites/actor-sprite';
 import RecordingMaskSprite from '../sprites/recording-mask-sprite';
@@ -128,7 +128,7 @@ class Stage extends React.Component {
     };
 
     // expand the extent of the recording rule to reflect this new extent
-    const nextExtent = objectAssign({}, this.props.recordingExtent);
+    const nextExtent = Object.assign({}, this.props.recordingExtent);
     if (side === 'left') { nextExtent.xmin = Math.min(nextExtent.xmax, Math.max(0, Math.round(position.x + 0.25))); }
     if (side === 'right') { nextExtent.xmax = Math.max(nextExtent.xmin, Math.min(stage.width, Math.round(position.x - 1))); }
     if (side === 'top') { nextExtent.ymin = Math.min(nextExtent.ymax, Math.max(0, Math.round(position.y + 0.25))); }
@@ -188,7 +188,7 @@ class Stage extends React.Component {
           return;
         }
         const character = characters[actor.characterId];
-        const clonedActor = objectAssign({}, actor, {position});
+        const clonedActor = Object.assign({}, actor, {position});
         dispatch(createActor(this._stagePath(), character, clonedActor));
       } else {
         dispatch(changeActor(this._actorPath(actorId), {position}));
@@ -352,7 +352,7 @@ class Stage extends React.Component {
 
               const lastPosition = this._lastActorPositions[actor.id] || {x: Math.NaN, y: Math.NaN};
               const didWrap = Math.abs(lastPosition.x - actor.position.x) > 6 || Math.abs(lastPosition.y - actor.position.y) > 6;
-              this._lastActorPositions[actor.id] = objectAssign({}, actor.position);
+              this._lastActorPositions[actor.id] = Object.assign({}, actor.position);
 
               return (
                 <ActorSprite

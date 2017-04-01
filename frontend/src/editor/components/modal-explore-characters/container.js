@@ -4,7 +4,7 @@ import Modal from 'reactstrap/lib/Modal';
 import ModalBody from 'reactstrap/lib/ModalBody';
 import ModalFooter from 'reactstrap/lib/ModalFooter';
 import Button from 'reactstrap/lib/Button';
-import objectAssign from 'object-assign';
+
 
 import Sprite from '../sprites/sprite';
 import {MODALS} from '../../constants/constants';
@@ -89,7 +89,7 @@ class Container extends React.Component {
 
   _onAddCharacter = (character) => {
     const id = `${Date.now()}`;
-    this.props.dispatch(changeCharacter(id, objectAssign({}, character, {id})));
+    this.props.dispatch(changeCharacter(id, Object.assign({}, character, {id})));
   }
 
   render() {

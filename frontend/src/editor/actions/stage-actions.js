@@ -1,5 +1,5 @@
 import * as types from '../constants/action-types';
-import objectAssign from 'object-assign';
+
 
 import {selectStageId} from './ui-actions';
 
@@ -90,7 +90,7 @@ export function recordClickForGameState(worldId, actorId) {
 export function createActor({worldId, stageId}, character, initialValues) {
   const newID = `${Date.now()}`;
 
-  const newActor = objectAssign({
+  const newActor = Object.assign({
     variableValues: {},
     appearance: Object.keys(character.spritesheet.appearances)[0],
   }, initialValues, {

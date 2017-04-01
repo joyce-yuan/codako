@@ -1,5 +1,5 @@
 import {forEachInLine, forEachInRect, getFlattenedImageData} from './helpers';
-import objectAssign from 'object-assign';
+
 
 export class PixelTool {
   constructor() {
@@ -7,7 +7,7 @@ export class PixelTool {
   }
 
   mousedown(point, props) {
-    return objectAssign({}, props, {
+    return Object.assign({}, props, {
       interaction: {
         s: point,
         e: point,
@@ -17,7 +17,7 @@ export class PixelTool {
   }
 
   mousemove(point, props) {
-    return objectAssign({}, props, {
+    return Object.assign({}, props, {
       interaction: {
         s: props.interaction.s,
         e: point,
@@ -30,7 +30,7 @@ export class PixelTool {
     const nextImageData = props.imageData.clone();
     this.render(nextImageData, props);
 
-    return objectAssign({}, props, {
+    return Object.assign({}, props, {
       imageData: nextImageData,
       interaction: {
         s: null,
@@ -195,14 +195,14 @@ class PixelSelectionTool extends PixelTool {
 
   mousedown(point, props, event) {
     if (this.shouldDrag(point, props)) {
-      return objectAssign({}, super.mousedown(point, props), {
+      return Object.assign({}, super.mousedown(point, props), {
         imageData: event.altKey ? getFlattenedImageData(props) : props.imageData,
         initialSelectionOffset: props.selectionOffset,
         draggingSelection: true,
       });
     }
 
-    return objectAssign({}, super.mousedown(point, props), {
+    return Object.assign({}, super.mousedown(point, props), {
       imageData: getFlattenedImageData(props),
       selectionImageData: null,
       selectionOffset: {x: 0, y: 0},
@@ -212,18 +212,18 @@ class PixelSelectionTool extends PixelTool {
 
   mousemove(point, props) {
     if (props.draggingSelection) {
-      return objectAssign({}, super.mousemove(point, props), {
+      return Object.assign({}, super.mousemove(point, props), {
         selectionOffset: this.selectionOffsetForProps(props),
       });
     }
-    return objectAssign({}, super.mousemove(point, props), {
+    return Object.assign({}, super.mousemove(point, props), {
       interactionPixels: this.selectionPixelsForProps(props),
     });
   }
 
   mouseup(props) {
     if (props.draggingSelection) {
-      return objectAssign({}, super.mouseup(props), {
+      return Object.assign({}, super.mouseup(props), {
         selectionOffset: this.selectionOffsetForProps(props),
         draggingSelection: false,
       });
@@ -237,7 +237,7 @@ class PixelSelectionTool extends PixelTool {
       const [x, y] = key.split(',').map(v => v / 1);
       imageData.fillPixelRGBA(x, y, 0, 0, 0, 0);
     }
-    return objectAssign({}, super.mouseup(props), {
+    return Object.assign({}, super.mouseup(props), {
       selectionOffset: {x: 0, y: 0},
       selectionImageData,
       imageData,

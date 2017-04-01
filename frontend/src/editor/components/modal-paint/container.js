@@ -9,7 +9,7 @@ import DropdownItem from 'reactstrap/lib/DropdownItem';
 import DropdownMenu from 'reactstrap/lib/DropdownMenu';
 import DropdownToggle from 'reactstrap/lib/DropdownToggle';
 
-import objectAssign from 'object-assign';
+
 
 import * as Tools from './tools';
 
@@ -65,7 +65,7 @@ class Container extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = objectAssign({}, INITIAL_STATE);
+    this.state = Object.assign({}, INITIAL_STATE);
   }
 
   componentDidMount() {
@@ -94,10 +94,10 @@ class Container extends React.Component {
       const frameDataURL = spritesheet.appearances[appearanceId][0];
       getImageDataFromDataURL(frameDataURL, {}, (imageData) => {
         CreatePixelImageData.call(imageData);
-        this.setState(objectAssign({}, INITIAL_STATE, {imageData}));
+        this.setState(Object.assign({}, INITIAL_STATE, {imageData}));
       });
     } else {
-        this.setState(objectAssign({}, INITIAL_STATE));
+        this.setState(Object.assign({}, INITIAL_STATE));
     }
   }
 
@@ -110,7 +110,7 @@ class Container extends React.Component {
   }
 
   setStateWithCheckpoint(nextState) {
-    this.setState(objectAssign({}, nextState, {
+    this.setState(Object.assign({}, nextState, {
       redoStack: [],
       undoStack: this.state.undoStack
         .slice(Math.max(0, this.state.undoStack.length - MAX_UNDO_STEPS))
@@ -123,7 +123,7 @@ class Container extends React.Component {
     const changes = undoStack.pop();
     if (!changes) { return; }
     const redoStack = [].concat(this.state.redoStack, [this.getCheckpoint()]);
-    this.setState(objectAssign({}, changes, {redoStack, undoStack}));
+    this.setState(Object.assign({}, changes, {redoStack, undoStack}));
   }
 
   _onRedo = () => {
@@ -131,7 +131,7 @@ class Container extends React.Component {
     const changes = redoStack.pop();
     if (!changes) { return; }
     const undoStack = [].concat(this.state.undoStack, [this.getCheckpoint()]);
-    this.setState(objectAssign({}, changes, {redoStack, undoStack}));
+    this.setState(Object.assign({}, changes, {redoStack, undoStack}));
   }
 
   _onClose = () => {

@@ -1,4 +1,4 @@
-import objectAssign from 'object-assign';
+
 import {shuffleArray, getVariableValue, applyVariableOperation, pointByAdding} from './stage-helpers';
 import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
 import {getCurrentStageForWorld} from '../utils/selectors';
@@ -215,7 +215,7 @@ export default function WorldOperator(previousWorld) {
       for (const action of rule.actions) {
         if (action.type === 'create') {
           const nextID = `a${IDSeed++}`;
-          actors[nextID] = objectAssign(deepClone(action.actor), {
+          actors[nextID] = Object.assign(deepClone(action.actor), {
             id: nextID,
             position: wrappedPosition(pointByAdding(me.position, action.offset)),
             variableValues: {},
@@ -265,7 +265,7 @@ export default function WorldOperator(previousWorld) {
     globals = deepClone(previousWorld.globals);
     actors = {};
     for (const actor of Object.values(rule.actors)) {
-      actors[actor.id] = objectAssign(deepClone(actor), {
+      actors[actor.id] = Object.assign(deepClone(actor), {
         position: pointByAdding(actor.position, offset),
       });
     }

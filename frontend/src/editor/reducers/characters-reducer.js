@@ -1,5 +1,5 @@
 import u from 'updeep';
-import objectAssign from 'object-assign';
+
 
 import initialState from './initial-state';
 import * as Types from '../constants/action-types';
@@ -104,7 +104,7 @@ export default function charactersReducer(state = initialState.characters, actio
 
       for (const a of Object.values(beforeStage.actors)) {
         if (pointIsInside(a.position, recording.extent)) {
-          recordingActors[a.id] = objectAssign({}, a, {
+          recordingActors[a.id] = Object.assign({}, a, {
             position: {
               x: a.position.x - mainActor.position.x,
               y: a.position.y - mainActor.position.y,
@@ -124,12 +124,12 @@ export default function charactersReducer(state = initialState.characters, actio
 
       if (recording.ruleId) {
         const [existingRule, parentRule, parentIdx] = findRule({rules}, recording.ruleId);
-        parentRule.rules[parentIdx] = objectAssign({}, existingRule, recordedRule);
+        parentRule.rules[parentIdx] = Object.assign({}, existingRule, recordedRule);
         return u.updateIn(recording.characterId, {rules}, state);
       }
 
       const idleContainer = rules.find(r => r.event === 'idle') || {rules};
-      idleContainer.rules.unshift(objectAssign(recordedRule, {
+      idleContainer.rules.unshift(Object.assign(recordedRule, {
         id: `${Date.now()}`,
         name: 'Untitled Rule',
       }));

@@ -1,6 +1,6 @@
 /* eslint no-unused-vars: 0 */
 import {DiffPatcher} from 'jsondiffpatch/src/diffpatcher';
-import objectAssign from 'object-assign';
+
 
 const PERFORM_UNDO = 'PERFORM_UNDO';
 const PERFORM_REDO = 'PERFORM_REDO';
@@ -61,7 +61,7 @@ export const undoRedoReducerFactory = ({trackedKeys, ignoredActions} = {}) => {
       }
       const diff = diffByApplyingOptions(action.diff, {trackedKeys});
       if (diff) {
-        return objectAssign({}, state, {
+        return Object.assign({}, state, {
           undoStack: [].concat(state.undoStack.slice(state.undoStack.length - 50), [diff]),
           redoStack: [],
         });

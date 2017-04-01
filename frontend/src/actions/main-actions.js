@@ -1,5 +1,5 @@
 import {replace, push} from 'react-router-redux';
-import objectAssign from 'object-assign';
+
 
 import {makeRequest} from '../helpers/api';
 import * as types from '../constants/action-types';
@@ -24,7 +24,7 @@ export function register({username, password, email}, redirectTo) {
     }).then((user) => {
       dispatch({
         type: types.SET_ME,
-        me: objectAssign(user, {password}),
+        me: Object.assign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
@@ -40,7 +40,7 @@ export function login({username, password}, redirectTo) {
     }).then((user) => {
       dispatch({
         type: types.SET_ME,
-        me: objectAssign(user, {password}),
+        me: Object.assign(user, {password}),
       });
       dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
     });
@@ -101,7 +101,7 @@ export function createWorld({from, fork} = {}) {
       }
       makeRequest(`/worlds/${from}`).then((world) => {
         const storageKey = `ls-${Date.now()}`;
-        const storageWorld = objectAssign({}, world, {id: storageKey});
+        const storageWorld = Object.assign({}, world, {id: storageKey});
         localStorage.setItem(storageKey, JSON.stringify(storageWorld));
         dispatch(push(`/editor/${storageKey}?localstorage=true&${qs}`));
       });
@@ -130,7 +130,7 @@ export function uploadLocalStorageWorld(storageKey) {
         window.localStorage.setItem(storageKey, JSON.stringify({uploadedAsId: created.id}));
 
         dispatch({type: types.UPSERT_WORLDS, worlds: [
-          objectAssign({}, created, json),
+          Object.assign({}, created, json),
         ]});
         dispatch(replace(`/editor/${created.id}`));
       });

@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: 0 */
 import u from 'updeep';
-import objectAssign from 'object-assign';
+
 import stageCollectionReducer from './stage-collection-reducer';
 
 import * as Types from '../constants/action-types';
@@ -11,7 +11,7 @@ export default function worldReducer(state, action) {
     return state;
   }
 
-  state = objectAssign({}, state, {
+  state = Object.assign({}, state, {
     stages: stageCollectionReducer(state.stages, action),
   });
 

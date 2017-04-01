@@ -1,4 +1,4 @@
-import objectAssign from 'object-assign';
+
 import * as Types from '../constants/action-types';
 import worldReducer from './world-reducer';
 import initialState from './initial-state';
@@ -39,7 +39,7 @@ function stateForEditingRule(phase, rule) {
 }
 
 export default function recordingReducer(state = initialState.recording, action) {
-  const nextState = objectAssign({}, state, {
+  const nextState = Object.assign({}, state, {
     beforeWorld: worldReducer(state.beforeWorld, action),
     afterWorld: worldReducer(state.afterWorld, action),
   });
@@ -91,10 +91,10 @@ export default function recordingReducer(state = initialState.recording, action)
       return u(stateForEditingRule(RECORDING_PHASE_RECORD, action.rule), nextState);
     }
     case Types.FINISH_RECORDING: {
-      return objectAssign({}, initialState.recording);
+      return Object.assign({}, initialState.recording);
     }
     case Types.CANCEL_RECORDING: {
-      return objectAssign({}, initialState.recording);
+      return Object.assign({}, initialState.recording);
     }
     case Types.START_RECORDING: {
       return u({
@@ -123,7 +123,7 @@ export default function recordingReducer(state = initialState.recording, action)
     }
     case Types.SET_RECORDING_EXTENT: {
       // find the primary actor, make sure the extent still includes it
-      const extent = objectAssign({}, action.extent);
+      const extent = Object.assign({}, action.extent);
       for (const world of [nextState.beforeWorld, nextState.afterWorld]) {
         const stage = getCurrentStageForWorld(world);
         const mainActor = Object.values(stage.actors || {}).find(a => a.id === nextState.actorId);

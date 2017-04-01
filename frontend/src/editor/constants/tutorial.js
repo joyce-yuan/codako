@@ -738,4 +738,4 @@ const forkTutorialSteps = [
 export const tutorialSteps = {
   base: baseTutorialSteps,
   fork: forkTutorialSteps,
-}
+};

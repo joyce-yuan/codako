@@ -1,4 +1,4 @@
-import objectAssign from 'object-assign';
+
 
 import * as Types from '../constants/action-types';
 import uiReducer from './ui-reducer';
@@ -29,7 +29,7 @@ const undoRedoReducer = undoRedoReducerFactory({
 });
 
 function applyReducerMap(map, state, action) {
- const nextState = objectAssign({}, state);
+ const nextState = Object.assign({}, state);
 
   for (const key of Object.keys(map)) {
     if (map[key] instanceof Function) {
