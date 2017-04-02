@@ -181,7 +181,7 @@ class EditorPage extends React.Component {
     clearTimeout(this._saveTimeout);
     this._saveTimeout = setTimeout(() => {
       this.saveWorld();
-    }, 2000);
+    }, 5000);
   }
 
   saveWorldAnd = (dest) => {
