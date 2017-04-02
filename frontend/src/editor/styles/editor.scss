@@ -891,48 +891,54 @@ button.btn.selected:active {
   right: 0px;
   position: fixed;
   z-index: 2000;
-  display: flex;
-  padding-left: 10px;
-  padding-right: 130px;
-  flex-direction: row;
-  align-items: center;
 
+  .tutorial-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 130px;
+
+    .copy {
+      padding: 5px;
+      font-size: 13px;
+      overflow-y: auto;
+    }
+
+    .controls {
+      padding: 5px;
+      text-align: right;
+      white-space: nowrap;
+      i {
+        padding: 6px 4px;
+        color: rgba(0,0,0,0.3);
+      }
+      i:hover, i:active {
+        color: rgba(0,0,0,0.6);
+      }
+    }
+  }
   .girl-container {
-    height:0;
-    right: -30px;
-    top: -110px;
+    width: 0;
+    height: 0;
+    right: 170px;
+    bottom: 180px;
     overflow: visible;
-    position: absolute;
+    position: fixed;
     pointer-events: none;
-  }
-
-  .copy {
-    padding: 5px;
-    font-size: 13px;
-    overflow-y: auto;
-    flex: 1;
-  }
-  .controls {
-    padding: 5px;
-    text-align: right;
-    i {
-      padding: 6px 4px;
-      color: rgba(0,0,0,0.3);
-    }
-    i:hover, i:active {
-      color: rgba(0,0,0,0.6);
-    }
   }
 }
 @media(min-width: 1000px) {
   .tutorial-container {
-    flex-direction: column;
-    align-items: inherit;
-    border-left: 3px solid lightblue;
     width: 550px;
-    .girl-container {
-      top: inherit;
-      bottom: 185px;
+    .tutorial-flex {
+      flex-direction: column;
+      align-items: inherit;
+      border-left: 3px solid lightblue;
+      .girl-container {
+        top: inherit;
+        bottom: 185px;
+      }
     }
   }
 }

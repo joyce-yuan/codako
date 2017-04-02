@@ -172,26 +172,27 @@ class TutorialContainer extends React.Component {
       <div>
         <div className="tutorial-container">
           <Girl pose={step.pose} playing={playing} />
-          <div className="copy">
-            {step.text}
-            <br />
-          </div>
-          <div className="controls">
-            {
-              (step.waitsFor && step.waitsFor.button) ? (
-                <Button size="sm" color="primary" onClick={this._onNextStep}>{step.waitsFor.button}</Button>
-              ) : (
-                <div className="playback">
-                  <i className="fa fa-step-backward" onClick={this._onPrevStep} />
-                  <i
-                    className={`fa ${playing ? 'fa-pause' : 'fa-play'}`}
-                    onClick={() => this._audio && (playing ? this._audio.pause() : this._audio.play())}
-                  />
-                  <i className="fa fa-step-forward" onClick={this._onNextStep} />
-                </div>
-              )
-            }
-            
+          <div className="tutorial-flex">
+            <div className="copy">
+              {step.text}
+              <br />
+            </div>
+            <div className="controls">
+              {
+                (step.waitsFor && step.waitsFor.button) ? (
+                  <Button size="sm" color="primary" onClick={this._onNextStep}>{step.waitsFor.button}</Button>
+                ) : (
+                  <div className="playback">
+                    <i className="fa fa-step-backward" onClick={this._onPrevStep} />
+                    <i
+                      className={`fa ${playing ? 'fa-pause' : 'fa-play'}`}
+                      onClick={() => this._audio && (playing ? this._audio.pause() : this._audio.play())}
+                    />
+                    <i className="fa fa-step-forward" onClick={this._onNextStep} />
+                  </div>
+                )
+              }
+            </div>  
           </div>
         </div>
 
