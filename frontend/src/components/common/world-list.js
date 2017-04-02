@@ -9,16 +9,17 @@ export default class WorldList extends React.Component {
     worlds: PropTypes.array,
     onDuplicateWorld: PropTypes.func,
     onDeleteWorld: PropTypes.func,
+    canEdit: PropTypes.bool,
   };
 
   render() {
-    const {worlds, onDeleteWorld, onDuplicateWorld} = this.props;
+    const {worlds, onDeleteWorld, onDuplicateWorld, canEdit} = this.props;
     
     let msg = null;
     if (!worlds) {
       msg = <PageMessage text="Loading..." size="sm" />;
     } else if (worlds.length === 0) {
-      msg = <PageMessage text="You haven't created any game worlds yet." size="sm" />;
+      msg = <PageMessage text={canEdit ? "You haven't created any games yet." : "Doesn't look like there are any games to see here!"} size="sm" />;
     }
 
     if (msg) {
@@ -35,6 +36,7 @@ export default class WorldList extends React.Component {
           <WorldCard
             key={s.id}
             world={s}
+            canEdit={canEdit}
             onDuplicate={() => onDuplicateWorld(s)}
             onDelete={() => onDeleteWorld(s)}
           />

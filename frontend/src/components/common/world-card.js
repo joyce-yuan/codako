@@ -19,10 +19,6 @@ export default class WorldCard extends React.Component {
       <div className="card world-card">
         {
           canEdit ? (
-            <Link to={`/play/${world.id}`}>
-              <img className="card-img-top world-thumbnail" src={world.thumbnail} />
-            </Link>
-          ) : (
             <div className="card-img-top world-thumbnail" style={{backgroundImage: `url(${world.thumbnail})`}}>
               <div>
                 <Link to={`/play/${world.id}`}>
@@ -34,6 +30,10 @@ export default class WorldCard extends React.Component {
                 </Link>
               </div>
             </div>
+          ) : (
+            <Link to={`/play/${world.id}`}>
+              <img className="card-img-top world-thumbnail" src={world.thumbnail} />
+            </Link>
           )
         }
         <div className="card-block">
