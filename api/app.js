@@ -1,23 +1,23 @@
-const Hapi = require('hapi');
-const HapiBasicAuth = require('hapi-auth-basic');
-const Inert = require('inert');
-const Vision = require('vision');
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-global.Logger = require('winston');
+const Hapi = require("hapi");
+const HapiBasicAuth = require("hapi-auth-basic");
+const Inert = require("inert");
+const Vision = require("vision");
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+global.Logger = require("winston");
 
-const db = require('./database');
+const db = require("./database");
 
 const server = new Hapi.Server({
-  debug: { request: ['error'] },
+  debug: { request: ["error"] },
   connections: {
     router: {
       stripTrailingSlash: true,
     },
     routes: {
       cors: {
-        origin: ['*.lvh.me:3000', '*.codako.com', '*.codako.org'],
+        origin: ["*.lvh.me:3000", "*.codako.com", "*.codako.org"],
       },
     },
   },
@@ -28,28 +28,31 @@ server.connection({ port: process.env.PORT });
 const validate = (incomingRequest, username, password, callback) => {
   db.User.find({
     where: {
-      $or: [{email: username.toLowerCase()}, {username: username.toLowerCase()}],
+      $or: [
+        { email: username.toLowerCase() },
+        { username: username.toLowerCase() },
+      ],
     },
   }).then((user) => {
     if (!user) {
       callback(null, false, {});
       return;
     }
-    const hash = crypto.createHmac('sha512', user.passwordSalt);
+    const hash = crypto.createHmac("sha512", user.passwordSalt);
     hash.update(password);
-    if (user.passwordHash !== hash.digest('hex')) {
+    if (user.passwordHash !== hash.digest("hex")) {
       callback(null, false, {});
       return;
     }
 
-    callback(null, true, {user});
+    callback(null, true, { user });
   });
 };
 
 const attach = (directory) => {
   const routesDir = path.join(__dirname, directory);
   fs.readdirSync(routesDir).forEach((filename) => {
-    if (filename.endsWith('.js')) {
+    if (filename.endsWith(".js")) {
       const routeFactory = require(path.join(routesDir, filename));
       routeFactory(server);
     }
@@ -57,16 +60,20 @@ const attach = (directory) => {
 };
 
 server.register([Inert, Vision, HapiBasicAuth], (err) => {
-  if (err) { throw err; }
+  if (err) {
+    throw err;
+  }
 
-  server.auth.strategy('api-consumer', 'basic', { validateFunc: validate });
-  server.auth.default('api-consumer');
+  server.auth.strategy("api-consumer", "basic", { validateFunc: validate });
+  server.auth.default("api-consumer");
 
-  attach('./routes/');
-  attach('./decorators/');
+  attach("./routes/");
+  attach("./decorators/");
 
   server.start((startErr) => {
-    if (startErr) { throw startErr; }
-    global.Logger.info({url: server.info.uri}, 'API running');
+    if (startErr) {
+      throw startErr;
+    }
+    global.Logger.info({ url: server.info.uri }, "API running");
   });
 });
