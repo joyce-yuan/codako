@@ -11,14 +11,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 // Apply various polyfills
-import 'core-js/es6/array';
-import 'core-js/fn/array/includes';
-import 'core-js/es6/object';
-import 'core-js/fn/object/values';
-import 'core-js/es6/promise';
-import 'core-js/fn/string/includes';
-import 'core-js/fn/string/starts-with';
-import 'core-js/fn/string/ends-with';
+import 'core-js';
 
 import routes from './routes';
 import configureStore from './store/configureStore';
