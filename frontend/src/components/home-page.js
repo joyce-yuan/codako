@@ -110,7 +110,7 @@ class HomePage extends React.Component {
                 <p>
                   Codako will always be free to play, and will never collect information beyond
                   the required email address, nickname and password. 20 years ago, I learned to
-                  program using Apple's KidSIM, and Codako is my effort to bring back the platform
+                  program using Apple's KidSIM and subsequently Stagecast Creator, and Codako is my effort to bring back the platform
                   that inspired me in my childhood. For more about why I've built Codako,
                   see the <Link to={'/faq'}>FAQ for Parents</Link>
                 </p>

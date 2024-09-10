@@ -57,7 +57,7 @@ export default class FAQPage extends React.Component {
               Codako runs in a web browser and all of your game information is stored in
               the cloud. There's nothing to download, and no plugins are required. From
               a technical perspective, Codako is written in ES2016 JavaScript (React, Redux)
-              and HTML5. The Codako backend is a NodeJS application running on Heroku.
+              and HTML5. The Codako backend is a NodeJS application.
             </p>
             <h5>Q: Is Codako COPPA complaint?</h5>
             <p>
