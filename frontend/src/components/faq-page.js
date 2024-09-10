@@ -23,16 +23,16 @@ export default class FAQPage extends React.Component {
             <h5>Q: Is Codako free?</h5>
             <p>
               Yes! Codako is completely free to play and learn. 20 years ago, I learned to
-              program using Apple's KidSIM, and Codako is my effort to bring back the platform
+              program using Apple's <a href="http://acypher.com/Publications/CHI95/KidSimCHI.html">KidSIM</a>, and Codako is my effort to bring back the platform
               that inspired me in my childhood.
             </p>
 
             <h5>Q: Where did the idea for Codako come from?</h5>
             <p>
-              The core concepts behind Codako's "<a href="http://www.sigchi.org/chi95/proceedings/papers/ac1bdy.htm" target="_blank">programming by demonstration</a>"
+              The core concepts behind Codako's "<a href="http://acypher.com/Publications/CHI95/KidSimCHI.html" target="_blank">programming by demonstration</a>"
               environment were developed and extensively tested by Apple's Advanced
               Research Group in the 1990's and published as
-              &nbsp;<a href="http://www.sigchi.org/chi95/proceedings/papers/ac1bdy.htm" target="_blank">KidSIM</a>,
+              &nbsp;<a href="http://acypher.com/Publications/CHI95/KidSimCHI.html" target="_blank">KidSIM</a>,
               &nbsp;<a href="https://www.macintoshrepository.org/5645-cocoa-dr3">Cocoa DR3</a>, and later
               &nbsp;<a href="https://en.wikipedia.org/wiki/Stagecast_Creator" target="_blank">Stagecast Creator.</a>
               &nbsp;Codako is a modern re-envisioning of KidSIM merged with the "share and remix" concept of Github "Gists".

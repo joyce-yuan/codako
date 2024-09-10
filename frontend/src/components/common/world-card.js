@@ -46,7 +46,7 @@ export default class WorldCard extends React.Component {
           </Link>
           <small className="card-text text-muted">
             {
-              world.forkParent && (
+              world.forkParent && world.forkParent.user && (
                 <div>
                   {`Forked from `}
                   <Link to={`/u/${world.forkParent.user.username}`}>{world.forkParent.user.username}</Link>

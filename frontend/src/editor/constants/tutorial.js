@@ -21,7 +21,7 @@ const baseTutorialBoulderPath = {worldId: 'root', stageId: 'root', actorId: '148
 const baseTutorialSteps = [
   {
     pose: 'sitting-talking',
-    text: `Hi there! I'm Preethi, and this is a game I've been working on. Want to help
+    text: `Hi there! I'm Ravi, and this is a game I've been working on. Want to help
     me finish it? Click "Start Lesson" over here!`,
     soundURL: require('../sounds/tutorial/base_01.mp3'),
     annotation: {selectors: ['.tutorial-container button.btn-primary'], style: 'outline'},

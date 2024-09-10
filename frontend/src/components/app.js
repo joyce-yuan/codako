@@ -59,9 +59,9 @@ class App extends React.Component {
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              © 2017
+              Open sourced with love by
               {' '}
-              <a href="http://www.foundry376.com/">Foundry376</a>, LLC. All Rights Reserved.
+              <a href="http://www.foundry376.com/">Foundry376.</a>
               {' '}
               <a href="/terms-of-use">Terms of Use</a> and
               {' '}

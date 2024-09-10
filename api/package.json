@@ -1,31 +1,79 @@
 {
-  "name": "ghkids-node",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "name": "codako-api",
+  "version": "1.5.0",
+  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pkill -f \"nodemon\"; concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"tsc -w\" \"nodemon --delay 5 dist/server.js\"",
+    "start": "node dist/server.js",
+    "build": "rm -rf dist && tsc",
+    "lint": "prettier -c ./src/**.ts && eslint ./src --ext .ts",
+    "typeorm": "if test \"$NODE_ENV\" != \"production\" ; then yarn build ; fi && node --require dotenv/config --require module-alias/register --require source-map-support/register ./node_modules/typeorm/cli.js -d ./dist/data-source.js",
+    "validate": "npm ls"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "hapi": "^16.1.0",
-    "hapi-auth-basic": "^4.2.0",
-    "inert": "^4.1.0",
-    "joi": "^10.1.0",
-    "mysql": "^2.12.0",
-    "pg": "^6.1.2",
-    "sequelize": "^3.28.0",
-    "sqlite": "3",
-    "vision": "^4.1.1",
-    "winston": "^2.3.0"
+    "@types/cors": "^2.8.12",
+    "@types/sinon": "^17.0.3",
+    "@types/winston": "^2.4.4",
+    "axios": "^0.28.0",
+    "body-parser": "^1.20.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "errorhandler": "^1.5.1",
+    "express": "^5.0.0-beta.3",
+    "express-sslify": "^1.2.0",
+    "express-validator": "^6.14.1",
+    "module-alias": "^2.2.2",
+    "moment-timezone": "^0.5.34",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.4.0",
+    "query-string": "7.1.1",
+    "reflect-metadata": "^0.1.13",
+    "source-map-support": "^0.5.21",
+    "swagger-ui-express": "^4.1.6",
+    "temp": "^0.9.4",
+    "throng": "^5.0.0",
+    "typeorm": "0.3.6",
+    "winston": "^3.10.0"
+  },
+  "_moduleAliases": {
+    "src": "dist"
   },
   "devDependencies": {
-    "eslint": "3.12.2",
-    "eslint-plugin-import": "2.2.0",
-    "eslint-plugin-jsx-a11y": "3.0.2",
-    "eslint-plugin-react": "6.8.0",
-    "eslint-watch": "2.1.14"
-  }
+    "@types/body-parser": "^1.19.2",
+    "@types/compression": "^1.7.2",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/dotenv": "^8.2.0",
+    "@types/errorhandler": "^1.5.0",
+    "@types/express": "^4.17.13",
+    "@types/express-sslify": "^1.2.2",
+    "@types/mocha": "^9.1.1",
+    "@types/morgan": "^1.7.35",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^18.19.1",
+    "@types/throng": "^5.0.3",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@typescript-eslint/parser": "^5.25.0",
+    "concurrently": "^7.2.0",
+    "eslint": "^8.15.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "nodemon": "^2.0.16",
+    "prettier": "3.3.3",
+    "precommit-hook": "^3.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "5.1.6"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }

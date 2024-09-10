@@ -67,7 +67,7 @@ class PlayPage extends React.Component {
           <Col sm={12} className="header">
             <div className="world-path">
               <h4><Link to={`/u/${world.user.username}`}>{world.user.username}</Link>/<Link>{world.name}</Link></h4>
-              {world.forkParent && (<small className="text-muted">
+              {world.forkParent && world.forkParent.user && (<small className="text-muted">
                 {`Remixed from `}
                 <Link to={`/u/${world.forkParent.user.username}`}>{world.forkParent.user.username}</Link>
                 {`/`}

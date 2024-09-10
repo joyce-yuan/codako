@@ -1,2 +1,4 @@
 /.DS_Store
 /api/npm-debug.log
+/api/frontend
+/api/dist
