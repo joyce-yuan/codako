@@ -6,21 +6,10 @@ export const WORLDS = {
   AFTER: 'after',
 };
 
-export const FLOW_BEHAVIORS = {
-  FIRST: 'first',
-  ALL: 'all',
-  RANDOM: 'random',
-};
-
 export const MODALS = {
   STAGES: 'STAGES',
   STAGE_SETTINGS: 'STAGE_SETTINGS',
   VIDEOS: 'VIDEOS',
-};
-
-export const CONTAINER_TYPES = {
-  EVENT: 'group-event',
-  FLOW: 'group-flow',
 };
 
 export const SPEED_OPTIONS = {

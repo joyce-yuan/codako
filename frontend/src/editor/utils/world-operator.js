@@ -1,7 +1,7 @@
 
 import {shuffleArray, getVariableValue, applyVariableOperation, pointByAdding} from './stage-helpers';
-import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
-import {getCurrentStageForWorld} from '../utils/selectors';
+import {FLOW_BEHAVIORS, CONTAINER_TYPES} from './world-constants';
+import {getCurrentStageForWorld} from './selectors';
 import u from 'updeep';
 
 let IDSeed = Date.now();
@@ -16,8 +16,7 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export default function WorldOperator(previousWorld) {
-  let characters = null;
+export default function WorldOperator(previousWorld, characters) {
   let stage = null;
   let globals = null;
   let actors = null;
@@ -258,7 +257,6 @@ export default function WorldOperator(previousWorld) {
 
   function resetForRule(rule, {offset, applyActions}) {
     // read-only things
-    characters = window.editorStore.getState().characters;
     stage = getCurrentStageForWorld(previousWorld);
 
     // mutable things
@@ -288,7 +286,6 @@ export default function WorldOperator(previousWorld) {
 
   function tick() {
     // read-only things
-    characters = window.editorStore.getState().characters;
     stage = getCurrentStageForWorld(previousWorld);
     input = previousWorld.input;
     

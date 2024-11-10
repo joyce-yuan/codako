@@ -3,7 +3,7 @@ import u from 'updeep';
 
 import initialState from './initial-state';
 import * as Types from '../constants/action-types';
-import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../constants/constants';
+import {FLOW_BEHAVIORS, CONTAINER_TYPES} from '../utils/world-constants';
 import {findRule, pointIsInside} from '../utils/stage-helpers';
 import {actionsForRecording, extentByShiftingExtent} from '../utils/recording-helpers';
 import {getCurrentStageForWorld} from '../utils/selectors';

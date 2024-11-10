@@ -37,10 +37,12 @@ export default function worldReducer(state, action) {
       }, state);
     }
     case Types.ADVANCE_GAME_STATE: {
-      return WorldOperator(state).tick();
+      const {characters} = window.editorStore.getState();
+      return WorldOperator(state, characters).tick();
     }
     case Types.STEP_BACK_GAME_STATE: {
-      return WorldOperator(state).untick();
+      const {characters} = window.editorStore.getState();
+      return WorldOperator(state, characters).untick();
     }
     case Types.UPSERT_ACTOR:
     case Types.DELETE_ACTOR:

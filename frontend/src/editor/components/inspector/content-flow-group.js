@@ -4,7 +4,7 @@ import DisclosureTriangle from './disclosure-triangle';
 import RuleList from './rule-list';
 import TapToEditLabel from '../tap-to-edit-label';
 
-import {FLOW_BEHAVIORS} from '../../constants/constants';
+import {FLOW_BEHAVIORS} from '../../utils/world-constants';
 
 export default class ContentGroupFlow extends React.Component {
   static propTypes = {

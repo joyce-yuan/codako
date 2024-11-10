@@ -33,7 +33,7 @@ export default class ScenarioStage extends React.Component {
     const height = (ymax - ymin + 1) * STAGE_CELL_SIZE;
     const zoom = Math.min(maxWidth / width, maxHeight / height, 1);
 
-    const ruleWorld = WorldOperator(world).resetForRule(rule, {
+    const ruleWorld = WorldOperator(world, characters).resetForRule(rule, {
       applyActions,
       offset: {x: -xmin, y: -ymin},
     });

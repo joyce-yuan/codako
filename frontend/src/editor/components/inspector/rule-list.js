@@ -4,7 +4,8 @@ import ContentRule from './content-rule';
 import ContentEventGroup from './content-event-group';
 import ContentFlowGroup from './content-flow-group';
 
-import {TOOL_TRASH, CONTAINER_TYPES} from '../../constants/constants';
+import {TOOL_TRASH} from '../../constants/constants';
+import {CONTAINER_TYPES} from '../../utils/world-constants';
 
 const DROP_INDEX_NA = 1000;
 const DROP_INDEX_INSIDE_BUT_INDETERMINATE = -1;

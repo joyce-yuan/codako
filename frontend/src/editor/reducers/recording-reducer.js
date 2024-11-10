@@ -11,7 +11,7 @@ import {extentByShiftingExtent} from '../utils/recording-helpers';
 
 
 function stateForEditingRule(phase, rule) {
-  const {world} = window.editorStore.getState();
+  const {world, characters} = window.editorStore.getState();
   const stage = getCurrentStageForWorld(world);
 
   const ex = rule.extent.xmax - rule.extent.xmin;
@@ -28,10 +28,10 @@ function stateForEditingRule(phase, rule) {
     actorId: rule.mainActorId,
     conditions: u.constant(rule.conditions),
     beforeWorld: u.constant(
-      WorldOperator(u({id: WORLDS.BEFORE}, world)).resetForRule(rule, {offset, applyActions: false})
+      WorldOperator(u({id: WORLDS.BEFORE}, world), characters).resetForRule(rule, {offset, applyActions: false})
     ),
     afterWorld: u.constant(
-      WorldOperator(u({id: WORLDS.AFTER}, world)).resetForRule(rule, {offset, applyActions: true})
+      WorldOperator(u({id: WORLDS.AFTER}, world), characters).resetForRule(rule, {offset, applyActions: true})
     ),
     extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
     prefs: u.constant({}),

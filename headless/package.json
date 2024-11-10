@@ -1,0 +1,28 @@
+{
+  "name": "headless",
+  "version": "0.1.0",
+  "description": "",
+  "engines": {
+    "npm": ">=3"
+  },
+  "scripts": {
+    "copy-frontend-src": "cp -r ../frontend/src/editor/utils/ ./src/frontend-editor-utils",
+    "start": "yarn copy-frontend-src && ts-node src/app.ts"
+  },
+  "author": "Ben Gotow",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "updeep": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
