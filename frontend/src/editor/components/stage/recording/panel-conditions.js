@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 
 import {TransformConditionRow, AppearanceConditionRow, VariableConditionRow} from './condition-rows';
 
-import {pointIsInside} from '../../../utils/stage-helpers';
+import {getVariableValue, pointIsInside} from '../../../utils/stage-helpers';
 import {updateRecordingCondition} from '../../../actions/recording-actions';
 import {getCurrentStageForWorld} from '../../../utils/selectors';
 
@@ -22,6 +22,7 @@ export default class RecordingConditions extends React.Component {
     const rows = [];
     Object.values(stage.actors).forEach((a) => {
       const saved = conditions[a.id] || {};
+      const character = characters[a.characterId];
 
       if (!pointIsInside(a.position, extent)) {
         return;
@@ -29,7 +30,7 @@ export default class RecordingConditions extends React.Component {
       rows.push(
         <TransformConditionRow
           key={`${a.id}-transform`}
-          character={characters[a.characterId]}
+          character={character}
           actor={a}
           transform={a.transform}
           onChange={(enabled) =>
@@ -41,7 +42,7 @@ export default class RecordingConditions extends React.Component {
       rows.push(
         <AppearanceConditionRow
           key={`${a.id}-appearance`}
-          character={characters[a.characterId]}
+          character={character}
           actor={a}
           appearance={a.appearance}
           onChange={(enabled) =>
@@ -51,14 +52,15 @@ export default class RecordingConditions extends React.Component {
         />
       );
 
-      for (const vkey of Object.keys(a.variableValues)) {
+
+      for (const vkey of Object.keys(character.variables)) {
         rows.push(
           <VariableConditionRow
             key={`${a.id}-var-${vkey}`}
-            character={characters[a.characterId]}
+            character={character}
             actor={a}
             variableId={vkey}
-            variableValue={a.variableValues[vkey]}
+            variableValue={getVariableValue(a, character, vkey)}
             onChange={(enabled, comparator) =>
               dispatch(updateRecordingCondition(a.id, vkey, {enabled, comparator}))
             }

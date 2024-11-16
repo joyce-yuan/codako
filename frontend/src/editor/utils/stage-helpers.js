@@ -30,10 +30,10 @@ export function shuffleArray(d) {
 }
 
 export function getVariableValue(actor, character, id) {
-  if (actor.variableValues[id]) {
+  if (actor.variableValues[id] !== undefined) {
     return actor.variableValues[id] / 1;
   }
-  if (character.variables[id]) {
+  if (character.variables[id] !== undefined) {
     return character.variables[id].defaultValue / 1;
   }
   return null;
