@@ -313,6 +313,7 @@ class Container extends React.Component {
           <div className="modal-header" style={{display: 'flex'}}>
             <h4 style={{flex: 1}}>Edit Appearance</h4>
             <Button
+              title="Undo"
               className="icon"
               onClick={this._onUndo}
               disabled={undoStack.length === 0}
@@ -320,6 +321,7 @@ class Container extends React.Component {
               <img src={require('../../img/icon_undo.png')} />
             </Button>
             <Button
+              title="Redo"
               className="icon"
               onClick={this._onRedo}
               disabled={redoStack.length === 0}
@@ -339,6 +341,12 @@ class Container extends React.Component {
                 </DropdownItem>
                 <DropdownItem onClick={() => this._onApplyCoordinateTransform(({x, y}) => { return {x, y: imageData.height - y }; })}>
                   Flip Vertically
+                </DropdownItem>
+                <DropdownItem onClick={() => this._onApplyCoordinateTransform(({x, y}) => { return {x: y, y: imageData.width - x}; })}>
+                  Rotate 90º
+                </DropdownItem>
+                <DropdownItem onClick={() => this._onApplyCoordinateTransform(({x, y}) => { return {x: imageData.height - y, y: x}; })}>
+                  Rotate -90º
                 </DropdownItem>
                 <DropdownItem divider />
                 <label htmlFor="hiddenFileInput" className="dropdown-item">
