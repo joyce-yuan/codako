@@ -34,6 +34,7 @@ const TOOLS = [
 
   new Tools.PixelRectSelectionTool(),
   new Tools.PixelMagicSelectionTool(),
+  new Tools.EyedropperTool(),
 ];
 
 const INITIAL_STATE = {

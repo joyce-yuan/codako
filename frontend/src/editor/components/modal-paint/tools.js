@@ -278,3 +278,28 @@ export class PixelMagicSelectionTool extends PixelSelectionTool {
     return imageData.getContiguousPixels(interaction.e);
   }
 }
+
+export class EyedropperTool extends PixelTool {
+  constructor() {
+    super();
+    this.name = 'eyedropper';
+  }
+
+  mouseup(props) {
+    const {imageData, interaction} = props;
+
+    if (!interaction.e) {
+      return super.mouseup(props);
+    }
+    const [r,g,b,a] = imageData.getPixel(interaction.e.x, interaction.e.y);
+
+    return Object.assign({}, props, {
+      color: `rgba(${r},${g},${b},${a})`,
+      interaction: {
+        s: null,
+        e: null,
+        points: [],
+      }
+    });
+  }
+}
