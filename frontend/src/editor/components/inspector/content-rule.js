@@ -6,6 +6,7 @@ import DisclosureTriangle from './disclosure-triangle';
 import TapToEditLabel from '../tap-to-edit-label';
 
 import {TransformConditionRow, AppearanceConditionRow, VariableConditionRow} from '../stage/recording/condition-rows';
+import { isCollapsePersisted, persistCollapsedState } from './collapse-state-storage';
 
 export default class ContentRule extends React.Component {
   static propTypes = {
@@ -20,7 +21,7 @@ export default class ContentRule extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      collapsed: false,
+      collapsed: isCollapsePersisted(props.rule.id),
     };
   }
 
@@ -98,7 +99,10 @@ export default class ContentRule extends React.Component {
           <div style={{flex: 1}} />
         </div>
         <DisclosureTriangle
-          onClick={() => this.setState({collapsed: !collapsed})}
+          onClick={() => {
+            this.setState({collapsed: !collapsed})
+            persistCollapsedState(this.props.rule.id, !collapsed)
+          }}
           enabled={conditions.length > 0}
           collapsed={conditions.length === 0 || collapsed}
         />
