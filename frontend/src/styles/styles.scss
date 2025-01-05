@@ -26,7 +26,7 @@ body {
 
 .play.container {
   .stage-container {
-    min-width:400px;
+    min-width: 400px;
   }
 }
 .play-tutorial-cta {
@@ -34,7 +34,7 @@ body {
   padding: 10px 15%;
   padding-bottom: 0;
   text-align: center;
-  display:flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
 
@@ -85,7 +85,7 @@ body {
 .btn.with-counter {
   position: relative;
   .counter-inline {
-    padding: 0 1.0rem;
+    padding: 0 1rem;
     display: inline-block;
   }
   .counter {
@@ -96,7 +96,7 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    padding: 0.5rem 1.0rem;
+    padding: 0.5rem 1rem;
     font-weight: bold;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
@@ -129,15 +129,15 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   h4 {
-    margin-top:50px;
-    padding-bottom:10px;
+    margin-top: 50px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #ccc;
   }
   h5 {
-    margin-top:50px;
-    margin-bottom:10px;
+    margin-top: 50px;
+    margin-bottom: 10px;
     &:first-child {
-      margin-top:20px;
+      margin-top: 20px;
     }
   }
 }
@@ -171,11 +171,11 @@ body {
 
   .world-thumbnail > div {
     opacity: 0;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     height: 100%;
 
     a {
-      color: white; 
+      color: white;
       display: inline-block;
       padding: 60px 15px;
     }
@@ -204,7 +204,7 @@ body {
     background: blue;
     &:before {
       background-color: #3f51b5;
-      content: '';
+      content: "";
       -webkit-animation: network-bar-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       animation: network-bar-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
@@ -231,8 +231,8 @@ body {
   font-size: 24px;
   padding: 150px;
   &.sm {
-  font-size: 16px;
-  padding: 50px;
+    font-size: 16px;
+    padding: 50px;
   }
 }
 
@@ -245,7 +245,7 @@ body {
   color: white;
 }
 .home-region.light-green {
-  background-color: #EBF1E7;
+  background-color: #ebf1e7;
 }
 
 .footer {
@@ -255,7 +255,7 @@ body {
   width: 100%;
   padding-top: 10px;
   padding-bottom: 30px;
-  margin-top:50px;
+  margin-top: 50px;
 }
 .footer .navbar {
   position: relative;
@@ -279,7 +279,8 @@ body {
   background: url(../img/splash-2.png) 40% 40%;
   background-size: cover;
   display: block;
-  p, h2 {
+  p,
+  h2 {
     color: #f4f4f4;
     display: inline-block;
     padding: 9px;
@@ -294,7 +295,16 @@ body {
 }
 
 @keyframes network-bar-progress {
-  0% { margin-left: 0px; margin-right: 100%; }
-  50% { margin-left: 25%; margin-right: 0%; }
-  100% { margin-left: 100%; margin-right: 0; }
+  0% {
+    margin-left: 0px;
+    margin-right: 100%;
+  }
+  50% {
+    margin-left: 25%;
+    margin-right: 0%;
+  }
+  100% {
+    margin-left: 100%;
+    margin-right: 0;
+  }
 }

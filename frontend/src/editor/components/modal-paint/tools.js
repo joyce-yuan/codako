@@ -113,9 +113,7 @@ export class PixelPenTool extends PixelTool {
     }
     let prev = points[0];
     for (const point of points) {
-      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) =>
-        context.fillPixel(x, y, color)
-      );
+      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y, color));
       prev = point;
     }
   }
@@ -163,12 +161,10 @@ export class PixelEraserTool extends PixelTool {
     let prev = points[0];
     for (const point of points) {
       if (isPreview) {
-        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) =>
-          context.clearPixel(x, y)
-        );
+        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.clearPixel(x, y));
       } else {
         forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) =>
-          context.fillPixel(x, y, "rgba(0,0,0,0)")
+          context.fillPixel(x, y, "rgba(0,0,0,0)"),
         );
       }
       prev = point;
@@ -195,17 +191,13 @@ class PixelSelectionTool extends PixelTool {
   shouldDrag(point, { selectionImageData, selectionOffset }) {
     const x = point.x - selectionOffset.x;
     const y = point.y - selectionOffset.y;
-    return (
-      selectionImageData && selectionImageData.getOpaquePixels()[`${x},${y}`]
-    );
+    return selectionImageData && selectionImageData.getOpaquePixels()[`${x},${y}`];
   }
 
   mousedown(point, props, event) {
     if (this.shouldDrag(point, props)) {
       return Object.assign({}, super.mousedown(point, props), {
-        imageData: event.altKey
-          ? getFlattenedImageData(props)
-          : props.imageData,
+        imageData: event.altKey ? getFlattenedImageData(props) : props.imageData,
         initialSelectionOffset: props.selectionOffset,
         draggingSelection: true,
       });
@@ -266,11 +258,7 @@ export class PixelRectSelectionTool extends PixelSelectionTool {
       return null;
     }
     const interactionPixels = {};
-    forEachInRect(
-      interaction.s,
-      interaction.e,
-      (x, y) => (interactionPixels[`${x},${y}`] = true)
-    );
+    forEachInRect(interaction.s, interaction.e, (x, y) => (interactionPixels[`${x},${y}`] = true));
     return interactionPixels;
   }
 }

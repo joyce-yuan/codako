@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 import { TransformLabels } from "../../inspector/transform-images";
-import Sprite from '../../sprites/sprite';
+import Sprite from "../../sprites/sprite";
 
 export class ActorBlock extends React.Component {
   static propTypes = {
@@ -13,10 +13,7 @@ export class ActorBlock extends React.Component {
     const { character, actor, disambiguate } = this.props;
     return (
       <code>
-        <Sprite
-          spritesheet={character.spritesheet}
-          appearance={actor.appearance}
-        />
+        <Sprite spritesheet={character.spritesheet} appearance={actor.appearance} />
         {disambiguate
           ? `${character.name} (${actor.position.x},${actor.position.y})`
           : character.name}

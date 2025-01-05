@@ -1,13 +1,8 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 import { getVariableValue } from "../../../utils/stage-helpers";
-import {
-  ActorBlock,
-  AppearanceBlock,
-  TransformBlock,
-  VariableBlock,
-} from "./blocks";
+import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
 
 export class FreeformConditionRow extends React.Component {
   static propTypes = {
@@ -44,21 +39,14 @@ export class FreeformConditionRow extends React.Component {
 
     const character = characters[actor.characterId];
 
-    const valueActor = condition.value.actorId
-      ? actors[condition.value.actorId]
-      : actor;
-    const valueCharacter = valueActor
-      ? characters[valueActor.characterId]
-      : character;
+    const valueActor = condition.value.actorId ? actors[condition.value.actorId] : actor;
+    const valueCharacter = valueActor ? characters[valueActor.characterId] : character;
 
-    const disambiguate =
-      valueActor !== actor && valueActor.characterId === actor.characterId;
+    const disambiguate = valueActor !== actor && valueActor.characterId === actor.characterId;
 
     const onDropValue = (e) => {
       if (e.dataTransfer.types.includes("variable")) {
-        const { actorId, variableId, type } = JSON.parse(
-          e.dataTransfer.getData("variable")
-        );
+        const { actorId, variableId, type } = JSON.parse(e.dataTransfer.getData("variable"));
         if (type === condition.type) {
           onChange(true, {
             ...condition,
@@ -73,24 +61,16 @@ export class FreeformConditionRow extends React.Component {
     return (
       <li className={`enabled-true`}>
         <div className="left">
-          <ActorBlock
-            character={character}
-            actor={actor}
-            disambiguate={disambiguate}
-          />
+          <ActorBlock character={character} actor={actor} disambiguate={disambiguate} />
           {condition.type === "transform" ? "direction" : condition.type}
           {condition.variableId ? (
-            <VariableBlock
-              name={character.variables[condition.variableId].name}
-            />
+            <VariableBlock name={character.variables[condition.variableId].name} />
           ) : undefined}
           {onChange ? (
             <ComparatorSelect
               type={condition.type}
               value={condition.comparator}
-              onChange={(e) =>
-                onChange(true, { ...condition, comparator: e.target.value })
-              }
+              onChange={(e) => onChange(true, { ...condition, comparator: e.target.value })}
             />
           ) : (
             ` ${condition.comparator} `
@@ -132,13 +112,7 @@ export class FreeformConditionRow extends React.Component {
   }
 }
 
-const FreeformConditionValue = ({
-  actor,
-  condition,
-  valueActor,
-  valueCharacter,
-  disambiguate,
-}) => {
+const FreeformConditionValue = ({ actor, condition, valueActor, valueCharacter, disambiguate }) => {
   const { value, type, variableId } = condition;
 
   if (!value) {
@@ -147,43 +121,24 @@ const FreeformConditionValue = ({
   if (valueActor !== actor) {
     return (
       <span>
-        <ActorBlock
-          character={valueCharacter}
-          actor={valueActor}
-          disambiguate={disambiguate}
-        />
+        <ActorBlock character={valueCharacter} actor={valueActor} disambiguate={disambiguate} />
         {type === "transform" ? "direction" : type}
         {value.variableId ? (
           <VariableBlock
-            name={
-              value.variableId &&
-              valueCharacter.variables[value.variableId].name
-            }
+            name={value.variableId && valueCharacter.variables[value.variableId].name}
           />
         ) : undefined}
       </span>
     );
   }
   if (type === "transform") {
-    return (
-      <TransformBlock
-        character={valueCharacter}
-        transform={valueActor.transform}
-      />
-    );
+    return <TransformBlock character={valueCharacter} transform={valueActor.transform} />;
   }
   if (type === "appearance") {
-    return (
-      <AppearanceBlock
-        character={valueCharacter}
-        appearanceId={valueActor.appearance}
-      />
-    );
+    return <AppearanceBlock character={valueCharacter} appearanceId={valueActor.appearance} />;
   }
   if (type === "variable") {
-    return (
-      <code>{getVariableValue(valueActor, valueCharacter, variableId)}</code>
-    );
+    return <code>{getVariableValue(valueActor, valueCharacter, variableId)}</code>;
   }
   return undefined;
 };

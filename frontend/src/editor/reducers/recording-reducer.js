@@ -3,11 +3,7 @@ import * as Types from "../constants/action-types";
 import initialState from "./initial-state";
 import worldReducer from "./world-reducer";
 
-import {
-  RECORDING_PHASE_RECORD,
-  RECORDING_PHASE_SETUP,
-  WORLDS,
-} from "../constants/constants";
+import { RECORDING_PHASE_RECORD, RECORDING_PHASE_SETUP, WORLDS } from "../constants/constants";
 import { extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import WorldOperator from "../utils/world-operator";
@@ -30,27 +26,23 @@ function stateForEditingRule(phase, rule, entireState) {
     actorId: rule.mainActorId,
     conditions: u.constant(rule.conditions),
     beforeWorld: u.constant(
-      WorldOperator(u({ id: WORLDS.BEFORE }, world), characters).resetForRule(
-        rule,
-        { offset, applyActions: false }
-      )
+      WorldOperator(u({ id: WORLDS.BEFORE }, world), characters).resetForRule(rule, {
+        offset,
+        applyActions: false,
+      }),
     ),
     afterWorld: u.constant(
-      WorldOperator(u({ id: WORLDS.AFTER }, world), characters).resetForRule(
-        rule,
-        { offset, applyActions: true }
-      )
+      WorldOperator(u({ id: WORLDS.AFTER }, world), characters).resetForRule(rule, {
+        offset,
+        applyActions: true,
+      }),
     ),
     extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
     prefs: u.constant({}),
   };
 }
 
-export default function recordingReducer(
-  state = initialState.recording,
-  action,
-  entireState
-) {
+export default function recordingReducer(state = initialState.recording, action, entireState) {
   const { world, characters } = entireState;
 
   const nextState = Object.assign({}, state, {
@@ -79,7 +71,7 @@ export default function recordingReducer(
           }),
           prefs: u.constant({}),
         },
-        nextState
+        nextState,
       );
     }
     case Types.SETUP_RECORDING_FOR_CHARACTER: {
@@ -100,16 +92,10 @@ export default function recordingReducer(
           },
         },
       };
-      return u(
-        stateForEditingRule(RECORDING_PHASE_SETUP, initialRule, entireState),
-        nextState
-      );
+      return u(stateForEditingRule(RECORDING_PHASE_SETUP, initialRule, entireState), nextState);
     }
     case Types.EDIT_RULE_RECORDING: {
-      return u(
-        stateForEditingRule(RECORDING_PHASE_RECORD, action.rule, entireState),
-        nextState
-      );
+      return u(stateForEditingRule(RECORDING_PHASE_RECORD, action.rule, entireState), nextState);
     }
     case Types.FINISH_RECORDING: {
       return Object.assign({}, initialState.recording);
@@ -121,11 +107,9 @@ export default function recordingReducer(
       return u(
         {
           phase: RECORDING_PHASE_RECORD,
-          afterWorld: u.constant(
-            u({ id: WORLDS.AFTER }, nextState.beforeWorld)
-          ),
+          afterWorld: u.constant(u({ id: WORLDS.AFTER }, nextState.beforeWorld)),
         },
-        nextState
+        nextState,
       );
     }
     case Types.UPDATE_RECORDING_CONDITION: {
@@ -133,10 +117,7 @@ export default function recordingReducer(
       if (values.enabled === false) {
         return u({ conditions: { [actorId]: u.omit(key) } }, nextState);
       }
-      return u(
-        { conditions: { [actorId]: { [key]: u.constant(values) } } },
-        nextState
-      );
+      return u({ conditions: { [actorId]: { [key]: u.constant(values) } } }, nextState);
     }
     case Types.UPDATE_RECORDING_ACTION_PREFS: {
       const { actorId, values } = action;
@@ -146,7 +127,7 @@ export default function recordingReducer(
             [actorId]: values,
           },
         },
-        nextState
+        nextState,
       );
     }
     case Types.SET_RECORDING_EXTENT: {
@@ -154,9 +135,7 @@ export default function recordingReducer(
       const extent = Object.assign({}, action.extent);
       for (const world of [nextState.beforeWorld, nextState.afterWorld]) {
         const stage = getCurrentStageForWorld(world);
-        const mainActor = Object.values(stage.actors || {}).find(
-          (a) => a.id === nextState.actorId
-        );
+        const mainActor = Object.values(stage.actors || {}).find((a) => a.id === nextState.actorId);
         if (mainActor) {
           extent.xmin = Math.min(extent.xmin, mainActor.position.x);
           extent.ymin = Math.min(extent.ymin, mainActor.position.y);
@@ -174,9 +153,7 @@ export default function recordingReducer(
         return nextState;
       }
       const key = `${x},${y}`;
-      const ignored = nextState.extent.ignored[key]
-        ? u.omit(key)
-        : { [key]: true };
+      const ignored = nextState.extent.ignored[key] ? u.omit(key) : { [key]: true };
       return u({ extent: { ignored } }, nextState);
     }
     default:

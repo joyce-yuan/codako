@@ -1,4 +1,3 @@
-
 export function forEachInRect(s, e, pixelCallback) {
   let [sx, sy, ex, ey] = [s.x, s.y, e.x, e.y];
   if (ex < sx) {
@@ -7,8 +6,8 @@ export function forEachInRect(s, e, pixelCallback) {
   if (ey < sy) {
     [ey, sy] = [sy, ey];
   }
-  for (let x = sx; x < ex; x ++) {
-    for (let y = sy; y < ey; y ++) {
+  for (let x = sx; x < ex; x++) {
+    for (let y = sy; y < ey; y++) {
       pixelCallback(x, y);
     }
   }
@@ -17,8 +16,8 @@ export function forEachInRect(s, e, pixelCallback) {
 export function forEachInLine(x0, y0, x1, y1, pixelCallback) {
   const dx = Math.abs(x1 - x0);
   const dy = Math.abs(y1 - y0);
-  const sx = (x0 < x1) ? 1 : -1;
-  const sy = (y0 < y1) ? 1 : -1;
+  const sx = x0 < x1 ? 1 : -1;
+  const sy = y0 < y1 ? 1 : -1;
   let x = x0;
   let y = y0;
   let err = dx - dy;
@@ -27,7 +26,7 @@ export function forEachInLine(x0, y0, x1, y1, pixelCallback) {
   while (arrived === false) {
     pixelCallback(x, y);
 
-    if ((x === x1) && (y === y1)) {
+    if (x === x1 && y === y1) {
       arrived = true;
       break;
     }
@@ -87,7 +86,7 @@ export function hsvToRgb(h, s, v) {
   return [r * 255, g * 255, b * 255];
 }
 
-const tempCanvas = document.createElement('canvas');
+const tempCanvas = document.createElement("canvas");
 
 export function getDataURLFromImageData(imageData) {
   if (!imageData) {
@@ -95,35 +94,50 @@ export function getDataURLFromImageData(imageData) {
   }
   tempCanvas.width = imageData.width;
   tempCanvas.height = imageData.height;
-  const tempContext = tempCanvas.getContext('2d');
+  const tempContext = tempCanvas.getContext("2d");
   tempContext.clearRect(0, 0, imageData.width, imageData.height);
   tempContext.putImageData(imageData, 0, 0);
   return tempCanvas.toDataURL();
 }
 
-export function getImageDataFromDataURL(dataURL, {maxWidth, maxHeight} = {}, callback) {
+export function getImageDataFromDataURL(dataURL, { maxWidth, maxHeight } = {}, callback) {
   const img = new Image();
   img.onload = () => {
     const scale = maxWidth ? Math.min(1, maxHeight / img.height, maxWidth / img.width) : 1;
-    const width = tempCanvas.width = img.width * scale;
-    const height = tempCanvas.height = img.height * scale;
+    const width = (tempCanvas.width = img.width * scale);
+    const height = (tempCanvas.height = img.height * scale);
 
-    const tempContext = tempCanvas.getContext('2d');
+    const tempContext = tempCanvas.getContext("2d");
     tempContext.imageSmoothingEnabled = false;
     tempContext.clearRect(0, 0, width, height);
-    tempContext.drawImage(img, (width - img.width * scale) / 2, (height - img.height * scale) / 2, img.width * scale, img.height * scale);
+    tempContext.drawImage(
+      img,
+      (width - img.width * scale) / 2,
+      (height - img.height * scale) / 2,
+      img.width * scale,
+      img.height * scale,
+    );
     callback(tempContext.getImageData(0, 0, width, height));
   };
   img.src = dataURL;
 }
 
-export function getFlattenedImageData({imageData, selectionImageData, selectionOffset}) {
+export function getFlattenedImageData({ imageData, selectionImageData, selectionOffset }) {
   if (!selectionImageData) {
     return imageData;
   }
   const nextImageData = imageData.clone();
-  nextImageData.applyPixelsFromData(selectionImageData, 0, 0, selectionImageData.width, selectionImageData.height, selectionOffset.x, selectionOffset.y, {
-    ignoreClearPixels: true,
-  });
+  nextImageData.applyPixelsFromData(
+    selectionImageData,
+    0,
+    0,
+    selectionImageData.width,
+    selectionImageData.height,
+    selectionOffset.x,
+    selectionOffset.y,
+    {
+      ignoreClearPixels: true,
+    },
+  );
   return nextImageData;
 }

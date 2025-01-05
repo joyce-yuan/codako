@@ -1,11 +1,12 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import Col from 'reactstrap/lib/Col';
-import Row from 'reactstrap/lib/Row';
-import Container from 'reactstrap/lib/Container';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Col from "reactstrap/lib/Col";
+import Row from "reactstrap/lib/Row";
+import Container from "reactstrap/lib/Container";
 
-import WorldList from './common/world-list';
-import {makeRequest} from '../helpers/api';
+import WorldList from "./common/world-list";
+import { makeRequest } from "../helpers/api";
 
 class ExplorePage extends React.Component {
   static propTypes = {
@@ -19,18 +20,18 @@ class ExplorePage extends React.Component {
 
   componentDidMount() {
     makeRequest(`/worlds/explore`).then((worlds) => {
-      this.setState({worlds});
+      this.setState({ worlds });
     });
   }
 
   render() {
     return (
-      <Container style={{marginTop: 30}} className="explore">
+      <Container style={{ marginTop: 30 }} className="explore">
         <Row>
           <Col md={12}>
             <div className="card card-block">
               <h5>Popular Games</h5>
-              <hr/>
+              <hr />
               <WorldList worlds={this.state.worlds} />
             </div>
           </Col>

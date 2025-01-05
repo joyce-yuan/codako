@@ -1,15 +1,16 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import classNames from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import classNames from "classnames";
 
-import Button from 'reactstrap/lib/Button';
-import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import Button from "reactstrap/lib/Button";
+import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
 
-import {nullActorPath} from '../utils/stage-helpers';
-import {TOOL_POINTER, TOOL_RECORD, TOOL_PAINT, TOOL_TRASH, MODALS} from '../constants/constants';
+import { nullActorPath } from "../utils/stage-helpers";
+import { TOOL_POINTER, TOOL_RECORD, TOOL_PAINT, TOOL_TRASH, MODALS } from "../constants/constants";
 
 import {
   createCharacter,
@@ -18,22 +19,14 @@ import {
   changeCharacterAppearanceName,
   createCharacterAppearance,
   deleteCharacterAppearance,
-} from '../actions/characters-actions';
+} from "../actions/characters-actions";
 
-import {
-  setupRecordingForCharacter
-} from '../actions/recording-actions';
+import { setupRecordingForCharacter } from "../actions/recording-actions";
 
-import {
-  select,
-  selectToolId,
-  showModal,
-  paintCharacterAppearance,
-} from '../actions/ui-actions';
+import { select, selectToolId, showModal, paintCharacterAppearance } from "../actions/ui-actions";
 
-import Sprite from './sprites/sprite';
-import TapToEditLabel from './tap-to-edit-label';
-
+import Sprite from "./sprites/sprite";
+import TapToEditLabel from "./tap-to-edit-label";
 
 function defaultAppearanceId(spritesheet) {
   return Object.keys(spritesheet.appearances)[0];
@@ -53,34 +46,38 @@ class LibraryItem extends React.Component {
   };
 
   _onDragStart = (event) => {
-    event.dataTransfer.dropEffect = 'copy';
-    event.dataTransfer.effectAllowed = 'copy';
+    event.dataTransfer.dropEffect = "copy";
+    event.dataTransfer.effectAllowed = "copy";
 
     const el = event.target;
-    const {top, left} = el.getBoundingClientRect();
+    const { top, left } = el.getBoundingClientRect();
     const offset = {
       dragLeft: event.clientX - left,
       dragTop: event.clientY - top,
     };
 
     const img = new Image();
-    img.src = ((el.tagName === 'IMG') ? el : el.querySelector('img')).src;
+    img.src = (el.tagName === "IMG" ? el : el.querySelector("img")).src;
     event.dataTransfer.setDragImage(img, offset.dragLeft, offset.dragTop);
 
-    event.dataTransfer.setData('drag-offset', JSON.stringify(offset));
-    event.dataTransfer.setData(this.props.dragType, JSON.stringify({
-      characterId: this.props.character.id,
-      appearance: this.props.appearance,
-    }));
-  }
+    event.dataTransfer.setData("drag-offset", JSON.stringify(offset));
+    event.dataTransfer.setData(
+      this.props.dragType,
+      JSON.stringify({
+        characterId: this.props.character.id,
+        appearance: this.props.appearance,
+      }),
+    );
+  };
 
   render() {
-    const {selected, onClick, character, label, labelEditable, appearance, onDoubleClick} = this.props;
-    const {spritesheet} = character;
+    const { selected, onClick, character, label, labelEditable, appearance, onDoubleClick } =
+      this.props;
+    const { spritesheet } = character;
 
     return (
       <div
-        className={classNames({"item": true, "selected": selected})}
+        className={classNames({ item: true, selected: selected })}
         draggable
         onDragStart={this._onDragStart}
         onClick={onClick}
@@ -110,11 +107,11 @@ class Library extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {characterDropdownOpen: false};
+    this.state = { characterDropdownOpen: false };
   }
 
   _onClickCharacter = (event, characterId) => {
-    const {ui, dispatch} = this.props;
+    const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOL_TRASH) {
       dispatch(deleteCharacter(characterId));
       if (!event.shiftKey) {
@@ -125,15 +122,15 @@ class Library extends React.Component {
       dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
       dispatch(selectToolId(TOOL_POINTER));
     } else if (ui.selectedToolId === TOOL_RECORD) {
-      dispatch(setupRecordingForCharacter({characterId}));
+      dispatch(setupRecordingForCharacter({ characterId }));
       dispatch(selectToolId(TOOL_POINTER));
     } else {
       dispatch(select(characterId, nullActorPath()));
     }
-  }
+  };
 
   _onClickAppearance = (event, characterId, appearanceId) => {
-    const {ui, dispatch} = this.props;
+    const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOL_TRASH) {
       dispatch(deleteCharacterAppearance(characterId, appearanceId));
       if (!event.shiftKey) {
@@ -143,14 +140,14 @@ class Library extends React.Component {
       dispatch(paintCharacterAppearance(characterId, appearanceId));
       dispatch(selectToolId(TOOL_POINTER));
     }
-  }
+  };
 
   renderCharactersPanel() {
-    const {characters, dispatch, ui} = this.props;
+    const { characters, dispatch, ui } = this.props;
 
     return (
       <div className="item-grid">
-        {Object.keys(characters).map(id =>
+        {Object.keys(characters).map((id) => (
           <LibraryItem
             key={id}
             dragType="sprite"
@@ -158,29 +155,25 @@ class Library extends React.Component {
             label={characters[id].name}
             labelEditable={ui.selectedToolId !== TOOL_TRASH}
             selected={id === ui.selectedCharacterId}
-            onChangeLabel={(event) => dispatch(changeCharacter(id, {name: event.target.value}))}
+            onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
             onClick={(event) => this._onClickCharacter(event, id)}
           />
-        )}
+        ))}
       </div>
     );
   }
 
   renderAppearancesPanel() {
-    const {characters, ui, dispatch} = this.props;
+    const { characters, ui, dispatch } = this.props;
     const character = characters[ui.selectedCharacterId];
 
     if (!character) {
-      return(
-        <div className="empty">
-          Select an actor in your library to view it's appearances.
-        </div>
-      );
+      return <div className="empty">Select an actor in your library to view it's appearances.</div>;
     }
 
-    return(
+    return (
       <div className="item-grid">
-        {Object.keys(character.spritesheet.appearances).map(appearanceId =>
+        {Object.keys(character.spritesheet.appearances).map((appearanceId) => (
           <LibraryItem
             key={appearanceId}
             character={character}
@@ -188,17 +181,15 @@ class Library extends React.Component {
             dragType="appearance"
             label={character.spritesheet.appearanceNames[appearanceId]}
             labelEditable={ui.selectedToolId !== TOOL_TRASH}
-            onDoubleClick={() =>
-              dispatch(paintCharacterAppearance(character.id, appearanceId))
-            }
-            onClick={(event) =>
-              this._onClickAppearance(event, character.id, appearanceId)
-            }
+            onDoubleClick={() => dispatch(paintCharacterAppearance(character.id, appearanceId))}
+            onClick={(event) => this._onClickAppearance(event, character.id, appearanceId)}
             onChangeLabel={(event) =>
-              dispatch(changeCharacterAppearanceName(character.id, appearanceId, event.target.value))
+              dispatch(
+                changeCharacterAppearanceName(character.id, appearanceId, event.target.value),
+              )
             }
           />
-        )}
+        ))}
       </div>
     );
   }
@@ -206,23 +197,23 @@ class Library extends React.Component {
   _onCreateCharacter = () => {
     const newCharacterId = `${Date.now()}`;
     this.props.dispatch(createCharacter(newCharacterId));
-    this.props.dispatch(paintCharacterAppearance(newCharacterId, 'idle'));
-  }
+    this.props.dispatch(paintCharacterAppearance(newCharacterId, "idle"));
+  };
 
   _onExploreCharacters = () => {
     this.props.dispatch(showModal(MODALS.EXPLORE_CHARACTERS));
-  }
+  };
 
   _onCreateAppearance = () => {
-    const {ui, characters, dispatch} = this.props;
-    const {spritesheet} = characters[ui.selectedCharacterId];
+    const { ui, characters, dispatch } = this.props;
+    const { spritesheet } = characters[ui.selectedCharacterId];
     const appearance = spritesheet.appearances[defaultAppearanceId(spritesheet)];
 
     const newAppearanceId = `${Date.now()}`;
     const newAppearanceData = appearance ? appearance[0] : null;
     dispatch(createCharacterAppearance(ui.selectedCharacterId, newAppearanceId, newAppearanceData));
     dispatch(paintCharacterAppearance(ui.selectedCharacterId, newAppearanceId));
-  }
+  };
 
   render() {
     return (
@@ -234,15 +225,17 @@ class Library extends React.Component {
               size="sm"
               isOpen={this.state.characterDropdownOpen}
               data-tutorial-id="characters-add-button"
-              toggle={() => this.setState({characterDropdownOpen: !this.state.characterDropdownOpen})}
+              toggle={() =>
+                this.setState({
+                  characterDropdownOpen: !this.state.characterDropdownOpen,
+                })
+              }
             >
               <DropdownToggle caret>
                 <i className="fa fa-plus" />
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem onClick={this._onCreateCharacter}>
-                  Draw new Character...
-                </DropdownItem>
+                <DropdownItem onClick={this._onCreateCharacter}>Draw new Character...</DropdownItem>
                 <DropdownItem onClick={this._onExploreCharacters}>
                   Explore Characters...
                 </DropdownItem>
@@ -276,6 +269,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-)(Library);
+export default connect(mapStateToProps)(Library);

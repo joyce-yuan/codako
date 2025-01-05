@@ -1,14 +1,15 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import Modal from 'reactstrap/lib/Modal';
-import ModalBody from 'reactstrap/lib/ModalBody';
-import ModalFooter from 'reactstrap/lib/ModalFooter';
-import Button from 'reactstrap/lib/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Modal from "reactstrap/lib/Modal";
+import ModalBody from "reactstrap/lib/ModalBody";
+import ModalFooter from "reactstrap/lib/ModalFooter";
+import Button from "reactstrap/lib/Button";
 
-import {findRule} from '../../utils/stage-helpers';
-import {pickCharacterRuleEventKey} from '../../actions/ui-actions';
-import {changeCharacter} from '../../actions/characters-actions';
-import Keyboard from './keyboard';
+import { findRule } from "../../utils/stage-helpers";
+import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
+import { changeCharacter } from "../../actions/characters-actions";
+import Keyboard from "./keyboard";
 
 class Container extends React.Component {
   static propTypes = {
@@ -27,53 +28,49 @@ class Container extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({keyCode: nextProps.initialKeyCode});
+    this.setState({ keyCode: nextProps.initialKeyCode });
   }
 
   _onClose = () => {
     this.props.dispatch(pickCharacterRuleEventKey(null));
-  }
+  };
 
   _onCloseAndSave = () => {
-    const {dispatch, characterId, ruleId, characters} = this.props;
+    const { dispatch, characterId, ruleId, characters } = this.props;
     const rules = JSON.parse(JSON.stringify(characters[characterId].rules));
 
     if (!this.state.keyCode) {
-      return window.alert("Uhoh - press a key on your keyboard or choose one in the picture to continue.");
+      return window.alert(
+        "Uhoh - press a key on your keyboard or choose one in the picture to continue.",
+      );
     }
 
-    const [rule] = findRule({rules}, ruleId);
+    const [rule] = findRule({ rules }, ruleId);
     rule.code = this.state.keyCode;
 
     dispatch(pickCharacterRuleEventKey(null));
-    dispatch(changeCharacter(characterId, {rules}));
-  }
+    dispatch(changeCharacter(characterId, { rules }));
+  };
 
   _onKeyDown = (event) => {
-    this.setState({keyCode: event.keyCode});
+    this.setState({ keyCode: event.keyCode });
     event.preventDefault();
-  }
+  };
 
   render() {
-    const {characterId} = this.props;
+    const { characterId } = this.props;
 
     return (
       <Modal isOpen={characterId !== null} backdrop="static" toggle={() => {}}>
-        <div className="modal-header" style={{display: 'flex'}}>
-          <h4 style={{flex: 1}}>Choose Key</h4>
+        <div className="modal-header" style={{ display: "flex" }}>
+          <h4 style={{ flex: 1 }}>Choose Key</h4>
         </div>
         <ModalBody>
           <Keyboard keyCode={this.state.keyCode} onKeyDown={this._onKeyDown} />
         </ModalBody>
         <ModalFooter>
-          <Button
-            onClick={this._onClose}>
-            Cancel
-          </Button>
-          {' '}
-          <Button
-            data-tutorial-id="keypicker-done"
-            onClick={this._onCloseAndSave}>
+          <Button onClick={this._onClose}>Cancel</Button>{" "}
+          <Button data-tutorial-id="keypicker-done" onClick={this._onCloseAndSave}>
             Done
           </Button>
         </ModalFooter>
@@ -83,9 +80,9 @@ class Container extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return Object.assign({}, state.ui.keypicker, {characters: state.characters});
+  return Object.assign({}, state.ui.keypicker, {
+    characters: state.characters,
+  });
 }
 
-export default connect(
-  mapStateToProps,
-)(Container);
+export default connect(mapStateToProps)(Container);

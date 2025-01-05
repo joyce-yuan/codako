@@ -39,12 +39,7 @@ export default function WorldOperator(previousWorld, characters) {
     return o;
   }
 
-  function actorsMatch(
-    stageActor,
-    ruleActor,
-    conditions,
-    stageActorsForReferencedActorId
-  ) {
+  function actorsMatch(stageActor, ruleActor, conditions, stageActorsForReferencedActorId) {
     if (ruleActor.characterId !== stageActor.characterId) {
       return false;
     }
@@ -71,16 +66,8 @@ export default function WorldOperator(previousWorld, characters) {
           leftValue = stageActor.transform || "none";
           rightValue = valueActor.transform || "none";
         } else {
-          leftValue = getVariableValue(
-            stageActor,
-            character,
-            condition.variableId
-          );
-          rightValue = getVariableValue(
-            valueActor,
-            character,
-            condition.variableId
-          );
+          leftValue = getVariableValue(stageActor, character, condition.variableId);
+          rightValue = getVariableValue(valueActor, character, condition.variableId);
         }
         return comparatorMatches(condition.comparator, leftValue, rightValue);
       });
@@ -110,7 +97,7 @@ export default function WorldOperator(previousWorld, characters) {
       return null;
     }
     return Object.values(actors).filter(
-      (a) => a.position.x === position.x && a.position.y === position.y
+      (a) => a.position.x === position.x && a.position.y === position.y,
     );
   }
 
@@ -183,7 +170,7 @@ export default function WorldOperator(previousWorld, characters) {
           const ignoreExtraActors = rule.extent.ignored[`${x},${y}`];
 
           const stageActorsAtPos = actorsAtPosition(
-            wrappedPosition(pointByAdding(me.position, { x, y }))
+            wrappedPosition(pointByAdding(me.position, { x, y })),
           );
 
           /** Ben Note: We now allow conditions to specify other actors on the RHS
@@ -211,35 +198,25 @@ export default function WorldOperator(previousWorld, characters) {
               return stageActorsForRuleActorIds[otherActorId];
             }
             const orule = rule.actors[otherActorId];
-            const stagePosition = wrappedPosition(
-              pointByAdding(me.position, orule.position)
-            );
+            const stagePosition = wrappedPosition(pointByAdding(me.position, orule.position));
             if (!stagePosition) {
               return [];
             }
             const ocandidates = actorsAtPosition(stagePosition);
             return ocandidates.filter((ostage) =>
-              actorsMatch(
-                ostage,
-                orule,
-                rule.conditions[otherActorId] || {},
-                () => false
-              )
+              actorsMatch(ostage, orule, rule.conditions[otherActorId] || {}, () => false),
             );
           };
 
           const ruleActorsAtPos = ruleActorsUnmatched.filter(
-            (r) => r.position.x === x && r.position.y === y
+            (r) => r.position.x === x && r.position.y === y,
           );
 
           if (stageActorsAtPos === null) {
             return false; // offscreen?
           }
 
-          if (
-            stageActorsAtPos.length !== ruleActorsAtPos.length &&
-            !ignoreExtraActors
-          ) {
+          if (stageActorsAtPos.length !== ruleActorsAtPos.length && !ignoreExtraActors) {
             return false;
           }
 
@@ -250,12 +227,7 @@ export default function WorldOperator(previousWorld, characters) {
               (r) =>
                 r.position.x === x &&
                 r.position.y === y &&
-                actorsMatch(
-                  s,
-                  r,
-                  rule.conditions[r.id] || {},
-                  stageActorsForReferencedActorId
-                )
+                actorsMatch(s, r, rule.conditions[r.id] || {}, stageActorsForReferencedActorId),
             );
 
             if (idx !== -1) {
@@ -300,9 +272,7 @@ export default function WorldOperator(previousWorld, characters) {
     function applyRule(rule, stageActorForId) {
       for (const action of rule.actions) {
         if (action.type === "create") {
-          const nextPos = wrappedPosition(
-            pointByAdding(me.position, action.offset)
-          );
+          const nextPos = wrappedPosition(pointByAdding(me.position, action.offset));
           if (!nextPos) {
             throw new Error(`Action cannot create at this position`);
           }
@@ -317,17 +287,13 @@ export default function WorldOperator(previousWorld, characters) {
           const stageActor = stageActorForId[action.actorId];
           if (!stageActor) {
             throw new Error(
-              `Action ${JSON.stringify(
-                action
-              )} references an actor which is not in rule.actors (${
+              `Action ${JSON.stringify(action)} references an actor which is not in rule.actors (${
                 action.actorId
-              }`
+              }`,
             );
           }
           if (action.type === "move") {
-            const nextPos = wrappedPosition(
-              pointByAdding(stageActor.position, action.delta)
-            );
+            const nextPos = wrappedPosition(pointByAdding(stageActor.position, action.delta));
             if (!nextPos) {
               throw new Error(`Action cannot create at this position`);
             }
@@ -342,24 +308,16 @@ export default function WorldOperator(previousWorld, characters) {
             const current = getVariableValue(
               stageActor,
               characters[stageActor.characterId],
-              action.variable
+              action.variable,
             );
-            const next = applyVariableOperation(
-              current,
-              action.operation,
-              action.value
-            );
+            const next = applyVariableOperation(current, action.operation, action.value);
             stageActor.variableValues[action.variable] = next;
           } else {
             throw new Error("Not sure how to apply action", action);
           }
         } else if (action.type === "global") {
           const global = globals[action.global];
-          global.value = applyVariableOperation(
-            global.value,
-            action.operation,
-            action.value
-          );
+          global.value = applyVariableOperation(global.value, action.operation, action.value);
         } else {
           throw new Error("Not sure how to apply action", action);
         }
@@ -405,7 +363,7 @@ export default function WorldOperator(previousWorld, characters) {
           },
         },
       },
-      previousWorld
+      previousWorld,
     );
   }
 
@@ -430,9 +388,7 @@ export default function WorldOperator(previousWorld, characters) {
     actors = deepClone(stage.actors);
     evaluatedRuleIds = {};
 
-    Object.values(actors).forEach((actor) =>
-      ActorOperator(actor).tickAllRules()
-    );
+    Object.values(actors).forEach((actor) => ActorOperator(actor).tickAllRules());
 
     return u(
       {
@@ -447,10 +403,9 @@ export default function WorldOperator(previousWorld, characters) {
         },
         globals: u.constant(globals),
         evaluatedRuleIds: u.constant(evaluatedRuleIds),
-        history: (values) =>
-          [].concat(values.slice(values.length - 20), [historyItem]),
+        history: (values) => [].concat(values.slice(values.length - 20), [historyItem]),
       },
-      previousWorld
+      previousWorld,
     );
   }
 
@@ -475,7 +430,7 @@ export default function WorldOperator(previousWorld, characters) {
         evaluatedRuleIds: u.constant(historyItem.evaluatedRuleIds),
         history: history.slice(0, history.length - 1),
       },
-      previousWorld
+      previousWorld,
     );
   }
 

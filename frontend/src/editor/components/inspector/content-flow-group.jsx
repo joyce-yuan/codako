@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import TapToEditLabel from '../tap-to-edit-label';
-import DisclosureTriangle from './disclosure-triangle';
-import RuleList from './rule-list';
-import RuleStateCircle from './rule-state-circle';
+import PropTypes from "prop-types";
+import React from "react";
+import TapToEditLabel from "../tap-to-edit-label";
+import DisclosureTriangle from "./disclosure-triangle";
+import RuleList from "./rule-list";
+import RuleStateCircle from "./rule-state-circle";
 
 import { FLOW_BEHAVIORS } from "../../utils/world-constants";
 import { isCollapsePersisted, persistCollapsedState } from "./collapse-state-storage";
@@ -65,11 +65,7 @@ export default class ContentGroupFlow extends React.Component {
               Randomize &amp; Do First
             </option>
           </select>
-          <TapToEditLabel
-            className="name"
-            value={rule.name}
-            onChange={this._onNameChange}
-          />
+          <TapToEditLabel className="name" value={rule.name} onChange={this._onNameChange} />
         </div>
         <RuleList parentId={rule.id} rules={rule.rules} collapsed={collapsed} />
       </div>

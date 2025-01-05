@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import TapToEditLabel from '../tap-to-edit-label';
-import ConnectedStagePicker from './connected-stage-picker';
+import PropTypes from "prop-types";
+import React from "react";
+import TapToEditLabel from "../tap-to-edit-label";
+import ConnectedStagePicker from "./connected-stage-picker";
 
 export default class VariableGridItem extends React.Component {
   static propTypes = {
@@ -36,20 +36,13 @@ export default class VariableGridItem extends React.Component {
         actorId: this.props.actorId,
         variableId: this.props.definition.id,
         value: { constant: displayValue || 0 },
-      })
+      }),
     );
   };
 
   render() {
-    const {
-      value,
-      actorId,
-      definition,
-      onChangeDefinition,
-      onChangeValue,
-      onBlurValue,
-      onClick,
-    } = this.props;
+    const { value, actorId, definition, onChangeDefinition, onChangeValue, onBlurValue, onClick } =
+      this.props;
     const displayValue = value !== undefined ? value : definition.defaultValue;
     const disabled = this.context.selectedToolId === "trash";
 
@@ -86,10 +79,7 @@ export default class VariableGridItem extends React.Component {
           className="name"
           value={definition.name}
           onChange={
-            disabled
-              ? null
-              : (e) =>
-                  onChangeDefinition(definition.id, { name: e.target.value })
+            disabled ? null : (e) => onChangeDefinition(definition.id, { name: e.target.value })
           }
         />
         {content}

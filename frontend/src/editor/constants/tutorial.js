@@ -1,8 +1,4 @@
-import {
-  TOOL_RECORD,
-  RECORDING_PHASE_SETUP,
-  RECORDING_PHASE_RECORD,
-} from "./constants";
+import { TOOL_RECORD, RECORDING_PHASE_SETUP, RECORDING_PHASE_RECORD } from "./constants";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import { changeActor } from "../actions/stage-actions";
 import { stopPlayback } from "../actions/ui-actions";
@@ -16,11 +12,7 @@ export const poseFrames = {
     "sitting-talking-5",
   ],
   "standing-pointing": ["standing-pointing"],
-  "standing-talking": [
-    "standing-talking-1",
-    "standing-talking-2",
-    "standing-talking-3",
-  ],
+  "standing-talking": ["standing-talking-1", "standing-talking-2", "standing-talking-3"],
   "standing-confused": ["standing-confused-1", "standing-confused-2"],
   ashamed: ["ashamed", "ashamed-blink"],
   excited: ["excited", "excited-blink"],
@@ -202,9 +194,7 @@ const baseTutorialSteps = [
       stateMatching: (state, stage) => {
         const counts = {};
         Object.values(stage.actors).forEach((a) => {
-          counts[a.characterId] = counts[a.characterId]
-            ? counts[a.characterId] + 1
-            : 1;
+          counts[a.characterId] = counts[a.characterId] ? counts[a.characterId] + 1 : 1;
         });
         return Object.values(counts).find((v) => v === 5);
       },
@@ -219,7 +209,7 @@ const baseTutorialSteps = [
     waitsFor: {
       stateMatching: (state, stage) => {
         return Object.values(stage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr" && a.position.x === 9
+          (a) => a.characterId === "aamlcui8uxr" && a.position.x === 9,
         );
       },
     },
@@ -251,9 +241,7 @@ const baseTutorialSteps = [
     },
     onEnter: (dispatch) => {
       dispatch(stopPlayback());
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } }));
     },
     waitsFor: {
       stateMatching: (state) => state.ui.selectedToolId === "record",
@@ -268,9 +256,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     onEnter: (dispatch) => {
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } }));
     },
     waitsFor: {
       stateMatching: (state) => state.recording.phase === RECORDING_PHASE_SETUP,
@@ -290,8 +276,7 @@ const baseTutorialSteps = [
     soundURL: new URL("../sounds/tutorial/base_19.mp3", import.meta.url).href,
     annotation: { selectors: ["[data-stage-handle=right]"], style: "outline" },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.extent.xmax - state.recording.extent.xmin > 0,
+      stateMatching: (state) => state.recording.extent.xmax - state.recording.extent.xmin > 0,
     },
   },
   {
@@ -301,8 +286,7 @@ const baseTutorialSteps = [
     soundURL: new URL("../sounds/tutorial/base_20.mp3", import.meta.url).href,
     annotation: { selectors: ["[data-stage-handle=top]"], style: "outline" },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.extent.ymax - state.recording.extent.ymin > 0,
+      stateMatching: (state) => state.recording.extent.ymax - state.recording.extent.ymin > 0,
     },
   },
   {
@@ -314,8 +298,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.phase === RECORDING_PHASE_RECORD,
+      stateMatching: (state) => state.recording.phase === RECORDING_PHASE_RECORD,
     },
   },
   {
@@ -351,11 +334,9 @@ const baseTutorialSteps = [
           return false;
         }
         const before = Object.values(beforeStage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
+          (a) => a.characterId === "aamlcui8uxr",
         );
-        const after = Object.values(afterStage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
-        );
+        const after = Object.values(afterStage.actors).find((a) => a.characterId === "aamlcui8uxr");
         return (
           before &&
           after &&
@@ -392,15 +373,11 @@ const baseTutorialSteps = [
     soundURL: new URL("../sounds/tutorial/base_28.mp3", import.meta.url).href,
     annotation: { selectors: ["[data-tutorial-id=play]"], style: "outline" },
     onEnter: (dispatch) => {
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 2, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 2, y: 9 } }));
     },
     waitsFor: {
       stateMatching: (state, stage) => {
-        const main = Object.values(stage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
-        );
+        const main = Object.values(stage.actors).find((a) => a.characterId === "aamlcui8uxr");
         return main && main.position.x > 9;
       },
     },
@@ -496,8 +473,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     waitsFor: {
-      elementMatching:
-        ".btn-group.open [data-tutorial-id=inspector-add-rule-key]",
+      elementMatching: ".btn-group.open [data-tutorial-id=inspector-add-rule-key]",
     },
   },
   {
@@ -509,8 +485,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     waitsFor: {
-      stateMatching: (state) =>
-        state.ui.keypicker.characterId === "aamlcui8uxr",
+      stateMatching: (state) => state.ui.keypicker.characterId === "aamlcui8uxr",
     },
   },
   {
@@ -571,9 +546,7 @@ const baseTutorialSteps = [
     annotation: { selectors: ["[data-tutorial-id=play]"], style: "outline" },
     waitsFor: {
       stateMatching: (state, stage) => {
-        const main = Object.values(stage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
-        );
+        const main = Object.values(stage.actors).find((a) => a.characterId === "aamlcui8uxr");
         return main.position.x > 9;
       },
     },
@@ -605,9 +578,7 @@ const baseTutorialSteps = [
     text: `here when the boulder starts to fall. Remember how we created our first rule?`,
     soundURL: new URL("../sounds/tutorial/base_46.mp3", import.meta.url).href,
     onEnter: (dispatch) => {
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 12, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 12, y: 9 } }));
     },
   },
   {
@@ -636,9 +607,7 @@ const baseTutorialSteps = [
       Can you expand the recording so our hero is inside the box?`,
     waitsFor: {
       stateMatching: (state, stage) => {
-        const main = Object.values(stage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
-        );
+        const main = Object.values(stage.actors).find((a) => a.characterId === "aamlcui8uxr");
         return (
           state.recording.extent.xmin <= main.position.x &&
           state.recording.extent.ymax >= main.position.y
@@ -655,8 +624,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.phase === RECORDING_PHASE_RECORD,
+      stateMatching: (state) => state.recording.phase === RECORDING_PHASE_RECORD,
     },
   },
   {
@@ -674,9 +642,7 @@ const baseTutorialSteps = [
         if (!after) {
           return false;
         }
-        const boulder = Object.values(after.actors).find(
-          (a) => a.characterId === "oou4u6jemi"
-        );
+        const boulder = Object.values(after.actors).find((a) => a.characterId === "oou4u6jemi");
         return boulder.position.x < 14;
       },
     },
@@ -703,24 +669,14 @@ const baseTutorialSteps = [
     text: `Press 'Play'! Walk the hero toward the boulder and let's see if it falls.`,
     soundURL: new URL("../sounds/tutorial/base_54.mp3", import.meta.url).href,
     onEnter: (dispatch) => {
-      dispatch(
-        changeActor(baseTutorialBoulderPath, { position: { x: 14, y: 5 } })
-      );
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialBoulderPath, { position: { x: 14, y: 5 } }));
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } }));
     },
     annotation: { selectors: ["[data-tutorial-id=play]"], style: "outline" },
     waitsFor: {
       stateMatching: (state, stage) => {
-        const boulder = Object.values(stage.actors).find(
-          (a) => a.characterId === "oou4u6jemi"
-        );
-        return (
-          state.ui.playback.running === true &&
-          boulder &&
-          boulder.position.x < 14
-        );
+        const boulder = Object.values(stage.actors).find((a) => a.characterId === "oou4u6jemi");
+        return state.ui.playback.running === true && boulder && boulder.position.x < 14;
       },
     },
   },
@@ -764,8 +720,7 @@ const baseTutorialSteps = [
     soundURL: new URL("../sounds/tutorial/base_58.mp3", import.meta.url).href,
     annotation: { selectors: ["[data-stage-handle=bottom]"], style: "outline" },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.extent.ymax - state.recording.extent.ymin > 0,
+      stateMatching: (state) => state.recording.extent.ymax - state.recording.extent.ymin > 0,
     },
   },
   {
@@ -777,8 +732,7 @@ const baseTutorialSteps = [
       style: "outline",
     },
     waitsFor: {
-      stateMatching: (state) =>
-        state.recording.phase === RECORDING_PHASE_RECORD,
+      stateMatching: (state) => state.recording.phase === RECORDING_PHASE_RECORD,
     },
   },
   {
@@ -796,9 +750,7 @@ const baseTutorialSteps = [
         if (!after) {
           return false;
         }
-        const boulder = Object.values(after.actors).find(
-          (a) => a.characterId === "oou4u6jemi"
-        );
+        const boulder = Object.values(after.actors).find((a) => a.characterId === "oou4u6jemi");
         return boulder.position.y > 5;
       },
     },
@@ -829,19 +781,13 @@ const baseTutorialSteps = [
     soundURL: new URL("../sounds/tutorial/base_64.mp3", import.meta.url).href,
     pose: "sitting-talking",
     onEnter: (dispatch) => {
-      dispatch(
-        changeActor(baseTutorialBoulderPath, { position: { x: 14, y: 5 } })
-      );
-      dispatch(
-        changeActor(baseTutorialCharacterPath, { position: { x: 2, y: 9 } })
-      );
+      dispatch(changeActor(baseTutorialBoulderPath, { position: { x: 14, y: 5 } }));
+      dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 2, y: 9 } }));
     },
     annotation: { selectors: ["[data-tutorial-id=play]"], style: "outline" },
     waitsFor: {
       stateMatching: (state, stage) => {
-        const main = Object.values(stage.actors).find(
-          (a) => a.characterId === "aamlcui8uxr"
-        );
+        const main = Object.values(stage.actors).find((a) => a.characterId === "aamlcui8uxr");
         return main && main.position.x > 13;
       },
     },

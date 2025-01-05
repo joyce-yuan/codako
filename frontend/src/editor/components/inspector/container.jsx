@@ -1,10 +1,10 @@
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import Nav from 'reactstrap/lib/Nav';
-import NavItem from 'reactstrap/lib/NavItem';
-import NavLink from 'reactstrap/lib/NavLink';
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import Nav from "reactstrap/lib/Nav";
+import NavItem from "reactstrap/lib/NavItem";
+import NavLink from "reactstrap/lib/NavLink";
 
 import { getCurrentStageForWorld } from "../../utils/selectors";
 import AddRuleButton from "./add-rule-button";
@@ -58,11 +58,7 @@ class Container extends React.Component {
     ) {
       this.setState({ activeTab: "variables" });
     }
-    if (
-      prevProps.isRecording &&
-      !this.props.isRecording &&
-      this.state.activeTab === "variables"
-    ) {
+    if (prevProps.isRecording && !this.props.isRecording && this.state.activeTab === "variables") {
       this.setState({ activeTab: "rules" });
     }
   }
@@ -71,14 +67,7 @@ class Container extends React.Component {
   };
 
   render() {
-    const {
-      character,
-      world,
-      actor,
-      dispatch,
-      selectedActorPath,
-      isRecording,
-    } = this.props;
+    const { character, world, actor, dispatch, selectedActorPath, isRecording } = this.props;
     const { activeTab } = this.state;
 
     const ContentContainer = {
@@ -92,9 +81,7 @@ class Container extends React.Component {
     }[activeTab];
 
     return (
-      <div
-        className={`panel inspector-panel-container tool-${this.props.selectedToolId}`}
-      >
+      <div className={`panel inspector-panel-container tool-${this.props.selectedToolId}`}>
         <Nav tabs>
           <NavItem>
             <NavLink
@@ -138,9 +125,7 @@ function mapStateToProps({ world, ui, characters, recording }) {
 
   // find the focused actor
   const focusedWorld =
-    [recording.beforeWorld, recording.afterWorld].find(
-      (s) => s.id === worldId
-    ) || world;
+    [recording.beforeWorld, recording.afterWorld].find((s) => s.id === worldId) || world;
   const focusedStage = getCurrentStageForWorld(focusedWorld);
   const focusedActor = (focusedStage.actors || {})[actorId];
 

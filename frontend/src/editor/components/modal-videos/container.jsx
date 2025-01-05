@@ -1,12 +1,13 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import Modal from 'reactstrap/lib/Modal';
-import ModalBody from 'reactstrap/lib/ModalBody';
-import ModalFooter from 'reactstrap/lib/ModalFooter';
-import Button from 'reactstrap/lib/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Modal from "reactstrap/lib/Modal";
+import ModalBody from "reactstrap/lib/ModalBody";
+import ModalFooter from "reactstrap/lib/ModalFooter";
+import Button from "reactstrap/lib/Button";
 
-import {dismissModal} from '../../actions/ui-actions';
-import {MODALS} from '../../constants/constants';
+import { dismissModal } from "../../actions/ui-actions";
+import { MODALS } from "../../constants/constants";
 
 class Container extends React.Component {
   static propTypes = {
@@ -18,32 +19,32 @@ class Container extends React.Component {
     super(props, context);
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   shouldComponentUpdate(nextProps) {
     // Avoid re-rendering the contents of the modal if we aren't visible
-    return (this.props.open || nextProps.open);
+    return this.props.open || nextProps.open;
   }
 
-  componentDidUpdate() {
-  }
+  componentDidUpdate() {}
 
   _onClose = () => {
     this.props.dispatch(dismissModal());
-  }
+  };
 
   render() {
     return (
       <Modal isOpen={this.props.open} backdrop="static" toggle={() => {}}>
-        <div className="modal-header" style={{display: 'flex'}}>
-          <h4 style={{flex: 1}}>Learning Videos</h4>
+        <div className="modal-header" style={{ display: "flex" }}>
+          <h4 style={{ flex: 1 }}>Learning Videos</h4>
         </div>
         <ModalBody>
           <p>Videos are coming soon - stay tuned!</p>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={this._onClose}>Done</Button>{' '}
+          <Button color="primary" onClick={this._onClose}>
+            Done
+          </Button>{" "}
         </ModalFooter>
       </Modal>
     );
@@ -56,6 +57,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-)(Container);
+export default connect(mapStateToProps)(Container);

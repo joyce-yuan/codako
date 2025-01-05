@@ -1,4 +1,4 @@
-import * as types from '../constants/action-types';
+import * as types from "../constants/action-types";
 
 export function upsertGlobal(worldId, globalId, changes) {
   return {
@@ -16,11 +16,11 @@ export function createGlobal(worldId) {
     worldId,
     globalId,
     changes: {
-      type: 'number',
+      type: "number",
       id: globalId,
       value: 0,
-      name: 'Untitled',
-    }
+      name: "Untitled",
+    },
   };
 }
 
@@ -36,6 +36,6 @@ export function updateWorldMetadata(worldId, metadata) {
   return {
     type: types.UPDATE_WORLD_METADATA,
     worldId,
-    metadata
+    metadata,
   };
 }

@@ -17,10 +17,7 @@ export default function worldReducer(state, action, entireState) {
 
   switch (action.type) {
     case Types.SELECT_STAGE_ID: {
-      return u(
-        { globals: { selectedStageId: { value: action.stageId } } },
-        state
-      );
+      return u({ globals: { selectedStageId: { value: action.stageId } } }, state);
     }
     case Types.UPDATE_WORLD_METADATA: {
       return u({ metadata: action.metadata }, state);
@@ -39,7 +36,7 @@ export default function worldReducer(state, action, entireState) {
             clicks: action.clicks,
           },
         },
-        state
+        state,
       );
     }
     case Types.ADVANCE_GAME_STATE: {
@@ -58,7 +55,7 @@ export default function worldReducer(state, action, entireState) {
         {
           history: u.constant([]),
         },
-        state
+        state,
       );
 
     default:

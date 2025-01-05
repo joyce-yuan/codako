@@ -1,15 +1,12 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 
-import {
-  changeCharacter,
-  deleteCharacterVariable,
-} from "../../actions/characters-actions";
+import { changeCharacter, deleteCharacterVariable } from "../../actions/characters-actions";
 import { changeActor } from "../../actions/stage-actions";
 import { selectToolId } from "../../actions/ui-actions";
 import { deleteGlobal, upsertGlobal } from "../../actions/world-actions";
@@ -48,7 +45,7 @@ class AppearanceGridItem extends React.Component {
         type: "appearance",
         actorId: this.props.actorId,
         value: {},
-      })
+      }),
     );
   };
 
@@ -56,11 +53,7 @@ class AppearanceGridItem extends React.Component {
     const { spritesheet, appearanceId, onChange } = this.props;
 
     return (
-      <div
-        className={`variable-box variable-set-true`}
-        draggable
-        onDragStart={this._onDragStart}
-      >
+      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
         <div className="name">Appearance</div>
         <ButtonDropdown
           size="sm"
@@ -72,10 +65,7 @@ class AppearanceGridItem extends React.Component {
           </DropdownToggle>
           <DropdownMenu className="with-sprites">
             {Object.keys(spritesheet.appearances).map((id) => (
-              <DropdownItem
-                onClick={() => onChange({ target: { value: id } })}
-                key={id}
-              >
+              <DropdownItem onClick={() => onChange({ target: { value: id } })} key={id}>
                 <Sprite spritesheet={spritesheet} appearance={id} />
               </DropdownItem>
             ))}
@@ -109,7 +99,7 @@ class TransformGridItem extends React.Component {
         type: "transform",
         actorId: this.props.actorId,
         value: {},
-      })
+      }),
     );
   };
 
@@ -117,31 +107,20 @@ class TransformGridItem extends React.Component {
     const { transform, onChange } = this.props;
 
     return (
-      <div
-        className={`variable-box variable-set-true`}
-        draggable
-        onDragStart={this._onDragStart}
-      >
+      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
         <div className="name">Direction</div>
         <ButtonDropdown
           size="sm"
           isOpen={this.state.open}
           toggle={() => this.setState({ open: !this.state.open })}
         >
-          <DropdownToggle caret>
-            {TransformImages[transform || "none"]}
-          </DropdownToggle>
+          <DropdownToggle caret>{TransformImages[transform || "none"]}</DropdownToggle>
           <DropdownMenu className="with-sprites">
-            {["none", "90deg", "270deg", "180deg", "flip-x", "flip-y"].map(
-              (option) => (
-                <DropdownItem
-                  onClick={() => onChange({ target: { value: option } })}
-                  key={option}
-                >
-                  {TransformImages[option]}
-                </DropdownItem>
-              )
-            )}
+            {["none", "90deg", "270deg", "180deg", "flip-x", "flip-y"].map((option) => (
+              <DropdownItem onClick={() => onChange({ target: { value: option } })} key={option}>
+                {TransformImages[option]}
+              </DropdownItem>
+            ))}
           </DropdownMenu>
         </ButtonDropdown>
       </div>
@@ -181,7 +160,7 @@ export default class ContainerPaneVariables extends React.Component {
         variables: {
           [id]: changes,
         },
-      })
+      }),
     );
   };
 
@@ -196,7 +175,7 @@ export default class ContainerPaneVariables extends React.Component {
         variableValues: {
           [id]: value,
         },
-      })
+      }),
     );
   };
 
@@ -231,9 +210,7 @@ export default class ContainerPaneVariables extends React.Component {
             appearanceId={actor.appearance}
             spritesheet={character.spritesheet}
             onChange={(e) => {
-              dispatch(
-                changeActor(selectedActorPath, { appearance: e.target.value })
-              );
+              dispatch(changeActor(selectedActorPath, { appearance: e.target.value }));
             }}
           />
         )}
@@ -244,9 +221,7 @@ export default class ContainerPaneVariables extends React.Component {
             appearanceId={actor.appearance}
             spritesheet={character.spritesheet}
             onChange={(e) => {
-              dispatch(
-                changeActor(selectedActorPath, { transform: e.target.value })
-              );
+              dispatch(changeActor(selectedActorPath, { transform: e.target.value }));
             }}
           />
         )}
@@ -266,8 +241,7 @@ export default class ContainerPaneVariables extends React.Component {
         ))}
         {Object.values(character.variables).length === 0 && (
           <div className="empty">
-            Add variables (like "age" or "health") that each {character.name}{" "}
-            will have.
+            Add variables (like "age" or "health") that each {character.name} will have.
           </div>
         )}
       </div>
@@ -283,9 +257,7 @@ export default class ContainerPaneVariables extends React.Component {
             definition={definition}
             value={definition.value || ""}
             onChangeDefinition={this._onChangeGlobalDefinition}
-            onChangeValue={(id, value) =>
-              this._onChangeGlobalDefinition(id, { value })
-            }
+            onChangeValue={(id, value) => this._onChangeGlobalDefinition(id, { value })}
             onBlurValue={(id, value) =>
               this._onChangeGlobalDefinition(id, {
                 value: coerceToType(value, definition.type),

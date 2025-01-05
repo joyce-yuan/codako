@@ -1,11 +1,12 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import {createCharacterVariable} from '../../actions/characters-actions';
-import {createGlobal} from '../../actions/world-actions';
+import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import { createCharacterVariable } from "../../actions/characters-actions";
+import { createGlobal } from "../../actions/world-actions";
 
 export default class VariablesAddButton extends React.Component {
   static propTypes = {
@@ -16,25 +17,25 @@ export default class VariablesAddButton extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {open: false};
+    this.state = { open: false };
   }
 
   _onCreateVar = () => {
     this.props.dispatch(createCharacterVariable(this.props.character.id));
-  }
+  };
 
   _onCreateGlobal = () => {
     this.props.dispatch(createGlobal());
-  }
+  };
 
   render() {
-    const {character} = this.props;
+    const { character } = this.props;
 
     return (
       <ButtonDropdown
         isOpen={this.state.open}
         data-tutorial-id="inspector-add-rule"
-        toggle={() => this.setState({open: !this.state.open})}
+        toggle={() => this.setState({ open: !this.state.open })}
       >
         <DropdownToggle caret>
           <i className="fa fa-inbox" /> Add
@@ -50,4 +51,5 @@ export default class VariablesAddButton extends React.Component {
         </DropdownMenu>
       </ButtonDropdown>
     );
-  }}
+  }
+}

@@ -1,10 +1,9 @@
 /* eslint no-unused-vars: 0 */
-import {DiffPatcher} from 'jsondiffpatch/src/diffpatcher';
+import { DiffPatcher } from "jsondiffpatch/src/diffpatcher";
 
-
-const PERFORM_UNDO = 'PERFORM_UNDO';
-const PERFORM_REDO = 'PERFORM_REDO';
-const PUSH_STACK = 'PUSH_STACK';
+const PERFORM_UNDO = "PERFORM_UNDO";
+const PERFORM_REDO = "PERFORM_REDO";
+const PUSH_STACK = "PUSH_STACK";
 
 const patcher = new DiffPatcher({
   textDiff: {
@@ -34,32 +33,32 @@ function shift(state, sourceStackName, targetStackName) {
   return nextState;
 }
 
-function diffByApplyingOptions(fullDiff = {}, {trackedKeys} = {}) {
+function diffByApplyingOptions(fullDiff = {}, { trackedKeys } = {}) {
   let diff = fullDiff || {};
   if (trackedKeys) {
     diff = {};
-    Object.keys(fullDiff).filter(key =>
-      trackedKeys.includes(key)
-    ).forEach(key => {
-      diff[key] = fullDiff[key];
-    });
+    Object.keys(fullDiff)
+      .filter((key) => trackedKeys.includes(key))
+      .forEach((key) => {
+        diff[key] = fullDiff[key];
+      });
   }
-  return (Object.keys(diff).length > 0) ? diff : null;
+  return Object.keys(diff).length > 0 ? diff : null;
 }
 
-export const undoRedoReducerFactory = ({trackedKeys, ignoredActions} = {}) => {
+export const undoRedoReducerFactory = ({ trackedKeys, ignoredActions } = {}) => {
   return (state, action) => {
     if (action.type === PERFORM_UNDO) {
-      return shift(state, 'undoStack', 'redoStack');
+      return shift(state, "undoStack", "redoStack");
     }
     if (action.type === PERFORM_REDO) {
-      return shift(state, 'redoStack', 'undoStack');
+      return shift(state, "redoStack", "undoStack");
     }
     if (action.type === PUSH_STACK) {
       if (ignoredActions.includes(action.triggeringActionType)) {
         return state;
       }
-      const diff = diffByApplyingOptions(action.diff, {trackedKeys});
+      const diff = diffByApplyingOptions(action.diff, { trackedKeys });
       if (diff) {
         return Object.assign({}, state, {
           undoStack: [].concat(state.undoStack.slice(state.undoStack.length - 50), [diff]),
@@ -72,7 +71,7 @@ export const undoRedoReducerFactory = ({trackedKeys, ignoredActions} = {}) => {
   };
 };
 
-export const undoRedoMiddleware = store => next => action => {
+export const undoRedoMiddleware = (store) => (next) => (action) => {
   if ([PERFORM_UNDO, PERFORM_REDO, PUSH_STACK].includes(action.type)) {
     return next(action);
   }
@@ -88,7 +87,7 @@ export const undoRedoMiddleware = store => next => action => {
   }
   if (diff && Object.keys(diff).length > 0) {
     store.dispatch({
-      type: 'PUSH_STACK',
+      type: "PUSH_STACK",
       triggeringActionType: action.type,
       diff: diff,
     });

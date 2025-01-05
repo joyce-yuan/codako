@@ -1,6 +1,6 @@
-import stage from './initial-state-stage';
-import {nullActorPath} from '../utils/stage-helpers';
-import {WORLDS} from '../constants/constants';
+import stage from "./initial-state-stage";
+import { nullActorPath } from "../utils/stage-helpers";
+import { WORLDS } from "../constants/constants";
 
 export default {
   version: 1,
@@ -20,7 +20,7 @@ export default {
     },
     input: {
       keys: {},
-      clicks: {}
+      clicks: {},
     },
 
     history: [],
@@ -29,7 +29,7 @@ export default {
   undoStack: [],
   redoStack: [],
   ui: {
-    selectedToolId: 'pointer',
+    selectedToolId: "pointer",
     selectedCharacterId: null,
     selectedActorPath: nullActorPath(),
     tutorial: {
@@ -50,7 +50,7 @@ export default {
     },
     modal: {
       openId: null,
-    }
+    },
   },
   recording: {
     phase: null,

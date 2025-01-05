@@ -1,28 +1,34 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {replace, push} from 'react-router-redux';
-import {connect} from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import { replace, push } from "react-router-redux";
+import { connect } from "react-redux";
 
-import RootEditor from '../editor/root-editor';
-import {createWorld} from '../actions/main-actions';
-import StoreProvider from '../editor/store-provider';
-import {makeRequest} from '../helpers/api';
+import RootEditor from "../editor/root-editor";
+import { createWorld } from "../actions/main-actions";
+import StoreProvider from "../editor/store-provider";
+import { makeRequest } from "../helpers/api";
 
-import PageMessage from './common/page-message';
-
+import PageMessage from "./common/page-message";
 
 const APIAdapter = {
   load: function (props) {
-    const {dispatch, params: {worldId}, me} = props;
+    const {
+      dispatch,
+      params: { worldId },
+      me,
+    } = props;
 
     return makeRequest(`/worlds/${worldId}`).then((world) => {
       if (!world || !me || world.userId !== me.id) {
         if (!me) {
-          dispatch(replace({
-            pathname: `/login`,
-            state: {
-              redirectTo: `/editor/${worldId}`,
-            },
-          }));
+          dispatch(
+            replace({
+              pathname: `/login`,
+              state: {
+                redirectTo: `/editor/${worldId}`,
+              },
+            }),
+          );
           return Promise.reject(new Error("Redirecting..."));
         }
         return Promise.reject(new Error("Sorry, this world could not be found."));
@@ -31,13 +37,19 @@ const APIAdapter = {
     });
   },
   save: function (json) {
-    return makeRequest(`/worlds/${this.props.params.worldId}`, {method: 'PUT', json});
+    return makeRequest(`/worlds/${this.props.params.worldId}`, {
+      method: "PUT",
+      json,
+    });
   },
 };
 
 const LocalStorageAdapter = {
   load: function (props) {
-    const {dispatch, params: {worldId}} = props;
+    const {
+      dispatch,
+      params: { worldId },
+    } = props;
 
     try {
       this._value = JSON.parse(window.localStorage.getItem(worldId));
@@ -61,7 +73,6 @@ const LocalStorageAdapter = {
   },
 };
 
-
 class EditorPage extends React.Component {
   static propTypes = {
     me: PropTypes.object,
@@ -74,7 +85,7 @@ class EditorPage extends React.Component {
     params: PropTypes.shape({
       worldId: PropTypes.string,
     }),
-  }
+  };
 
   static childContextTypes = {
     usingLocalStorage: PropTypes.bool,
@@ -130,26 +141,36 @@ class EditorPage extends React.Component {
   }
 
   loadWorld(props) {
-    this.getAdapter(props).load.call(this, props).then((world) => {
-      if (!this._mounted) { return; }
-
-      try {
-        this.setState({world, loaded: true});
-      } catch (err1) {
-        world.data = JSON.parse(JSON.stringify(world.data));
-        delete world.data.ui;
-        delete world.data.recording;
-        try {
-          this.setState({world, loaded: true, retry: 1});
-        } catch (err2) {
-          this.setState({world: null, error: err1.toString(), loaded: true});
+    this.getAdapter(props)
+      .load.call(this, props)
+      .then((world) => {
+        if (!this._mounted) {
+          return;
         }
-      }
 
-    }).catch((error) => {
-      if (!this._mounted) { return; }
-      this.setState({error: error.message, loaded: true});
-    });
+        try {
+          this.setState({ world, loaded: true });
+        } catch (err1) {
+          world.data = JSON.parse(JSON.stringify(world.data));
+          delete world.data.ui;
+          delete world.data.recording;
+          try {
+            this.setState({ world, loaded: true, retry: 1 });
+          } catch (err2) {
+            this.setState({
+              world: null,
+              error: err1.toString(),
+              loaded: true,
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        if (!this._mounted) {
+          return;
+        }
+        this.setState({ error: error.message, loaded: true });
+      });
   }
 
   saveWorld() {
@@ -164,15 +185,24 @@ class EditorPage extends React.Component {
       return this._savePromise;
     }
 
-    this._savePromise = fn.call(this, json).then(() => {
-      if (!this._mounted) { return; }
-      this._savePromise = null;
-    }).catch((e) => {
-      if (!this._mounted) { return; }
-      this._savePromise = null;
-      alert(`Codako was unable to save changes to your world. Your internet connection may be offline. \n(Detail: ${e.message})`);
-      throw new Error(e);
-    });
+    this._savePromise = fn
+      .call(this, json)
+      .then(() => {
+        if (!this._mounted) {
+          return;
+        }
+        this._savePromise = null;
+      })
+      .catch((e) => {
+        if (!this._mounted) {
+          return;
+        }
+        this._savePromise = null;
+        alert(
+          `Codako was unable to save changes to your world. Your internet connection may be offline. \n(Detail: ${e.message})`,
+        );
+        throw new Error(e);
+      });
 
     return this._savePromise;
   }
@@ -182,41 +212,39 @@ class EditorPage extends React.Component {
     this._saveTimeout = setTimeout(() => {
       this.saveWorld();
     }, 5000);
-  }
+  };
 
   saveWorldAnd = (dest) => {
     this.saveWorld().then(() => {
-      if (dest === 'tutorial') {
-        this.props.dispatch(createWorld({from: 'tutorial'}));
+      if (dest === "tutorial") {
+        this.props.dispatch(createWorld({ from: "tutorial" }));
       } else {
         this.props.dispatch(push(dest));
       }
     });
-  }
+  };
 
   _onBeforeUnload = () => {
     if (this._saveTimeout) {
       this.saveWorld();
 
-      const msg = 'Your changes are still saving. Are you sure you want to close the editor?';
+      const msg = "Your changes are still saving. Are you sure you want to close the editor?";
       event.returnValue = msg; // Gecko, Trident, Chrome 34+
       return msg; // Gecko, WebKit, Chrome <34
     }
     return undefined;
-  }
+  };
 
   render() {
-    const {world, loaded, error, retry} = this.state; 
+    const { world, loaded, error, retry } = this.state;
 
     if (error || !loaded) {
-      return (
-        <PageMessage text={error ? error : "Loading..."} />
-      );
+      return <PageMessage text={error ? error : "Loading..."} />;
     }
 
     return (
       <StoreProvider
-        ref={(r) => this.storeProvider = r}
+        ref={(r) => (this.storeProvider = r)}
         key={`${world.id}${retry}`}
         world={world}
         onWorldChanged={this.saveWorldSoon}
@@ -234,5 +262,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(EditorPage);
-
-

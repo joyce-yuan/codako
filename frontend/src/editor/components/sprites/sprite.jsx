@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-
+import PropTypes from "prop-types";
+import React from "react";
 
 export default class Sprite extends React.Component {
   static propTypes = {
@@ -16,7 +15,7 @@ export default class Sprite extends React.Component {
     const { appearance, transform, frame, spritesheet, className } = this.props;
     const { width, appearances } = spritesheet;
 
-    let data = new URL('../../img/splat.png', import.meta.url).href;
+    let data = new URL("../../img/splat.png", import.meta.url).href;
     if (appearance && appearances[appearance]) {
       data = appearances[appearance][frame || 0];
     }
@@ -36,16 +35,9 @@ export default class Sprite extends React.Component {
           none: undefined,
         }[transform],
       },
-      this.props.style
+      this.props.style,
     );
 
-    return (
-      <img
-        src={data}
-        draggable={false}
-        className={`sprite ${className}`}
-        style={style}
-      />
-    );
+    return <img src={data} draggable={false} className={`sprite ${className}`} style={style} />;
   }
 }

@@ -1,14 +1,15 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import Button from 'reactstrap/lib/Button';
-import {undo, redo} from '../utils/undo-redo';
-import {connect} from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import Button from "reactstrap/lib/Button";
+import { undo, redo } from "../utils/undo-redo";
+import { connect } from "react-redux";
 
 class UndoRedoControls extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     undoDepth: PropTypes.number,
     redoDepth: PropTypes.number,
-  }
+  };
 
   constructor(props, context) {
     super(props, context);
@@ -24,7 +25,7 @@ class UndoRedoControls extends React.Component {
   }
 
   _onGlobalKeydown = (event) => {
-    if (event.target.closest('.modal')) {
+    if (event.target.closest(".modal")) {
       return;
     }
 
@@ -32,20 +33,19 @@ class UndoRedoControls extends React.Component {
       this._dispatch(undo());
       event.preventDefault();
       event.stopPropagation();
-    }
-    else if (event.which === 90 && (event.ctrlKey || event.metaKey)) {
+    } else if (event.which === 90 && (event.ctrlKey || event.metaKey)) {
       this._dispatch(event.shiftKey ? redo() : undo());
       event.preventDefault();
       event.stopPropagation();
     }
-  }
+  };
 
   _dispatch = (action) => {
     this.props.dispatch(action);
-  }
+  };
 
   render() {
-    const {undoDepth, redoDepth} = this.props;
+    const { undoDepth, redoDepth } = this.props;
 
     return (
       <div className={`button-group`}>
@@ -55,14 +55,10 @@ class UndoRedoControls extends React.Component {
           onClick={() => this._dispatch(undo())}
           disabled={undoDepth === 0}
         >
-          <img src={new URL('../img/icon_undo.png', import.meta.url).href} />
+          <img src={new URL("../img/icon_undo.png", import.meta.url).href} />
         </Button>
-        <Button
-          className="icon"
-          onClick={() => this._dispatch(redo())}
-          disabled={redoDepth === 0}
-        >
-          <img src={new URL('../img/icon_redo.png', import.meta.url).href} />
+        <Button className="icon" onClick={() => this._dispatch(redo())} disabled={redoDepth === 0}>
+          <img src={new URL("../img/icon_redo.png", import.meta.url).href} />
         </Button>
       </div>
     );
@@ -76,6 +72,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-)(UndoRedoControls);
+export default connect(mapStateToProps)(UndoRedoControls);

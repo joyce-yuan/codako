@@ -1,8 +1,7 @@
-import {routerReducer} from 'react-router-redux';
+import { routerReducer } from "react-router-redux";
 
-
-import mainReducer from './main-reducer';
-import initialState from './initial-state';
+import mainReducer from "./main-reducer";
+import initialState from "./initial-state";
 
 export default (state = initialState, action) => {
   let nextState = Object.assign({}, state);

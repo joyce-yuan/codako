@@ -11,5 +11,9 @@ export function getCurrentStage(state) {
 }
 
 export function getCurrentStageForWorld(world) {
-  return world && Object.keys(world.stages).length > 0 && world.stages[world.globals.selectedStageId.value];
+  return (
+    world &&
+    Object.keys(world.stages).length > 0 &&
+    world.stages[world.globals.selectedStageId.value]
+  );
 }

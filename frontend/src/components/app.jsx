@@ -49,11 +49,7 @@ class App extends React.Component {
                     </Link>
                   </li>,
                   <li className="nav-item" key="logout">
-                    <a
-                      className="nav-link"
-                      href="#"
-                      onClick={() => dispatch(logout())}
-                    >
+                    <a className="nav-link" href="#" onClick={() => dispatch(logout())}>
                       Log Out ({me.username})
                     </a>
                   </li>,
@@ -101,11 +97,7 @@ class App extends React.Component {
     const { hidesNav, hidesFooter, unwrapped } =
       (ChildClass && ChildClass.layoutConsiderations) || {};
 
-    const content = unwrapped ? (
-      children
-    ) : (
-      <div className="page-content-flex">{children}</div>
-    );
+    const content = unwrapped ? children : <div className="page-content-flex">{children}</div>;
 
     return (
       <div className="page-container">
@@ -124,7 +116,7 @@ function mapStateToProps(state) {
     {
       me: state.me,
       network: state.network,
-    }
+    },
   );
 }
 

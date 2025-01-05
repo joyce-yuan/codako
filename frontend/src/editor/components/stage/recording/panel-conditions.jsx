@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import { FreeformConditionRow } from "./condition-rows";
 
@@ -34,11 +34,9 @@ export class RecordingConditions extends React.Component {
               condition={toV2Condition(key, value)}
               characters={characters}
               onChange={(enabled, rest) =>
-                dispatch(
-                  updateRecordingCondition(a.id, key, { enabled, ...rest })
-                )
+                dispatch(updateRecordingCondition(a.id, key, { enabled, ...rest }))
               }
-            />
+            />,
           );
         }
       });
@@ -49,9 +47,7 @@ export class RecordingConditions extends React.Component {
         style={{
           flex: 1,
           marginRight: 3,
-          outline: this.state.dropping
-            ? `2px solid rgba(91, 192, 222, 0.65)`
-            : "none",
+          outline: this.state.dropping ? `2px solid rgba(91, 192, 222, 0.65)` : "none",
         }}
         onDragOver={(e) => {
           if (e.dataTransfer.types.includes("variable")) {
@@ -64,18 +60,16 @@ export class RecordingConditions extends React.Component {
         }}
         onDrop={(e) => {
           const { type, value, actorId, variableId } = JSON.parse(
-            e.dataTransfer.getData("variable")
+            e.dataTransfer.getData("variable"),
           );
           this.setState({ dropping: false });
           if (
             conditions[actorId] &&
             Object.values(conditions[actorId]).some(
-              (t) => t && t.type === type && t.variableId === variableId
+              (t) => t && t.type === type && t.variableId === variableId,
             )
           ) {
-            window.alert(
-              `A condition for this actor ${type} has already been added to the list.`
-            );
+            window.alert(`A condition for this actor ${type} has already been added to the list.`);
             return;
           }
           dispatch(
@@ -85,7 +79,7 @@ export class RecordingConditions extends React.Component {
               comparator: "=",
               variableId: variableId,
               value: value,
-            })
+            }),
           );
         }}
       >
@@ -93,8 +87,8 @@ export class RecordingConditions extends React.Component {
         <ul>{rows}</ul>
         {rows.length < 2 && (
           <div style={{ opacity: 0.5, marginTop: 8 }}>
-            Double-click an actor in the picture above and drag in their
-            variables to add conditions.
+            Double-click an actor in the picture above and drag in their variables to add
+            conditions.
           </div>
         )}
       </div>

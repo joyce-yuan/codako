@@ -1,19 +1,14 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { updateRecordingActionPrefs } from '../../../actions/recording-actions';
-import { changeActor } from '../../../actions/stage-actions';
-import { actionsForRecording } from '../../../utils/recording-helpers';
-import { getCurrentStageForWorld } from '../../../utils/selectors';
-import { applyVariableOperation } from '../../../utils/stage-helpers';
+import PropTypes from "prop-types";
+import React from "react";
+import { updateRecordingActionPrefs } from "../../../actions/recording-actions";
+import { changeActor } from "../../../actions/stage-actions";
+import { actionsForRecording } from "../../../utils/recording-helpers";
+import { getCurrentStageForWorld } from "../../../utils/selectors";
+import { applyVariableOperation } from "../../../utils/stage-helpers";
 
 import ActorDeltaCanvas from "./actor-delta-canvas";
 import ActorPositionCanvas from "./actor-position-canvas";
-import {
-  ActorBlock,
-  AppearanceBlock,
-  TransformBlock,
-  VariableBlock,
-} from "./blocks";
+import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
 
 class VariableActionPicker extends React.Component {
   static propTypes = {
@@ -60,9 +55,7 @@ export default class RecordingActions extends React.Component {
   };
 
   _onChangeVariableOperation = (actorId, variableId, operation) => {
-    this.props.dispatch(
-      updateRecordingActionPrefs(actorId, { [variableId]: operation })
-    );
+    this.props.dispatch(updateRecordingActionPrefs(actorId, { [variableId]: operation }));
   };
 
   _onChangeVariableValue = (actorId, variableId, operation, value) => {
@@ -74,15 +67,11 @@ export default class RecordingActions extends React.Component {
     const afterStage = getCurrentStageForWorld(afterWorld);
 
     const actor = beforeStage.actors[actorId];
-    const after = applyVariableOperation(
-      actor.variableValues[variableId],
-      operation,
-      value
-    );
+    const after = applyVariableOperation(actor.variableValues[variableId], operation, value);
     dispatch(
       changeActor(afterStage.id, actorId, {
         variableValues: { [variableId]: after },
-      })
+      }),
     );
   };
 
@@ -135,16 +124,9 @@ export default class RecordingActions extends React.Component {
               value={a.value}
               operation={a.operation}
               onChangeValue={(v) =>
-                this._onChangeVariableValue(
-                  a.actorId,
-                  a.variable,
-                  a.operation,
-                  v
-                )
+                this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)
               }
-              onChangeOperation={(op) =>
-                this._onChangeVariableOperation("globals", a.variable, op)
-              }
+              onChangeOperation={(op) => this._onChangeVariableOperation("globals", a.variable, op)}
             />
             <VariableBlock name={character.variables[a.variable].name} />
             of
@@ -190,9 +172,7 @@ export default class RecordingActions extends React.Component {
             Set
             <VariableBlock name={"Current Stage"} />
             to
-            <code>
-              {afterWorld.stages[a.value] && afterWorld.stages[a.value].name}
-            </code>
+            <code>{afterWorld.stages[a.value] && afterWorld.stages[a.value].name}</code>
           </li>
         );
       }
@@ -204,9 +184,7 @@ export default class RecordingActions extends React.Component {
             onChangeValue={(v) =>
               this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)
             }
-            onChangeOperation={(op) =>
-              this._onChangeVariableOperation("globals", a.variable, op)
-            }
+            onChangeOperation={(op) => this._onChangeVariableOperation("globals", a.variable, op)}
           />
           <VariableBlock name={a.global} />
         </li>

@@ -1,10 +1,11 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import RuleStateCircle from './rule-state-circle';
-import RuleList from './rule-list';
-import DisclosureTriangle from './disclosure-triangle';
+import React from "react";
+import PropTypes from "prop-types";
+import RuleStateCircle from "./rule-state-circle";
+import RuleList from "./rule-list";
+import DisclosureTriangle from "./disclosure-triangle";
 
-import {nameForKey} from '../../utils/event-helpers';
-import {isCollapsePersisted, persistCollapsedState} from './collapse-state-storage';
+import { nameForKey } from "../../utils/event-helpers";
+import { isCollapsePersisted, persistCollapsedState } from "./collapse-state-storage";
 
 export default class ContentEventGroup extends React.Component {
   static propTypes = {
@@ -24,9 +25,9 @@ export default class ContentEventGroup extends React.Component {
   }
 
   _name() {
-    const {event, code} = this.props.rule;
+    const { event, code } = this.props.rule;
 
-    if (event === 'key') {
+    if (event === "key") {
       return (
         <span>
           When the
@@ -35,43 +36,39 @@ export default class ContentEventGroup extends React.Component {
         </span>
       );
     }
-    if (event === 'click') {
+    if (event === "click") {
       return "When I'm Clicked";
     }
     return "When I'm Idle";
   }
 
   render() {
-    const {rule} = this.props;
-    const {collapsed} = this.state;
+    const { rule } = this.props;
+    const { collapsed } = this.state;
 
     return (
       <div>
         <div className="header">
-          <div style={{float:'left', width: 20, lineHeight:'1.15em'}}>
+          <div style={{ float: "left", width: 20, lineHeight: "1.15em" }}>
             <RuleStateCircle rule={rule} />
             <DisclosureTriangle
               onClick={() => {
-                this.setState({collapsed: !collapsed});
+                this.setState({ collapsed: !collapsed });
                 persistCollapsedState(this.props.rule.id, !collapsed);
               }}
               collapsed={collapsed}
             />
           </div>
-          <img className="icon" src={new URL(`../../img/icon_event_${rule.event}.png`, import.meta.url).href} />
-          <div
-            className="name"
-            onDoubleClick={() => this.context.onRulePickKey(rule.id)}
-          >
+          <img
+            className="icon"
+            src={new URL(`../../img/icon_event_${rule.event}.png`, import.meta.url).href}
+          />
+          <div className="name" onDoubleClick={() => this.context.onRulePickKey(rule.id)}>
             {this._name()}
           </div>
         </div>
-      <RuleList
-        parentId={rule.id}
-        rules={rule.rules}
-        collapsed={collapsed}
-      />
-    </div>
+        <RuleList parentId={rule.id} rules={rule.rules} collapsed={collapsed} />
+      </div>
     );
   }
 }

@@ -1,6 +1,5 @@
-import * as Types from '../constants/action-types';
-import { LOCATION_CHANGE } from 'react-router-redux';
-
+import * as Types from "../constants/action-types";
+import { LOCATION_CHANGE } from "react-router-redux";
 
 export default function mainReducer(state, action) {
   switch (action.type) {
@@ -11,7 +10,9 @@ export default function mainReducer(state, action) {
     }
     case Types.UPSERT_PROFILE: {
       return Object.assign({}, state, {
-        profiles: Object.assign({}, state.profile, {[action.profile.username]: action.profile}),
+        profiles: Object.assign({}, state.profile, {
+          [action.profile.username]: action.profile,
+        }),
       });
     }
     case Types.UPSERT_WORLDS: {

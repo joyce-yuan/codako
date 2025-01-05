@@ -5,11 +5,7 @@ import { WORLDS } from "../constants/constants";
 import { buildActorPath, nullActorPath } from "../utils/stage-helpers";
 import initialState from "./initial-state";
 
-export default function uiReducer(
-  state = initialState.ui,
-  action,
-  entireState
-) {
+export default function uiReducer(state = initialState.ui, action, entireState) {
   switch (action.type) {
     case Types.START_RECORDING: {
       const { actorId, characterId } = entireState.recording;
@@ -17,11 +13,7 @@ export default function uiReducer(
 
       return Object.assign({}, state, {
         selectedCharacterId: characterId,
-        selectedActorPath: buildActorPath(
-          WORLDS.AFTER,
-          current.stageId,
-          actorId
-        ),
+        selectedActorPath: buildActorPath(WORLDS.AFTER, current.stageId, actorId),
       });
     }
     case Types.CANCEL_RECORDING: {

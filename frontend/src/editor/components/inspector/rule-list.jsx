@@ -1,18 +1,19 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import ContentRule from './content-rule';
-import ContentEventGroup from './content-event-group';
-import ContentFlowGroup from './content-flow-group';
+import ContentRule from "./content-rule";
+import ContentEventGroup from "./content-event-group";
+import ContentFlowGroup from "./content-flow-group";
 
-import {TOOL_TRASH} from '../../constants/constants';
-import {CONTAINER_TYPES} from '../../utils/world-constants';
+import { TOOL_TRASH } from "../../constants/constants";
+import { CONTAINER_TYPES } from "../../utils/world-constants";
 
 const DROP_INDEX_NA = 1000;
 const DROP_INDEX_INSIDE_BUT_INDETERMINATE = -1;
 
 class RuleDropPlaceholder extends React.Component {
   render() {
-    return (<div style={{height: 30}} />);
+    return <div style={{ height: 30 }} />;
   }
 }
 
@@ -42,7 +43,7 @@ export default class RuleList extends React.Component {
 
   componentWillReceiveProps() {
     if (this.state.dragIndex !== -1) {
-      this.setState({dragIndex: -1, dropIndex: -1});
+      this.setState({ dragIndex: -1, dropIndex: -1 });
     }
   }
 
@@ -61,14 +62,14 @@ export default class RuleList extends React.Component {
   }
 
   _dropIndexForRuleDragEvent(event) {
-    const hasRuleId = event.dataTransfer.types.includes('rule-id');
+    const hasRuleId = event.dataTransfer.types.includes("rule-id");
     if (!hasRuleId) {
       return DROP_INDEX_NA;
     }
 
-    const all = Array.from(this._el.children).filter(c => c.classList.contains('rule-container'));
-    for (let i = 0; i < all.length; i ++) {
-      const {top, height} = all[i].getBoundingClientRect();
+    const all = Array.from(this._el.children).filter((c) => c.classList.contains("rule-container"));
+    for (let i = 0; i < all.length; i++) {
+      const { top, height } = all[i].getBoundingClientRect();
       if (event.clientY < top + Math.min(50, height * 0.33)) {
         return i;
       }
@@ -88,7 +89,7 @@ export default class RuleList extends React.Component {
     if (this.context.selectedToolId === TOOL_TRASH) {
       this.context.onRuleDeleted(rule.id, event);
     }
-  }
+  };
 
   _onRuleDoubleClick = (event, rule) => {
     event.stopPropagation();
@@ -96,23 +97,23 @@ export default class RuleList extends React.Component {
       return;
     }
     this.context.onRuleReRecord(rule);
-  }
+  };
 
   _onDragStart = (event, rule) => {
     event.stopPropagation();
-    event.dataTransfer.setData('rule-id', rule.id);
+    event.dataTransfer.setData("rule-id", rule.id);
     this.setState({
       dragIndex: this.props.rules.indexOf(rule),
       dropIndex: -1,
     });
-  }
+  };
 
   _onDragEnd = () => {
     this.setState({
       dragIndex: -1,
       dropIndex: -1,
     });
-  }
+  };
 
   _onDragOver = (event) => {
     clearTimeout(this._leaveTimeout);
@@ -125,49 +126,48 @@ export default class RuleList extends React.Component {
     event.stopPropagation();
     event.preventDefault();
     if (dropIndex !== this.state.dropIndex) {
-      this.setState({dropIndex});
+      this.setState({ dropIndex });
     }
-  }
+  };
 
   _onDragLeave = () => {
     this._leaveTimeout = setTimeout(() => {
       if (this.state.dropIndex !== -1) {
-        this.setState({dropIndex: -1});
+        this.setState({ dropIndex: -1 });
       }
     }, 1);
-  }
+  };
 
   _onDrop = (event) => {
-    const ruleId = event.dataTransfer.getData('rule-id');
+    const ruleId = event.dataTransfer.getData("rule-id");
     const dropIndex = this._dropIndexForRuleDragEvent(event);
 
     event.stopPropagation();
     event.preventDefault();
 
-    if (!ruleId || (dropIndex === -1)) {
+    if (!ruleId || dropIndex === -1) {
       return;
     }
 
     this.context.onRuleMoved(ruleId, this.props.parentId, dropIndex);
-    this.setState({dragIndex: -1, dropIndex: -1});
-  }
+    this.setState({ dragIndex: -1, dropIndex: -1 });
+  };
 
   _onMouseOver = (event, rule) => {
     event.stopPropagation();
-    this.setState({hovering: rule.id});
-
-  }
+    this.setState({ hovering: rule.id });
+  };
 
   _onMouseOut = (event) => {
     event.stopPropagation();
     if (this.state.hovering) {
-      this.setState({hovering: false});
+      this.setState({ hovering: false });
     }
-  }
+  };
 
   render() {
-    const {collapsed, rules} = this.props;
-    const {dropIndex, dragIndex, hovering} = this.state;
+    const { collapsed, rules } = this.props;
+    const { dropIndex, dragIndex, hovering } = this.state;
 
     if (collapsed || !rules) {
       return <span />;
@@ -180,7 +180,7 @@ export default class RuleList extends React.Component {
           draggable
           key={r.id}
           data-rule-id={r.id}
-          className={`rule-container ${r.type} ${(hovering === r.id) && 'hovering'}`}
+          className={`rule-container ${r.type} ${hovering === r.id && "hovering"}`}
           onClick={(event) => this._onRuleClicked(event, r)}
           onDoubleClick={(event) => this._onRuleDoubleClick(event, r)}
           onDragStart={(event) => this._onDragStart(event, r)}
@@ -193,14 +193,14 @@ export default class RuleList extends React.Component {
       );
     });
 
-    if ((dropIndex !== -1) && ((items.length === 0) || (dragIndex !== dropIndex))) {
-      items.splice(dropIndex, 0, <RuleDropPlaceholder key={'drop'} />);
+    if (dropIndex !== -1 && (items.length === 0 || dragIndex !== dropIndex)) {
+      items.splice(dropIndex, 0, <RuleDropPlaceholder key={"drop"} />);
     }
 
     return (
       <ul
         className="rules-list"
-        ref={(el) => this._el = el}
+        ref={(el) => (this._el = el)}
         onDragOver={this._onDragOver}
         onDragLeave={this._onDragLeave}
         onDrop={this._onDrop}

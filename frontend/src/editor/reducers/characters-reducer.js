@@ -1,20 +1,13 @@
 import u from "updeep";
 
 import * as Types from "../constants/action-types";
-import {
-  actionsForRecording,
-  extentByShiftingExtent,
-} from "../utils/recording-helpers";
+import { actionsForRecording, extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import { findRule, pointIsInside } from "../utils/stage-helpers";
 import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "../utils/world-constants";
 import initialState from "./initial-state";
 
-export default function charactersReducer(
-  state = initialState.characters,
-  action,
-  { recording }
-) {
+export default function charactersReducer(state = initialState.characters, action, { recording }) {
   switch (action.type) {
     case Types.UPSERT_CHARACTER: {
       return u.updateIn(action.characterId, action.values, state);
@@ -37,7 +30,7 @@ export default function charactersReducer(
             },
           },
         },
-        state
+        state,
       );
     }
 
@@ -47,7 +40,7 @@ export default function charactersReducer(
         {
           variables: u.omit(action.variableId),
         },
-        state
+        state,
       );
     }
 
@@ -60,7 +53,7 @@ export default function charactersReducer(
             appearanceNames: u.omit(action.appearanceId),
           },
         },
-        state
+        state,
       );
     }
 
@@ -68,9 +61,7 @@ export default function charactersReducer(
       const { characterId, eventType, eventCode, id } = action;
 
       let rules = JSON.parse(JSON.stringify(state[characterId].rules));
-      const hasSameAlready = rules.some(
-        (r) => r.event === eventType && r.code === eventCode
-      );
+      const hasSameAlready = rules.some((r) => r.event === eventType && r.code === eventCode);
       const hasEvents = rules.some((r) => !!r.event);
 
       if (hasSameAlready) {
@@ -117,15 +108,11 @@ export default function charactersReducer(
     }
 
     case Types.FINISH_RECORDING: {
-      const rules = JSON.parse(
-        JSON.stringify(state[recording.characterId].rules)
-      );
+      const rules = JSON.parse(JSON.stringify(state[recording.characterId].rules));
 
       // locate the main actor in the recording to "re-center" the extent to it
       const beforeStage = getCurrentStageForWorld(recording.beforeWorld);
-      const mainActor = Object.values(beforeStage.actors).find(
-        (a) => a.id === recording.actorId
-      );
+      const mainActor = Object.values(beforeStage.actors).find((a) => a.id === recording.actorId);
       const recordingActors = {};
 
       for (const a of Object.values(beforeStage.actors)) {
@@ -152,15 +139,8 @@ export default function charactersReducer(
       };
 
       if (recording.ruleId) {
-        const [existingRule, parentRule, parentIdx] = findRule(
-          { rules },
-          recording.ruleId
-        );
-        parentRule.rules[parentIdx] = Object.assign(
-          {},
-          existingRule,
-          recordedRule
-        );
+        const [existingRule, parentRule, parentIdx] = findRule({ rules }, recording.ruleId);
+        parentRule.rules[parentIdx] = Object.assign({}, existingRule, recordedRule);
         return u.updateIn(recording.characterId, { rules }, state);
       }
 
@@ -169,7 +149,7 @@ export default function charactersReducer(
         Object.assign(recordedRule, {
           id: `${Date.now()}`,
           name: "Untitled Rule",
-        })
+        }),
       );
       return u.updateIn(recording.characterId, { rules }, state);
     }

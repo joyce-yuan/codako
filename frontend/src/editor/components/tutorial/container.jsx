@@ -1,13 +1,14 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import Button from 'reactstrap/lib/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Button from "reactstrap/lib/Button";
 
-import {updateTutorialState} from '../../actions/ui-actions';
-import {getCurrentStage} from '../../utils/selectors';
-import {tutorialSteps} from '../../constants/tutorial';
+import { updateTutorialState } from "../../actions/ui-actions";
+import { getCurrentStage } from "../../utils/selectors";
+import { tutorialSteps } from "../../constants/tutorial";
 
-import TutorialAnnotation from './annotation';
-import Girl from './girl';
+import TutorialAnnotation from "./annotation";
+import Girl from "./girl";
 
 class TutorialAdvancer {
   constructor(step, callback) {
@@ -41,7 +42,6 @@ class TutorialAdvancer {
       this._unsub = () => clearInterval(interval);
       tryElements();
     }
-
   }
 
   onAudioEnded() {
@@ -58,7 +58,6 @@ class TutorialAdvancer {
     }
   }
 }
-
 
 class TutorialContainer extends React.Component {
   static propTypes = {
@@ -77,14 +76,16 @@ class TutorialContainer extends React.Component {
   componentDidMount() {
     this._startCurrentStep();
 
-    const pageQueryParams = location.search.split(/[?&]/g).map(p => p.split('='));
-    const pageQueryStepSet = (pageQueryParams.find(p => p[0] === 'tutorial') || [])[1];
+    const pageQueryParams = location.search.split(/[?&]/g).map((p) => p.split("="));
+    const pageQueryStepSet = (pageQueryParams.find((p) => p[0] === "tutorial") || [])[1];
 
     if (pageQueryStepSet && !this.props.stepSet) {
-      this.props.dispatch(updateTutorialState({
-        stepSet: pageQueryStepSet,
-        stepIndex: 0,
-      }));
+      this.props.dispatch(
+        updateTutorialState({
+          stepSet: pageQueryStepSet,
+          stepIndex: 0,
+        }),
+      );
     }
   }
 
@@ -112,7 +113,7 @@ class TutorialContainer extends React.Component {
   _startCurrentStep() {
     this._detatchForCurrentStep();
 
-    const {stepSet, stepIndex} = this.props;
+    const { stepSet, stepIndex } = this.props;
     if (!stepSet) {
       return;
     }
@@ -125,20 +126,26 @@ class TutorialContainer extends React.Component {
     this._advancer = new TutorialAdvancer(step, () => {
       this._onNextStep();
     });
-    
+
     if (step.soundURL) {
       this._audio = new Audio(step.soundURL);
-      this._audio.addEventListener('playing', () => {
-        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
-        this.setState({playing: true});
+      this._audio.addEventListener("playing", () => {
+        if (this.props.stepIndex !== stepIndex || !this._audio) {
+          return;
+        }
+        this.setState({ playing: true });
       });
-      this._audio.addEventListener('pause', () => {
-        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
-        this.setState({playing: false});
+      this._audio.addEventListener("pause", () => {
+        if (this.props.stepIndex !== stepIndex || !this._audio) {
+          return;
+        }
+        this.setState({ playing: false });
       });
-      this._audio.addEventListener('ended', () => {
-        if (this.props.stepIndex !== stepIndex || !this._audio) { return; }
-        this.setState({playing: false});
+      this._audio.addEventListener("ended", () => {
+        if (this.props.stepIndex !== stepIndex || !this._audio) {
+          return;
+        }
+        this.setState({ playing: false });
         this._advancer.onAudioEnded();
       });
       this._audio.play();
@@ -146,26 +153,24 @@ class TutorialContainer extends React.Component {
   }
 
   _onNextStep = () => {
-    const {dispatch, stepIndex} = this.props;
-    dispatch(updateTutorialState({stepIndex: stepIndex + 1}));
-  }
+    const { dispatch, stepIndex } = this.props;
+    dispatch(updateTutorialState({ stepIndex: stepIndex + 1 }));
+  };
 
   _onPrevStep = () => {
-    const {dispatch, stepIndex} = this.props;
+    const { dispatch, stepIndex } = this.props;
     if (stepIndex > 0) {
-      dispatch(updateTutorialState({stepIndex: stepIndex - 1}));
+      dispatch(updateTutorialState({ stepIndex: stepIndex - 1 }));
     }
-  }
+  };
 
   render() {
-    const {stepSet, stepIndex} = this.props;
-    const {playing} = this.state;
+    const { stepSet, stepIndex } = this.props;
+    const { playing } = this.state;
     const step = stepSet && tutorialSteps[stepSet][stepIndex];
 
     if (!step) {
-      return (
-        <div />
-      );
+      return <div />;
     }
 
     return (
@@ -178,21 +183,23 @@ class TutorialContainer extends React.Component {
               <br />
             </div>
             <div className="controls">
-              {
-                (step.waitsFor && step.waitsFor.button) ? (
-                  <Button size="sm" color="primary" onClick={this._onNextStep}>{step.waitsFor.button}</Button>
-                ) : (
-                  <div className="playback">
-                    <i className="fa fa-step-backward" onClick={this._onPrevStep} />
-                    <i
-                      className={`fa ${playing ? 'fa-pause' : 'fa-play'}`}
-                      onClick={() => this._audio && (playing ? this._audio.pause() : this._audio.play())}
-                    />
-                    <i className="fa fa-step-forward" onClick={this._onNextStep} />
-                  </div>
-                )
-              }
-            </div>  
+              {step.waitsFor && step.waitsFor.button ? (
+                <Button size="sm" color="primary" onClick={this._onNextStep}>
+                  {step.waitsFor.button}
+                </Button>
+              ) : (
+                <div className="playback">
+                  <i className="fa fa-step-backward" onClick={this._onPrevStep} />
+                  <i
+                    className={`fa ${playing ? "fa-pause" : "fa-play"}`}
+                    onClick={() =>
+                      this._audio && (playing ? this._audio.pause() : this._audio.play())
+                    }
+                  />
+                  <i className="fa fa-step-forward" onClick={this._onNextStep} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -206,6 +213,4 @@ function mapStateToProps(state) {
   return state.ui.tutorial;
 }
 
-export default connect(
-  mapStateToProps,
-)(TutorialContainer);
+export default connect(mapStateToProps)(TutorialContainer);

@@ -1,16 +1,15 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import RecordingActions from './recording/panel-actions';
-import { RecordingConditions } from './recording/panel-conditions';
-import Stage from './stage';
-import StageControls from './stage-controls';
-import StageRecordingControls from './stage-recording-controls';
-import StageRecordingTools from './stage-recording-tools';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import RecordingActions from "./recording/panel-actions";
+import { RecordingConditions } from "./recording/panel-conditions";
+import Stage from "./stage";
+import StageControls from "./stage-controls";
+import StageRecordingControls from "./stage-recording-controls";
+import StageRecordingTools from "./stage-recording-tools";
 
-import { RECORDING_PHASE_RECORD, RECORDING_PHASE_SETUP } from '../../constants/constants';
-import { getCurrentStageForWorld } from '../../utils/selectors';
-
+import { RECORDING_PHASE_RECORD, RECORDING_PHASE_SETUP } from "../../constants/constants";
+import { getCurrentStageForWorld } from "../../utils/selectors";
 
 class StageContainer extends React.Component {
   static propTypes = {
@@ -24,8 +23,7 @@ class StageContainer extends React.Component {
   };
 
   render() {
-    const { world, recording, playback, dispatch, characters, readonly } =
-      this.props;
+    const { world, recording, playback, dispatch, characters, readonly } = this.props;
 
     let stageA = null;
     let stageB = null;
@@ -34,11 +32,7 @@ class StageContainer extends React.Component {
 
     if (recording.characterId) {
       controls = (
-        <StageRecordingControls
-          characters={characters}
-          dispatch={dispatch}
-          recording={recording}
-        />
+        <StageRecordingControls characters={characters} dispatch={dispatch} recording={recording} />
       );
 
       if (recording.phase === RECORDING_PHASE_SETUP) {
@@ -84,11 +78,7 @@ class StageContainer extends React.Component {
               recording={recording}
               dispatch={dispatch}
             />
-            <RecordingActions
-              characters={characters}
-              recording={recording}
-              dispatch={dispatch}
-            />
+            <RecordingActions characters={characters} recording={recording} dispatch={dispatch} />
           </div>
         );
       }
@@ -107,16 +97,9 @@ class StageContainer extends React.Component {
           )}
           {stageB || <Stage style={{ flex: 0 }} />}
         </div>
-        {actions || (
-          <div className="recording-specifics" style={{ height: 0 }} />
-        )}
+        {actions || <div className="recording-specifics" style={{ height: 0 }} />}
         {controls || (
-          <StageControls
-            {...playback}
-            dispatch={dispatch}
-            world={world}
-            readonly={readonly}
-          />
+          <StageControls {...playback} dispatch={dispatch} world={world} readonly={readonly} />
         )}
       </div>
     );
@@ -131,7 +114,7 @@ function mapStateToProps(state) {
       characters: state.characters,
       playback: state.ui.playback,
       world: state.world,
-    }
+    },
   );
 }
 

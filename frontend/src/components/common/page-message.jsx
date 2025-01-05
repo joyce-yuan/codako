@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 export default class PageMessage extends React.Component {
   static propTypes = {
@@ -11,10 +12,6 @@ export default class PageMessage extends React.Component {
   }
 
   render() {
-    return (
-      <div className={`page-message ${this.props.size}`}>
-        {this.props.text}
-      </div>
-    );
+    return <div className={`page-message ${this.props.size}`}>{this.props.text}</div>;
   }
 }

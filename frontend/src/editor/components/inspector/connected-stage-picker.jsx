@@ -1,11 +1,12 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
-import DropdownItem from 'reactstrap/lib/DropdownItem';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
-import DropdownToggle from 'reactstrap/lib/DropdownToggle';
-import {getStages} from '../../utils/selectors';
+import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import { getStages } from "../../utils/selectors";
 
 class StagePicker extends React.Component {
   static propTypes = {
@@ -22,23 +23,23 @@ class StagePicker extends React.Component {
   }
 
   render() {
-    const {stages, value, onChange} = this.props;
+    const { stages, value, onChange } = this.props;
 
     return (
       <ButtonDropdown
         size="sm"
         isOpen={this.state.open}
-        toggle={() => this.setState({open: !this.state.open})}
+        toggle={() => this.setState({ open: !this.state.open })}
       >
-        <DropdownToggle caret>
-          {stages[value] ? stages[value].name : 'None'}
-        </DropdownToggle>
+        <DropdownToggle caret>{stages[value] ? stages[value].name : "None"}</DropdownToggle>
         <DropdownMenu>
-        {Object.values(stages).sort((a, b) => a.order - b.order).map(s =>
-          <DropdownItem onClick={() => onChange({target: {value: s.id}})} key={s.id}>
-            {s.name}
-          </DropdownItem>
-        )}
+          {Object.values(stages)
+            .sort((a, b) => a.order - b.order)
+            .map((s) => (
+              <DropdownItem onClick={() => onChange({ target: { value: s.id } })} key={s.id}>
+                {s.name}
+              </DropdownItem>
+            ))}
         </DropdownMenu>
       </ButtonDropdown>
     );
@@ -51,6 +52,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-)(StagePicker);
+export default connect(mapStateToProps)(StagePicker);

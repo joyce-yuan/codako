@@ -45,10 +45,7 @@ export function createCharacterFlowContainer(characterId, { id }) {
     id,
   };
 }
-export function createCharacterEventContainer(
-  characterId,
-  { id, eventCode, eventType }
-) {
+export function createCharacterEventContainer(characterId, { id, eventCode, eventType }) {
   return {
     type: types.CREATE_CHARACTER_EVENT_CONTAINER,
     characterId,
@@ -75,11 +72,7 @@ export function deleteCharacterVariable(characterId, variableId) {
   };
 }
 
-export function createCharacterAppearance(
-  characterId,
-  newAppearanceId,
-  newAppearanceData
-) {
+export function createCharacterAppearance(characterId, newAppearanceId, newAppearanceData) {
   return {
     type: types.UPSERT_CHARACTER,
     characterId: characterId,
@@ -87,8 +80,7 @@ export function createCharacterAppearance(
       spritesheet: {
         appearances: {
           [newAppearanceId]: [
-            newAppearanceData ||
-              new URL("../img/splat.png", import.meta.url).href,
+            newAppearanceData || new URL("../img/splat.png", import.meta.url).href,
           ],
         },
         appearanceNames: { [newAppearanceId]: "Untitled" },

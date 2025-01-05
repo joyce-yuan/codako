@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 import TapToEditLabel from "../tap-to-edit-label";
 import DisclosureTriangle from "./disclosure-triangle";
@@ -8,10 +8,7 @@ import ScenarioStage from "./scenario-stage";
 
 import { toV2Condition } from "../../utils/stage-helpers";
 import { FreeformConditionRow } from "../stage/recording/condition-rows";
-import {
-  isCollapsePersisted,
-  persistCollapsedState,
-} from "./collapse-state-storage";
+import { isCollapsePersisted, persistCollapsedState } from "./collapse-state-storage";
 
 export default class ContentRule extends React.Component {
   static propTypes = {
@@ -54,7 +51,7 @@ export default class ContentRule extends React.Component {
               actors={rule.actors}
               condition={toV2Condition(key, value)}
               characters={characters}
-            />
+            />,
           );
         }
       });
@@ -65,19 +62,9 @@ export default class ContentRule extends React.Component {
         <div className="scenario">
           <RuleStateCircle rule={rule} />
           <div style={{ flex: 1 }} />
-          <ScenarioStage
-            rule={rule}
-            applyActions={false}
-            maxWidth={75}
-            maxHeight={75}
-          />
+          <ScenarioStage rule={rule} applyActions={false} maxWidth={75} maxHeight={75} />
           <i className="fa fa-arrow-right" aria-hidden="true" />
-          <ScenarioStage
-            rule={rule}
-            applyActions
-            maxWidth={75}
-            maxHeight={75}
-          />
+          <ScenarioStage rule={rule} applyActions maxWidth={75} maxHeight={75} />
           <div style={{ flex: 1 }} />
         </div>
         <DisclosureTriangle
@@ -88,14 +75,8 @@ export default class ContentRule extends React.Component {
           enabled={conditions.length > 0}
           collapsed={conditions.length === 0 || collapsed}
         />
-        <TapToEditLabel
-          className="name"
-          value={rule.name}
-          onChange={this._onNameChange}
-        />
-        {conditions.length > 0 && !collapsed && (
-          <ul className="conditions">{conditions}</ul>
-        )}
+        <TapToEditLabel className="name" value={rule.name} onChange={this._onNameChange} />
+        {conditions.length > 0 && !collapsed && <ul className="conditions">{conditions}</ul>}
       </div>
     );
   }

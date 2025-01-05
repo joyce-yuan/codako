@@ -102,14 +102,13 @@ export function getStageScreenshot(stage, { size }) {
 
   Object.values(stage.actors).forEach((actor) => {
     const i = new Image();
-    i.src =
-      characters[actor.characterId].spritesheet.appearances[actor.appearance];
+    i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
     context.drawImage(
       i,
       Math.floor(actor.position.x * pxPerSquare),
       Math.floor(actor.position.y * pxPerSquare),
       pxPerSquare,
-      pxPerSquare
+      pxPerSquare,
     );
   });
 

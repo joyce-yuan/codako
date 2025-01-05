@@ -1,14 +1,14 @@
 /* eslint-disable import/default */
 
-import React from 'react'; import PropTypes from 'prop-types';
-import {Provider} from 'react-redux';
-import u from 'updeep';
+import React from "react";
+import PropTypes from "prop-types";
+import { Provider } from "react-redux";
+import u from "updeep";
 
-import initialData from './reducers/initial-state';
-import configureStore from './store/configureStore';
-import {getStageScreenshot} from './utils/stage-helpers';
-import {getCurrentStage} from './utils/selectors';
-
+import initialData from "./reducers/initial-state";
+import configureStore from "./store/configureStore";
+import { getStageScreenshot } from "./utils/stage-helpers";
+import { getCurrentStage } from "./utils/selectors";
 
 export default class StoreProvider extends React.Component {
   static propTypes = {
@@ -31,45 +31,47 @@ export default class StoreProvider extends React.Component {
   }
 
   getStateForStore = (world) => {
-    const {data, name, id} = world;
+    const { data, name, id } = world;
 
     // perform migrations here as necessary
-    const fullState = u({
-      world: {
-        metadata: {name, id},
+    const fullState = u(
+      {
+        world: {
+          metadata: { name, id },
+        },
       },
-    }, data || initialData);
+      data || initialData,
+    );
 
-    const store = window.editorStore = configureStore(fullState);
+    const store = (window.editorStore = configureStore(fullState));
     store.subscribe(this.props.onWorldChanged);
 
     return {
       editorStore: store,
       loaded: true,
     };
-  }
+  };
 
   getWorldSaveData = () => {
-    const savedState = u({
-      undoStack: u.constant([]),
-      redoStack: u.constant([]),
-      stages: u.map({history: u.constant([])}),
-    }, this.state.editorStore.getState());
+    const savedState = u(
+      {
+        undoStack: u.constant([]),
+        redoStack: u.constant([]),
+        stages: u.map({ history: u.constant([]) }),
+      },
+      this.state.editorStore.getState(),
+    );
 
     return {
-      thumbnail: getStageScreenshot(getCurrentStage(savedState), {size: 400}),
+      thumbnail: getStageScreenshot(getCurrentStage(savedState), { size: 400 }),
       name: savedState.world.metadata.name,
       data: savedState,
     };
-  }
+  };
 
   render() {
-    const {editorStore} = this.state;
+    const { editorStore } = this.state;
 
-    return (
-      <Provider store={editorStore}>
-        {this.props.children}
-      </Provider>
-    );
+    return <Provider store={editorStore}>{this.props.children}</Provider>;
   }
 }

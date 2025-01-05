@@ -1,8 +1,9 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import Container from 'reactstrap/lib/Container';
+import React from "react";
+import PropTypes from "prop-types";
+import Container from "reactstrap/lib/Container";
 
-import WorldCard from './world-card';
-import PageMessage from './page-message';
+import WorldCard from "./world-card";
+import PageMessage from "./page-message";
 
 export default class WorldList extends React.Component {
   static propTypes = {
@@ -13,26 +14,31 @@ export default class WorldList extends React.Component {
   };
 
   render() {
-    const {worlds, onDeleteWorld, onDuplicateWorld, canEdit} = this.props;
-    
+    const { worlds, onDeleteWorld, onDuplicateWorld, canEdit } = this.props;
+
     let msg = null;
     if (!worlds) {
       msg = <PageMessage text="Loading..." size="sm" />;
     } else if (worlds.length === 0) {
-      msg = <PageMessage text={canEdit ? "You haven't created any games yet." : "Doesn't look like there are any games to see here!"} size="sm" />;
+      msg = (
+        <PageMessage
+          text={
+            canEdit
+              ? "You haven't created any games yet."
+              : "Doesn't look like there are any games to see here!"
+          }
+          size="sm"
+        />
+      );
     }
 
     if (msg) {
-      return (
-        <Container>
-          {msg}
-        </Container>
-      );
+      return <Container>{msg}</Container>;
     }
 
     return (
       <div className="world-list">
-        {worlds.map((s) =>
+        {worlds.map((s) => (
           <WorldCard
             key={s.id}
             world={s}
@@ -40,7 +46,7 @@ export default class WorldList extends React.Component {
             onDuplicate={() => onDuplicateWorld(s)}
             onDelete={() => onDeleteWorld(s)}
           />
-        )}
+        ))}
       </div>
     );
   }

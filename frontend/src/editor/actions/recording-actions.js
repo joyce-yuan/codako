@@ -1,29 +1,34 @@
-import * as types from '../constants/action-types';
-import {stopPlayback} from './ui-actions';
+import * as types from "../constants/action-types";
+import { stopPlayback } from "./ui-actions";
 
-export function setupRecordingForActor({characterId, actor}) {
+export function setupRecordingForActor({ characterId, actor }) {
   return (dispatch) => {
     dispatch(stopPlayback());
     dispatch({
-      type: types.SETUP_RECORDING_FOR_ACTOR, characterId, actor,
+      type: types.SETUP_RECORDING_FOR_ACTOR,
+      characterId,
+      actor,
     });
   };
 }
 
-export function setupRecordingForCharacter({characterId}) {
+export function setupRecordingForCharacter({ characterId }) {
   return (dispatch) => {
     dispatch(stopPlayback());
     dispatch({
-      type: types.SETUP_RECORDING_FOR_CHARACTER, characterId,
+      type: types.SETUP_RECORDING_FOR_CHARACTER,
+      characterId,
     });
   };
 }
 
-export function editRuleRecording({characterId, rule}) {
+export function editRuleRecording({ characterId, rule }) {
   return (dispatch) => {
     dispatch(stopPlayback());
     dispatch({
-      type: types.EDIT_RULE_RECORDING, characterId, rule,
+      type: types.EDIT_RULE_RECORDING,
+      characterId,
+      rule,
     });
   };
 }
@@ -48,24 +53,31 @@ export function startRecording() {
 
 export function setRecordingExtent(extent) {
   return {
-    type: types.SET_RECORDING_EXTENT, extent,
+    type: types.SET_RECORDING_EXTENT,
+    extent,
   };
 }
 
 export function updateRecordingCondition(actorId, key, values) {
   return {
-    type: types.UPDATE_RECORDING_CONDITION, actorId, key, values
+    type: types.UPDATE_RECORDING_CONDITION,
+    actorId,
+    key,
+    values,
   };
 }
 
 export function updateRecordingActionPrefs(actorId, values) {
   return {
-    type: types.UPDATE_RECORDING_ACTION_PREFS, actorId, values
+    type: types.UPDATE_RECORDING_ACTION_PREFS,
+    actorId,
+    values,
   };
 }
 
 export function toggleSquareIgnored(position) {
   return {
-    type: types.TOGGLE_RECORDING_SQUARE_IGNORED, position
+    type: types.TOGGLE_RECORDING_SQUARE_IGNORED,
+    position,
   };
 }

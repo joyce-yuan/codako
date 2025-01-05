@@ -1,4 +1,4 @@
-import * as types from '../constants/action-types';
+import * as types from "../constants/action-types";
 
 export function selectToolId(toolId) {
   return {
@@ -10,7 +10,8 @@ export function selectToolId(toolId) {
 export function selectStageId(worldId, stageId) {
   return {
     type: types.SELECT_STAGE_ID,
-    worldId, stageId,
+    worldId,
+    stageId,
   };
 }
 
@@ -32,7 +33,7 @@ export function updatePlaybackState(values) {
 export function stopPlayback() {
   return {
     type: types.UPDATE_PLAYBACK_STATE,
-    values: {running: false},
+    values: { running: false },
   };
 }
 
@@ -78,6 +79,7 @@ export function pickCharacterRuleEventKey(characterId, ruleId, initialKeyCode) {
 
 export function updateTutorialState(values) {
   return {
-    type: types.UPDATE_TUTORIAL_STATE, values,
+    type: types.UPDATE_TUTORIAL_STATE,
+    values,
   };
 }

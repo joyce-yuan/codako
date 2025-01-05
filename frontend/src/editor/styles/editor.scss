@@ -4,16 +4,21 @@ $outline-color: rgba(255, 255, 255, 0.78);
 $stage-default-background: gray;
 $trash-hover-color: #d05959;
 
-$rule-event-color: #5BC15C;
-$rule-flow-color: #5BA4CD;
+$rule-event-color: #5bc15c;
+$rule-flow-color: #5ba4cd;
 
 $create-account-notice-color: #e6dac1;
 
 @use "sass:color";
 
 @mixin cursor($name) {
-  cursor: url(../img/cursor_#{$name}.cur) 0 0, auto;
-  cursor: -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0, url(../img/cursor_#{$name}.cur) 0 0, auto;
+  cursor:
+    url(../img/cursor_#{$name}.cur) 0 0,
+    auto;
+  cursor:
+    -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0,
+    url(../img/cursor_#{$name}.cur) 0 0,
+    auto;
 }
 
 /*
@@ -37,16 +42,16 @@ $create-account-notice-color: #e6dac1;
 */
 
 .tool-trash {
-  @include cursor('trashcan');
+  @include cursor("trashcan");
 }
 .tool-paint {
-  @include cursor('paint');
+  @include cursor("paint");
 }
 .tool-record {
-  @include cursor('camera');
+  @include cursor("camera");
 }
 .tool-ignore-square {
-  @include cursor('ignored_square');
+  @include cursor("ignored_square");
 }
 .tool-pointer {
   cursor: default;
@@ -56,16 +61,14 @@ $create-account-notice-color: #e6dac1;
   image-rendering: pixelated;
 
   &.outlined {
-  	filter: drop-shadow(2px 0 0.5px $outline-color)
-  		drop-shadow(-2px 0 0.5px $outline-color)
-  		drop-shadow(0 -2px 0.5px $outline-color)
-   		drop-shadow(0 2px 0.5px $outline-color);
+    filter: drop-shadow(2px 0 0.5px $outline-color) drop-shadow(-2px 0 0.5px $outline-color)
+      drop-shadow(0 -2px 0.5px $outline-color) drop-shadow(0 2px 0.5px $outline-color);
   }
 }
 
 .panel {
   background-color: white;
-  box-shadow: 0 2px 5px rgba(0,0,0, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   margin: 5px;
   padding: 5px;
 
@@ -77,8 +80,8 @@ $create-account-notice-color: #e6dac1;
   .empty {
     text-align: center;
     color: #bbb;
-    padding:20px;
-    padding-top:20px;
+    padding: 20px;
+    padding-top: 20px;
   }
 }
 
@@ -97,7 +100,8 @@ $create-account-notice-color: #e6dac1;
     opacity: 0.7;
   }
 
-  .btn, .dropdown-menu {
+  .btn,
+  .dropdown-menu {
     font-size: 0.9rem;
   }
 
@@ -128,8 +132,8 @@ $create-account-notice-color: #e6dac1;
 
   .toolbar {
     order: 0;
-    height:50px;
-    padding:4px;
+    height: 50px;
+    padding: 4px;
     flex: 1;
     display: flex;
     flex-direction: row;
@@ -176,11 +180,12 @@ $create-account-notice-color: #e6dac1;
       font-size: 25px;
       line-height: 38px;
       padding: 0 8px;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-left: 1px solid transparent;
-      background: rgba(255,255,255,0.3);
-      &:hover, &:active {
-        border: 1px solid rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.3);
+      &:hover,
+      &:active {
+        border: 1px solid rgba(0, 0, 0, 0.2);
         border-left: 1px solid transparent;
       }
     }
@@ -193,7 +198,7 @@ $create-account-notice-color: #e6dac1;
         color.adjust($create-account-notice-color, $lightness: -5%) 10px,
         color.adjust($create-account-notice-color, $lightness: -5%) 20px
       );
-      color: rgba(0,0,0,0.8);
+      color: rgba(0, 0, 0, 0.8);
       padding: 2px;
       display: inline-block;
       border: 1px solid color.adjust($create-account-notice-color, $lightness: - 20%);
@@ -234,10 +239,12 @@ $create-account-notice-color: #e6dac1;
       margin-bottom: 4px;
       position: relative;
       background-color: #222;
-      transition: box-shadow 200ms, flex 400ms ease-out;
+      transition:
+        box-shadow 200ms,
+        flex 400ms ease-out;
 
       &.running-true {
-        box-shadow:0 0 0 4px $tint-color;
+        box-shadow: 0 0 0 4px $tint-color;
         .animated {
           transition-timing-function: linear;
           transition-property: top, left;
@@ -253,7 +260,9 @@ $create-account-notice-color: #e6dac1;
         background-color: $stage-default-background;
         position: relative;
         outline: 0;
-        transition: top 400ms ease-out, left 400ms ease-out;
+        transition:
+          top 400ms ease-out,
+          left 400ms ease-out;
       }
     }
 
@@ -275,7 +284,10 @@ $create-account-notice-color: #e6dac1;
   }
 
   .tool-ignored-square {
-    img { width: 20px; height: 20px; }
+    img {
+      width: 20px;
+      height: 20px;
+    }
     padding: 4px;
   }
 
@@ -291,14 +303,14 @@ $create-account-notice-color: #e6dac1;
       flex-direction: column;
     }
     ul {
-      margin: 0; 
+      margin: 0;
       padding: 0;
       overflow-y: auto;
-      border-top: 1px solid rgba(0,0,0,0.2);
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
 
       li {
         padding: 6px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.2);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         list-style-type: none;
         display: flex;
         flex-direction: row;
@@ -311,21 +323,21 @@ $create-account-notice-color: #e6dac1;
           }
         }
         .right {
-            display: inline-block;
-            padding: 2px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(0,0,0,0.05);
-            code {
-              background: none;
-              padding: 0;
-            }
-            input {  
-              width: 50px;
-            }
-            &.dropping-true {
-              border: 1px solid rgba(91, 192, 222, 0.6);
-              background: rgba(91, 192, 222, 0.35);
-            }
+          display: inline-block;
+          padding: 2px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          background: rgba(0, 0, 0, 0.05);
+          code {
+            background: none;
+            padding: 0;
+          }
+          input {
+            width: 50px;
+          }
+          &.dropping-true {
+            border: 1px solid rgba(91, 192, 222, 0.6);
+            background: rgba(91, 192, 222, 0.35);
+          }
         }
         .sprite {
           zoom: 0.6;
@@ -411,8 +423,8 @@ $create-account-notice-color: #e6dac1;
           padding: 0 7px;
         }
       }
-      
-      .start-thumbnail.restart-button {      
+
+      .start-thumbnail.restart-button {
         cursor: pointer;
         &:hover img {
           filter: brightness(80%);
@@ -425,7 +437,7 @@ $create-account-notice-color: #e6dac1;
           text-align: center;
           top: 30%;
           color: white;
-          font-size: .875rem;
+          font-size: 0.875rem;
         }
       }
     }
@@ -444,8 +456,8 @@ $create-account-notice-color: #e6dac1;
     display: flex;
     flex-direction: row;
     flex-grow: 1;
-    min-height:130px;
-    max-height:170px;
+    min-height: 130px;
+    max-height: 170px;
 
     .panel {
       display: flex;
@@ -469,16 +481,16 @@ $create-account-notice-color: #e6dac1;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      margin-top:4px;
+      margin-top: 4px;
       flex: 1;
       overflow-y: auto;
       align-items: flex-start;
       background-color: #eee;
       .item {
-        padding:10px;
+        padding: 10px;
         text-align: center;
         .name {
-          padding-top:2px;
+          padding-top: 2px;
           font-size: 0.9em;
         }
         &.selected {
@@ -497,20 +509,19 @@ $create-account-notice-color: #e6dac1;
       }
     }
   }
-
 }
 
 .inspector-panel-container {
   order: 2;
   width: 300px;
-  min-width:260px;
+  min-width: 260px;
 
   display: flex;
   flex-direction: column;
   .scroll-container {
     position: relative;
     overflow-y: auto;
-    flex:1;
+    flex: 1;
 
     .scroll-container-contents {
       position: absolute;
@@ -542,13 +553,13 @@ $create-account-notice-color: #e6dac1;
       height: 42px;
       margin-bottom: 3px;
       margin-right: 2px;
-      border: 1px solid rgba(0,0,0,0.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
     }
 
     .tools {
       .tool {
         display: inline-block;
-        border: 1px solid rgba(0,0,0,0.2);
+        border: 1px solid rgba(0, 0, 0, 0.2);
         padding: 2px;
         margin-right: 3px;
         margin-bottom: 3px;
@@ -656,10 +667,12 @@ $create-account-notice-color: #e6dac1;
   .variables-grid {
     .variable-box:hover {
       background-color: $trash-hover-color;
-      .name { color: white; }
+      .name {
+        color: white;
+      }
     }
-    .variable-box input:hover  {
-      @include cursor('trashcan');
+    .variable-box input:hover {
+      @include cursor("trashcan");
     }
   }
 }
@@ -668,100 +681,106 @@ $create-account-notice-color: #e6dac1;
   padding: 3px 0;
 
   .name {
-    display:inline-block;
-    font-size:0.9em;
-    line-height:1.2em;
+    display: inline-block;
+    font-size: 0.9em;
+    line-height: 1.2em;
     font-weight: bold;
-    padding:0px 4px 0px 4px;
-    margin-bottom:2px;
+    padding: 0px 4px 0px 4px;
+    margin-bottom: 2px;
     color: #222;
-    text-shadow: 0px 1px rgba(255,255,255,0.4);
+    text-shadow: 0px 1px rgba(255, 255, 255, 0.4);
     background-color: transparent;
-    border:1px solid transparent;
+    border: 1px solid transparent;
     vertical-align: middle;
     width: 185px;
   }
 
   input.name {
-    width:120px;
+    width: 120px;
   }
 
   .rule-container {
-    padding:5px;
-    padding-top:2px;
-    margin-bottom:5px;
+    padding: 5px;
+    padding-top: 2px;
+    margin-bottom: 5px;
     list-style-type: none;
-    border: 1px solid rgba(0,0,0,0.2);
-    border-top: 2px solid rgba(255,255,255,0.4);
-    -moz-box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
-    -webkit-box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
-    box-shadow: inset 0 0 2px 1px rgba(255,255,255,0.4);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
+    -moz-box-shadow: inset 0 0 2px 1px rgba(255, 255, 255, 0.4);
+    -webkit-box-shadow: inset 0 0 2px 1px rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 2px 1px rgba(255, 255, 255, 0.4);
 
     &.group-event {
       background-color: $rule-event-color;
-      .header { user-select: none; height:36px; }
+      .header {
+        user-select: none;
+        height: 36px;
+      }
     }
 
     &.group-flow {
       background-color: $rule-flow-color;
-      .header { user-select: none; height:50px; }
+      .header {
+        user-select: none;
+        height: 50px;
+      }
     }
 
     .keycode {
-      padding-left:4px;
-      padding-right:4px;
-      background-color:rgba(255,255,255,0.2);
-      border:1px solid rgba(255,255,25,0.0);
+      padding-left: 4px;
+      padding-right: 4px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 25, 0);
     }
     .keycode:hover {
-      background-color:rgba(255,255,255,0.4);
-      border:1px solid rgba(255,255,25,0.6);
+      background-color: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 25, 0.6);
     }
 
     .circle {
-      display:inline-block;
-      width:12px;
-      height:12px;
-      margin-top:3px;
-      border-radius:12px;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-top: 3px;
+      border-radius: 12px;
       background-color: transparent;
-      border:1px solid rgba(0,0,0,0.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
       &.true {
-        background-color: #74E535;
+        background-color: #74e535;
       }
       &.false {
         background-color: red;
       }
     }
     .icon {
-      width:32px;
-      height:32px;
-      padding-top:1px;
-      float:left;
+      width: 32px;
+      height: 32px;
+      padding-top: 1px;
+      float: left;
     }
 
     select {
       background-color: transparent;
-      width:205px;
-      border:none;
-      font-weight:bold;
-      height:19px;
+      width: 205px;
+      border: none;
+      font-weight: bold;
+      height: 19px;
       outline: none;
-      color:#222;
-      margin:0;
-      padding:0;
-      margin-top:4px;
-      margin-bottom:4px;
+      color: #222;
+      margin: 0;
+      padding: 0;
+      margin-top: 4px;
+      margin-bottom: 4px;
     }
 
     ul.rules-list {
-      background-color: rgba(0,0,0,0.3);
-      padding-top:7px;
-      padding-bottom:2px;
-      min-height:25px;
-      -moz-box-shadow: inset 0 1px 1px 1px rgba(0,0,0,0.4);
-      -webkit-box-shadow: inset 0 1px 1px 1px rgba(0,0,0,0.4);
-      box-shadow: inset 0 1px 1px 1px rgba(0,0,0,0.4);
+      background-color: rgba(0, 0, 0, 0.3);
+      padding-top: 7px;
+      padding-bottom: 2px;
+      min-height: 25px;
+      -moz-box-shadow: inset 0 1px 1px 1px rgba(0, 0, 0, 0.4);
+      -webkit-box-shadow: inset 0 1px 1px 1px rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 1px 1px 1px rgba(0, 0, 0, 0.4);
     }
 
     .triangle {
@@ -769,14 +788,14 @@ $create-account-notice-color: #e6dac1;
       display: inline-block;
       width: 0px;
       height: 0px;
-      margin-left:2px;
+      margin-left: 2px;
       border-style: solid;
       border-width: 10.4px 6px 0 6px;
-      border-color: rgba(0,0,0,0.4) transparent transparent transparent;
+      border-color: rgba(0, 0, 0, 0.4) transparent transparent transparent;
       opacity: 0;
       &.disclosed {
         border-width: 6px 0 6px 10.4px;
-        border-color: transparent transparent transparent rgba(0,0,0,0.4);
+        border-color: transparent transparent transparent rgba(0, 0, 0, 0.4);
       }
       &.enabled {
         opacity: 1;
@@ -785,30 +804,30 @@ $create-account-notice-color: #e6dac1;
   }
 
   .rule {
-    background-color:#ddd;
-    margin-bottom:3px;
-    border: 1px solid rgba(0,0,0,0.2);
-    border-top: 2px solid rgba(255,255,255,0.6);
-    -moz-box-shadow: inset 0 0 2px 0px rgba(255,255,255,0.4);
-    -webkit-box-shadow: inset 0 0 2px 0px rgba(255,255,255,0.4);
-    box-shadow: inset 0 0 2px 0px rgba(255,255,255,0.4);
+    background-color: #ddd;
+    margin-bottom: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: 2px solid rgba(255, 255, 255, 0.6);
+    -moz-box-shadow: inset 0 0 2px 0px rgba(255, 255, 255, 0.4);
+    -webkit-box-shadow: inset 0 0 2px 0px rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 2px 0px rgba(255, 255, 255, 0.4);
 
     .action {
-      margin-left:3px;
-      margin-right:3px;
-      background-color: #E8B432;
+      margin-left: 3px;
+      margin-right: 3px;
+      background-color: #e8b432;
     }
     .conditions {
       list-style-type: none;
-      background-color:rgba(0,0,0,0.1);
-      border-top: 1px solid rgba(0,0,0,0.2);
-      border-left: 1px solid rgba(0,0,0,0.2);
+      background-color: rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
+      border-left: 1px solid rgba(0, 0, 0, 0.2);
       font-size: 13px;
       padding: 2px;
       code {
         background-color: transparent;
         img {
-          zoom: 0.50;
+          zoom: 0.5;
           margin-right: 10px;
         }
       }
@@ -823,15 +842,17 @@ $create-account-notice-color: #e6dac1;
         user-select: none;
         position: relative;
         display: inline-block;
-        background: url(../img/board-grid.png) top left, url(../img/checker.png);
+        background:
+          url(../img/board-grid.png) top left,
+          url(../img/checker.png);
         background-size: 40px, 8px;
         border: 1px solid #bbb;
-        box-sizing:content-box;
+        box-sizing: content-box;
         vertical-align: middle;
       }
 
       i {
-        margin:5px;
+        margin: 5px;
         align-self: center;
       }
     }
@@ -867,13 +888,15 @@ $create-account-notice-color: #e6dac1;
   display: flex;
 }
 
-
 button.btn.selected {
   background-image: linear-gradient($tint-color, color.adjust($tint-color, $lightness: -22%));
   color: white;
 }
 button.btn.selected:active {
-  background-image: linear-gradient(color.adjust($tint-color, $lightness: -30%), color.adjust($tint-color, $lightness: -22%));
+  background-image: linear-gradient(
+    color.adjust($tint-color, $lightness: -30%),
+    color.adjust($tint-color, $lightness: -22%)
+  );
   color: white;
 }
 
@@ -883,7 +906,7 @@ button.btn.selected:active {
   border-radius: 7px;
   vertical-align: middle;
   display: inline-block;
-  
+
   &.rule {
     background-color: gray;
   }
@@ -895,13 +918,13 @@ button.btn.selected:active {
   }
 }
 
-
 .tap-to-edit {
-  border:1px solid transparent;
-  &.enabled:hover, &.enabled:focus {
+  border: 1px solid transparent;
+  &.enabled:hover,
+  &.enabled:focus {
     cursor: text;
-    background-color: rgba(255,255,255,0.4);
-    border:1px solid rgba(255,255,255,0.5);
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     outline: none;
   }
 }
@@ -934,10 +957,11 @@ button.btn.selected:active {
       white-space: nowrap;
       i {
         padding: 6px 4px;
-        color: rgba(0,0,0,0.3);
+        color: rgba(0, 0, 0, 0.3);
       }
-      i:hover, i:active {
-        color: rgba(0,0,0,0.6);
+      i:hover,
+      i:active {
+        color: rgba(0, 0, 0, 0.6);
       }
     }
   }
@@ -951,7 +975,7 @@ button.btn.selected:active {
     pointer-events: none;
   }
 }
-@media(min-width: 1000px) {
+@media (min-width: 1000px) {
   .tutorial-container {
     width: 550px;
     .tutorial-flex {
@@ -966,7 +990,6 @@ button.btn.selected:active {
   }
 }
 
-
 .stage-sidebar {
   max-height: 380px;
   width: 190px;
@@ -974,12 +997,13 @@ button.btn.selected:active {
   flex-direction: column;
   flex-shrink: 0;
   background-color: #eee;
-  border-right:1px solid #ccc;
+  border-right: 1px solid #ccc;
 
   .bar {
     display: flex;
 
-    .add, .remove {
+    .add,
+    .remove {
       width: 28px;
       height: 28px;
       border-radius: 0;
@@ -987,7 +1011,7 @@ button.btn.selected:active {
       padding: 2px 0 0 0;
     }
     .space {
-      border-top:1px solid #ccc;
+      border-top: 1px solid #ccc;
       flex: 1;
     }
   }
@@ -1000,12 +1024,12 @@ button.btn.selected:active {
     .stage-item {
       margin: 10px;
       display: inline-block;
-      border: 2px solid color.adjust(gray, $lightness:  10%);
+      border: 2px solid color.adjust(gray, $lightness: 10%);
       background-color: gray;
       vertical-align: top;
       padding: 2px;
       &.selected {
-        border: 2px solid color.adjust($tint-color, $lightness:  10%);
+        border: 2px solid color.adjust($tint-color, $lightness: 10%);
         background-color: $tint-color;
       }
       img {
@@ -1017,7 +1041,7 @@ button.btn.selected:active {
         width: 160px;
         overflow: hidden;
         font-size: 18px;
-        color:rgba(255,255,255,0.9);
+        color: rgba(255, 255, 255, 0.9);
         margin: 5px 0 2px 0;
         text-overflow: ellipsis;
         text-align: center;
@@ -1034,7 +1058,7 @@ button.btn.selected:active {
     margin-bottom: 3px;
     width: 27px;
     height: 25px;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
     outline: 0;
   }
@@ -1069,6 +1093,5 @@ button.btn.selected:active {
     .actions {
       float: right;
     }
-    
   }
 }

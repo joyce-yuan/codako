@@ -1,7 +1,7 @@
 let states = null;
 let setorder = null;
 
-/** This implements a small LRU cache that saves the last 1000 
+/** This implements a small LRU cache that saves the last 1000
  * toggled disclosure states to local storage. (to avoid taking
  * too much space)
  */
@@ -12,8 +12,7 @@ function ensureLoadedFromStorage() {
   }
   try {
     const val = JSON.parse(
-      window.localStorage.getItem("codako-collapsed") ||
-        '{"states": {}, "setorder": []}'
+      window.localStorage.getItem("codako-collapsed") || '{"states": {}, "setorder": []}',
     );
     states = val.states;
     setorder = val.setorder;
@@ -24,10 +23,7 @@ function ensureLoadedFromStorage() {
 
 function saveToStorage() {
   try {
-    window.localStorage.setItem(
-      "codako-collapsed",
-      JSON.stringify({ states, setorder })
-    );
+    window.localStorage.setItem("codako-collapsed", JSON.stringify({ states, setorder }));
   } catch (err) {
     console.error(err);
   }
@@ -43,8 +39,8 @@ export function persistCollapsedState(id, val) {
     states[id] = true;
     setorder = setorder.filter((l) => l !== id).concat([id]);
     if (setorder.length > 1000) {
-        const oldestId = setorder.shift();
-        delete states[oldestId];
+      const oldestId = setorder.shift();
+      delete states[oldestId];
     }
   } else {
     delete states[id];

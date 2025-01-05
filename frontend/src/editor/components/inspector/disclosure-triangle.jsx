@@ -1,4 +1,5 @@
-import React from 'react'; import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 export default class DisclosureTriangle extends React.Component {
   static propTypes = {
@@ -15,13 +16,13 @@ export default class DisclosureTriangle extends React.Component {
     e.stopPropagation();
     e.preventDefault();
     this.props.onClick(e);
-  }
+  };
 
   render() {
     return (
       <div
         onClick={this._onClick}
-        className={`triangle ${this.props.collapsed ? 'disclosed': ''} ${this.props.enabled ? 'enabled': ''}`}
+        className={`triangle ${this.props.collapsed ? "disclosed" : ""} ${this.props.enabled ? "enabled" : ""}`}
       />
     );
   }

@@ -1,10 +1,11 @@
-import React from 'react'; import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import Container from 'reactstrap/lib/Container';
-import Row from 'reactstrap/lib/Row';
-import Col from 'reactstrap/lib/Col';
-import {uploadLocalStorageWorld} from '../actions/main-actions';
+import Container from "reactstrap/lib/Container";
+import Row from "reactstrap/lib/Row";
+import Col from "reactstrap/lib/Col";
+import { uploadLocalStorageWorld } from "../actions/main-actions";
 
 class JoinSendWorldsPage extends React.Component {
   static propTypes = {
@@ -17,7 +18,7 @@ class JoinSendWorldsPage extends React.Component {
   };
 
   componentDidMount() {
-    const {location, dispatch} = this.props;
+    const { location, dispatch } = this.props;
     const storageKey = location.query.storageKey;
 
     setTimeout(() => {
@@ -30,11 +31,9 @@ class JoinSendWorldsPage extends React.Component {
       <Container>
         <Row>
           <Col size={12}>
-            <div style={{textAlign: 'center', marginTop:60, marginBottom: 30}}>
+            <div style={{ textAlign: "center", marginTop: 60, marginBottom: 30 }}>
               <h3>Saving world to your account...</h3>
-              <p>
-                Please wait, this should only take a moment.
-              </p>
+              <p>Please wait, this should only take a moment.</p>
             </div>
           </Col>
         </Row>

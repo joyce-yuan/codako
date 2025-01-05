@@ -12,13 +12,12 @@ function configureStoreProd(initialState) {
   return createStore(
     rootReducer,
     initialState,
-    compose(applyMiddleware(thunk, undoRedoMiddleware))
+    compose(applyMiddleware(thunk, undoRedoMiddleware)),
   );
 }
 
 function configureStoreDev(initialState) {
-  const composeEnhancers =
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
   const store = createStore(
     rootReducer,
     initialState,
@@ -27,9 +26,9 @@ function configureStoreDev(initialState) {
         // note this is slow af
         // reduxImmutableStateInvariant(),
         thunk,
-        undoRedoMiddleware
-      )
-    )
+        undoRedoMiddleware,
+      ),
+    ),
   );
 
   if (import.meta.hot) {
@@ -43,6 +42,4 @@ function configureStoreDev(initialState) {
   return store;
 }
 
-export default process.env.NODE_ENV === "production"
-  ? configureStoreProd
-  : configureStoreDev;
+export default process.env.NODE_ENV === "production" ? configureStoreProd : configureStoreDev;
