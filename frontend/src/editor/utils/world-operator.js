@@ -1,13 +1,13 @@
+import u from "updeep";
+import { getCurrentStageForWorld } from "./selectors";
 import {
-  shuffleArray,
-  getVariableValue,
   applyVariableOperation,
+  getVariableValue,
   pointByAdding,
+  shuffleArray,
   toV2Condition,
 } from "./stage-helpers";
-import { FLOW_BEHAVIORS, CONTAINER_TYPES } from "./world-constants";
-import { getCurrentStageForWorld } from "./selectors";
-import u from "updeep";
+import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "./world-constants";
 
 let IDSeed = Date.now();
 
