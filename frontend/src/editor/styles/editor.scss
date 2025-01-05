@@ -100,8 +100,8 @@ $create-account-notice-color: #e6dac1;
   }
 
   .editor-centered-flex {
-    max-width: 1200px;
-    max-height: 800px;
+    max-width: 1210px;
+    max-height: 804px;
     margin: auto;
 
     display: flex;
@@ -228,7 +228,7 @@ $create-account-notice-color: #e6dac1;
 
     .stage-scroll-wrap {
       flex: 1;
-      overflow: scroll;
+      overflow: auto;
       margin-bottom: 4px;
       position: relative;
       background-color: #222;

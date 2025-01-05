@@ -211,9 +211,13 @@ export default function WorldOperator(previousWorld, characters) {
               return stageActorsForRuleActorIds[otherActorId];
             }
             const orule = rule.actors[otherActorId];
-            const ocandidates = actorsAtPosition(
-              wrappedPosition(pointByAdding(me.position, orule.position))
+            const stagePosition = wrappedPosition(
+              pointByAdding(me.position, orule.position)
             );
+            if (!stagePosition) {
+              return [];
+            }
+            const ocandidates = actorsAtPosition(stagePosition);
             return ocandidates.filter((ostage) =>
               actorsMatch(
                 ostage,
