@@ -3,6 +3,7 @@ import {
   getVariableValue,
   applyVariableOperation,
   pointByAdding,
+  toV2Condition,
 } from "./stage-helpers";
 import { FLOW_BEHAVIORS, CONTAINER_TYPES } from "./world-constants";
 import { getCurrentStageForWorld } from "./selectors";
@@ -33,53 +34,66 @@ export default function WorldOperator(previousWorld, characters) {
       y: stage.wrapY ? (y + stage.height) % stage.height : y,
     };
     if (o.x < 0 || o.y < 0 || o.x >= stage.width || o.y >= stage.height) {
-      console.log(o);
       return null;
     }
     return o;
   }
 
-  function actorsMatch(actor, other, conditions = {}) {
-    if (other.characterId !== actor.characterId) {
+  function actorsMatch(
+    stageActor,
+    ruleActor,
+    conditions,
+    stageActorsForReferencedActorId
+  ) {
+    if (ruleActor.characterId !== stageActor.characterId) {
       return false;
     }
 
+    const character = characters[stageActor.characterId];
+
     for (const id of Object.keys(conditions)) {
-      const condition = conditions[id];
-      if (!condition.enabled) {
+      const condition = toV2Condition(id, conditions[id]);
+      if (!condition || !condition.enabled) {
         continue;
       }
 
-      if (id === "appearance") {
-        if (actor.appearance !== other.appearance) {
-          return false;
-        }
-      } else if (id === "transform") {
-        if ((actor.transform || "none") !== (other.transform || "none")) {
-          return false;
-        }
-      } else {
-        const actorValue = getVariableValue(
-          actor,
-          characters[actor.characterId],
-          id
-        );
-        const otherValue = getVariableValue(
-          other,
-          characters[actor.characterId],
-          id
-        );
+      const possibleValueActors = condition.value.actorId
+        ? stageActorsForReferencedActorId(condition.value.actorId)
+        : [ruleActor];
 
-        if (!comparatorMatches(condition.comparator, actorValue, otherValue)) {
-          return false;
+      const matchedValueActor = possibleValueActors.find((valueActor) => {
+        let leftValue, rightValue;
+
+        if (condition.type === "appearance") {
+          leftValue = stageActor.appearance;
+          rightValue = valueActor.appearance;
+        } else if (condition.type === "transform") {
+          leftValue = stageActor.transform || "none";
+          rightValue = valueActor.transform || "none";
+        } else {
+          leftValue = getVariableValue(
+            stageActor,
+            character,
+            condition.variableId
+          );
+          rightValue = getVariableValue(
+            valueActor,
+            character,
+            condition.variableId
+          );
         }
+        return comparatorMatches(condition.comparator, leftValue, rightValue);
+      });
+
+      if (!matchedValueActor) {
+        return false;
       }
     }
     return true;
   }
 
   function comparatorMatches(comparator, a, b) {
-    if (comparator === "=" && a / 1 !== b / 1) {
+    if (comparator === "=" && `${a}` !== `${b}`) {
       return false;
     }
     if (comparator === ">=" && a / 1 < b / 1) {
@@ -168,10 +182,48 @@ export default function WorldOperator(previousWorld, characters) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y++) {
           const ignoreExtraActors = rule.extent.ignored[`${x},${y}`];
 
-          const stagePosition = wrappedPosition(
-            pointByAdding(me.position, { x, y })
+          const stageActorsAtPos = actorsAtPosition(
+            wrappedPosition(pointByAdding(me.position, { x, y }))
           );
-          const stageActorsAtPos = actorsAtPosition(stagePosition);
+
+          /** Ben Note: We now allow conditions to specify other actors on the RHS
+           * of the equation. This, combined with the fact that you can `ignoreExtraActors`,
+           * means there are edge cases (two actors of the same character with different
+           * variable values on top of each other) where we need a proper "constraint solver".
+           *
+           * This is currently a single pass matching system that looks at each square in the rule
+           * once. I think we'd need to look at each square, identify posibilities, and then
+           * narrow the solution space by evaluating constraints.
+           *
+           * Since this is such an edge case, I'm implementing a simpler solution:
+           *
+           * When a condition references another actor at a position, we find stage actors
+           * at that position that match (via stageActorsForReferencedActorId) and match
+           * if ANY of them meet the condition. Given two conditions on an actor in the same tile,
+           * the actor used to match condition 1 may not be the one used to match condition 2.
+           *
+           * To avoid circular dependencies (eg: Rule 1 says A match B and rule 2 says B match A),
+           * we don't evaluate other referential conditions when looking for matches in
+           * stageActorsForReferencedActorId. (See () => false passed on 207 below.)
+           */
+          const stageActorsForReferencedActorId = (otherActorId) => {
+            if (stageActorsForRuleActorIds[otherActorId]) {
+              return stageActorsForRuleActorIds[otherActorId];
+            }
+            const orule = rule.actors[otherActorId];
+            const ocandidates = actorsAtPosition(
+              wrappedPosition(pointByAdding(me.position, orule.position))
+            );
+            return ocandidates.filter((ostage) =>
+              actorsMatch(
+                ostage,
+                orule,
+                rule.conditions[otherActorId] || {},
+                () => false
+              )
+            );
+          };
+
           const ruleActorsAtPos = ruleActorsUnmatched.filter(
             (r) => r.position.x === x && r.position.y === y
           );
@@ -187,13 +239,19 @@ export default function WorldOperator(previousWorld, characters) {
             return false;
           }
 
-          // make sure the descriptors on stage satisfy the rule
+          // make sure the stage actors match the rule actors, and the
+          // additional conditions also match.
           for (const s of stageActorsAtPos) {
             const idx = ruleActorsUnmatched.findIndex(
               (r) =>
                 r.position.x === x &&
                 r.position.y === y &&
-                actorsMatch(s, r, rule.conditions[r.id])
+                actorsMatch(
+                  s,
+                  r,
+                  rule.conditions[r.id] || {},
+                  stageActorsForReferencedActorId
+                )
             );
 
             if (idx !== -1) {
@@ -225,6 +283,11 @@ export default function WorldOperator(previousWorld, characters) {
       }
       for (const actorId of Object.keys(rule.conditions)) {
         requiredActorIds.push(actorId);
+        for (const condition of Object.values(rule.conditions[actorId])) {
+          if (condition && condition.value && condition.value.actorId) {
+            requiredActorIds.push(condition.value.actorId);
+          }
+        }
       }
 
       return requiredActorIds;

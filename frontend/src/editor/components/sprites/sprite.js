@@ -37,6 +37,13 @@ export default class Sprite extends React.Component {
       this.props.style
     );
 
-    return <img src={data} className={`sprite ${className}`} style={style} />;
+    return (
+      <img
+        src={data}
+        draggable={false}
+        className={`sprite ${className}`}
+        style={style}
+      />
+    );
   }
 }
