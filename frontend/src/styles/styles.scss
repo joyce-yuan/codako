@@ -63,7 +63,22 @@ body {
 }
 
 .btn-secondary {
+  color: #111;
   background-image: linear-gradient(#fcfcfc, #eee);
+  &:not(.disabled):not(.selected) {
+    &:hover,
+    &:active,
+    &:focus {
+      background-image: linear-gradient(#eee, #ddd);
+      color: #000;
+    }
+  }
+  &.selected:hover:not(.disabled) {
+    color: white;
+  }
+  &.disabled {
+    color: #444;
+  }
 }
 .btn-secondary.btn-link {
   background-image: inherit;

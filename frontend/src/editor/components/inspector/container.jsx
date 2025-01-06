@@ -99,14 +99,13 @@ class Container extends React.Component {
               Variables
             </NavLink>
           </NavItem>
-          <div style={{ float: "right" }}>
-            <AddButton
-              character={character}
-              actor={actor}
-              dispatch={dispatch}
-              isRecording={isRecording}
-            />
-          </div>
+          <div style={{ flex: 1 }} />
+          <AddButton
+            character={character}
+            actor={actor}
+            dispatch={dispatch}
+            isRecording={isRecording}
+          />
         </Nav>
         <ContentContainer
           world={world}

@@ -1,16 +1,16 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
+import Button from "reactstrap/lib/Button";
 import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
-import Button from "reactstrap/lib/Button";
 
-import Sprite from "../sprites/sprite";
-import { MODALS } from "../../constants/constants";
+import { makeRequest } from "../../../helpers/api";
 import { changeCharacter } from "../../actions/characters-actions";
 import { dismissModal } from "../../actions/ui-actions";
-import { makeRequest } from "../../../helpers/api";
+import { MODALS } from "../../constants/constants";
+import Sprite from "../sprites/sprite";
 
 class CharacterCard extends React.Component {
   static propTypes = {
@@ -96,7 +96,12 @@ class Container extends React.Component {
 
   render() {
     return (
-      <Modal isOpen={this.props.open} backdrop="static" toggle={() => {}}>
+      <Modal
+        isOpen={this.props.open}
+        backdrop="static"
+        toggle={() => {}}
+        style={{ minWidth: 650, maxWidth: 650 }}
+      >
         <div className="modal-header" style={{ display: "flex" }}>
           <h4 style={{ flex: 1 }}>Explore Characters</h4>
         </div>

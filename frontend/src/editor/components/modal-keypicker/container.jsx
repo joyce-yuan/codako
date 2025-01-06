@@ -1,14 +1,14 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
+import Button from "reactstrap/lib/Button";
 import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
-import Button from "reactstrap/lib/Button";
 
-import { findRule } from "../../utils/stage-helpers";
-import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
 import { changeCharacter } from "../../actions/characters-actions";
+import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
+import { findRule } from "../../utils/stage-helpers";
 import Keyboard from "./keyboard";
 
 class Container extends React.Component {
@@ -61,7 +61,12 @@ class Container extends React.Component {
     const { characterId } = this.props;
 
     return (
-      <Modal isOpen={characterId !== null} backdrop="static" toggle={() => {}}>
+      <Modal
+        isOpen={characterId !== null}
+        backdrop="static"
+        toggle={() => {}}
+        style={{ maxWidth: 600, minWidth: 600 }}
+      >
         <div className="modal-header" style={{ display: "flex" }}>
           <h4 style={{ flex: 1 }}>Choose Key</h4>
         </div>

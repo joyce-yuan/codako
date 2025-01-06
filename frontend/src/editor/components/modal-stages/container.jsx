@@ -1,17 +1,17 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
+import Button from "reactstrap/lib/Button";
 import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
-import Button from "reactstrap/lib/Button";
 
-import StageSettings from "./settings";
+import { createStage, deleteStageId, updateStageSettings } from "../../actions/stage-actions";
+import { dismissModal, selectStageId } from "../../actions/ui-actions";
 import { MODALS, WORLDS } from "../../constants/constants";
 import { getCurrentStage, getStagesList } from "../../utils/selectors";
-import { selectStageId, dismissModal } from "../../actions/ui-actions";
-import { createStage, deleteStageId, updateStageSettings } from "../../actions/stage-actions";
 import { getStageScreenshot } from "../../utils/stage-helpers";
+import StageSettings from "./settings";
 
 class Container extends React.Component {
   static propTypes = {
@@ -86,7 +86,12 @@ class Container extends React.Component {
     const { dispatch, stagesArray, stage } = this.props;
 
     return (
-      <Modal isOpen={this.props.open} backdrop="static" toggle={() => {}}>
+      <Modal
+        isOpen={this.props.open}
+        backdrop="static"
+        toggle={() => {}}
+        style={{ minWidth: 700, maxWidth: 700 }}
+      >
         <div className="modal-header" style={{ display: "flex" }}>
           <h4 style={{ flex: 1 }}>Stages</h4>
         </div>

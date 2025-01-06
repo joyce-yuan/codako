@@ -532,7 +532,8 @@ $create-account-notice-color: #e6dac1;
 
 .modal-dialog.paint {
   user-select: none;
-
+  min-width: 600px;
+  max-width: 600px;
   canvas {
     cursor: crosshair;
   }
@@ -771,6 +772,10 @@ $create-account-notice-color: #e6dac1;
       padding: 0;
       margin-top: 4px;
       margin-bottom: 4px;
+      &:hover, &:active {
+        background-color: rgba(255, 255, 255, 0.4);
+        outline: 1px solid rgba(255, 255, 255, 0.5);
+      }
     }
 
     ul.rules-list {

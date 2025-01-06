@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 // import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
 export default class StageSettings extends React.Component {
@@ -56,80 +56,88 @@ export default class StageSettings extends React.Component {
         <fieldset className="form-group">
           <legend className="col-form-legend">Wrapping</legend>
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <label className="form-check-label" htmlFor="wrapX" style={{ flex: 1 }}>
-              <input
-                style={{ marginRight: 5 }}
-                className="form-check-input"
-                id="wrapX"
-                type="checkbox"
-                defaultChecked={wrapX}
-                onBlur={(e) => onChange({ wrapX: e.target.checked })}
-              />
-              Wrap Horizontally
-            </label>
-            <label className="form-check-label" htmlFor="wrapY" style={{ flex: 1 }}>
-              <input
-                style={{ marginRight: 5, marginLeft: 0 }}
-                className="form-check-input"
-                id="wrapY"
-                type="checkbox"
-                defaultChecked={wrapY}
-                onBlur={(e) => onChange({ wrapY: e.target.checked })}
-              />
-              Wrap Vertically
-            </label>
+            <div class="form-check" style={{ flex: 1 }}>
+              <label className="form-check-label" htmlFor="wrapX">
+                <input
+                  style={{ marginRight: 5 }}
+                  className="form-check-input"
+                  id="wrapX"
+                  type="checkbox"
+                  defaultChecked={wrapX}
+                  onBlur={(e) => onChange({ wrapX: e.target.checked })}
+                />
+                Wrap Horizontally
+              </label>
+            </div>
+            <div class="form-check" style={{ flex: 1 }}>
+              <label className="form-check-label" htmlFor="wrapY">
+                <input
+                  className="form-check-input"
+                  id="wrapY"
+                  type="checkbox"
+                  defaultChecked={wrapY}
+                  onBlur={(e) => onChange({ wrapY: e.target.checked })}
+                />
+                Wrap Vertically
+              </label>
+            </div>
           </div>
         </fieldset>
         <fieldset className="form-group">
           <legend className="col-form-legend">Background</legend>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div style={{ flex: 1 }}>
-              <label className="form-check-label">
+              <div class="form-check">
+                <label className="form-check-label">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    style={{ marginRight: 5 }}
+                    checked={!!backgroundAsColor}
+                    onChange={() => onChange({ background: "black" })}
+                    name="bgradio"
+                  />
+                  Color
+                </label>
+                <br />
                 <input
-                  className="form-check-input"
-                  type="radio"
-                  style={{ marginRight: 5 }}
-                  checked={!!backgroundAsColor}
-                  onChange={() => onChange({ background: "black" })}
-                  name="bgradio"
+                  type="text"
+                  defaultValue={backgroundAsColor}
+                  onBlur={(e) => {
+                    if (e.target.value) {
+                      onChange({ background: e.target.value });
+                    }
+                  }}
                 />
-                Color
-              </label>
-              <input
-                type="text"
-                defaultValue={backgroundAsColor}
-                onBlur={(e) => {
-                  if (e.target.value) {
-                    onChange({ background: e.target.value });
-                  }
-                }}
-              />
-              {/*<PixelColorPicker
+                {/*<PixelColorPicker
                 color={backgroundAsColor}
                 onColorChange={(color) => onChange({background: color})}
               />*/}
+              </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label className="form-check-label">
+              <div class="form-check">
+                <label className="form-check-label">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    style={{ marginRight: 5 }}
+                    checked={!!backgroundAsURL}
+                    onChange={() => onChange({ background: "url(/Layer0_2.png)" })}
+                    name="bgradio"
+                  />
+                  Image
+                </label>
                 <input
-                  className="form-check-input"
-                  type="radio"
-                  style={{ marginRight: 5 }}
-                  checked={!!backgroundAsURL}
-                  onChange={() => onChange({ background: "url(/Layer0_2.png)" })}
-                  name="bgradio"
+                  type="text"
+                  defaultValue={backgroundAsURL}
+                  onBlur={(e) => {
+                    if (e.target.value) {
+                      onChange({ background: `url(${e.target.value})` });
+                    }
+                  }}
                 />
-                Image
-              </label>
-              <input
-                type="text"
-                defaultValue={backgroundAsURL}
-                onBlur={(e) => {
-                  if (e.target.value) {
-                    onChange({ background: `url(${e.target.value})` });
-                  }
-                }}
-              />
+              </div>
             </div>
           </div>
         </fieldset>
