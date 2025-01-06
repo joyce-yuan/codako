@@ -1,14 +1,14 @@
-import React from "react";
 import PropTypes from "prop-types";
-import { withRouter, Link } from "react-router";
+import React from "react";
 import { connect } from "react-redux";
+import { Link, withRouter } from "react-router";
 import Button from "reactstrap/lib/Button";
+import Col from "reactstrap/lib/Col";
 import Container from "reactstrap/lib/Container";
 import Row from "reactstrap/lib/Row";
-import Col from "reactstrap/lib/Col";
 
-import * as CustomPropTypes from "../constants/custom-prop-types";
 import { login } from "../actions/main-actions";
+import * as CustomPropTypes from "../constants/custom-prop-types";
 
 class LoginPage extends React.Component {
   static propTypes = {
@@ -56,30 +56,30 @@ class LoginPage extends React.Component {
     let messageClass = null;
     if (redirectPresent) {
       message = "Sorry, you need to log in to view that page.";
-      messageClass = "info";
+      messageClass = "bg-info text-white";
     }
     if (networkError) {
       message =
         networkError.statusCode === 401
           ? "Sorry, your username or password was incorrect."
           : networkError.message;
-      messageClass = "danger";
+      messageClass = "bg-danger text-white ";
     }
 
     return (
       <Container>
         <Row>
-          <Col lg={{ size: 4, push: 3, pull: 3, offset: 1 }}>
+          <Col lg={{ size: 4, offset: 4 }}>
             <div style={{ textAlign: "center", marginTop: 60, marginBottom: 30 }}>
               <h3>Sign in to Codako</h3>
             </div>
             <div className="card">
               {message && (
-                <div className={`card card-inverse card-${messageClass} card-block text-xs-center`}>
-                  <blockquote className="card-blockquote">{message}</blockquote>
+                <div className={`card card-inverse ${messageClass} card-body text-xs-center`}>
+                  {message}
                 </div>
               )}
-              <form className="card-block" onSubmit={this._onSubmit}>
+              <form className="card-body" onSubmit={this._onSubmit}>
                 <div className="form-group">
                   <label htmlFor="username">Username or email address:</label>
                   <input className="form-control" id="username" ref="username" />
@@ -93,8 +93,8 @@ class LoginPage extends React.Component {
                 </Button>
               </form>
             </div>
-            <div className="card">
-              <div className="card-block text-xs-center">
+            <div className="card" style={{ marginTop: 20 }}>
+              <div className="card-body text-xs-center">
                 New to Codako? <Link to="/join">Create an account</Link>.
               </div>
             </div>

@@ -1,14 +1,14 @@
-import React from "react";
 import PropTypes from "prop-types";
-import { withRouter } from "react-router";
+import React from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
 import Button from "reactstrap/lib/Button";
+import Col from "reactstrap/lib/Col";
 import Container from "reactstrap/lib/Container";
 import Row from "reactstrap/lib/Row";
-import Col from "reactstrap/lib/Col";
 
-import * as CustomPropTypes from "../constants/custom-prop-types";
 import { register } from "../actions/main-actions";
+import * as CustomPropTypes from "../constants/custom-prop-types";
 
 class JoinPage extends React.Component {
   static propTypes = {
@@ -75,11 +75,11 @@ class JoinPage extends React.Component {
           <Col sm={{ size: 7 }} lg={{ size: 5, offset: 2 }}>
             <div className="card">
               {message && (
-                <div className={`card card-inverse card-${messageClass} card-block text-xs-center`}>
-                  <blockquote className="card-blockquote">{message}</blockquote>
+                <div className={`card card-inverse card-${messageClass} card-body text-xs-center`}>
+                  <blockquote className="card-bodyquote">{message}</blockquote>
                 </div>
               )}
-              <form className="card-block" onSubmit={this._onSubmit}>
+              <form className="card-body" onSubmit={this._onSubmit}>
                 <div className={`form-group ${message.includes("username") ? "has-danger" : ""}`}>
                   <label htmlFor="username">Username</label>
                   <input
@@ -110,8 +110,15 @@ class JoinPage extends React.Component {
                 </div>
                 <hr />
                 <p>
-                  By clicking on "Create an account" below, you are agreeing to the Terms of Service
-                  and the Privacy Policy.
+                  By clicking on "Create an account" below, you are agreeing to the{" "}
+                  <a href="/terms-of-use" target="_blank">
+                    Terms of Service
+                  </a>
+                  and the{" "}
+                  <a href="/privacy-policy" target="_blank">
+                    Privacy Policy
+                  </a>
+                  .
                 </p>
                 <hr />
                 <Button color="primary" type="submit">
@@ -123,10 +130,12 @@ class JoinPage extends React.Component {
           <Col sm={{ size: 5 }} lg={{ size: 3 }}>
             <div className="card">
               <div className="card-header">Featured</div>
-              <div className="card-block">
+              <div className="card-body">
                 <ul style={{ paddingLeft: 10 }}>
-                  <li>Learn early programming concepts without writing code</li>
-                  <li>Share your work and learn from others</li>
+                  <li style={{ marginBottom: 8 }}>
+                    Learn early programming concepts without writing code
+                  </li>
+                  <li style={{ marginBottom: 8 }}>Share your work and learn from others</li>
                   <li>No downloads - create games in your broswer!</li>
                 </ul>
               </div>

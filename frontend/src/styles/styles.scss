@@ -25,6 +25,7 @@ body {
 }
 
 .play.container {
+  max-width: 1240px;
   .stage-container {
     min-width: 400px;
   }
@@ -111,7 +112,7 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 1rem;
     font-weight: bold;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
@@ -165,6 +166,7 @@ body {
     display: inline-block;
     margin-left: 10px;
     margin-right: 10px;
+    margin-bottom: 20px;
     width: calc(33% - 20px);
     vertical-align: top;
 

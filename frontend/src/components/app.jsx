@@ -18,12 +18,12 @@ class App extends React.Component {
     const { me, dispatch } = this.props;
 
     return (
-      <div className="navbar">
-        <div className="container">
+      <nav className="navbar navbar-expand">
+        <div className="container" style={{ justifyContent: "flex-start" }}>
           <IndexLink className="navbar-brand" to="/">
             Codako
           </IndexLink>
-          <ul className="nav navbar-nav">
+          <ul className="nav ">
             <li className="nav-item">
               <IndexLink className="nav-link" to="/">
                 Home
@@ -40,7 +40,8 @@ class App extends React.Component {
               </Link>
             </li>
           </ul>
-          <ul className="nav navbar-nav float-xs-right">
+          <div style={{ flex: 1 }} />
+          <ul className="nav ">
             {me
               ? [
                   <li className="nav-item" key="dashboard">
@@ -55,7 +56,7 @@ class App extends React.Component {
                   </li>,
                 ]
               : [
-                  <li className="nav-item" key="sign-in">
+                  <li className="nav-item" key="sign-in" style={{ marginRight: 10 }}>
                     <Link to="/login">
                       <Button>Sign in</Button>
                     </Link>
@@ -70,7 +71,7 @@ class App extends React.Component {
                 ]}
           </ul>
         </div>
-      </div>
+      </nav>
     );
   };
 

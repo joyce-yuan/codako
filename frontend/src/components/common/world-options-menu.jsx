@@ -1,9 +1,9 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import DropdownItem from "reactstrap/lib/DropdownItem";
 
 export default class WorldOptionsMenu extends React.Component {
   static propTypes = {
@@ -24,7 +24,7 @@ export default class WorldOptionsMenu extends React.Component {
         isOpen={this.state.open}
         toggle={() => this.setState({ open: !this.state.open })}
       >
-        <DropdownToggle className="btn-link btn-sm">
+        <DropdownToggle className="btn-link btn-sm" outline>
           <i className="fa fa-ellipsis-v" />
         </DropdownToggle>
         <DropdownMenu right>

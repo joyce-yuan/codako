@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Link } from "react-router";
 import timeago from "timeago.js";
 
@@ -34,7 +34,7 @@ export default class WorldCard extends React.Component {
             <img className="card-img-top world-thumbnail" src={world.thumbnail} />
           </Link>
         )}
-        <div className="card-block">
+        <div className="card-body card-body">
           <WorldOptionsMenu onDuplicate={this.props.onDuplicate} onDelete={this.props.onDelete} />
           <Link to={canEdit ? `/editor/${world.id}` : `/play/${world.id}`}>
             <h4 className="card-title">{world.name}</h4>

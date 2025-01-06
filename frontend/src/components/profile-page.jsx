@@ -1,10 +1,10 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
-import Row from "reactstrap/lib/Row";
 import Col from "reactstrap/lib/Col";
 import Container from "reactstrap/lib/Container";
-import { fetchWorldsForUser, fetchUser, deleteWorld, createWorld } from "../actions/main-actions";
+import Row from "reactstrap/lib/Row";
+import { createWorld, deleteWorld, fetchUser, fetchWorldsForUser } from "../actions/main-actions";
 
 import WorldList from "./common/world-list";
 
@@ -38,12 +38,15 @@ class ProfilePage extends React.Component {
         <Row>
           <Col md={3}>
             <div className="dashboard-sidebar">
-              <img src={require("../img/profile-placeholder.png")} style={{ maxWidth: "100%" }} />
+              <img
+                src={new URL("../img/profile-placeholder.png", import.meta.url).href}
+                style={{ maxWidth: "100%" }}
+              />
               <h4>{profile.username}</h4>
             </div>
           </Col>
           <Col md={9}>
-            <div className="card card-block">
+            <div className="card card-body">
               <h5>Public Worlds</h5>
               <hr />
               <WorldList

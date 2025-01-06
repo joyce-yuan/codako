@@ -1,12 +1,12 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 import Button from "reactstrap/lib/Button";
 import Col from "reactstrap/lib/Col";
-import Row from "reactstrap/lib/Row";
 import Container from "reactstrap/lib/Container";
+import Row from "reactstrap/lib/Row";
 
-import { fetchWorldsForUser, deleteWorld, createWorld } from "../actions/main-actions";
+import { createWorld, deleteWorld, fetchWorldsForUser } from "../actions/main-actions";
 import WorldList from "./common/world-list";
 
 class DashboardPage extends React.Component {
@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
         <Row>
           <Col md={9}>
             {showTutorialPrompt && (
-              <div className="card card-block tutorial-cta">
+              <div className="card card-body tutorial-cta">
                 <div
                   style={{
                     display: "flex",
@@ -63,16 +63,18 @@ class DashboardPage extends React.Component {
                 </div>
               </div>
             )}
-            <div className="card card-block">
-              <Button
-                size="sm"
-                color={showTutorialPrompt ? undefined : "success"}
-                className="float-xs-right"
-                onClick={() => dispatch(createWorld())}
-              >
-                New Game
-              </Button>
-              <h5>My Games</h5>
+            <div className="card card-body">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h5>My Games</h5>
+
+                <Button
+                  size="sm"
+                  color={showTutorialPrompt ? undefined : "success"}
+                  onClick={() => dispatch(createWorld())}
+                >
+                  New Game
+                </Button>
+              </div>
               <hr />
               <WorldList
                 worlds={worlds}
