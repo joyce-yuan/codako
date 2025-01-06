@@ -71,7 +71,9 @@ class Container extends React.Component {
           <h4 style={{ flex: 1 }}>Choose Key</h4>
         </div>
         <ModalBody>
-          <Keyboard keyCode={this.state.keyCode} onKeyDown={this._onKeyDown} />
+          {characterId !== null && (
+            <Keyboard keyCode={this.state.keyCode} onKeyDown={this._onKeyDown} />
+          )}
         </ModalBody>
         <ModalFooter>
           <Button onClick={this._onClose}>Cancel</Button>{" "}

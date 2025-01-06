@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { nameForKey } from "../../utils/event-helpers";
 
 const forEachKeyRect = (el, cb) => {
@@ -81,13 +81,20 @@ export default class Keyboard extends React.Component {
 
   componentDidMount() {
     this._renderKeyboard();
-    this._keyboardCanvasEl.focus();
+    document.addEventListener("keydown", this.onKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onKeyDown);
   }
 
   componentDidUpdate() {
     this._renderKeyboard();
-    this._keyboardCanvasEl.focus();
   }
+
+  onKeyDown = (event) => {
+    this.props.onKeyDown(event);
+  };
 
   _renderKeyboard() {
     const context = this._keyboardCanvasEl.getContext("2d");
@@ -126,12 +133,10 @@ export default class Keyboard extends React.Component {
       <canvas
         tabIndex={0}
         style={{ outline: 0 }}
-        onKeyDown={this.props.onKeyDown}
         onMouseUp={this._onMouseUp}
-        onBlur={() => this._keyboardCanvasEl.focus()}
+        ref={(el) => (this._keyboardCanvasEl = el)}
         width={570}
         height={200}
-        ref={(el) => (this._keyboardCanvasEl = el)}
       />
     );
   }
