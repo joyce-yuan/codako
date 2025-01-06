@@ -47,6 +47,7 @@ class AppearanceGridItem extends React.Component {
         value: {},
       }),
     );
+    event.dataTransfer.setData("variable-type:appearance", "true");
   };
 
   render() {
@@ -101,6 +102,7 @@ class TransformGridItem extends React.Component {
         value: {},
       }),
     );
+    event.dataTransfer.setData("variable-type:transform", "true");
   };
 
   render() {

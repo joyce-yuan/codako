@@ -38,6 +38,7 @@ export default class VariableGridItem extends React.Component {
         value: { constant: displayValue || 0 },
       }),
     );
+    event.dataTransfer.setData("variable-type:variable", "true");
   };
 
   render() {
@@ -48,21 +49,24 @@ export default class VariableGridItem extends React.Component {
 
     let content = null;
 
-    if (disabled) {
-      content = <div className="value">{displayValue}</div>;
-    } else if (definition.type === "number") {
-      content = (
-        <input
-          className="value"
-          value={displayValue}
-          onChange={(e) => onChangeValue(definition.id, e.target.value)}
-          onBlur={(e) => onBlurValue(definition.id, e.target.value)}
-        />
-      );
+    if (definition.type === "number") {
+      if (disabled) {
+        content = <div className="value">{displayValue}</div>;
+      } else {
+        content = (
+          <input
+            className="value"
+            value={displayValue}
+            onChange={(e) => onChangeValue(definition.id, e.target.value)}
+            onBlur={(e) => onBlurValue(definition.id, e.target.value)}
+          />
+        );
+      }
     } else if (definition.type === "stage") {
       content = (
         <ConnectedStagePicker
           value={displayValue}
+          disabled={disabled}
           onChange={(e) => onChangeValue(definition.id, e.target.value)}
         />
       );

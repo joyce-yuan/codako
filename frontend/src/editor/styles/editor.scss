@@ -826,10 +826,14 @@ $create-account-notice-color: #e6dac1;
       padding: 2px;
       code {
         background-color: transparent;
+        padding: 4px;
         img {
           zoom: 0.5;
           margin-right: 10px;
         }
+      }
+      .right, .left {
+        display: inline-block;
       }
     }
     .scenario {

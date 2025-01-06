@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
@@ -11,6 +11,7 @@ import { getStages } from "../../utils/selectors";
 class StagePicker extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,
+    disabled: PropTypes.bool,
     value: PropTypes.string,
     stages: PropTypes.object,
   };
@@ -23,11 +24,12 @@ class StagePicker extends React.Component {
   }
 
   render() {
-    const { stages, value, onChange } = this.props;
+    const { stages, disabled, value, onChange } = this.props;
 
     return (
       <ButtonDropdown
         size="sm"
+        disabled={disabled}
         isOpen={this.state.open}
         toggle={() => this.setState({ open: !this.state.open })}
       >
