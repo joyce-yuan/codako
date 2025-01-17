@@ -85,11 +85,13 @@ export default class StageSettings extends React.Component {
                 />
                 Color
               </label>
+              <div style={{marginLeft: '10px'}}>
               <input
                 type="color"
                 defaultValue={backgroundAsColor}
                 onBlur={(e) => { if (e.target.value) { onChange({background: e.target.value}); }}}
               />
+              </div>
               {/*<PixelColorPicker
                 color={backgroundAsColor}
                 onColorChange={(color) => onChange({background: color})}
