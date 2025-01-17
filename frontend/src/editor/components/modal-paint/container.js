@@ -283,12 +283,37 @@ class Container extends React.Component {
   _onChooseFile = (event) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => {
+      console.log("reader.result", reader.result);
       this._onApplyExternalDataURL(reader.result);
     }, false);
     const file = event.target.files[0];
     if (file) {
       reader.readAsDataURL(file);
     }
+  }
+
+  _onGenerateSprite = () => {
+    const description = this.state.spriteDescription;
+    const prompt = `Generate a pixel art sprite with a solid background based on the following description: ${description}`;
+    console.log(prompt);
+
+    // const simulatedImageDataURL = "data:image/png;base64,..."; // Replace with actual API call
+
+
+    // Call the backend API
+    fetch(`http://localhost:5001/generate-sprite?prompt=${encodeURIComponent(prompt)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.imageUrl) {
+          console.log("data.imageUrl", data.imageUrl);
+          this._onApplyExternalDataURL(data.imageUrl);
+        } else {
+          console.error("Failed to generate sprite:", data.error);
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching sprite:", error);
+      });
   }
 
   render() {
@@ -368,13 +393,24 @@ class Container extends React.Component {
                   onToolChange={this._onChooseTool}
                 />
               </div>
-              <PixelCanvas
-                pixelSize={11}
-                onMouseDown={this._onCanvasMouseDown}
-                onMouseMove={this._onCanvasMouseMove}
-                onMouseUp={this._onCanvasMouseUp}
-                {...this.state}
-              />
+              <div className="canvas-and-generator">
+                <PixelCanvas
+                  pixelSize={11}
+                  onMouseDown={this._onCanvasMouseDown}
+                  onMouseMove={this._onCanvasMouseMove}
+                  onMouseUp={this._onCanvasMouseUp}
+                  {...this.state}
+                />
+                <div className="ai-sprite-generator">
+                  <input
+                    type="text"
+                    placeholder="Describe your sprite..."
+                    value={this.state.spriteDescription || ''}
+                    onChange={(e) => this.setState({spriteDescription: e.target.value})}
+                  />
+                  <Button onClick={this._onGenerateSprite}>Generate Sprite</Button>
+                </div>
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>
