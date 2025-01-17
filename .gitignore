@@ -3,3 +3,5 @@
 /api/frontend
 /api/dist
 .DS_Store
+/api/yarn-error.log
+/api/image.png

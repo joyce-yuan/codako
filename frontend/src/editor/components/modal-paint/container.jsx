@@ -1,25 +1,27 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
-import Modal from "reactstrap/lib/Modal";
-import ModalBody from "reactstrap/lib/ModalBody";
-import ModalFooter from "reactstrap/lib/ModalFooter";
 import Button from "reactstrap/lib/Button";
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import Modal from "reactstrap/lib/Modal";
+import ModalBody from "reactstrap/lib/ModalBody";
+import ModalFooter from "reactstrap/lib/ModalFooter";
+
+import { makeRequest } from "../../../helpers/api";
 
 import * as Tools from "./tools";
 
-import { paintCharacterAppearance } from "../../actions/ui-actions";
 import { changeCharacter } from "../../actions/characters-actions";
+import { paintCharacterAppearance } from "../../actions/ui-actions";
 
-import { getImageDataFromDataURL, getDataURLFromImageData, getFlattenedImageData } from "./helpers";
 import CreatePixelImageData from "./create-pixel-image-data";
+import { getDataURLFromImageData, getFlattenedImageData, getImageDataFromDataURL } from "./helpers";
 import PixelCanvas from "./pixel-canvas";
-import PixelToolbar from "./pixel-toolbar";
 import PixelColorPicker, { ColorOptions } from "./pixel-color-picker";
+import PixelToolbar from "./pixel-toolbar";
 
 const MAX_UNDO_STEPS = 30;
 const TOOLS = [
@@ -305,6 +307,27 @@ class Container extends React.Component {
     }
   };
 
+  _onGenerateSprite = async () => {
+    const description = this.state.spriteDescription;
+    const prompt = `Generate a pixel art sprite with a solid background based on the following description: ${description}`;
+    console.log(prompt);
+
+    // const simulatedImageDataURL = "data:image/png;base64,..."; // Replace with actual API call
+
+    // Call the backend API
+    try {
+      const data = await makeRequest(`/generate-sprite?prompt=${encodeURIComponent(prompt)}`);
+      if (data.imageUrl) {
+        console.log("data.imageUrl", data.imageUrl);
+        this._onApplyExternalDataURL(data.imageUrl);
+      } else {
+        console.error("Failed to generate sprite:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching sprite:", error);
+    }
+  };
+
   render() {
     const { imageData, tool, color, undoStack, redoStack } = this.state;
 
@@ -397,13 +420,24 @@ class Container extends React.Component {
                 />
                 <PixelToolbar tools={TOOLS} tool={tool} onToolChange={this._onChooseTool} />
               </div>
-              <PixelCanvas
-                pixelSize={11}
-                onMouseDown={this._onCanvasMouseDown}
-                onMouseMove={this._onCanvasMouseMove}
-                onMouseUp={this._onCanvasMouseUp}
-                {...this.state}
-              />
+              <div className="canvas-and-generator">
+                <PixelCanvas
+                  pixelSize={11}
+                  onMouseDown={this._onCanvasMouseDown}
+                  onMouseMove={this._onCanvasMouseMove}
+                  onMouseUp={this._onCanvasMouseUp}
+                  {...this.state}
+                />
+                <div className="ai-sprite-generator">
+                  <input
+                    type="text"
+                    placeholder="Describe your sprite..."
+                    value={this.state.spriteDescription || ""}
+                    onChange={(e) => this.setState({ spriteDescription: e.target.value })}
+                  />
+                  <Button onClick={this._onGenerateSprite}>Generate Sprite</Button>
+                </div>
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>

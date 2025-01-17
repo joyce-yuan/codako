@@ -48,6 +48,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use("/", require("./routes/users").default);
 app.use("/", require("./routes/worlds").default);
 app.use("/", require("./routes/characters").default);
+app.use("/", require("./routes/openai").default);
 
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   // Catch multer limit errors
