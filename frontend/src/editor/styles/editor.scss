@@ -105,6 +105,17 @@ $create-account-notice-color: #e6dac1;
     font-size: 0.9rem;
   }
 
+  .btn-group > .btn, button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-group-sm > .btn, button.btn-sm {
+    gap: 4px;
+    padding: .15rem .5rem;
+  }
+
   .editor-centered-flex {
     max-width: 1210px;
     max-height: 804px;
@@ -489,12 +500,17 @@ $create-account-notice-color: #e6dac1;
       .item {
         padding: 10px;
         text-align: center;
+        cursor: grab;
+
         .name {
           padding-top: 2px;
           font-size: 0.9em;
         }
         &.selected {
           background-color: $highlight-color;
+        }
+        &:hover:not(.selected) {
+          background-color: rgba($tint-color, 0.15);;
         }
       }
     }
@@ -614,7 +630,9 @@ $create-account-notice-color: #e6dac1;
     background-color: #c6c6c6;
     box-sizing: content-box;
     margin: 8px 0;
-
+    &.draggable-true {
+      cursor: grab;
+    }
     &.variable-set-true {
       background-color: orange;
     }
@@ -637,6 +655,7 @@ $create-account-notice-color: #e6dac1;
       padding: 3px 0;
       font-size: 1.2em;
       font-weight: bold;
+      cursor: text;
     }
 
     .btn-group {

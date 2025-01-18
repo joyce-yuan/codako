@@ -54,7 +54,11 @@ class AppearanceGridItem extends React.Component {
     const { spritesheet, appearanceId, onChange } = this.props;
 
     return (
-      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
+      <div
+        className={`variable-box draggable-true variable-set-true`}
+        draggable
+        onDragStart={this._onDragStart}
+      >
         <div className="name">Appearance</div>
         <ButtonDropdown
           size="sm"
@@ -109,7 +113,11 @@ class TransformGridItem extends React.Component {
     const { transform, onChange } = this.props;
 
     return (
-      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
+      <div
+        className={`variable-box draggable-true variable-set-true`}
+        draggable
+        onDragStart={this._onDragStart}
+      >
         <div className="name">Direction</div>
         <ButtonDropdown
           size="sm"

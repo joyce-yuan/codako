@@ -75,7 +75,7 @@ export default class VariableGridItem extends React.Component {
 
     return (
       <div
-        className={`variable-box variable-set-${value !== undefined}`}
+        className={`variable-box draggable-${!!actorId} variable-set-${value !== undefined}`}
         onClick={(e) => onClick(definition.id, e)}
         draggable={!!actorId}
         onDragStart={this._onDragStart}
@@ -84,7 +84,9 @@ export default class VariableGridItem extends React.Component {
           className="name"
           value={definition.name}
           onChange={
-            disabled ? null : (e) => onChangeDefinition(definition.id, { name: e.target.value })
+            disabled || definition.type === "stage"
+              ? null
+              : (e) => onChangeDefinition(definition.id, { name: e.target.value })
           }
         />
         {content}
