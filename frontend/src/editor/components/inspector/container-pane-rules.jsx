@@ -1,10 +1,10 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
-import { TOOL_POINTER } from "../../constants/constants";
 import { changeCharacter } from "../../actions/characters-actions";
-import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
 import { editRuleRecording } from "../../actions/recording-actions";
+import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
+import { TOOL_POINTER } from "../../constants/constants";
 import { findRule } from "../../utils/stage-helpers";
 import RuleList from "./rule-list";
 
@@ -166,7 +166,7 @@ export default class ContainerPaneRules extends React.Component {
     return (
       <div className="scroll-container" ref={(el) => (this._scrollContainerEl = el)}>
         <div className="scroll-container-contents">
-          <RuleList rules={character.rules} />
+          <RuleList character={character} rules={character.rules} />
         </div>
       </div>
     );

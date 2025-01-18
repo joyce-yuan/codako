@@ -58,6 +58,7 @@ export default class VariableGridItem extends React.Component {
             className="value"
             value={displayValue}
             onChange={(e) => onChangeValue(definition.id, e.target.value)}
+            onDoubleClick={(e) => e.currentTarget.select()}
             onBlur={(e) => onBlurValue(definition.id, e.target.value)}
           />
         );

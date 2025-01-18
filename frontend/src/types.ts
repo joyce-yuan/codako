@@ -59,14 +59,10 @@ export type RuleTreeFlowLoopItem = {
   name: string;
   rules: RuleTreeItem[];
   id: string;
-  loopCount: { constant: number } | { variableId: string };
+  times: { constant: number } | { variableId: string };
 };
 
-export type RuleTreeItem =
-  | RuleTreeGroupItem
-  | RuleTreeFlowItem
-  | RuleTreeFlowLoopItem
-  | Rule;
+export type RuleTreeItem = RuleTreeGroupItem | RuleTreeFlowItem | RuleTreeFlowLoopItem | Rule;
 
 export type Rule = {
   type: "rule";

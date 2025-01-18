@@ -2,6 +2,9 @@ import * as types from "../constants/action-types";
 
 import xhr from "xhr";
 
+// Use the production backend for development:
+// const API_ROOT = `https://www.codako.org`;
+//
 const API_ROOT = window.location.host.includes("codako") ? `` : `http://localhost:8080`;
 
 export function makeRequest(path, { method = "GET", query = {}, headers = {}, json, body } = {}) {

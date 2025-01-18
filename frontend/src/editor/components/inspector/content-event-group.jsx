@@ -1,8 +1,8 @@
-import React from "react";
 import PropTypes from "prop-types";
-import RuleStateCircle from "./rule-state-circle";
-import RuleList from "./rule-list";
+import React from "react";
 import DisclosureTriangle from "./disclosure-triangle";
+import RuleList from "./rule-list";
+import RuleStateCircle from "./rule-state-circle";
 
 import { nameForKey } from "../../utils/event-helpers";
 import { isCollapsePersisted, persistCollapsedState } from "./collapse-state-storage";
@@ -43,7 +43,7 @@ export default class ContentEventGroup extends React.Component {
   }
 
   render() {
-    const { rule } = this.props;
+    const { rule, character } = this.props;
     const { collapsed } = this.state;
 
     return (
@@ -67,7 +67,12 @@ export default class ContentEventGroup extends React.Component {
             {this._name()}
           </div>
         </div>
-        <RuleList parentId={rule.id} rules={rule.rules} collapsed={collapsed} />
+        <RuleList
+          parentId={rule.id}
+          rules={rule.rules}
+          collapsed={collapsed}
+          character={character}
+        />
       </div>
     );
   }

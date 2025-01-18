@@ -119,14 +119,28 @@ export default function WorldOperator(previousWorld, characters) {
       }
 
       // perf note: avoid creating empty evaluatedRuleIds entries if no rules are evaluated
+      let iterations = 1;
+      if (behavior === FLOW_BEHAVIORS.LOOP) {
+        if (struct.loopCount.constant) {
+          iterations = struct.loopCount.constant;
+        }
+        if (struct.loopCount.variableId) {
+          const actor = actors[me.id];
+          const character = characters[actor.characterId];
+          iterations = getVariableValue(actor, character, struct.loopCount.variableId);
+          console.log(iterations);
+        }
+      }
 
-      for (const rule of rules) {
-        const applied = tickRule(rule);
-        evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
-        evaluatedRuleIds[me.id][rule.id] = applied;
-        evaluatedRuleIds[me.id][struct.id] = applied;
-        if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
-          break;
+      for (let ii = 0; ii < iterations; ii++) {
+        for (const rule of rules) {
+          const applied = tickRule(rule);
+          evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
+          evaluatedRuleIds[me.id][rule.id] = applied;
+          evaluatedRuleIds[me.id][struct.id] = applied;
+          if (applied && behavior !== FLOW_BEHAVIORS.ALL) {
+            break;
+          }
         }
       }
 

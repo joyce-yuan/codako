@@ -1,9 +1,9 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
-import ContentRule from "./content-rule";
 import ContentEventGroup from "./content-event-group";
 import ContentFlowGroup from "./content-flow-group";
+import ContentRule from "./content-rule";
 
 import { TOOL_TRASH } from "../../constants/constants";
 import { CONTAINER_TYPES } from "../../utils/world-constants";
@@ -21,6 +21,7 @@ export default class RuleList extends React.Component {
   static propTypes = {
     parentId: PropTypes.string,
     rules: PropTypes.array,
+    character: PropTypes.object,
     collapsed: PropTypes.bool,
   };
 
@@ -166,7 +167,7 @@ export default class RuleList extends React.Component {
   };
 
   render() {
-    const { collapsed, rules } = this.props;
+    const { collapsed, rules, character } = this.props;
     const { dropIndex, dragIndex, hovering } = this.state;
 
     if (collapsed || !rules) {
@@ -188,7 +189,7 @@ export default class RuleList extends React.Component {
           onMouseOver={(event) => this._onMouseOver(event, r)}
           onMouseOut={(event) => this._onMouseOut(event, r)}
         >
-          <ContentComponent rule={r} />
+          <ContentComponent rule={r} character={character} />
         </li>
       );
     });

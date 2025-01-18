@@ -1,6 +1,6 @@
 /* eslint react/no-danger: 0 */
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 export default class TapToEditLabel extends React.Component {
   static propTypes = {
@@ -27,6 +27,8 @@ export default class TapToEditLabel extends React.Component {
     const { value, onChange, className } = this.props;
     const { editing } = this.state;
 
+    const isUntitled = `${value}`.startsWith("Untitled");
+
     if (!onChange) {
       return (
         <div
@@ -41,7 +43,7 @@ export default class TapToEditLabel extends React.Component {
       <div
         contentEditable={editing}
         ref={(el) => (this._el = el)}
-        className={`tap-to-edit editing-${editing} enabled ${className}`}
+        className={`tap-to-edit editing-${editing} enabled ${isUntitled ? "untitled" : ""} ${className}`}
         dangerouslySetInnerHTML={{ __html: value }}
         onChange={(e) => {
           onChange({ target: { value: e.target.innerText } });
