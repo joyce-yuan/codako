@@ -1,36 +1,36 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 
 import ActorSprite from "../sprites/actor-sprite";
-import RecordingMaskSprite from "../sprites/recording-mask-sprite";
-import RecordingIgnoredSprite from "../sprites/recording-ignored-sprite";
 import RecordingHandle from "../sprites/recording-handle";
+import RecordingIgnoredSprite from "../sprites/recording-ignored-sprite";
+import RecordingMaskSprite from "../sprites/recording-mask-sprite";
 
-import {
-  createActor,
-  changeActor,
-  deleteActor,
-  recordClickForGameState,
-  recordKeyForGameState,
-} from "../../actions/stage-actions";
-import { select, selectToolId, paintCharacterAppearance } from "../../actions/ui-actions";
 import {
   setRecordingExtent,
   setupRecordingForActor,
   toggleSquareIgnored,
 } from "../../actions/recording-actions";
+import {
+  changeActor,
+  createActor,
+  deleteActor,
+  recordClickForGameState,
+  recordKeyForGameState,
+} from "../../actions/stage-actions";
+import { paintCharacterAppearance, select, selectToolId } from "../../actions/ui-actions";
 
 import {
   STAGE_CELL_SIZE,
-  TOOL_POINTER,
-  TOOL_TRASH,
-  TOOL_RECORD,
-  TOOL_PAINT,
   TOOL_IGNORE_SQUARE,
+  TOOL_PAINT,
+  TOOL_POINTER,
+  TOOL_RECORD,
+  TOOL_TRASH,
 } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
-import { pointIsOutside, buildActorPath } from "../../utils/stage-helpers";
+import { buildActorPath, pointIsOutside } from "../../utils/stage-helpers";
 
 import * as CustomPropTypes from "../../constants/custom-prop-types";
 
@@ -402,8 +402,7 @@ class Stage extends React.Component {
               position: "absolute",
               width: stage.width * STAGE_CELL_SIZE,
               height: stage.height * STAGE_CELL_SIZE,
-              background: `url('/src/editor/img/board-grid.png') top left, ${stage.background}`,
-              backgroundSize: "40px, cover",
+              background: `url('/src/editor/img/board-grid.png') top left / 40px, ${stage.background}${stage.background?.includes("url(") ? " 50% 50% / cover" : ""}`,
             }}
           />
           {Object.values(stage.actors).map((actor) => {

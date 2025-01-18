@@ -128,7 +128,6 @@ export default function WorldOperator(previousWorld, characters) {
           const actor = actors[me.id];
           const character = characters[actor.characterId];
           iterations = getVariableValue(actor, character, struct.loopCount.variableId);
-          console.log(iterations);
         }
       }
 

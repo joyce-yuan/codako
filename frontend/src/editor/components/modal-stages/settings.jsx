@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 // import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
+const DEFAULT_COLOR = "#005392";
 export default class StageSettings extends React.Component {
   static propTypes = {
     stage: PropTypes.object,
@@ -56,7 +57,7 @@ export default class StageSettings extends React.Component {
         <fieldset className="form-group">
           <legend className="col-form-legend">Wrapping</legend>
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <div class="form-check" style={{ flex: 1 }}>
+            <div className="form-check" style={{ flex: 1 }}>
               <label className="form-check-label" htmlFor="wrapX">
                 <input
                   style={{ marginRight: 5 }}
@@ -69,7 +70,7 @@ export default class StageSettings extends React.Component {
                 Wrap Horizontally
               </label>
             </div>
-            <div class="form-check" style={{ flex: 1 }}>
+            <div className="form-check" style={{ flex: 1 }}>
               <label className="form-check-label" htmlFor="wrapY">
                 <input
                   className="form-check-input"
@@ -87,14 +88,14 @@ export default class StageSettings extends React.Component {
           <legend className="col-form-legend">Background</legend>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <div style={{ flex: 1 }}>
-              <div class="form-check">
+              <div className="form-check">
                 <label className="form-check-label">
                   <input
                     className="form-check-input"
                     type="radio"
                     style={{ marginRight: 5 }}
                     checked={!!backgroundAsColor}
-                    onChange={() => onChange({ background: "black" })}
+                    onChange={() => onChange({ background: DEFAULT_COLOR })}
                     name="bgradio"
                   />
                   Color
@@ -102,8 +103,8 @@ export default class StageSettings extends React.Component {
                 <br />
                 <input
                   type="color"
-                  defaultValue={backgroundAsColor}
-                  onBlur={(e) => {
+                  value={backgroundAsColor || DEFAULT_COLOR}
+                  onChange={(e) => {
                     if (e.target.value) {
                       onChange({ background: e.target.value });
                     }
@@ -116,7 +117,7 @@ export default class StageSettings extends React.Component {
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <div class="form-check">
+              <div className="form-check">
                 <label className="form-check-label">
                   <input
                     className="form-check-input"

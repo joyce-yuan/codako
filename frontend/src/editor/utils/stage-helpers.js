@@ -112,5 +112,10 @@ export function getStageScreenshot(stage, { size }) {
     );
   });
 
-  return canvas.toDataURL("image/jpeg", 0.8);
+  try {
+    return canvas.toDataURL("image/jpeg", 0.8);
+  } catch (err) {
+    console.warn(`getStageScreenshot: ${err.toString()}`);
+  }
+  return null;
 }
