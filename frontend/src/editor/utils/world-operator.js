@@ -175,8 +175,42 @@ export default function WorldOperator(previousWorld, characters) {
 
     function checkRuleScenario(rule) {
       const ruleActorsUnmatched = Object.values(rule.actors);
-
       const stageActorsForRuleActorIds = {};
+
+      /** Ben Note: We now allow conditions to specify other actors on the RHS
+       * of the equation. This, combined with the fact that you can `ignoreExtraActors`,
+       * means there are edge cases (two actors of the same character with different
+       * variable values on top of each other) where we need a proper "constraint solver".
+       *
+       * This is currently a single pass matching system that looks at each square in the rule
+       * once. I think we'd need to look at each square, identify posibilities, and then
+       * narrow the solution space by evaluating constraints.
+       *
+       * Since this is such an edge case, I'm implementing a simpler solution:
+       *
+       * When a condition references another actor at a position, we find stage actors
+       * at that position that match (via stageActorsForReferencedActorId) and match
+       * if ANY of them meet the condition. Given two conditions on an actor in the same tile,
+       * the actor used to match condition 1 may not be the one used to match condition 2.
+       *
+       * To avoid circular dependencies (eg: Rule 1 says A match B and rule 2 says B match A),
+       * we don't evaluate other referential conditions when looking for matches in
+       * stageActorsForReferencedActorId. (See () => false passed on 207 below.)
+       */
+      const stageActorsForReferencedActorId = (otherActorId) => {
+        if (stageActorsForRuleActorIds[otherActorId]) {
+          return stageActorsForRuleActorIds[otherActorId];
+        }
+        const orule = rule.actors[otherActorId];
+        const stagePosition = wrappedPosition(pointByAdding(me.position, orule.position));
+        if (!stagePosition) {
+          return [];
+        }
+        const ocandidates = actorsAtPosition(stagePosition);
+        return ocandidates.filter((ostage) =>
+          actorsMatch(ostage, orule, rule.conditions[otherActorId] || {}, () => false),
+        );
+      };
 
       for (let x = rule.extent.xmin; x <= rule.extent.xmax; x++) {
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y++) {
@@ -185,41 +219,6 @@ export default function WorldOperator(previousWorld, characters) {
           const stageActorsAtPos = actorsAtPosition(
             wrappedPosition(pointByAdding(me.position, { x, y })),
           );
-
-          /** Ben Note: We now allow conditions to specify other actors on the RHS
-           * of the equation. This, combined with the fact that you can `ignoreExtraActors`,
-           * means there are edge cases (two actors of the same character with different
-           * variable values on top of each other) where we need a proper "constraint solver".
-           *
-           * This is currently a single pass matching system that looks at each square in the rule
-           * once. I think we'd need to look at each square, identify posibilities, and then
-           * narrow the solution space by evaluating constraints.
-           *
-           * Since this is such an edge case, I'm implementing a simpler solution:
-           *
-           * When a condition references another actor at a position, we find stage actors
-           * at that position that match (via stageActorsForReferencedActorId) and match
-           * if ANY of them meet the condition. Given two conditions on an actor in the same tile,
-           * the actor used to match condition 1 may not be the one used to match condition 2.
-           *
-           * To avoid circular dependencies (eg: Rule 1 says A match B and rule 2 says B match A),
-           * we don't evaluate other referential conditions when looking for matches in
-           * stageActorsForReferencedActorId. (See () => false passed on 207 below.)
-           */
-          const stageActorsForReferencedActorId = (otherActorId) => {
-            if (stageActorsForRuleActorIds[otherActorId]) {
-              return stageActorsForRuleActorIds[otherActorId];
-            }
-            const orule = rule.actors[otherActorId];
-            const stagePosition = wrappedPosition(pointByAdding(me.position, orule.position));
-            if (!stagePosition) {
-              return [];
-            }
-            const ocandidates = actorsAtPosition(stagePosition);
-            return ocandidates.filter((ostage) =>
-              actorsMatch(ostage, orule, rule.conditions[otherActorId] || {}, () => false),
-            );
-          };
 
           const ruleActorsAtPos = ruleActorsUnmatched.filter(
             (r) => r.position.x === x && r.position.y === y,
@@ -260,6 +259,32 @@ export default function WorldOperator(previousWorld, characters) {
           return false;
         }
       }
+
+      // If there are global conditions, check those - they can reference the actor
+      // variable values, so we need to do this last.
+      for (const condition of Object.values(rule.conditions.globals || {})) {
+        const leftValue = globals[condition.globalId].value;
+
+        if (condition.value.constant) {
+          const rightValue = condition.value.constant;
+          if (!comparatorMatches(condition.comparator, leftValue, rightValue)) {
+            return false;
+          }
+        } else if (condition.value.actorId) {
+          const rightActor = stageActorsForReferencedActorId(condition.value.actorId);
+          const rightValue = getVariableValue(
+            rightActor,
+            characters[rightActor.characterId],
+            condition.value.variableId,
+          );
+          if (!comparatorMatches(condition.comparator, leftValue, rightValue)) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+
       return stageActorsForRuleActorIds;
     }
 
@@ -271,6 +296,9 @@ export default function WorldOperator(previousWorld, characters) {
         }
       }
       for (const actorId of Object.keys(rule.conditions)) {
+        if (actorId === "globals") {
+          continue;
+        }
         requiredActorIds.push(actorId);
         for (const condition of Object.values(rule.conditions[actorId])) {
           if (condition && condition.value && condition.value.actorId) {
@@ -355,6 +383,29 @@ export default function WorldOperator(previousWorld, characters) {
       actors[actor.id] = Object.assign(deepClone(actor), {
         position: pointByAdding(actor.position, offset),
       });
+    }
+    for (const cond of Object.values(rule.conditions.globals || {})) {
+      if (!globals[cond.globalId]) {
+        continue;
+      }
+      if (cond.value.constant) {
+        globals[cond.globalId].value = cond.value.constant;
+      } else if (cond.value.actorId) {
+        const actor = actors[cond.value.actorId];
+        globals[cond.globalId].value = getVariableValue(
+          actor,
+          characters[actor.characterId],
+          cond.value.variableId,
+        );
+      }
+    }
+    for (const cond of Object.values(rule.conditions.globals || {})) {
+      if (!globals[cond.globalId]) {
+        continue;
+      }
+      if (cond.value.globalId) {
+        globals[cond.globalId].value = globals[cond.value.globalId].value;
+      }
     }
 
     // lay out the before state and apply any rules that apply to

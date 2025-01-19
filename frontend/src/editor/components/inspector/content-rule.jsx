@@ -18,6 +18,7 @@ export default class ContentRule extends React.Component {
   static contextTypes = {
     onRuleChanged: PropTypes.func,
     characters: PropTypes.object,
+    world: PropTypes.object,
   };
 
   constructor(props, context) {
@@ -34,7 +35,7 @@ export default class ContentRule extends React.Component {
   };
 
   render() {
-    const { characters } = this.context;
+    const { characters, world } = this.context;
     const { rule } = this.props;
     const { collapsed } = this.state;
 
@@ -49,6 +50,7 @@ export default class ContentRule extends React.Component {
               key={`${a.id}-${key}`}
               actor={a}
               actors={rule.actors}
+              world={world}
               condition={toV2Condition(key, value)}
               characters={characters}
             />,

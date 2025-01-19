@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FreeformConditionRow } from "./condition-rows";
+import { FreeformConditionRow, GlobalConditionRow } from "./condition-rows";
 
 import { updateRecordingCondition } from "../../../actions/recording-actions";
 import { getCurrentStageForWorld } from "../../../utils/selectors";
@@ -18,6 +18,22 @@ export class RecordingConditions extends React.Component {
     const stage = getCurrentStageForWorld(beforeWorld);
 
     const rows = [];
+
+    Object.entries(conditions.globals || {}).forEach(([key, value]) => {
+      rows.push(
+        <GlobalConditionRow
+          key={`global-${key}`}
+          actors={stage.actors}
+          world={beforeWorld}
+          condition={toV2Condition(key, value)}
+          characters={characters}
+          onChange={(enabled, rest) =>
+            dispatch(updateRecordingCondition("globals", key, { enabled, ...rest }))
+          }
+        />,
+      );
+    });
+
     Object.values(stage.actors).forEach((a) => {
       if (!pointIsInside(a.position, extent)) {
         return;
@@ -31,6 +47,7 @@ export class RecordingConditions extends React.Component {
               key={`${a.id}-${key}`}
               actor={a}
               actors={stage.actors}
+              world={beforeWorld}
               condition={toV2Condition(key, value)}
               characters={characters}
               onChange={(enabled, rest) =>
@@ -59,11 +76,23 @@ export class RecordingConditions extends React.Component {
           this.setState({ dropping: false });
         }}
         onDrop={(e) => {
-          const { type, value, actorId, variableId } = JSON.parse(
+          const { type, value, actorId, variableId, globalId } = JSON.parse(
             e.dataTransfer.getData("variable"),
           );
           this.setState({ dropping: false });
+
           if (
+            globalId &&
+            Object.values(conditions.globals || {}).some(
+              (t) => t && t.type === type && t.globalId === globalId,
+            )
+          ) {
+            window.alert(`A condition for this global has already been added to the list.`);
+            return;
+          }
+
+          if (
+            variableId &&
             conditions[actorId] &&
             Object.values(conditions[actorId]).some(
               (t) => t && t.type === type && t.variableId === variableId,
@@ -72,12 +101,14 @@ export class RecordingConditions extends React.Component {
             window.alert(`A condition for this actor ${type} has already been added to the list.`);
             return;
           }
+
           dispatch(
-            updateRecordingCondition(actorId, `v2-${Date.now()}`, {
+            updateRecordingCondition(globalId ? "globals" : actorId, `v2-${Date.now()}`, {
               enabled: true,
               type: type,
               comparator: "=",
               variableId: variableId,
+              globalId: globalId,
               value: value,
             }),
           );

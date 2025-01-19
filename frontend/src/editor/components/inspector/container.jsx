@@ -27,6 +27,7 @@ class Container extends React.Component {
   };
 
   static childContextTypes = {
+    world: PropTypes.object,
     characters: PropTypes.object,
     evaluatedRuleIdsForActor: PropTypes.object,
     selectedToolId: PropTypes.string,
@@ -43,6 +44,7 @@ class Container extends React.Component {
     const { characters, selectedToolId, world, actor } = this.props;
 
     return {
+      world: world,
       characters: characters,
       selectedToolId: selectedToolId,
       evaluatedRuleIdsForActor: actor ? world.evaluatedRuleIds[actor.id] : {},

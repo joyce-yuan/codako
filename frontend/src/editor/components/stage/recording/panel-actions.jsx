@@ -2,9 +2,14 @@ import PropTypes from "prop-types";
 import React from "react";
 import { updateRecordingActionPrefs } from "../../../actions/recording-actions";
 import { changeActor } from "../../../actions/stage-actions";
+import { upsertGlobal } from "../../../actions/world-actions";
 import { actionsForRecording } from "../../../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../../../utils/selectors";
-import { applyVariableOperation } from "../../../utils/stage-helpers";
+import {
+  applyVariableOperation,
+  buildActorPath,
+  getVariableValue,
+} from "../../../utils/stage-helpers";
 
 import ActorDeltaCanvas from "./actor-delta-canvas";
 import ActorPositionCanvas from "./actor-position-canvas";
@@ -54,25 +59,34 @@ export default class RecordingActions extends React.Component {
     recording: PropTypes.object,
   };
 
-  _onChangeVariableOperation = (actorId, variableId, operation) => {
-    this.props.dispatch(updateRecordingActionPrefs(actorId, { [variableId]: operation }));
-  };
-
   _onChangeVariableValue = (actorId, variableId, operation, value) => {
     const {
       dispatch,
+      characters,
       recording: { beforeWorld, afterWorld },
     } = this.props;
     const beforeStage = getCurrentStageForWorld(beforeWorld);
     const afterStage = getCurrentStageForWorld(afterWorld);
 
-    const actor = beforeStage.actors[actorId];
-    const after = applyVariableOperation(actor.variableValues[variableId], operation, value);
-    dispatch(
-      changeActor(afterStage.id, actorId, {
-        variableValues: { [variableId]: after },
-      }),
-    );
+    if (actorId === "globals") {
+      console.log(beforeWorld.globals, beforeWorld);
+      const beforeValue = beforeWorld.globals[variableId].value || 0;
+      const after = applyVariableOperation(beforeValue, operation, value);
+      dispatch(updateRecordingActionPrefs("globals", { [variableId]: operation }));
+      dispatch(upsertGlobal(afterWorld.id, variableId, { value: after }));
+    } else {
+      const actor = beforeStage.actors[actorId];
+      const character = characters[actor.characterId];
+      const beforeValue = getVariableValue(actor, character, variableId);
+      const after = applyVariableOperation(beforeValue, operation, value);
+
+      dispatch(updateRecordingActionPrefs(actorId, { [variableId]: operation }));
+      dispatch(
+        changeActor(buildActorPath(afterWorld.id, afterStage.id, actorId), {
+          variableValues: { [variableId]: after },
+        }),
+      );
+    }
   };
 
   _renderAction(a, idx) {
@@ -126,7 +140,9 @@ export default class RecordingActions extends React.Component {
               onChangeValue={(v) =>
                 this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)
               }
-              onChangeOperation={(op) => this._onChangeVariableOperation("globals", a.variable, op)}
+              onChangeOperation={(op) =>
+                this._onChangeVariableValue(a.actorId, a.variable, op, a.value)
+              }
             />
             <VariableBlock name={character.variables[a.variable].name} />
             of
@@ -165,8 +181,8 @@ export default class RecordingActions extends React.Component {
     }
 
     if (a.type === "global") {
-      const valueType = afterWorld.globals[a.global].type;
-      if (valueType === "stage") {
+      const declaration = afterWorld.globals[a.global];
+      if (declaration.type === "stage") {
         return (
           <li key={idx}>
             Set
@@ -181,12 +197,12 @@ export default class RecordingActions extends React.Component {
           <VariableActionPicker
             value={a.value}
             operation={a.operation}
-            onChangeValue={(v) =>
-              this._onChangeVariableValue(a.actorId, a.variable, a.operation, v)
+            onChangeValue={(v) => this._onChangeVariableValue("globals", a.global, a.operation, v)}
+            onChangeOperation={(op) =>
+              this._onChangeVariableValue("globals", a.global, op, a.value)
             }
-            onChangeOperation={(op) => this._onChangeVariableOperation("globals", a.variable, op)}
           />
-          <VariableBlock name={a.global} />
+          <VariableBlock name={declaration.name} />
         </li>
       );
     }

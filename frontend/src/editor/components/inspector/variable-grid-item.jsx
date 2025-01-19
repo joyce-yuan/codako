@@ -31,12 +31,20 @@ export default class VariableGridItem extends React.Component {
     event.dataTransfer.effectAllowed = "copy";
     event.dataTransfer.setData(
       "variable",
-      JSON.stringify({
-        type: "variable",
-        actorId: this.props.actorId,
-        variableId: this.props.definition.id,
-        value: { constant: displayValue || 0 },
-      }),
+      JSON.stringify(
+        this.props.actorId
+          ? {
+              type: "variable",
+              actorId: this.props.actorId,
+              variableId: this.props.definition.id,
+              value: { constant: displayValue || 0 },
+            }
+          : {
+              type: "variable",
+              globalId: this.props.definition.id,
+              value: { constant: displayValue || 0 },
+            },
+      ),
     );
     event.dataTransfer.setData("variable-type:variable", "true");
   };
@@ -75,9 +83,9 @@ export default class VariableGridItem extends React.Component {
 
     return (
       <div
-        className={`variable-box draggable-${!!actorId} variable-set-${value !== undefined}`}
+        className={`variable-box draggable-true variable-set-${value !== undefined}`}
         onClick={(e) => onClick(definition.id, e)}
-        draggable={!!actorId}
+        draggable
         onDragStart={this._onDragStart}
       >
         <TapToEditLabel

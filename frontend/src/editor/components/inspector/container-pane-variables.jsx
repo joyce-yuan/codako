@@ -241,12 +241,12 @@ export default class ContainerPaneVariables extends React.Component {
             key={definition.id}
             definition={definition}
             value={actorValues[definition.id]}
+            onClick={this._onClickVar}
             onChangeDefinition={this._onChangeVarDefinition}
             onChangeValue={this._onChangeVarValue}
             onBlurValue={(id, value) =>
               this._onChangeVarValue(id, coerceToType(value, definition.type))
             }
-            onClick={this._onClickVar}
           />
         ))}
         {Object.values(character.variables).length === 0 && (
@@ -266,6 +266,7 @@ export default class ContainerPaneVariables extends React.Component {
             key={definition.id}
             definition={definition}
             value={definition.value || ""}
+            onClick={this._onClickGlobal}
             onChangeDefinition={this._onChangeGlobalDefinition}
             onChangeValue={(id, value) => this._onChangeGlobalDefinition(id, { value })}
             onBlurValue={(id, value) =>
@@ -273,7 +274,6 @@ export default class ContainerPaneVariables extends React.Component {
                 value: coerceToType(value, definition.type),
               })
             }
-            onClick={this._onClickGlobal}
           />
         ))}
       </div>

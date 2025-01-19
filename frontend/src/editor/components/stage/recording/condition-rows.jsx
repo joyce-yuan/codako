@@ -4,10 +4,10 @@ import React from "react";
 import { getVariableValue } from "../../../utils/stage-helpers";
 import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
 
-export class FreeformConditionRow extends React.Component {
+export class GlobalConditionRow extends React.Component {
   static propTypes = {
-    actor: PropTypes.object,
     actors: PropTypes.object,
+    world: PropTypes.object,
     characters: PropTypes.object,
     onChange: PropTypes.func,
     condition: PropTypes.shape({
@@ -19,10 +19,14 @@ export class FreeformConditionRow extends React.Component {
           actorId: PropTypes.string.isRequired,
           variableId: PropTypes.string,
         }),
+        PropTypes.shape({
+          globalId: PropTypes.string,
+        }),
       ]),
       type: PropTypes.string,
       comparator: PropTypes.string,
       variableId: PropTypes.string,
+      globalId: PropTypes.string,
     }),
   };
 
@@ -35,9 +39,117 @@ export class FreeformConditionRow extends React.Component {
   };
 
   render() {
-    const { condition, actor, actors, characters, onChange } = this.props;
+    const { world, condition, actor, actors, characters, onChange } = this.props;
 
-    const character = characters[actor.characterId];
+    const valueActor = condition.value.actorId ? actors[condition.value.actorId] : null;
+    const valueCharacter = valueActor ? characters[valueActor.characterId] : null;
+
+    const onDropValue = (e) => {
+      if (e.dataTransfer.types.includes("variable")) {
+        const { actorId, globalId, variableId, type } = JSON.parse(
+          e.dataTransfer.getData("variable"),
+        );
+        if (type === "variable") {
+          onChange(true, {
+            ...condition,
+            value:
+              globalId === condition.globalId
+                ? { constant: world.global[condition.globalId].value }
+                : { actorId, globalId, variableId },
+          });
+          e.stopPropagation();
+        }
+      }
+      this.setState({ droppingValue: false });
+    };
+
+    return (
+      <li className={`enabled-true`}>
+        <div className="left">
+          <VariableBlock name={world.globals[condition.globalId].name} />
+          {onChange ? (
+            <ComparatorSelect
+              type={condition.type}
+              value={condition.comparator}
+              onChange={(e) => onChange(true, { ...condition, comparator: e.target.value })}
+            />
+          ) : (
+            ` ${condition.comparator} `
+          )}
+          <div
+            className={`right dropping-${this.state.droppingValue}`}
+            title="Drop a variable or appearance here to create an expression linking two variables."
+            onDragOver={(e) => {
+              if (e.dataTransfer.types.includes(`variable-type:variable`)) {
+                this.setState({ droppingValue: true });
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
+            onDragLeave={() => {
+              this.setState({ droppingValue: false });
+            }}
+            onDrop={onDropValue}
+          >
+            <FreeformConditionValue
+              world={world}
+              actor={actor}
+              condition={condition}
+              valueActor={valueActor}
+              valueCharacter={valueCharacter}
+              disambiguate={false}
+            />
+          </div>
+        </div>
+        {onChange && (
+          <div onClick={() => onChange(false)} className="condition-remove">
+            <div />
+          </div>
+        )}
+      </li>
+    );
+  }
+}
+
+export class FreeformConditionRow extends React.Component {
+  static propTypes = {
+    actor: PropTypes.object,
+    actors: PropTypes.object,
+    world: PropTypes.object,
+    characters: PropTypes.object,
+    onChange: PropTypes.func,
+    condition: PropTypes.shape({
+      value: PropTypes.oneOfType([
+        PropTypes.shape({
+          constant: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        }),
+        PropTypes.shape({
+          actorId: PropTypes.string.isRequired,
+          variableId: PropTypes.string,
+        }),
+        PropTypes.shape({
+          globalId: PropTypes.string,
+        }),
+      ]),
+      type: PropTypes.string,
+      comparator: PropTypes.string,
+      variableId: PropTypes.string,
+      globalId: PropTypes.string,
+    }),
+  };
+
+  static defaultProps = {
+    enabled: false,
+  };
+
+  state = {
+    droppingValue: false,
+  };
+
+  render() {
+    const { world, condition, actor, actors, characters, onChange } = this.props;
+
+    const character = actor && characters[actor.characterId];
 
     const valueActor = condition.value.actorId ? actors[condition.value.actorId] : actor;
     const valueCharacter = valueActor ? characters[valueActor.characterId] : character;
@@ -46,11 +158,13 @@ export class FreeformConditionRow extends React.Component {
 
     const onDropValue = (e) => {
       if (e.dataTransfer.types.includes("variable")) {
-        const { actorId, variableId, type } = JSON.parse(e.dataTransfer.getData("variable"));
+        const { actorId, globalId, variableId, type } = JSON.parse(
+          e.dataTransfer.getData("variable"),
+        );
         if (type === condition.type) {
           onChange(true, {
             ...condition,
-            value: actorId === actor.id ? {} : { actorId, variableId },
+            value: actorId === actor.id ? {} : { actorId, globalId, variableId },
           });
           e.stopPropagation();
         }
@@ -79,7 +193,7 @@ export class FreeformConditionRow extends React.Component {
             className={`right dropping-${this.state.droppingValue}`}
             title="Drop a variable or appearance here to create an expression linking two variables."
             onDragOver={(e) => {
-              if (e.dataTransfer.types.includes(`variable-type:${type}`)) {
+              if (e.dataTransfer.types.includes(`variable-type:${condition.type}`)) {
                 this.setState({ droppingValue: true });
                 e.preventDefault();
                 e.stopPropagation();
@@ -91,6 +205,7 @@ export class FreeformConditionRow extends React.Component {
             onDrop={onDropValue}
           >
             <FreeformConditionValue
+              world={world}
               actor={actor}
               condition={condition}
               valueActor={valueActor}
@@ -109,13 +224,20 @@ export class FreeformConditionRow extends React.Component {
   }
 }
 
-const FreeformConditionValue = ({ actor, condition, valueActor, valueCharacter, disambiguate }) => {
-  const { value, type, variableId } = condition;
+const FreeformConditionValue = ({
+  world,
+  actor,
+  condition,
+  valueActor,
+  valueCharacter,
+  disambiguate,
+}) => {
+  const { value, type, variableId, globalId } = condition;
 
   if (!value) {
     return <div>Empty</div>;
   }
-  if (valueActor !== actor) {
+  if (valueActor && valueActor !== actor) {
     return (
       <span>
         <ActorBlock character={valueCharacter} actor={valueActor} disambiguate={disambiguate} />
@@ -135,7 +257,13 @@ const FreeformConditionValue = ({ actor, condition, valueActor, valueCharacter, 
     return <AppearanceBlock character={valueCharacter} appearanceId={valueActor.appearance} />;
   }
   if (type === "variable") {
-    return <code>{getVariableValue(valueActor, valueCharacter, variableId)}</code>;
+    if (variableId) {
+      return <code>{getVariableValue(valueActor, valueCharacter, variableId)}</code>;
+    } else if (globalId) {
+      return <code>{world.globals[globalId].value}</code>;
+    } else {
+      return <code>unknown</code>;
+    }
   }
   return undefined;
 };
