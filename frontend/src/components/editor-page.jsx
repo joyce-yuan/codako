@@ -1,11 +1,12 @@
-import React from "react";
 import PropTypes from "prop-types";
-import { replace, push } from "react-router-redux";
+import React from "react";
 import { connect } from "react-redux";
+import { push, replace } from "react-router-redux";
 
-import RootEditor from "../editor/root-editor";
 import { createWorld } from "../actions/main-actions";
+import RootEditor from "../editor/root-editor";
 import StoreProvider from "../editor/store-provider";
+import { deepClone } from "../editor/utils/utils";
 import { makeRequest } from "../helpers/api";
 
 import PageMessage from "./common/page-message";
@@ -151,7 +152,7 @@ class EditorPage extends React.Component {
         try {
           this.setState({ world, loaded: true });
         } catch (err1) {
-          world.data = JSON.parse(JSON.stringify(world.data));
+          world.data = deepClone(world.data);
           delete world.data.ui;
           delete world.data.recording;
           try {

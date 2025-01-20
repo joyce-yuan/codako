@@ -193,7 +193,7 @@ export class FreeformConditionRow extends React.Component {
             className={`right dropping-${this.state.droppingValue}`}
             title="Drop a variable or appearance here to create an expression linking two variables."
             onDragOver={(e) => {
-              if (e.dataTransfer.types.includes(`variable-type:${condition.type}`)) {
+              if (e.dataTransfer.types.includes(`variable-type:${condition.ActorBlocktype}`)) {
                 this.setState({ droppingValue: true });
                 e.preventDefault();
                 e.stopPropagation();

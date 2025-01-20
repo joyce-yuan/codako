@@ -235,7 +235,7 @@ class PixelSelectionTool extends PixelTool {
 
     const imageData = props.imageData.clone();
     for (const key of Object.keys(props.interactionPixels)) {
-      const [x, y] = key.split(",").map((v) => v / 1);
+      const [x, y] = key.split(",").map(Number);
       imageData.fillPixelRGBA(x, y, 0, 0, 0, 0);
     }
     return Object.assign({}, super.mouseup(props), {

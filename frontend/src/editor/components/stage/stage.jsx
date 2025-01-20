@@ -21,14 +21,7 @@ import {
 } from "../../actions/stage-actions";
 import { paintCharacterAppearance, select, selectToolId } from "../../actions/ui-actions";
 
-import {
-  STAGE_CELL_SIZE,
-  TOOL_IGNORE_SQUARE,
-  TOOL_PAINT,
-  TOOL_POINTER,
-  TOOL_RECORD,
-  TOOL_TRASH,
-} from "../../constants/constants";
+import { STAGE_CELL_SIZE, TOOLS } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
 import { buildActorPath, pointIsOutside } from "../../utils/stage-helpers";
 
@@ -243,13 +236,13 @@ class Stage extends React.Component {
 
     const { selectedToolId, dispatch, world } = this.props;
     switch (selectedToolId) {
-      case TOOL_PAINT:
+      case TOOLS.PAINT:
         dispatch(paintCharacterAppearance(actor.characterId, actor.appearance));
         break;
-      case TOOL_TRASH:
+      case TOOLS.TRASH:
         dispatch(deleteActor(this._actorPath(actor.id)));
         break;
-      case TOOL_RECORD:
+      case TOOLS.RECORD:
         dispatch(
           setupRecordingForActor({
             characterId: actor.characterId,
@@ -258,16 +251,16 @@ class Stage extends React.Component {
           }),
         );
         break;
-      case TOOL_IGNORE_SQUARE:
+      case TOOLS.IGNORE_SQUARE:
         dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
         break;
-      case TOOL_POINTER:
+      case TOOLS.POINTER:
         dispatch(recordClickForGameState(world.id, actor.id));
         break;
     }
 
-    if (selectedToolId !== TOOL_POINTER && !event.shiftKey) {
-      dispatch(selectToolId(TOOL_POINTER));
+    if (selectedToolId !== TOOLS.POINTER && !event.shiftKey) {
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
@@ -276,18 +269,18 @@ class Stage extends React.Component {
     event.stopPropagation();
 
     const { selectedToolId, dispatch } = this.props;
-    if (selectedToolId === TOOL_IGNORE_SQUARE) {
+    if (selectedToolId === TOOLS.IGNORE_SQUARE) {
       dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
     }
 
-    if (selectedToolId !== TOOL_POINTER && !event.shiftKey) {
-      dispatch(selectToolId(TOOL_POINTER));
+    if (selectedToolId !== TOOLS.POINTER && !event.shiftKey) {
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
   _onSelectActor = (actor) => {
     const { selectedToolId, dispatch } = this.props;
-    if (selectedToolId === TOOL_POINTER) {
+    if (selectedToolId === TOOLS.POINTER) {
       dispatch(select(actor.characterId, this._actorPath(actor.id)));
     }
   };

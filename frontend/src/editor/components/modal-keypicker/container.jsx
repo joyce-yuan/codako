@@ -9,6 +9,7 @@ import ModalFooter from "reactstrap/lib/ModalFooter";
 import { changeCharacter } from "../../actions/characters-actions";
 import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
 import { findRule } from "../../utils/stage-helpers";
+import { deepClone } from "../../utils/utils";
 import Keyboard from "./keyboard";
 
 class Container extends React.Component {
@@ -37,7 +38,7 @@ class Container extends React.Component {
 
   _onCloseAndSave = () => {
     const { dispatch, characterId, ruleId, characters } = this.props;
-    const rules = JSON.parse(JSON.stringify(characters[characterId].rules));
+    const rules = deepClone(characters[characterId].rules);
 
     if (!this.state.keyCode) {
       return window.alert(

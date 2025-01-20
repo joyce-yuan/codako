@@ -1,11 +1,11 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 
-import { TOOL_POINTER, TOOL_IGNORE_SQUARE } from "../../constants/constants";
 import classNames from "classnames";
-import { selectToolId } from "../../actions/ui-actions";
 import Button from "reactstrap/lib/Button";
+import { selectToolId } from "../../actions/ui-actions";
+import { TOOLS } from "../../constants/constants";
 
 class StageRecordingTools extends React.Component {
   static propTypes = {
@@ -15,7 +15,7 @@ class StageRecordingTools extends React.Component {
 
   render() {
     const { selectedToolId, dispatch } = this.props;
-    const selected = selectedToolId === TOOL_IGNORE_SQUARE;
+    const selected = selectedToolId === TOOLS.IGNORE_SQUARE;
 
     return (
       <Button
@@ -24,7 +24,7 @@ class StageRecordingTools extends React.Component {
           selected: selected,
           enabled: true,
         })}
-        onClick={() => dispatch(selectToolId(selected ? TOOL_POINTER : TOOL_IGNORE_SQUARE))}
+        onClick={() => dispatch(selectToolId(selected ? TOOLS.POINTER : TOOLS.IGNORE_SQUARE))}
       >
         <img src={new URL("../../img/ignored_square.png", import.meta.url).href} />
       </Button>

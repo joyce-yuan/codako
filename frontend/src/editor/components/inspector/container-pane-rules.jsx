@@ -4,8 +4,9 @@ import React from "react";
 import { changeCharacter } from "../../actions/characters-actions";
 import { editRuleRecording } from "../../actions/recording-actions";
 import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
-import { TOOL_POINTER } from "../../constants/constants";
+import { TOOLS } from "../../constants/constants";
 import { findRule } from "../../utils/stage-helpers";
+import { deepClone } from "../../utils/utils";
 import RuleList from "./rule-list";
 
 export default class ContainerPaneRules extends React.Component {
@@ -103,7 +104,7 @@ export default class ContainerPaneRules extends React.Component {
   };
 
   _onRuleMoved = (movingRuleId, newParentId, newParentIdx) => {
-    const rules = JSON.parse(JSON.stringify(this.props.character.rules));
+    const rules = deepClone(this.props.character.rules);
     const root = { rules };
 
     const [movingRule, oldParentRule, oldIdx] = findRule(root, movingRuleId);
@@ -128,17 +129,17 @@ export default class ContainerPaneRules extends React.Component {
 
   _onRuleDeleted = (ruleId, event) => {
     const { character, dispatch } = this.props;
-    const rules = JSON.parse(JSON.stringify(character.rules));
+    const rules = deepClone(character.rules);
     const [, parentRule, parentIdx] = findRule({ rules }, ruleId);
     parentRule.rules.splice(parentIdx, 1);
     dispatch(changeCharacter(character.id, { rules }));
     if (!event.shiftKey) {
-      dispatch(selectToolId(TOOL_POINTER));
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
   _onRuleChanged = (ruleId, changes) => {
-    const rules = JSON.parse(JSON.stringify(this.props.character.rules));
+    const rules = deepClone(this.props.character.rules);
     const [rule] = findRule({ rules }, ruleId);
     Object.assign(rule, changes);
     this.props.dispatch(changeCharacter(this.props.character.id, { rules }));

@@ -5,7 +5,7 @@ import ContentEventGroup from "./content-event-group";
 import ContentFlowGroup from "./content-flow-group";
 import ContentRule from "./content-rule";
 
-import { TOOL_TRASH } from "../../constants/constants";
+import { TOOLS } from "../../constants/constants";
 import { CONTAINER_TYPES } from "../../utils/world-constants";
 
 const DROP_INDEX_NA = 1000;
@@ -87,7 +87,7 @@ export default class RuleList extends React.Component {
 
   _onRuleClicked = (event, rule) => {
     event.stopPropagation();
-    if (this.context.selectedToolId === TOOL_TRASH) {
+    if (this.context.selectedToolId === TOOLS.TRASH) {
       this.context.onRuleDeleted(rule.id, event);
     }
   };

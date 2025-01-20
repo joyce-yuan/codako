@@ -37,7 +37,7 @@ export type RuleExtent = {
   ignored: {};
 };
 
-export type RuleTreeGroupItem = {
+export type RuleTreeEventItem = {
   type: "group-event";
   rules: RuleTreeItem[];
   event: "idle" | "key" | "click";
@@ -63,7 +63,7 @@ export type RuleTreeFlowLoopItem = {
 };
 
 export type RuleTreeItem =
-  | RuleTreeGroupItem
+  | RuleTreeEventItem
   | RuleTreeFlowItem
   | RuleTreeFlowLoopItem
   | Rule;
@@ -164,7 +164,7 @@ export type World = {
   };
 };
 
-export type GameContents = {
+export type EditorState = {
   characters: {
     [characterId: string]: Character;
   };
@@ -240,5 +240,5 @@ export type Game = {
   thumbnail: string;
   createdAt: string;
   updatedAt: string;
-  data: GameContents;
+  data: EditorState;
 };

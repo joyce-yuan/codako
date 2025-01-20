@@ -8,7 +8,7 @@ import StageControls from "./stage-controls";
 import StageRecordingControls from "./stage-recording-controls";
 import StageRecordingTools from "./stage-recording-tools";
 
-import { RECORDING_PHASE_RECORD, RECORDING_PHASE_SETUP } from "../../constants/constants";
+import { RECORDING_PHASE } from "../../constants/constants";
 import { getCurrentStageForWorld } from "../../utils/selectors";
 
 class StageContainer extends React.Component {
@@ -35,7 +35,7 @@ class StageContainer extends React.Component {
         <StageRecordingControls characters={characters} dispatch={dispatch} recording={recording} />
       );
 
-      if (recording.phase === RECORDING_PHASE_SETUP) {
+      if (recording.phase === RECORDING_PHASE.SETUP) {
         stageA = (
           <Stage
             world={recording.beforeWorld}
@@ -43,7 +43,7 @@ class StageContainer extends React.Component {
             recordingExtent={recording.extent}
           />
         );
-      } else if (recording.phase === RECORDING_PHASE_RECORD) {
+      } else if (recording.phase === RECORDING_PHASE.RECORD) {
         stageA = (
           <Stage
             style={{ marginRight: 2 }}

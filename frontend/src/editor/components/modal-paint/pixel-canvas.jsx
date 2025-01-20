@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
 import classNames from "classnames";
+import PropTypes from "prop-types";
+import React from "react";
 import CreatePixelContext from "./create-pixel-context";
 
 const SELECTION_ANTS_INTERVAL = 200;
@@ -8,7 +8,7 @@ const SELECTION_ANTS_INTERVAL = 200;
 function getEdgePixels(pixelMap) {
   const results = [];
   for (const p of Object.keys(pixelMap)) {
-    const [x, y] = p.split(",").map((v) => v / 1);
+    const [x, y] = p.split(",").map(Number);
     const left = pixelMap[`${x - 1},${y}`];
     const right = pixelMap[`${x + 1},${y}`];
     const top = pixelMap[`${x},${y - 1}`];

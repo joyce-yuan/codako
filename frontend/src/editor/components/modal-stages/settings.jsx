@@ -43,14 +43,14 @@ export default class StageSettings extends React.Component {
               className="form-control"
               type="number"
               defaultValue={width}
-              onBlur={(e) => onChange({ width: e.target.value / 1 })}
+              onBlur={(e) => onChange({ width: Number(e.target.value) })}
             />
             <span style={{ paddingLeft: 10, paddingRight: 10 }}>x</span>
             <input
               className="form-control"
               type="number"
               defaultValue={height}
-              onBlur={(e) => onChange({ height: e.target.value / 1 })}
+              onBlur={(e) => onChange({ height: Number(e.target.value) })}
             />
           </div>
         </fieldset>

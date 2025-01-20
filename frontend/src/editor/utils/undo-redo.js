@@ -1,5 +1,6 @@
 /* eslint no-unused-vars: 0 */
 import { DiffPatcher } from "jsondiffpatch/src/diffpatcher";
+import { deepClone } from "./utils";
 
 const PERFORM_UNDO = "PERFORM_UNDO";
 const PERFORM_REDO = "PERFORM_REDO";
@@ -24,7 +25,7 @@ export function redo() {
 }
 
 function shift(state, sourceStackName, targetStackName) {
-  let nextState = JSON.parse(JSON.stringify(state));
+  let nextState = deepClone(state);
   const diff = nextState[sourceStackName].pop();
   if (diff) {
     nextState = patcher.patch(nextState, diff);

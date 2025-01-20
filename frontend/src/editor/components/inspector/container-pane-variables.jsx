@@ -10,7 +10,7 @@ import { changeCharacter, deleteCharacterVariable } from "../../actions/characte
 import { changeActor } from "../../actions/stage-actions";
 import { selectToolId } from "../../actions/ui-actions";
 import { deleteGlobal, upsertGlobal } from "../../actions/world-actions";
-import { TOOL_POINTER, TOOL_TRASH } from "../../constants/constants";
+import { TOOLS } from "../../constants/constants";
 import * as CustomPropTypes from "../../constants/custom-prop-types";
 import Sprite from "../sprites/sprite";
 import { TransformImages } from "./transform-images";
@@ -18,7 +18,7 @@ import VariableGridItem from "./variable-grid-item";
 
 function coerceToType(value, type) {
   if (type === "number") {
-    return value !== "" && `${value / 1}` === value ? value / 1 : undefined;
+    return value !== "" && `${Number(value)}` === value ? Number(value) : undefined;
   }
   return value;
 }
@@ -154,11 +154,11 @@ export default class ContainerPaneVariables extends React.Component {
   // Chararacter and actor variables
 
   _onClickVar = (id, event) => {
-    if (this.context.selectedToolId === TOOL_TRASH) {
+    if (this.context.selectedToolId === TOOLS.TRASH) {
       const { character, dispatch } = this.props;
       dispatch(deleteCharacterVariable(character.id, id));
       if (!event.shiftKey) {
-        dispatch(selectToolId(TOOL_POINTER));
+        dispatch(selectToolId(TOOLS.POINTER));
       }
     }
   };
@@ -196,10 +196,10 @@ export default class ContainerPaneVariables extends React.Component {
   };
 
   _onClickGlobal = (globalId) => {
-    if (this.context.selectedToolId === TOOL_TRASH) {
+    if (this.context.selectedToolId === TOOLS.TRASH) {
       this.props.dispatch(deleteGlobal(this.props.world.id, globalId));
       if (!event.shiftKey) {
-        this.props.dispatch(selectToolId(TOOL_POINTER));
+        this.props.dispatch(selectToolId(TOOLS.POINTER));
       }
     }
   };

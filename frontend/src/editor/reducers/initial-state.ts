@@ -1,0 +1,88 @@
+import { EditorState, World } from "../../types";
+import { TOOLS, WORLDS } from "../constants/constants";
+import { nullActorPath } from "../utils/stage-helpers";
+import stage from "./initial-state-stage";
+
+const InitialWorld: World = {
+  id: WORLDS.ROOT,
+  stages: {
+    [stage.id]: stage,
+  },
+  globals: {
+    selectedStageId: {
+      id: "selectedStageId",
+      name: "Current Stage",
+      value: stage.id,
+      type: "stage",
+    },
+  },
+  input: {
+    keys: {},
+    clicks: {},
+  },
+  metadata: {
+    name: "",
+    id: 0,
+  },
+  history: [],
+  evaluatedRuleIds: {},
+};
+
+const InitialState: EditorState = {
+  version: 1,
+  characters: {},
+  world: InitialWorld,
+  undoStack: [],
+  redoStack: [],
+  ui: {
+    selectedToolId: TOOLS.POINTER,
+    selectedCharacterId: null,
+    selectedActorPath: nullActorPath(),
+    tutorial: {
+      stepIndex: 0,
+    },
+    playback: {
+      speed: 500,
+      running: false,
+    },
+    keypicker: {
+      characterId: null,
+      initialKeyCode: null,
+      ruleId: null,
+    },
+    paint: {
+      characterId: null,
+      appearanceId: null,
+    },
+    modal: {
+      openId: null,
+    },
+  },
+  recording: {
+    phase: null,
+    characterId: null,
+    actorId: null,
+    ruleId: null,
+    conditions: {},
+    extent: {
+      xmin: 0,
+      xmax: 0,
+      ymin: 0,
+      ymax: 0,
+      ignored: {},
+    },
+    prefs: {},
+    beforeWorld: {
+      ...InitialWorld,
+      id: WORLDS.BEFORE,
+      stages: {},
+    },
+    afterWorld: {
+      ...InitialWorld,
+      id: WORLDS.AFTER,
+      stages: {},
+    },
+  },
+};
+
+export default InitialState;

@@ -1,9 +1,9 @@
 import axios from "axios";
 import WorldOperator from "./frontend-editor-utils/world-operator";
-import { Actor, Game, GameContents, Rule, RuleTreeItem, World } from "./types";
+import { Actor, EditorState, Game, Rule, RuleTreeItem, World } from "./types";
 
 // Auth header for the API is a base-64 encoded username:password
-const CODAKO_AUTH = `Basic ${btoa('bengotowt123:doggums')}`;
+const CODAKO_AUTH = `Basic ${btoa("bengotowt123:doggums")}`;
 const CODAKO_GAME_ID = 53;
 
 async function run() {
@@ -28,7 +28,7 @@ async function run() {
 
   // Let's advance the state of the simulation, assuming the user is pressing
   // the right arrow key (key code 39). Note: We could do this over and over,
-  // passing the `next` value back in to a new WorldOperator in a loop. 
+  // passing the `next` value back in to a new WorldOperator in a loop.
   // We only need to save the world back to the API /if/ we want to visualize
   // it on the web to see the end result.
   world.input = {
@@ -89,7 +89,7 @@ function printActorSurroundings(mainActor: Actor, allActors: Actor[]) {
 
 function printEvaluatedRuleNames(
   next: World,
-  characters: GameContents["characters"]
+  characters: EditorState["characters"]
 ) {
   const stage = next.stages[next.globals.selectedStageId.value];
 

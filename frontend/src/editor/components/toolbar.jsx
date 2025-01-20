@@ -1,21 +1,21 @@
-import React from "react";
+import classNames from "classnames";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router";
-import classNames from "classnames";
 
 import Button from "reactstrap/lib/Button";
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import DropdownItem from "reactstrap/lib/DropdownItem";
 
 import * as actions from "../actions/ui-actions";
 import { updateWorldMetadata } from "../actions/world-actions";
+import { MODALS, TOOLS } from "../constants/constants";
 import { getCurrentStage } from "../utils/selectors";
-import { TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT, MODALS } from "../constants/constants";
-import UndoRedoControls from "./undo-redo-controls";
 import TapToEditLabel from "./tap-to-edit-label";
+import UndoRedoControls from "./undo-redo-controls";
 
 class Toolbar extends React.Component {
   static propTypes = {
@@ -134,7 +134,7 @@ class Toolbar extends React.Component {
 
         <div style={{ display: "flex", alignItems: "center" }}>
           <div className="button-group">
-            {[TOOL_POINTER, TOOL_TRASH, TOOL_RECORD, TOOL_PAINT].map(this._renderTool)}
+            {[TOOLS.POINTER, TOOLS.TRASH, TOOLS.RECORD, TOOLS.PAINT].map(this._renderTool)}
           </div>
           <UndoRedoControls />
         </div>

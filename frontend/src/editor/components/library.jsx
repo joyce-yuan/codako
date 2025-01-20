@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import classNames from "classnames";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
 
 import Button from "reactstrap/lib/Button";
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
@@ -9,21 +9,21 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 
+import { MODALS, TOOLS } from "../constants/constants";
 import { nullActorPath } from "../utils/stage-helpers";
-import { TOOL_POINTER, TOOL_RECORD, TOOL_PAINT, TOOL_TRASH, MODALS } from "../constants/constants";
 
 import {
-  createCharacter,
   changeCharacter,
-  deleteCharacter,
   changeCharacterAppearanceName,
+  createCharacter,
   createCharacterAppearance,
+  deleteCharacter,
   deleteCharacterAppearance,
 } from "../actions/characters-actions";
 
 import { setupRecordingForCharacter } from "../actions/recording-actions";
 
-import { select, selectToolId, showModal, paintCharacterAppearance } from "../actions/ui-actions";
+import { paintCharacterAppearance, select, selectToolId, showModal } from "../actions/ui-actions";
 
 import Sprite from "./sprites/sprite";
 import TapToEditLabel from "./tap-to-edit-label";
@@ -112,18 +112,18 @@ class Library extends React.Component {
 
   _onClickCharacter = (event, characterId) => {
     const { ui, dispatch } = this.props;
-    if (ui.selectedToolId === TOOL_TRASH) {
+    if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacter(characterId));
       if (!event.shiftKey) {
-        dispatch(selectToolId(TOOL_POINTER));
+        dispatch(selectToolId(TOOLS.POINTER));
       }
-    } else if (ui.selectedToolId === TOOL_PAINT) {
+    } else if (ui.selectedToolId === TOOLS.PAINT) {
       const character = this.props.characters[characterId];
       dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
-      dispatch(selectToolId(TOOL_POINTER));
-    } else if (ui.selectedToolId === TOOL_RECORD) {
+      dispatch(selectToolId(TOOLS.POINTER));
+    } else if (ui.selectedToolId === TOOLS.RECORD) {
       dispatch(setupRecordingForCharacter({ characterId }));
-      dispatch(selectToolId(TOOL_POINTER));
+      dispatch(selectToolId(TOOLS.POINTER));
     } else {
       dispatch(select(characterId, nullActorPath()));
     }
@@ -131,14 +131,14 @@ class Library extends React.Component {
 
   _onClickAppearance = (event, characterId, appearanceId) => {
     const { ui, dispatch } = this.props;
-    if (ui.selectedToolId === TOOL_TRASH) {
+    if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacterAppearance(characterId, appearanceId));
       if (!event.shiftKey) {
-        dispatch(selectToolId(TOOL_POINTER));
+        dispatch(selectToolId(TOOLS.POINTER));
       }
-    } else if (ui.selectedToolId === TOOL_PAINT) {
+    } else if (ui.selectedToolId === TOOLS.PAINT) {
       dispatch(paintCharacterAppearance(characterId, appearanceId));
-      dispatch(selectToolId(TOOL_POINTER));
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
@@ -153,7 +153,7 @@ class Library extends React.Component {
             dragType="sprite"
             character={characters[id]}
             label={characters[id].name}
-            labelEditable={ui.selectedToolId !== TOOL_TRASH}
+            labelEditable={ui.selectedToolId !== TOOLS.TRASH}
             selected={id === ui.selectedCharacterId}
             onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
             onClick={(event) => this._onClickCharacter(event, id)}
@@ -180,7 +180,7 @@ class Library extends React.Component {
             appearance={appearanceId}
             dragType="appearance"
             label={character.spritesheet.appearanceNames[appearanceId]}
-            labelEditable={ui.selectedToolId !== TOOL_TRASH}
+            labelEditable={ui.selectedToolId !== TOOLS.TRASH}
             onDoubleClick={() => dispatch(paintCharacterAppearance(character.id, appearanceId))}
             onClick={(event) => this._onClickAppearance(event, character.id, appearanceId)}
             onChangeLabel={(event) =>
