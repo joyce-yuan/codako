@@ -100,7 +100,7 @@ export function findRule(
     const n = node.rules[idx];
     if (n.id === id) {
       return [n, node, idx];
-    } else if ("rules" in n) {
+    } else if ("rules" in n && n.rules) {
       const rval = findRule(n, id);
       if (rval) {
         return rval;

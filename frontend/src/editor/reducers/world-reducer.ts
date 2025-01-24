@@ -13,7 +13,7 @@ export default function worldReducer(
   action: Actions,
   entireState: EditorState,
 ) {
-  if ("worldId" in action && action.worldId !== state.id) {
+  if ("worldId" in action && action.worldId && action.worldId !== state.id) {
     return state;
   }
 

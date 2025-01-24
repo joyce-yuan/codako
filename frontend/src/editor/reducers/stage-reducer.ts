@@ -5,7 +5,7 @@ import { Actions } from "../actions";
 import * as Types from "../constants/action-types";
 
 export default function stageReducer(state: Stage, action: Actions) {
-  if ("stageId" in action && action.stageId !== state.id) {
+  if ("stageId" in action && action.stageId && action.stageId !== state.id) {
     return state;
   }
 

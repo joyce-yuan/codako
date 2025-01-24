@@ -3,6 +3,7 @@ import {
   Actor,
   Character,
   Characters,
+  EvaluatedRuleIds,
   FrameInput,
   Globals,
   HistoryItem,
@@ -38,7 +39,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
   let globals: Globals;
   let actors: { [actorId: string]: Actor };
   let input: FrameInput;
-  let evaluatedRuleIds: { [actorId: string]: { [ruleId: string]: boolean } } = {};
+  let evaluatedRuleIds: EvaluatedRuleIds = {};
 
   function wrappedPosition({ x, y }: PositionRelativeToWorld) {
     const o = {
@@ -150,10 +151,10 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       // perf note: avoid creating empty evaluatedRuleIds entries if no rules are evaluated
       let iterations = 1;
       if ("behavior" in struct && struct.behavior === FLOW_BEHAVIORS.LOOP) {
-        if ("constant" in struct.loopCount) {
+        if ("constant" in struct.loopCount && struct.loopCount.constant) {
           iterations = struct.loopCount.constant;
         }
-        if ("variableId" in struct.loopCount) {
+        if ("variableId" in struct.loopCount && struct.loopCount.variableId) {
           const actor = actors[me.id];
           const character = characters[actor.characterId];
           iterations = getVariableValue(actor, character, struct.loopCount.variableId) ?? 0;
@@ -297,12 +298,12 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       for (const condition of Object.values(rule.conditions.globals || {})) {
         const leftValue = globals[condition.globalId].value;
 
-        if ("constant" in condition.value) {
+        if ("constant" in condition.value && condition.value.constant !== undefined) {
           const rightValue = condition.value.constant;
           if (!comparatorMatches(condition.comparator, leftValue, rightValue)) {
             return false;
           }
-        } else if ("actorId" in condition.value) {
+        } else if ("actorId" in condition.value && condition.value.actorId) {
           const { actorId, variableId } = condition.value;
           const possibleRightActors = stageActorsForReferencedActorId(actorId);
           const matched = possibleRightActors.some((rightActor) => {
@@ -366,7 +367,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
             action.operation,
             action.value,
           );
-        } else if ("actorId" in action) {
+        } else if ("actorId" in action && action.actorId) {
           // find the actor on the stage that matches
           const stageActor = stageActorForId[action.actorId];
           if (!stageActor) {
@@ -429,9 +430,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       if (!globals[cond.globalId]) {
         continue;
       }
-      if ("constant" in cond.value) {
+      if ("constant" in cond.value && cond.value.constant !== undefined) {
         globals[cond.globalId].value = cond.value.constant;
-      } else if ("actorId" in cond.value) {
+      } else if ("actorId" in cond.value && cond.value.actorId) {
         const actor = actors[cond.value.actorId];
         globals[cond.globalId].value =
           getVariableValue(actor, characters[actor.characterId], cond.value.variableId) ?? 0;
@@ -441,7 +442,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       if (!globals[cond.globalId]) {
         continue;
       }
-      if ("globalId" in cond.value) {
+      if ("globalId" in cond.value && cond.value.globalId) {
         globals[cond.globalId].value = globals[cond.value.globalId].value;
       }
     }
