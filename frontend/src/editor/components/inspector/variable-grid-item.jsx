@@ -6,6 +6,7 @@ import ConnectedStagePicker from "./connected-stage-picker";
 export default class VariableGridItem extends React.Component {
   static propTypes = {
     actorId: PropTypes.string,
+    draggable: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     definition: PropTypes.shape({
       id: PropTypes.string,
@@ -50,8 +51,16 @@ export default class VariableGridItem extends React.Component {
   };
 
   render() {
-    const { value, actorId, definition, onChangeDefinition, onChangeValue, onBlurValue, onClick } =
-      this.props;
+    const {
+      value,
+      actorId,
+      definition,
+      draggable,
+      onChangeDefinition,
+      onChangeValue,
+      onBlurValue,
+      onClick,
+    } = this.props;
     const displayValue = value !== undefined ? value : definition.defaultValue;
     const disabled = this.context.selectedToolId === "trash";
 
@@ -83,9 +92,9 @@ export default class VariableGridItem extends React.Component {
 
     return (
       <div
-        className={`variable-box draggable-true variable-set-${value !== undefined}`}
+        className={`variable-box draggable-${draggable} variable-set-${value !== undefined}`}
         onClick={(e) => onClick(definition.id, e)}
-        draggable
+        draggable={draggable}
         onDragStart={this._onDragStart}
       >
         <TapToEditLabel

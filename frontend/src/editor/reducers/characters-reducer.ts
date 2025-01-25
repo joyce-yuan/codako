@@ -1,6 +1,6 @@
 import u from "updeep";
 
-import { Actor, EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
+import { Actor, EditorState, Rule, RuleTreeEventItem, RuleTreeItem } from "../../types";
 import { Actions } from "../actions";
 import * as Types from "../constants/action-types";
 import { actionsForRecording, extentByShiftingExtent } from "../utils/recording-helpers";
@@ -146,7 +146,7 @@ export default function charactersReducer(
         }
       }
 
-      const recordedRule = {
+      const recordedRule: Omit<Rule, "id" | "name"> = {
         type: "rule" as const,
         mainActorId: recording.actorId!,
         conditions: recording.conditions,

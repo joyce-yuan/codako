@@ -16,6 +16,7 @@ export const SPEED_OPTIONS = {
   Slow: 1000,
   Normal: 500,
   Fast: 250,
+  Super: 125,
 };
 
 export enum TOOLS {

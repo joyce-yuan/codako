@@ -98,6 +98,7 @@ export class GlobalConditionRow extends React.Component {
               valueActor={valueActor}
               valueCharacter={valueCharacter}
               disambiguate={false}
+              onChange={(value) => onChange(true, { ...condition, value })}
             />
           </div>
         </div>
@@ -231,6 +232,7 @@ const FreeformConditionValue = ({
   valueActor,
   valueCharacter,
   disambiguate,
+  onChange,
 }) => {
   const { value, type, variableId, globalId } = condition;
 
@@ -260,7 +262,15 @@ const FreeformConditionValue = ({
     if (variableId) {
       return <code>{getVariableValue(valueActor, valueCharacter, variableId)}</code>;
     } else if (globalId) {
-      return <code>{world.globals[globalId].value}</code>;
+      return (
+        <code>
+          <input
+            type="number"
+            value={value.constant}
+            onChange={(e) => onChange({ constant: Number(e.target.value) })}
+          />
+        </code>
+      );
     } else {
       return <code>unknown</code>;
     }

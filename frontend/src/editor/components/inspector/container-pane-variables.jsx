@@ -237,6 +237,7 @@ export default class ContainerPaneVariables extends React.Component {
         )}
         {Object.values(character.variables).map((definition) => (
           <VariableGridItem
+            draggable={!!actor}
             actorId={actor ? actor.id : null}
             key={definition.id}
             definition={definition}
@@ -263,6 +264,7 @@ export default class ContainerPaneVariables extends React.Component {
       <div className="variables-grid">
         {Object.values(this.props.world.globals).map((definition) => (
           <VariableGridItem
+            draggable={true}
             key={definition.id}
             definition={definition}
             value={definition.value || ""}
