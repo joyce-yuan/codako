@@ -41,6 +41,15 @@ export default function uiReducer(
         selectedCharacterId: action.characterId,
         selectedActorPath: action.actorPath,
       });
+    case Types.DELETE_CHARACTER: {
+      if (state.selectedCharacterId === action.characterId) {
+        return Object.assign({}, state, {
+          selectedCharacterId: null,
+          selectedActorPath: null,
+        });
+      }
+      return state;
+    }
     case Types.UPDATE_PLAYBACK_STATE:
       return u({ playback: action.values }, state);
     case Types.UPDATE_PAINTING_STATE:
