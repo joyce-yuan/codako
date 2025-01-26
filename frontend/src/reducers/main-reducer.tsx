@@ -1,4 +1,3 @@
-import { LOCATION_CHANGE } from "react-router-redux";
 import { MainActions } from "../actions/main-actions";
 import * as Types from "../constants/action-types";
 import { MainState } from "./initial-state";
@@ -34,14 +33,14 @@ export default function mainReducer(state: MainState, action: MainActions) {
         },
       });
     }
-    case LOCATION_CHANGE: {
-      return Object.assign({}, state, {
-        network: {
-          pending: 0,
-          error: null,
-        },
-      });
-    }
+    // case LOCATION_CHANGE: {
+    //   return Object.assign({}, state, {
+    //     network: {
+    //       pending: 0,
+    //       error: null,
+    //     },
+    //   });
+    // }
     default:
       return state;
   }

@@ -21,6 +21,10 @@ class DashboardPage extends React.Component {
   }
 
   componentDidMount() {
+    if (!window.store.getState().me) {
+      window.location.href = `/login?redirectTo=/dashboard`;
+    }
+
     this.props.dispatch(fetchWorldsForUser("me"));
   }
 
@@ -103,7 +107,7 @@ function mapStateToProps(state) {
     worlds:
       state.worlds &&
       Object.values(state.worlds)
-        .filter((w) => w.userId === state.me.id)
+        .filter((w) => w.userId === state.me?.id)
         .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   };
 }

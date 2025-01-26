@@ -1,5 +1,4 @@
-import { EnterHook, IndexRoute, Route } from "react-router";
-
+import { Route, Routes } from "react-router-dom";
 import App from "./components/app";
 import DashboardPage from "./components/dashboard-page";
 import EditorPage from "./components/editor-page";
@@ -13,32 +12,23 @@ import NotFoundPage from "./components/not-found-page";
 import PlayPage from "./components/play-page";
 import ProfilePage from "./components/profile-page";
 
-const requireAuth: EnterHook = (nextState, replace) => {
-  if (!window.store.getState().me) {
-    replace({
-      pathname: "/login",
-      state: {
-        redirectTo: nextState.location.pathname,
-      },
-    });
-  }
-};
-
 export default (
-  <Route path="/" component={App}>
-    <IndexRoute component={HomePage} />
-    <Route path="explore" component={ExplorePage} />
-    <Route path="faq" component={FAQPage} />
-    <Route path="login" component={LoginPage} />
-    <Route path="join" component={JoinPage} />
-    <Route path="join-send-world" component={JoinSendWorldsPage} />
+  <Routes>
+    <Route path="/" element={<App />}>
+      <Route path="/" element={<HomePage />} />
+      <Route path="explore" element={<ExplorePage />} />
+      <Route path="faq" element={<FAQPage />} />
+      <Route path="login" element={<LoginPage />} />
+      <Route path="join" element={<JoinPage />} />
+      <Route path="join-send-world" element={<JoinSendWorldsPage />} />
 
-    <Route path="play/:worldId" component={PlayPage} />
-    <Route path="editor/:worldId" component={EditorPage} />
-    <Route path="u/:username" component={ProfilePage} />
+      <Route path="play/:worldId" element={<PlayPage />} />
+      <Route path="editor/:worldId" element={<EditorPage />} />
+      <Route path="u/:username" element={<ProfilePage />} />
 
-    <Route path="dashboard" component={DashboardPage} onEnter={requireAuth} />
+      <Route path="dashboard" element={<DashboardPage />} />
 
-    <Route path="*" component={NotFoundPage} />
-  </Route>
+      <Route path="*" element={<NotFoundPage />} />
+    </Route>
+  </Routes>
 );

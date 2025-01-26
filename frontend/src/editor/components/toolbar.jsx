@@ -1,8 +1,7 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
-import React from "react";
+import { useContext, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 import Button from "reactstrap/lib/Button";
 import ButtonDropdown from "reactstrap/lib/ButtonDropdown";
@@ -17,27 +16,21 @@ import { getCurrentStage } from "../utils/selectors";
 import TapToEditLabel from "./tap-to-edit-label";
 import UndoRedoControls from "./undo-redo-controls";
 
-class Toolbar extends React.Component {
-  static propTypes = {
-    stageName: PropTypes.string,
-    metadata: PropTypes.object,
-    selectedToolId: PropTypes.string.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    isInTutorial: PropTypes.bool,
-  };
+import { EditorContext } from "../../components/editor-page";
 
-  static contextTypes = {
-    usingLocalStorage: PropTypes.bool,
-    saveWorldAnd: PropTypes.func,
-  };
+const Toolbar = ({ selectedToolId, dispatch, metadata, stageName, isInTutorial }) => {
+  // static propTypes = {
+  //   stageName: PropTypes.string,
+  //   metadata: PropTypes.object,
+  //   selectedToolId: PropTypes.string.isRequired,
+  //   dispatch: PropTypes.func.isRequired,
+  //   isInTutorial: PropTypes.bool,
+  // };
 
-  constructor(props, context) {
-    super(props, context);
-    this.state = { open: false };
-  }
+  const { usingLocalStorage, saveWorldAnd } = useContext(EditorContext);
+  const [open, setOpen] = useState(false);
 
-  _renderTool = (toolId) => {
-    const { selectedToolId, dispatch } = this.props;
+  const _renderTool = (toolId) => {
     const classes = classNames({
       "tool-option": true,
       enabled: true,
@@ -56,24 +49,22 @@ class Toolbar extends React.Component {
     );
   };
 
-  _onNameChange = (e) => {
-    this.props.dispatch(updateWorldMetadata("root", { name: e.target.value }));
+  const _onNameChange = (e) => {
+    dispatch(updateWorldMetadata("root", { name: e.target.value }));
   };
 
-  _renderLeft() {
-    const { metadata, isInTutorial } = this.props;
-
-    if (this.context.usingLocalStorage) {
+  const _renderLeft = () => {
+    if (usingLocalStorage) {
       return (
         <div className="create-account-notice">
           <span>Your work has not been saved!</span>
           <Link
             to={{
               pathname: `/join`,
-              state: {
+              search: new URLSearchParams({
                 why: ` to save "${metadata.name}"`,
                 redirectTo: `/join-send-world?storageKey=${metadata.id}`,
-              },
+              }).toString(),
             }}
           >
             <Button color="success">Create Account</Button>
@@ -84,74 +75,60 @@ class Toolbar extends React.Component {
 
     return (
       <div style={{ display: "flex", alignItems: "center" }}>
-        <ButtonDropdown
-          data-tutorial-id="main-menu"
-          isOpen={this.state.open}
-          toggle={() => this.setState({ open: !this.state.open })}
-        >
+        <ButtonDropdown data-tutorial-id="main-menu" isOpen={open} toggle={() => setOpen(!open)}>
           <DropdownToggle>
             <i className="fa fa-ellipsis-v" />
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem onClick={() => this.context.saveWorldAnd(`/play/${metadata.id}`)}>
+            <DropdownItem onClick={() => saveWorldAnd(`/play/${metadata.id}`)}>
               Switch to Player View...
             </DropdownItem>
             <DropdownItem divider />
-            <DropdownItem onClick={() => this.props.dispatch(actions.showModal(MODALS.VIDEOS))}>
+            <DropdownItem onClick={() => dispatch(actions.showModal(MODALS.VIDEOS))}>
               Tips &amp; Tricks Videos...
             </DropdownItem>
             {!isInTutorial && (
               <DropdownItem
                 onClick={() => {
                   alert("Your current game will be saved - you can open it later from 'My Games'.");
-                  this.context.saveWorldAnd("tutorial");
+                  saveWorldAnd("tutorial");
                 }}
               >
                 Start Tutorial...
               </DropdownItem>
             )}
             <DropdownItem divider />
-            <DropdownItem onClick={() => this.context.saveWorldAnd("/dashboard")}>
-              Save &amp; Exit
-            </DropdownItem>
+            <DropdownItem onClick={() => saveWorldAnd("/dashboard")}>Save &amp; Exit</DropdownItem>
           </DropdownMenu>
         </ButtonDropdown>
-        <TapToEditLabel
-          className="world-name"
-          value={metadata.name}
-          onChange={this._onNameChange}
-        />
+        <TapToEditLabel className="world-name" value={metadata.name} onChange={_onNameChange} />
       </div>
     );
-  }
+  };
 
-  render() {
-    const { stageName, dispatch } = this.props;
+  return (
+    <div className="toolbar">
+      <div style={{ flex: 1, textAlign: "left" }}>{_renderLeft()}</div>
 
-    return (
-      <div className="toolbar">
-        <div style={{ flex: 1, textAlign: "left" }}>{this._renderLeft()}</div>
-
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div className="button-group">
-            {[TOOLS.POINTER, TOOLS.TRASH, TOOLS.RECORD, TOOLS.PAINT].map(this._renderTool)}
-          </div>
-          <UndoRedoControls />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div className="button-group">
+          {[TOOLS.POINTER, TOOLS.TRASH, TOOLS.RECORD, TOOLS.PAINT].map(_renderTool)}
         </div>
-
-        <div style={{ flex: 1, textAlign: "right" }}>
-          <Button
-            onClick={() => dispatch(actions.showModal(MODALS.STAGES))}
-            className="dropdown-toggle"
-          >
-            <img src={new URL("../img/sidebar_choose_background.png", import.meta.url).href} />
-            <span className="title">{stageName || "Untitled Stage"}</span>
-          </Button>
-        </div>
+        <UndoRedoControls />
       </div>
-    );
-  }
-}
+
+      <div style={{ flex: 1, textAlign: "right" }}>
+        <Button
+          onClick={() => dispatch(actions.showModal(MODALS.STAGES))}
+          className="dropdown-toggle"
+        >
+          <img src={new URL("../img/sidebar_choose_background.png", import.meta.url).href} />
+          <span className="title">{stageName || "Untitled Stage"}</span>
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {

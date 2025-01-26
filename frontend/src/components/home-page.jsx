@@ -1,7 +1,7 @@
-import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router";
+import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 
 import { createWorld } from "../actions/main-actions";

@@ -1,22 +1,18 @@
-import { createStore, compose, applyMiddleware } from "redux";
-import { routerMiddleware as createRouterMiddleware } from "react-router-redux";
-import { browserHistory } from "react-router";
+import { applyMiddleware, compose, createStore } from "redux";
 import reduxImmutableStateInvariant from "redux-immutable-state-invariant";
 import thunk from "redux-thunk";
 
-import rootReducer from "../reducers";
 import { sessionStorageMiddleware } from "../helpers/session-storage";
+import rootReducer from "../reducers";
 
 // thunk middleware can also accept an extra argument to be passed to each thunk action
 // https://github.com/gaearon/redux-thunk#injecting-a-custom-argument
-
-const routerMiddleware = createRouterMiddleware(browserHistory);
 
 function configureStoreProd(initialState) {
   return createStore(
     rootReducer,
     initialState,
-    compose(applyMiddleware(routerMiddleware, sessionStorageMiddleware, thunk)),
+    compose(applyMiddleware(sessionStorageMiddleware, thunk)),
   );
 }
 
@@ -26,12 +22,7 @@ function configureStoreDev(initialState) {
     rootReducer,
     initialState,
     composeEnhancers(
-      applyMiddleware(
-        reduxImmutableStateInvariant(),
-        routerMiddleware,
-        sessionStorageMiddleware,
-        thunk,
-      ),
+      applyMiddleware(reduxImmutableStateInvariant(), sessionStorageMiddleware, thunk),
     ),
   );
 

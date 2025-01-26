@@ -1,33 +1,32 @@
-import PropTypes from "prop-types";
-import React from "react";
 import { connect } from "react-redux";
-import { IndexLink, Link } from "react-router";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 
 import { logout } from "../actions/main-actions";
 
-class App extends React.Component {
-  static propTypes = {
-    me: PropTypes.object,
-    children: PropTypes.element,
-    network: PropTypes.object,
-    dispatch: PropTypes.func,
-  };
+// class App extends React.Component {
+//   static propTypes = {
+//     me: PropTypes.object,
+//     children: PropTypes.element,
+//     network: PropTypes.object,
+//     dispatch: PropTypes.func,
+//   };
 
-  _renderNav = () => {
-    const { me, dispatch } = this.props;
+export const App = ({ me, dispatch, network }) => {
+  const location = useLocation();
 
+  const _renderNav = () => {
     return (
       <nav className="navbar navbar-expand">
         <div className="container" style={{ justifyContent: "flex-start" }}>
-          <IndexLink className="navbar-brand" to="/">
+          <Link className="navbar-brand" to="/">
             Codako
-          </IndexLink>
+          </Link>
           <ul className="nav ">
             <li className="nav-item">
-              <IndexLink className="nav-link" to="/">
+              <Link className="nav-link" to="/">
                 Home
-              </IndexLink>
+              </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/faq">
@@ -75,7 +74,7 @@ class App extends React.Component {
     );
   };
 
-  _renderFooter() {
+  const _renderFooter = () => {
     return (
       <footer className="footer">
         <div className="container">
@@ -90,26 +89,34 @@ class App extends React.Component {
         </div>
       </footer>
     );
-  }
+  };
 
-  render() {
-    const { children, network } = this.props;
-    const ChildClass = children.type.WrappedComponent || children.type;
-    const { hidesNav, hidesFooter, unwrapped } =
-      (ChildClass && ChildClass.layoutConsiderations) || {};
+  // const ChildClass = children?.type.WrappedComponent || children?.type;
+  // const { hidesNav, hidesFooter, unwrapped } =
+  //   (ChildClass && ChildClass.layoutConsiderations) || {};
+  const isEditor = location.pathname.startsWith("/editor");
+  const isLogin = location.pathname.startsWith("/login");
 
-    const content = unwrapped ? children : <div className="page-content-flex">{children}</div>;
+  const hidesNav = isLogin || isEditor;
+  const hidesFooter = isLogin || isEditor;
+  const unwrapped = isEditor;
+  const content = unwrapped ? (
+    <Outlet />
+  ) : (
+    <div className="page-content-flex">
+      <Outlet />
+    </div>
+  );
 
-    return (
-      <div className="page-container">
-        {!hidesNav && this._renderNav()}
-        {content}
-        {!hidesFooter && this._renderFooter()}
-        <div className={`network-bar active-${network.pending > 0}`} />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="page-container">
+      {!hidesNav && _renderNav()}
+      {content}
+      {!hidesFooter && _renderFooter()}
+      <div className={`network-bar active-${network.pending > 0}`} />
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return Object.assign(

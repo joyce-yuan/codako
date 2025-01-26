@@ -1,5 +1,3 @@
-import { push, replace } from "react-router-redux";
-
 import { Dispatch } from "react-redux";
 import * as types from "../constants/action-types";
 import { makeRequest } from "../helpers/api";
@@ -16,7 +14,7 @@ export function logout() {
       type: types.SET_ME,
       me: null,
     });
-    dispatch(push("/"));
+    window.location.href = "/";
   };
 }
 
@@ -30,7 +28,7 @@ export function register({ username, password, email }: User, redirectTo: string
         type: types.SET_ME,
         me: Object.assign(user, { password }),
       });
-      dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
+      window.location.href = redirectTo || DEFAULT_POST_AUTH_PATH;
     });
   };
 }
@@ -49,7 +47,7 @@ export function login(
         type: types.SET_ME,
         me: Object.assign(user, { password }),
       });
-      dispatch(replace(redirectTo || DEFAULT_POST_AUTH_PATH));
+      window.location.href = redirectTo || DEFAULT_POST_AUTH_PATH;
     });
   };
 }
@@ -102,7 +100,7 @@ export function createWorld({ from, fork }: { from?: string; fork?: string } = {
     if (window.store.getState().me) {
       makeRequest<{ id: string }>(`/worlds`, { query: { from, fork }, method: "POST" }).then(
         (created) => {
-          dispatch(push(`/editor/${created.id}?${qs}`));
+          window.location.href = `/editor/${created.id}?${qs}`;
         },
       );
     } else {
@@ -114,7 +112,7 @@ export function createWorld({ from, fork }: { from?: string; fork?: string } = {
         const storageKey = `ls-${Date.now()}`;
         const storageWorld = Object.assign({}, world, { id: storageKey });
         localStorage.setItem(storageKey, JSON.stringify(storageWorld));
-        dispatch(push(`/editor/${storageKey}?localstorage=true&${qs}`));
+        window.location.href = `/editor/${storageKey}?localstorage=true&${qs}`;
       });
     }
   };
@@ -128,7 +126,7 @@ export function uploadLocalStorageWorld(storageKey: string) {
       json = { name: world.name, data: world.data, thumbnail: world.thumbnail };
     } catch (err) {
       alert(`Sorry, your world could not be uploaded. ${err}`);
-      dispatch(replace(`/dashboard`));
+      window.location.href = "/dashboard";
       return;
     }
 
@@ -144,7 +142,7 @@ export function uploadLocalStorageWorld(storageKey: string) {
           type: types.UPSERT_WORLDS,
           worlds: [Object.assign({}, created, json)],
         });
-        dispatch(replace(`/editor/${created.id}`));
+        window.location.href = `/editor/${created.id}`;
       });
     });
   };
