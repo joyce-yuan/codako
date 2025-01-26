@@ -1,5 +1,4 @@
-import { Dispatch } from "react-redux";
-import { DeepPartial } from "redux";
+import { DeepPartial, Dispatch } from "redux";
 import { Actions } from ".";
 import { ActorPath, EditorState } from "../../types";
 import * as types from "../constants/action-types";
@@ -74,7 +73,7 @@ export function paintCharacterAppearance(characterId: string, appearanceId: stri
 export function pickCharacterRuleEventKey(
   characterId: string,
   ruleId: string,
-  initialKeyCode: string,
+  initialKeyCode: string | null,
 ) {
   return (dispatch: Dispatch<Actions>) => {
     dispatch(stopPlayback());

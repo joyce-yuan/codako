@@ -320,7 +320,7 @@ export type Game = {
   userId: number;
   playCount: number;
   forkCount: number;
-  forkParent: null;
+  forkParent: Game | null;
   user: {
     id: number;
     username: string;

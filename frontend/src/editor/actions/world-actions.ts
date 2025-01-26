@@ -22,7 +22,7 @@ export type ActionUpsertGlobal = {
   changes: DeepPartial<Global>;
 };
 
-export function createGlobal(worldId: string): ActionUpsertGlobal {
+export function createGlobal(worldId?: string): ActionUpsertGlobal {
   const globalId = `${Date.now()}`;
   return {
     type: types.UPSERT_GLOBAL,

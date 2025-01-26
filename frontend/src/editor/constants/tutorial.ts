@@ -1,4 +1,4 @@
-import { Dispatch } from "react-redux";
+import { Dispatch } from "redux";
 import { EditorState, Stage } from "../../types";
 import { Actions } from "../actions";
 import { changeActor } from "../actions/stage-actions";

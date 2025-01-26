@@ -31,7 +31,7 @@
     "redux": "4",
     "redux-immutable-state-invariant": "^2.1.0",
     "redux-thunk": "2",
-    "timeago.js": "2.0.4",
+    "timeago.js": "^4.0.2",
     "updeep": "^1.2.4",
     "url-loader": "0.5.7"
   },

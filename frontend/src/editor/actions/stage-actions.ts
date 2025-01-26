@@ -1,5 +1,4 @@
-import { Dispatch } from "react-redux";
-import { DeepPartial } from "redux";
+import { DeepPartial, Dispatch } from "redux";
 import { Actor, ActorPath, Character, Stage } from "../../types";
 import * as types from "../constants/action-types";
 

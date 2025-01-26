@@ -1,19 +1,15 @@
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 
 import { logout } from "../actions/main-actions";
+import { MainState } from "../reducers/initial-state";
 
-// class App extends React.Component {
-//   static propTypes = {
-//     me: PropTypes.object,
-//     children: PropTypes.element,
-//     network: PropTypes.object,
-//     dispatch: PropTypes.func,
-//   };
-
-export const App = ({ me, dispatch, network }) => {
+const App = () => {
   const location = useLocation();
+  const me = useSelector<MainState, MainState["me"]>((state) => state.me);
+  const network = useSelector<MainState, MainState["network"]>((state) => state.network);
+  const dispatch = useDispatch();
 
   const _renderNav = () => {
     return (
@@ -91,9 +87,6 @@ export const App = ({ me, dispatch, network }) => {
     );
   };
 
-  // const ChildClass = children?.type.WrappedComponent || children?.type;
-  // const { hidesNav, hidesFooter, unwrapped } =
-  //   (ChildClass && ChildClass.layoutConsiderations) || {};
   const isEditor = location.pathname.startsWith("/editor");
   const isLogin = location.pathname.startsWith("/login");
 
@@ -118,14 +111,4 @@ export const App = ({ me, dispatch, network }) => {
   );
 };
 
-function mapStateToProps(state) {
-  return Object.assign(
-    {},
-    {
-      me: state.me,
-      network: state.network,
-    },
-  );
-}
-
-export default connect(mapStateToProps)(App);
+export default App;

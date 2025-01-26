@@ -1,5 +1,5 @@
-let states = null;
-let setorder = null;
+let states: { [id: string]: boolean } | null = null;
+let setorder: string[] | null = null;
 
 /** This implements a small LRU cache that saves the last 1000
  * toggled disclosure states to local storage. (to avoid taking
@@ -28,22 +28,24 @@ function saveToStorage() {
     console.error(err);
   }
 }
-export function isCollapsePersisted(id) {
+export function isCollapsePersisted(id: string) {
   ensureLoadedFromStorage();
-  return states[id] || false;
+  return states![id] || false;
 }
 
-export function persistCollapsedState(id, val) {
+export function persistCollapsedState(id: string, val: boolean) {
   ensureLoadedFromStorage();
   if (val) {
-    states[id] = true;
-    setorder = setorder.filter((l) => l !== id).concat([id]);
+    states![id] = true;
+    setorder = setorder!.filter((l) => l !== id).concat([id]);
     if (setorder.length > 1000) {
       const oldestId = setorder.shift();
-      delete states[oldestId];
+      if (oldestId) {
+        delete states![oldestId];
+      }
     }
   } else {
-    delete states[id];
+    delete states![id];
   }
   saveToStorage();
 }

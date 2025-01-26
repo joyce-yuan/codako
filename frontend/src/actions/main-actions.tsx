@@ -1,11 +1,11 @@
-import { Dispatch } from "react-redux";
+import { Dispatch } from "redux";
 import * as types from "../constants/action-types";
 import { makeRequest } from "../helpers/api";
 import { World } from "../types";
 
 const DEFAULT_POST_AUTH_PATH = "/dashboard";
 
-export type User = { username: string; password: string; email: string };
+export type User = { id: number; username: string; password: string; email: string };
 export type Profile = { id: number; username: string };
 
 export function logout() {
@@ -18,7 +18,7 @@ export function logout() {
   };
 }
 
-export function register({ username, password, email }: User, redirectTo: string) {
+export function register({ username, password, email }: Omit<User, "id">, redirectTo: string) {
   return function (dispatch: Dispatch<MainActions>) {
     makeRequest<User>("/users", {
       method: "POST",
@@ -89,7 +89,8 @@ export function deleteWorld(id: string) {
 }
 
 export function createWorld({ from, fork }: { from?: string; fork?: string } = {}) {
-  return function (dispatch: Dispatch<MainActions>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return function (_dispatch: Dispatch<MainActions>) {
     let qs = "";
     if (from === "tutorial") {
       qs = "tutorial=base";
@@ -131,7 +132,7 @@ export function uploadLocalStorageWorld(storageKey: string) {
     }
 
     console.log("Creating a new world");
-    makeRequest<{ id: string }>(`/worlds`, { method: "POST" }).then((created) => {
+    makeRequest<World>(`/worlds`, { method: "POST" }).then((created) => {
       console.log("Uploading localstorage data to world");
 
       makeRequest(`/worlds/${created.id}`, { method: "PUT", json }).then(() => {

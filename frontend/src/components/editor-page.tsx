@@ -1,18 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import { connect } from "react-redux";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { createWorld } from "../actions/main-actions";
+import { createWorld, User } from "../actions/main-actions";
 import RootEditor from "../editor/root-editor";
 import StoreProvider from "../editor/store-provider";
 import { deepClone } from "../editor/utils/utils";
 import { makeRequest } from "../helpers/api";
 
 import { useParams } from "react-router";
+import { MainState } from "../reducers/initial-state";
+import { Game } from "../types";
 import PageMessage from "./common/page-message";
+import { EditorContext } from "./editor-context";
 
 const APIAdapter = {
-  load: function (me, worldId) {
-    return makeRequest(`/worlds/${worldId}`).then((world) => {
+  load: function (me: User, worldId: string) {
+    return makeRequest<Game>(`/worlds/${worldId}`).then((world) => {
       if (!world || !me || world.userId !== me.id) {
         if (!me) {
           window.location.href = `login?redirectTo=/editor/${worldId}`;
@@ -23,7 +27,7 @@ const APIAdapter = {
       return Promise.resolve(world);
     });
   },
-  save: function (me, worldId, json) {
+  save: function (_me: User, worldId: string, json: any) {
     return makeRequest(`/worlds/${worldId}`, {
       method: "PUT",
       json,
@@ -32,12 +36,12 @@ const APIAdapter = {
 };
 
 const LocalStorageAdapter = {
-  load: function (me, worldId) {
+  load: function (_me: User, worldId: string) {
     let _value;
     try {
-      _value = JSON.parse(window.localStorage.getItem(worldId));
+      _value = JSON.parse(window.localStorage.getItem(worldId)!);
     } catch (err) {
-      window.alert(err.toString());
+      window.alert(`${err}`);
     }
 
     if (!_value) {
@@ -49,8 +53,8 @@ const LocalStorageAdapter = {
     }
     return Promise.resolve(_value);
   },
-  save: function (me, worldId, json) {
-    const _value = JSON.parse(window.localStorage.getItem(worldId));
+  save: function (_me: User, worldId: string, json: any) {
+    const _value = JSON.parse(window.localStorage.getItem(worldId)!);
     _value.data = json.data;
     window.localStorage.setItem(worldId, JSON.stringify(_value));
     return Promise.resolve(_value);
@@ -70,46 +74,42 @@ const LocalStorageAdapter = {
 //   }),
 // };
 
-export const EditorContext = React.createContext(null);
-// static childContextTypes = {
-//   usingLocalStorage: PropTypes.bool,
-//   saveWorldAnd: PropTypes.func,
-// };
+const EditorPage = () => {
+  const me = useSelector<MainState, User>((s) => s.me!);
+  const dispatch = useDispatch();
 
-const EditorPage = ({ me, dispatch }) => {
-  const { worldId } = useParams();
+  const worldId = useParams().worldId!;
 
   const _mounted = useRef(true);
-  const _saveTimeout = useRef(0);
-  const _savePromise = useRef(null);
-  const storeProvider = useRef();
+  const _saveTimeout = useRef<number | null>(null);
+  const _savePromise = useRef<Promise<any> | null>(null);
+  const storeProvider = useRef<StoreProvider | null>(null);
 
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
-  const [world, setWorld] = useState(null);
+  const [world, setWorld] = useState<Game | null>(null);
   const [retry, setRetry] = useState(0);
 
   const Adapter = window.location.href.includes("localstorage") ? LocalStorageAdapter : APIAdapter;
 
-  const _onBeforeUnload = () => {
-    if (_saveTimeout.current) {
-      saveWorld();
-
-      const msg = "Your changes are still saving. Are you sure you want to close the editor?";
-      event.returnValue = msg; // Gecko, Trident, Chrome 34+
-      return msg; // Gecko, WebKit, Chrome <34
-    }
-    return undefined;
-  };
-
   useEffect(() => {
+    const _onBeforeUnload = () => {
+      if (_saveTimeout.current) {
+        saveWorld();
+
+        const msg = "Your changes are still saving. Are you sure you want to close the editor?";
+        (event as any).returnValue = msg; // Gecko, Trident, Chrome 34+
+        return msg; // Gecko, WebKit, Chrome <34
+      }
+      return undefined;
+    };
     window.addEventListener("beforeunload", _onBeforeUnload);
     _mounted.current = true;
     return () => {
       window.removeEventListener("beforeunload", _onBeforeUnload);
       _mounted.current = false;
     };
-  }, []);
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -118,7 +118,7 @@ const EditorPage = ({ me, dispatch }) => {
         try {
           setWorld(loaded);
           setLoaded(true);
-        } catch (err1) {
+        } catch (err1: any) {
           loaded.data = deepClone(loaded.data);
           delete loaded.data.ui;
           delete loaded.data.recording;
@@ -126,12 +126,12 @@ const EditorPage = ({ me, dispatch }) => {
             setWorld(loaded);
             setLoaded(true);
             setRetry(1);
-          } catch (err2) {
+          } catch {
             setWorld(null);
             setError(err1.toString());
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
         setLoaded(true);
         return;
@@ -142,14 +142,14 @@ const EditorPage = ({ me, dispatch }) => {
       }
     };
     load();
-  }, [worldId]);
+  }, [me, Adapter, worldId]);
 
   const saveWorld = () => {
-    const json = storeProvider.current.getWorldSaveData();
-
-    clearTimeout(_saveTimeout.current);
-    _saveTimeout.current = null;
-
+    const json = storeProvider.current!.getWorldSaveData();
+    if (_saveTimeout.current) {
+      clearTimeout(_saveTimeout.current);
+      _saveTimeout.current = null;
+    }
     if (_savePromise.current) {
       saveWorldSoon();
       return _savePromise.current;
@@ -177,13 +177,15 @@ const EditorPage = ({ me, dispatch }) => {
   };
 
   const saveWorldSoon = () => {
-    clearTimeout(_saveTimeout.current);
+    if (_saveTimeout.current) {
+      clearTimeout(_saveTimeout.current);
+    }
     _saveTimeout.current = setTimeout(() => {
       saveWorld();
     }, 5000);
   };
 
-  const saveWorldAnd = (dest) => {
+  const saveWorldAnd = (dest: string) => {
     saveWorld().then(() => {
       if (dest === "tutorial") {
         dispatch(createWorld({ from: "tutorial" }));
@@ -205,7 +207,7 @@ const EditorPage = ({ me, dispatch }) => {
       ) : (
         <StoreProvider
           ref={(r) => (storeProvider.current = r)}
-          key={`${world.id}${retry}`}
+          key={`${world!.id}${retry}`}
           world={world}
           onWorldChanged={saveWorldSoon}
         >
@@ -216,10 +218,4 @@ const EditorPage = ({ me, dispatch }) => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    me: state.me,
-  };
-}
-
-export default connect(mapStateToProps)(EditorPage);
+export default EditorPage;

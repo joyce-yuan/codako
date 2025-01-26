@@ -16,7 +16,7 @@ import { getCurrentStage } from "../utils/selectors";
 import TapToEditLabel from "./tap-to-edit-label";
 import UndoRedoControls from "./undo-redo-controls";
 
-import { EditorContext } from "../../components/editor-page";
+import { EditorContext } from "../../components/editor-context";
 
 const Toolbar = ({ selectedToolId, dispatch, metadata, stageName, isInTutorial }) => {
   // static propTypes = {
