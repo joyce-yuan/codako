@@ -17,7 +17,7 @@ export function upsertGlobal(
 
 export type ActionUpsertGlobal = {
   type: "UPSERT_GLOBAL";
-  worldId: string;
+  worldId?: string;
   globalId: string;
   changes: DeepPartial<Global>;
 };

@@ -137,7 +137,7 @@ export type ActionUpdateKeypickerState = {
   type: "UPDATE_KEYPICKER_STATE";
   characterId: string;
   ruleId: string;
-  initialKeyCode: string;
+  initialKeyCode: string | null;
 };
 
 export type ActionUpdateTutorialState = {
