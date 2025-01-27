@@ -165,8 +165,8 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         for (const rule of rules) {
           const applied = tickRule(rule);
           evaluatedRuleIds[me.id] = evaluatedRuleIds[me.id] || {};
-          evaluatedRuleIds[me.id][rule.id] = applied;
-          evaluatedRuleIds[me.id][struct.id] = applied;
+          evaluatedRuleIds[me.id][rule.id] ||= applied;
+          evaluatedRuleIds[me.id][struct.id] ||= applied;
           if (applied && !("behavior" in struct && struct.behavior === FLOW_BEHAVIORS.ALL)) {
             break;
           }
