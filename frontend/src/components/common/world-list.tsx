@@ -29,7 +29,7 @@ const WorldList: React.FC<{
   }
 
   return (
-    <Container>
+    <div className="world-list">
       {worlds.map((world) => (
         <WorldCard
           key={world.id}
@@ -39,7 +39,7 @@ const WorldList: React.FC<{
           onDelete={() => onDeleteWorld(world)}
         />
       ))}
-    </Container>
+    </div>
   );
 };
 

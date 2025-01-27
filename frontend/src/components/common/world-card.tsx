@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { format } from "timeago.js";
 
+import { format } from "timeago.js";
 import { Game } from "../../types";
 import WorldOptionsMenu from "./world-options-menu";
 

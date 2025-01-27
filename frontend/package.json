@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "bootstrap": "4",
-    "classnames": "2.2.5",
+    "classnames": "^2.5.1",
     "core-js": "^3.39.0",
     "jquery": "3",
     "js-cookie": "2.1.3",
