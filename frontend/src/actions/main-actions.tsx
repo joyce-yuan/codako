@@ -1,12 +1,15 @@
 import { Dispatch } from "redux";
 import * as types from "../constants/action-types";
 import { makeRequest } from "../helpers/api";
-import { World } from "../types";
+import { Game, World } from "../types";
 
 const DEFAULT_POST_AUTH_PATH = "/dashboard";
 
-export type User = { id: number; username: string; password: string; email: string };
-export type Profile = { id: number; username: string };
+// unfortunately they're numbers, but I wish they were strings so making a type
+type ID = number;
+
+export type User = { id: ID; username: string; password: string; email: string };
+export type Profile = { id: ID; username: string };
 
 export function logout() {
   return function (dispatch: Dispatch<MainActions>) {
@@ -60,23 +63,23 @@ export function fetchUser(username: string) {
   };
 }
 
-export function fetchWorldsForUser(userId: string) {
+export function fetchWorldsForUser(user: string | "me") {
   return function (dispatch: Dispatch<MainActions>) {
-    makeRequest<World[]>(`/worlds`, { query: { user: userId } }).then((worlds) => {
+    makeRequest<Game[]>(`/worlds`, { query: { user: user } }).then((worlds) => {
       dispatch({ type: types.UPSERT_WORLDS, worlds });
     });
   };
 }
 
-export function fetchWorld(id: string) {
+export function fetchWorld(id: ID) {
   return function (dispatch: Dispatch<MainActions>) {
-    makeRequest<World>(`/worlds/${id}`).then((world) => {
+    makeRequest<Game>(`/worlds/${id}`).then((world) => {
       dispatch({ type: types.UPSERT_WORLDS, worlds: [world] });
     });
   };
 }
 
-export function deleteWorld(id: string) {
+export function deleteWorld(id: ID) {
   return function () {
     if (
       window.confirm("Are you sure you want to delete this world? This action cannot be undone.")
@@ -88,7 +91,7 @@ export function deleteWorld(id: string) {
   };
 }
 
-export function createWorld({ from, fork }: { from?: string; fork?: string } = {}) {
+export function createWorld({ from, fork }: { from?: ID | "tutorial"; fork?: string } = {}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return function (_dispatch: Dispatch<MainActions>) {
     let qs = "";
@@ -132,7 +135,7 @@ export function uploadLocalStorageWorld(storageKey: string) {
     }
 
     console.log("Creating a new world");
-    makeRequest<World>(`/worlds`, { method: "POST" }).then((created) => {
+    makeRequest<Game>(`/worlds`, { method: "POST" }).then((created) => {
       console.log("Uploading localstorage data to world");
 
       makeRequest(`/worlds/${created.id}`, { method: "PUT", json }).then(() => {
@@ -164,7 +167,7 @@ export type ActionUpsertProfile = {
 };
 export type ActionUpsertWorlds = {
   type: "UPSERT_WORLDS";
-  worlds: World[];
+  worlds: Game[];
 };
 export type MainActions =
   | ActionSetMe

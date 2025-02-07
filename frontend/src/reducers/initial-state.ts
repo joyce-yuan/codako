@@ -1,11 +1,11 @@
 import { Profile, User } from "../actions/main-actions";
 import * as session from "../helpers/session-storage";
-import { World } from "../types";
+import { Game } from "../types";
 
 export type MainState = {
   me: User | null;
-  worlds: { [worldId: string]: World } | null;
-  profile: { [profileId: string]: Profile };
+  worlds: { [worldId: string]: Game } | null;
+  profiles: { [username: string]: Profile };
   network: { error: Error | null; pending: number };
 };
 

@@ -11,13 +11,13 @@ export default function mainReducer(state: MainState, action: MainActions) {
     }
     case Types.UPSERT_PROFILE: {
       return Object.assign({}, state, {
-        profiles: Object.assign({}, state.profile, {
+        profiles: Object.assign({}, state.profiles, {
           [action.profile.username]: action.profile,
         }),
       });
     }
     case Types.UPSERT_WORLDS: {
-      const hash = Object.assign({}, state.worlds);
+      const hash = state.worlds ? Object.assign({}, state.worlds) : {};
       for (const w of action.worlds) {
         hash[w.id] = w;
       }
