@@ -1,7 +1,7 @@
-import { World } from "./entity/world";
-import { User } from "./entity/user";
 import { DataSource } from "typeorm";
 import { logger } from "../logger";
+import { User } from "./entity/user";
+import { World } from "./entity/world";
 
 //Do not remove this or your migrations will silently run on no database at all
 require("dotenv").config();
@@ -12,7 +12,7 @@ const url =
 export const AppDataSource = new DataSource({
   url: url,
   type: "postgres",
-  synchronize: false,
+  synchronize: true,
   logging: true,
   maxQueryExecutionTime: 30000,
   entities: [User, World],
