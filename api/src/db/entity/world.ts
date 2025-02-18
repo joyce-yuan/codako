@@ -3,7 +3,7 @@ import { User } from "./user";
 
 @Entity({ name: "worlds" })
 export class World {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: "text" })
@@ -15,10 +15,10 @@ export class World {
   @Column({ type: "text" })
   thumbnail: string;
 
-  @Column({ type: "int8" })
+  @Column({ type: "int8", default: 0 })
   playCount: number;
 
-  @Column({ type: "int8" })
+  @Column({ type: "int8", default: 0 })
   forkCount: number;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "NOW()" })
@@ -36,7 +36,7 @@ export class World {
   @ManyToOne(() => World, { persistence: false, nullable: true })
   forkParent: World | null;
 
-  @Column()
+  @Column({ default: null })
   forkParentId: number | null;
 
   serialize(): any {
