@@ -1,5 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
+import Button from "reactstrap/lib/Button";
+import { makeRequest } from "../../../helpers/api";
+
 // import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
 const DEFAULT_COLOR = "#005392";
@@ -7,6 +10,55 @@ export default class StageSettings extends React.Component {
   static propTypes = {
     stage: PropTypes.object,
     onChange: PropTypes.func,
+  };
+
+  state = {
+    backgroundPrompt: "",
+    isGenerating: false
+  };
+
+  _onGenerateBackground = async () => {
+    const { onChange } = this.props;
+    const { backgroundPrompt } = this.state;
+    const stageName = this.props.stage.name.replace(/\s+/g, '_'); // Replace spaces with underscores
+    const worldId = this.props.stage.worldId;
+
+    if (!backgroundPrompt) {
+      alert("Please enter a description for the background");
+      return;
+    }
+
+    this.setState({ isGenerating: true });
+    try {
+      // First generate the image with OpenAI
+      const fileName = `${Date.now()}-${stageName}-background`;
+      const data = await makeRequest(`/generate-background?prompt=${encodeURIComponent(backgroundPrompt)}&filename=${encodeURIComponent(fileName)}`);
+      if (data.imageUrl) {
+        // onChange({ background: `url(${data.imageUrl})` });
+        // Then store it permanently in our system
+        // const savedImage = await makeRequest('/api/images', {
+        //   method: 'POST',
+        //   json: {
+        //     url: data.imageUrl,
+        //     prompt: backgroundPrompt,
+        //     type: 'generated'
+        //   }
+        // });
+        
+        // Use the permanent URL from our storage
+        onChange({ 
+          background: `url(${data.imageUrl})` 
+        });
+      } else {
+        console.error("Failed to generate background:", data.error);
+        alert("Failed to generate background. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error generating background:", error);
+      alert("Error generating background. Please try again.");
+    } finally {
+      this.setState({ isGenerating: false });
+    }
   };
 
   render() {
@@ -138,6 +190,30 @@ export default class StageSettings extends React.Component {
                     }
                   }}
                 />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Describe your background..."
+                  value={this.state.backgroundPrompt}
+                  onChange={(e) => this.setState({ backgroundPrompt: e.target.value })}
+                  style={{ marginBottom: 5 }}
+                />
+                <Button
+                  className="btn btn-primary"
+                  onClick={this._onGenerateBackground}
+                  disabled={this.state.isGenerating}
+                >
+                  {this.state.isGenerating ? (
+                    <span>
+                      <i className="fa fa-spinner fa-spin" style={{ marginRight: '5px' }} />
+                      Generating...
+                    </span>
+                  ) : (
+                    'Generate Background'
+                  )}
+                </Button>
               </div>
             </div>
           </div>

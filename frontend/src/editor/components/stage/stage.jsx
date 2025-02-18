@@ -395,7 +395,14 @@ class Stage extends React.Component {
               position: "absolute",
               width: stage.width * STAGE_CELL_SIZE,
               height: stage.height * STAGE_CELL_SIZE,
-              background: `url('/src/editor/img/board-grid.png') top left / 40px, ${stage.background}${stage.background?.includes("url(") ? " 50% 50% / cover" : ""}`,
+              // background: `url('/src/editor/img/board-grid.png') top left / 40px, ${stage.background}${stage.background?.includes("url(") ? " 50% 50% / cover" : ""}`,
+              background: `url('/src/editor/img/board-grid.png') top left / 40px, ${
+                typeof stage.background === "string"
+                  ? stage.background
+                  : stage.background?.url
+                  ? `url(${stage.background.url})`
+                  : ""
+              }${(typeof stage.background === "string" ? stage.background : stage.background?.url)?.includes("url(") ? " 50% 50% / cover" : ""}`,
             }}
           />
           {Object.values(stage.actors).map((actor) => {
