@@ -2,18 +2,19 @@
 
 import React from "react";
 
-import Toolbar from "./components/toolbar";
 import Library from "./components/library";
+import Toolbar from "./components/toolbar";
 
+import InspectorContainer from "./components/inspector/container";
 import StageContainer from "./components/stage/container";
 import TutorialContainer from "./components/tutorial/container";
-import InspectorContainer from "./components/inspector/container";
 
-import VideosContainer from "./components/modal-videos/container";
-import PaintContainer from "./components/modal-paint/container";
-import KeypickerContainer from "./components/modal-keypicker/container";
-import StagesContainer from "./components/modal-stages/container";
 import ExploreCharactersContainer from "./components/modal-explore-characters/container";
+import KeypickerContainer from "./components/modal-keypicker/container";
+import PaintContainer from "./components/modal-paint/container";
+import StagesContainer from "./components/modal-stages/container";
+import VideosContainer from "./components/modal-videos/container";
+import { StageImagesLoader } from "./components/stage/stage-images-loader";
 
 import "./styles/editor.scss";
 
@@ -37,6 +38,7 @@ export default class RootEditor extends React.Component {
           <PaintContainer />
           <KeypickerContainer />
           <StagesContainer />
+          <StageImagesLoader />
           <VideosContainer />
           <ExploreCharactersContainer />
         </div>

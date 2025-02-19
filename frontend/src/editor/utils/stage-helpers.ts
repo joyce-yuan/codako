@@ -110,6 +110,38 @@ export function findRule(
   return null;
 }
 
+let bgImages: { [url: string]: HTMLImageElement } = {};
+
+function cssURLToURL(cssUrl: string) {
+  if (cssUrl.includes("url(")) {
+    return cssUrl.split("url(").pop()!.slice(0, -1).replace(/['"]$/, "").replace(/^['"]/, "");
+  }
+  return null;
+}
+
+export function prepareCrossoriginImages(stages: Stage[]) {
+  const next: { [url: string]: HTMLImageElement } = {};
+
+  for (const stage of stages) {
+    const url = cssURLToURL(stage.background);
+    if (!url) continue;
+
+    next[url] = bgImages[url];
+    if (!next[url]) {
+      const background = new Image();
+      background.crossOrigin = "anonymous";
+      background.src = stage.background
+        .split("url(")
+        .pop()!
+        .slice(0, -1)
+        .replace(/['"]$/, "")
+        .replace(/^['"]/, "");
+      next[url] = background;
+    }
+  }
+  bgImages = next;
+}
+
 export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
   const { characters } = window.editorStore.getState();
 
@@ -123,11 +155,12 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
   if (!context) {
     return;
   }
-  if (stage.background.includes("url(")) {
-    const background = new Image();
-    background.crossOrigin = "anonymous";
-    background.src = stage.background.split("url(").pop()!.slice(0, -1);
-    context.drawImage(background, 0, 0, canvas.width, canvas.height);
+  const backgroundUrl = cssURLToURL(stage.background);
+  if (backgroundUrl) {
+    const backgroundImage = bgImages[backgroundUrl];
+    if (backgroundImage) {
+      context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    }
   } else {
     context.fillStyle = stage.background;
     context.fillRect(0, 0, canvas.width, canvas.height);
