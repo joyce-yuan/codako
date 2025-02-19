@@ -1,11 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 import express from "express";
 import fs from "fs";
 import https from "https";
-import multer from 'multer';
+import multer from "multer";
 import OpenAI from "openai";
 import { userFromBasicAuth } from "src/middleware";
-
 
 // Initialize OpenAI API client
 
@@ -91,69 +90,70 @@ router.get("/generate-background", userFromBasicAuth, async (req, res) => {
     console.log("Downloading background image from URL:", imageUrl);
 
     // Download the image using https
-    https.get(imageUrl, (imageResponse) => {
-      const data: Buffer[] = [];
+    https
+      .get(imageUrl, (imageResponse) => {
+        const data: Buffer[] = [];
 
-      imageResponse.on("data", (chunk) => {
-        data.push(chunk);
-      });
-
-      imageResponse.on("end", async () => {
-        try {
-          const imageBuffer = Buffer.concat(data);
-
-          // Upload the image to Supabase
-          const publicUrl = await uploadImageToSupabase(imageBuffer, filename, "image/png");
-
-          console.log("Uploaded to Supabase:", publicUrl);
-
-        // Save the image locally
-        // fs.writeFileSync("background.png", imageBuffer);
-        // console.log("Background image saved locally as 'background.png'");
-
-        // Set CORS headers
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Content-Type", "application/json");
-        res.json({ 
-          success: true, 
-          message: "Background generated successfully",
-          imageUrl: publicUrl
+        imageResponse.on("data", (chunk) => {
+          data.push(chunk);
         });
-      } catch (err) {
-        console.error("Error processing image:", err);
-        res.status(500).json({ error: "Failed to process image" });
-      }
+
+        imageResponse.on("end", async () => {
+          try {
+            const imageBuffer = Buffer.concat(data);
+
+            // Upload the image to Supabase
+            const publicUrl = await uploadImageToSupabase(imageBuffer, filename, "image/png");
+
+            console.log("Uploaded to Supabase:", publicUrl);
+
+            // Save the image locally
+            // fs.writeFileSync("background.png", imageBuffer);
+            // console.log("Background image saved locally as 'background.png'");
+
+            // Set CORS headers
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Content-Type", "application/json");
+            res.json({
+              success: true,
+              message: "Background generated successfully",
+              imageUrl: publicUrl,
+            });
+          } catch (err) {
+            console.error("Error processing image:", err);
+            res.status(500).json({ error: "Failed to process image" });
+          }
+        });
+      })
+      .on("error", (err) => {
+        console.error("Error downloading the image:", err);
+        res.status(500).json({ error: "Failed to download the image" });
       });
-    }).on("error", (err) => {
-      console.error("Error downloading the image:", err);
-      res.status(500).json({ error: "Failed to download the image" });
-    });
   } catch (error) {
     console.error("Error generating background:", error);
     res.status(500).json({ error: "Failed to generate background" });
   }
 });
 
-
 // Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post('/upload-image', upload.single('image'), async (req, res) => {
+router.post("/upload-image", upload.single("image"), async (req, res) => {
   try {
     const file = req.file;
-    if (!file) return res.status(400).json({ error: 'No file uploaded' });
+    if (!file) return res.status(400).json({ error: "No file uploaded" });
 
     const { buffer, originalname } = file;
 
     // Upload the image to Supabase Storage
     const { data, error } = await supabase.storage
-      .from('background-images') // Replace with your bucket name
+      .from("background-images") // Replace with your bucket name
       .upload(`backgrounds/${originalname}`, buffer, {
         contentType: file.mimetype,
         upsert: true, // Overwrite if the file already exists
@@ -165,13 +165,13 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
 
     // Get the public URL of the uploaded image
     const publicUrl = supabase.storage
-      .from('background-images') // Replace with your bucket name
+      .from("background-images") // Replace with your bucket name
       .getPublicUrl(data.path).data.publicUrl;
 
     res.json({ publicUrl });
   } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: "Failed to upload image" });
   }
 });
 
