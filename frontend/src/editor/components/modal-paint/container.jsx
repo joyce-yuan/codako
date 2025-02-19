@@ -67,7 +67,9 @@ class Container extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = Object.assign({}, INITIAL_STATE);
+    this.state = Object.assign({}, INITIAL_STATE, {
+      isGeneratingSprite: false,
+    });
   }
 
   componentDidMount() {
@@ -315,6 +317,8 @@ class Container extends React.Component {
     // const simulatedImageDataURL = "data:image/png;base64,..."; // Replace with actual API call
 
     // Call the backend API
+
+    this.setState({ isGeneratingSprite: true });
     try {
       const data = await makeRequest(`/generate-sprite?prompt=${encodeURIComponent(prompt)}`);
       if (data.imageUrl) {
@@ -325,7 +329,25 @@ class Container extends React.Component {
       }
     } catch (error) {
       console.error("Error fetching sprite:", error);
+    } finally {
+      this.setState({ isGeneratingSprite: false });
     }
+  };
+
+  _onDownloadImage = () => {
+    const { imageData } = this.state;
+    const { characterId, characters, appearanceId } = this.props;
+    const canvas = document.createElement('canvas');
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    const ctx = canvas.getContext('2d');
+    ctx.putImageData(imageData, 0, 0);
+
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    const fileName = characterId && appearanceId ? `${characters[characterId].name}_${appearanceId}.png` : 'sprite.png';
+    link.download = fileName;
+    link.click();
   };
 
   render() {
@@ -408,6 +430,11 @@ class Container extends React.Component {
                 <label htmlFor="hiddenFileInput" className="dropdown-item">
                   Import Image from File...
                 </label>
+                <DropdownItem
+                  onClick={this._onDownloadImage}
+                >
+                  Download Sprite as PNG
+                </DropdownItem>
               </DropdownMenu>
             </ButtonDropdown>
           </div>
@@ -435,7 +462,19 @@ class Container extends React.Component {
                     value={this.state.spriteDescription || ""}
                     onChange={(e) => this.setState({ spriteDescription: e.target.value })}
                   />
-                  <Button onClick={this._onGenerateSprite}>Generate Sprite</Button>
+                  <Button
+                    onClick={this._onGenerateSprite}
+                    disabled={this.state.isGeneratingSprite}
+                  >
+                    {this.state.isGeneratingSprite ? (
+                      <span>
+                        <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
+                        Generating...
+                      </span>
+                    ) : (
+                      "Generate Sprite"
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
