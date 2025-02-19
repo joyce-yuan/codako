@@ -365,7 +365,7 @@ class Stage extends React.Component {
       selected = stage.actors[selectedActorPath.actorId];
     }
 
-    if (stage.background === "url(/Layer0_2.png)") {
+    if (stage.background.includes("/Layer0_2.png")) {
       stage.background = `url(${new URL(`/src/editor/img/backgrounds/Layer0_2.png`, import.meta.url).href})`;
     }
     return (
@@ -400,8 +400,8 @@ class Stage extends React.Component {
                 typeof stage.background === "string"
                   ? stage.background
                   : stage.background?.url
-                  ? `url(${stage.background.url})`
-                  : ""
+                    ? `url(${stage.background.url})`
+                    : ""
               }${(typeof stage.background === "string" ? stage.background : stage.background?.url)?.includes("url(") ? " 50% 50% / cover" : ""}`,
             }}
           />

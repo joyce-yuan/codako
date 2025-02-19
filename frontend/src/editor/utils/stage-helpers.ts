@@ -113,6 +113,9 @@ export function findRule(
 let bgImages: { [url: string]: HTMLImageElement } = {};
 
 function cssURLToURL(cssUrl: string) {
+  if (cssUrl.includes("/Layer0_2.png")) {
+    return new URL(`/src/editor/img/backgrounds/Layer0_2.png`, import.meta.url).href;
+  }
   if (cssUrl.includes("url(")) {
     return cssUrl.split("url(").pop()!.slice(0, -1).replace(/['"]$/, "").replace(/^['"]/, "");
   }
@@ -130,12 +133,7 @@ export function prepareCrossoriginImages(stages: Stage[]) {
     if (!next[url]) {
       const background = new Image();
       background.crossOrigin = "anonymous";
-      background.src = stage.background
-        .split("url(")
-        .pop()!
-        .slice(0, -1)
-        .replace(/['"]$/, "")
-        .replace(/^['"]/, "");
+      background.src = url;
       next[url] = background;
     }
   }
