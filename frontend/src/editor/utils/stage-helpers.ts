@@ -125,6 +125,7 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
   }
   if (stage.background.includes("url(")) {
     const background = new Image();
+    background.crossOrigin = "anonymous";
     background.src = stage.background.split("url(").pop()!.slice(0, -1);
     context.drawImage(background, 0, 0, canvas.width, canvas.height);
   } else {
