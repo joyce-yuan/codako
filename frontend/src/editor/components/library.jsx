@@ -114,13 +114,9 @@ class Library extends React.Component {
     const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacter(characterId));
-      if (!event.shiftKey) {
-        dispatch(selectToolId(TOOLS.POINTER));
-      }
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       const character = this.props.characters[characterId];
       dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
-      dispatch(selectToolId(TOOLS.POINTER));
     } else if (ui.selectedToolId === TOOLS.RECORD) {
       dispatch(setupRecordingForCharacter({ characterId }));
       dispatch(selectToolId(TOOLS.POINTER));
@@ -133,9 +129,6 @@ class Library extends React.Component {
     const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacterAppearance(characterId, appearanceId));
-      if (!event.shiftKey) {
-        dispatch(selectToolId(TOOLS.POINTER));
-      }
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       dispatch(paintCharacterAppearance(characterId, appearanceId));
       dispatch(selectToolId(TOOLS.POINTER));

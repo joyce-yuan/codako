@@ -3,8 +3,7 @@ import React from "react";
 
 import { changeCharacter } from "../../actions/characters-actions";
 import { editRuleRecording } from "../../actions/recording-actions";
-import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
-import { TOOLS } from "../../constants/constants";
+import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
 import { findRule } from "../../utils/stage-helpers";
 import { deepClone } from "../../utils/utils";
 import RuleList from "./rule-list";
@@ -133,9 +132,6 @@ export default class ContainerPaneRules extends React.Component {
     const [, parentRule, parentIdx] = findRule({ rules }, ruleId);
     parentRule.rules.splice(parentIdx, 1);
     dispatch(changeCharacter(character.id, { rules }));
-    if (!event.shiftKey) {
-      dispatch(selectToolId(TOOLS.POINTER));
-    }
   };
 
   _onRuleChanged = (ruleId, changes) => {

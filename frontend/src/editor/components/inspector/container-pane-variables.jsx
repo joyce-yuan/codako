@@ -157,9 +157,6 @@ export default class ContainerPaneVariables extends React.Component {
     if (this.context.selectedToolId === TOOLS.TRASH) {
       const { character, dispatch } = this.props;
       dispatch(deleteCharacterVariable(character.id, id));
-      if (!event.shiftKey) {
-        dispatch(selectToolId(TOOLS.POINTER));
-      }
     }
   };
 

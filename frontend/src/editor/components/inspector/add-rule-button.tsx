@@ -15,7 +15,8 @@ import {
   setupRecordingForActor,
   setupRecordingForCharacter,
 } from "../../actions/recording-actions";
-import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
+import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
+import { TOOLS } from "../../constants/constants";
 
 const RuleAddButton = ({
   character,
@@ -32,8 +33,10 @@ const RuleAddButton = ({
   const _onCreateRule = () => {
     if (actor) {
       dispatch(setupRecordingForActor({ characterId: character.id, actor }));
+      dispatch(selectToolId(TOOLS.POINTER));
     } else {
       dispatch(setupRecordingForCharacter({ characterId: character.id }));
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
