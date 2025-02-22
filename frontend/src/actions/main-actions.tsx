@@ -122,6 +122,10 @@ export function uploadLocalStorageWorld(storageKey: string) {
     let json = null;
     try {
       const world = JSON.parse(window.localStorage.getItem(storageKey)!);
+      if (world.uploadedAsId) {
+        window.location.href = `/editor/${world.uploadedAsId}`;
+        return;
+      }
       json = { name: world.name, data: world.data, thumbnail: world.thumbnail };
     } catch (err) {
       alert(`Sorry, your world could not be uploaded. ${err}`);

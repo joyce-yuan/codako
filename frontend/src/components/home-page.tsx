@@ -51,7 +51,7 @@ const HomePage = () => {
             <div className="col-md-12">
               <h2>Create your own games!</h2>
               <div>
-                <p>Codako is a game programming tool designed for young learners ages 6-12.</p>
+                <p>Codako is a game programming tool designed for young learners ages 6-14.</p>
                 <br />
                 {me ? (
                   <div style={{ display: "inline-flex", gap: 16, margin: "auto" }}>
@@ -82,8 +82,8 @@ const HomePage = () => {
               </h3>
               <p>
                 Use Codako's built-in drawing tools to create characters and place them into your
-                game world. You can create mario-style adventure games, simulations, zelda-style
-                exploration games, and more!
+                game world. You can create mario-style adventure games, simulations, puzzle
+                challenges, and more!
               </p>
             </div>
             <div className="col-md-4">
@@ -117,9 +117,9 @@ const HomePage = () => {
               <h3>Based on research</h3>
               <p>
                 Codako is heavily inspired by the KidSIM research conducted by Apple's Advanced
-                Technologies Group in the late 1990s, which identified the potential
-                programming-by-demonstration environments had for engaging and teaching core
-                concepts.
+                Technologies Group in the late 1990s, which showed how programming-by-demonstration
+                could introduce object-oriented concepts and bring the joy of programming to young
+                people.
               </p>
             </div>
             <div className="offset-md-2 col-md-3">

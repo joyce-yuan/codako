@@ -1,7 +1,7 @@
 import React from "react";
 import Col from "reactstrap/lib/Col";
-import Row from "reactstrap/lib/Row";
 import Container from "reactstrap/lib/Container";
+import Row from "reactstrap/lib/Row";
 
 export default class FAQPage extends React.Component {
   render() {
@@ -65,8 +65,8 @@ export default class FAQPage extends React.Component {
             <p>
               Codako runs in a web browser and all of your game information is stored in the cloud.
               There's nothing to download, and no plugins are required. From a technical
-              perspective, Codako is written in ES2016 JavaScript (React, Redux) and HTML5. The
-              Codako backend is a NodeJS application.
+              perspective, Codako is written in TypeScript (React, Redux) and HTML5. The Codako
+              backend is a NodeJS application.
             </p>
             <h5>Q: Is Codako COPPA complaint?</h5>
             <p>
