@@ -78,7 +78,7 @@ class LibraryItem extends React.Component {
     return (
       <div
         className={classNames({ item: true, selected: selected })}
-        draggable
+        draggable={labelEditable}
         onDragStart={this._onDragStart}
         onClick={onClick}
         onDoubleClick={onDoubleClick}
@@ -131,7 +131,6 @@ class Library extends React.Component {
       dispatch(deleteCharacterAppearance(characterId, appearanceId));
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       dispatch(paintCharacterAppearance(characterId, appearanceId));
-      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
@@ -146,7 +145,7 @@ class Library extends React.Component {
             dragType="sprite"
             character={characters[id]}
             label={characters[id].name}
-            labelEditable={ui.selectedToolId !== TOOLS.TRASH}
+            labelEditable={ui.selectedToolId === TOOLS.POINTER}
             selected={id === ui.selectedCharacterId}
             onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
             onClick={(event) => this._onClickCharacter(event, id)}
@@ -173,7 +172,7 @@ class Library extends React.Component {
             appearance={appearanceId}
             dragType="appearance"
             label={character.spritesheet.appearanceNames[appearanceId]}
-            labelEditable={ui.selectedToolId !== TOOLS.TRASH}
+            labelEditable={ui.selectedToolId === TOOLS.POINTER}
             onDoubleClick={() => dispatch(paintCharacterAppearance(character.id, appearanceId))}
             onClick={(event) => this._onClickAppearance(event, character.id, appearanceId)}
             onChangeLabel={(event) =>

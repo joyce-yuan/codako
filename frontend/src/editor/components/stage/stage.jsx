@@ -243,13 +243,8 @@ class Stage extends React.Component {
         dispatch(deleteActor(this._actorPath(actor.id)));
         break;
       case TOOLS.RECORD:
-        dispatch(
-          setupRecordingForActor({
-            characterId: actor.characterId,
-            actor: actor,
-            ruleId: null,
-          }),
-        );
+        dispatch(setupRecordingForActor({ characterId: actor.characterId, actor, ruleId: null }));
+        dispatch(selectToolId(TOOLS.POINTER));
         break;
       case TOOLS.IGNORE_SQUARE:
         dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
@@ -257,10 +252,6 @@ class Stage extends React.Component {
       case TOOLS.POINTER:
         dispatch(recordClickForGameState(world.id, actor.id));
         break;
-    }
-
-    if (selectedToolId !== TOOLS.POINTER && !event.shiftKey) {
-      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 
@@ -272,8 +263,12 @@ class Stage extends React.Component {
     if (selectedToolId === TOOLS.IGNORE_SQUARE) {
       dispatch(toggleSquareIgnored(this._getPositionForEvent(event)));
     }
+  };
 
-    if (selectedToolId !== TOOLS.POINTER && !event.shiftKey) {
+  _onRightClickStage = (event) => {
+    event.preventDefault();
+    const { selectedToolId, dispatch } = this.props;
+    if (selectedToolId !== TOOLS.POINTER) {
       dispatch(selectToolId(TOOLS.POINTER));
     }
   };
@@ -386,6 +381,7 @@ class Stage extends React.Component {
           onDrop={this._onDrop}
           onKeyDown={this._onKeyDown}
           onBlur={this._onBlur}
+          onContextMenu={this._onRightClickStage}
           onClick={this._onClickStage}
           tabIndex={0}
         >

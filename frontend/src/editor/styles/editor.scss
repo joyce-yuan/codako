@@ -171,7 +171,7 @@ $create-account-notice-color: #e6dac1;
           margin-right: 0;
         }
         img {
-          padding: 0 2px;
+          margin: 0 2px;
         }
       }
     }
@@ -500,8 +500,10 @@ $create-account-notice-color: #e6dac1;
       .item {
         padding: 10px;
         text-align: center;
-        cursor: grab;
 
+        &[draggable=true] {
+          cursor: grab;
+        }
         .name {
           padding-top: 2px;
           font-size: 0.9em;
@@ -630,7 +632,7 @@ $create-account-notice-color: #e6dac1;
     background-color: #c6c6c6;
     box-sizing: content-box;
     margin: 8px 0;
-    &.draggable-true {
+    &[draggable=true] {
       cursor: grab;
     }
     &.variable-set-true {
@@ -652,9 +654,11 @@ $create-account-notice-color: #e6dac1;
       text-align: center;
       width: 110px;
       height: 36px;
-      padding: 3px 0;
+      padding: 5px 0;
       font-size: 1.2em;
       font-weight: bold;
+    }
+    input.value {
       cursor: text;
     }
 

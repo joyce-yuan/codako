@@ -54,11 +54,7 @@ class AppearanceGridItem extends React.Component {
     const { spritesheet, appearanceId, onChange } = this.props;
 
     return (
-      <div
-        className={`variable-box draggable-true variable-set-true`}
-        draggable
-        onDragStart={this._onDragStart}
-      >
+      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
         <div className="name">Appearance</div>
         <ButtonDropdown
           size="sm"
@@ -113,11 +109,7 @@ class TransformGridItem extends React.Component {
     const { transform, onChange } = this.props;
 
     return (
-      <div
-        className={`variable-box draggable-true variable-set-true`}
-        draggable
-        onDragStart={this._onDragStart}
-      >
+      <div className={`variable-box variable-set-true`} draggable onDragStart={this._onDragStart}>
         <div className="name">Direction</div>
         <ButtonDropdown
           size="sm"
@@ -234,7 +226,8 @@ export default class ContainerPaneVariables extends React.Component {
         )}
         {Object.values(character.variables).map((definition) => (
           <VariableGridItem
-            draggable={!!actor}
+            disabled={this.context.selectedToolId !== TOOLS.POINTER}
+            draggable={!!actor && this.context.selectedToolId === TOOLS.POINTER}
             actorId={actor ? actor.id : null}
             key={definition.id}
             definition={definition}
@@ -262,6 +255,7 @@ export default class ContainerPaneVariables extends React.Component {
         {Object.values(this.props.world.globals).map((definition) => (
           <VariableGridItem
             draggable={true}
+            disabled={this.context.selectedToolId !== TOOLS.POINTER}
             key={definition.id}
             definition={definition}
             value={definition.value || ""}

@@ -7,6 +7,7 @@ export default class VariableGridItem extends React.Component {
   static propTypes = {
     actorId: PropTypes.string,
     draggable: PropTypes.bool,
+    disabled: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     definition: PropTypes.shape({
       id: PropTypes.string,
@@ -55,6 +56,7 @@ export default class VariableGridItem extends React.Component {
       value,
       actorId,
       definition,
+      disabled,
       draggable,
       onChangeDefinition,
       onChangeValue,
@@ -62,7 +64,6 @@ export default class VariableGridItem extends React.Component {
       onClick,
     } = this.props;
     const displayValue = value !== undefined ? value : definition.defaultValue;
-    const disabled = this.context.selectedToolId === "trash";
 
     let content = null;
 
@@ -92,7 +93,7 @@ export default class VariableGridItem extends React.Component {
 
     return (
       <div
-        className={`variable-box draggable-${draggable} variable-set-${value !== undefined}`}
+        className={`variable-box variable-set-${value !== undefined}`}
         onClick={(e) => onClick(definition.id, e)}
         draggable={draggable}
         onDragStart={this._onDragStart}
