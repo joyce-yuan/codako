@@ -93,7 +93,7 @@ export function deleteWorld(id: ID) {
 
 export function createWorld({ from, fork }: { from?: ID | "tutorial"; fork?: string } = {}) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return function (_dispatch: Dispatch<MainActions>) {
+  return async function (_dispatch: Dispatch<MainActions>) {
     let qs = "";
     if (from === "tutorial") {
       qs = "tutorial=base";
@@ -108,16 +108,11 @@ export function createWorld({ from, fork }: { from?: ID | "tutorial"; fork?: str
         },
       );
     } else {
-      if (!from) {
-        alert("You need to create an account to create worlds from scratch!");
-        return;
-      }
-      makeRequest<World>(`/worlds/${from}`).then((world) => {
-        const storageKey = `ls-${Date.now()}`;
-        const storageWorld = Object.assign({}, world, { id: storageKey });
-        localStorage.setItem(storageKey, JSON.stringify(storageWorld));
-        window.location.href = `/editor/${storageKey}?localstorage=true&${qs}`;
-      });
+      const template = from ? await makeRequest<World>(`/worlds/${from}`) : {};
+      const storageKey = `ls-${Date.now()}`;
+      const storageWorld = Object.assign({}, template, { id: storageKey });
+      localStorage.setItem(storageKey, JSON.stringify(storageWorld));
+      window.location.href = `/editor/${storageKey}?localstorage=true&${qs}`;
     }
   };
 }
