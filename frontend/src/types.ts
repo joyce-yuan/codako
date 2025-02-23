@@ -200,7 +200,7 @@ export type Stage = {
   order: number;
   name: string;
   actors: { [actorId: string]: Actor };
-  background: ImageData | { url: string };
+  background: ImageData | string;
   height: number;
   startThumbnail: ImageData;
   tutorial_name?: string;

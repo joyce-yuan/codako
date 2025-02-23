@@ -88,6 +88,18 @@ export function hsvToRgb(h, s, v) {
 
 const tempCanvas = document.createElement("canvas");
 
+export async function getBlobFromImageData(imageData) {
+  if (!imageData) {
+    return null;
+  }
+  tempCanvas.width = imageData.width;
+  tempCanvas.height = imageData.height;
+  const tempContext = tempCanvas.getContext("2d");
+  tempContext.clearRect(0, 0, imageData.width, imageData.height);
+  tempContext.putImageData(imageData, 0, 0);
+  return new Promise((resolve) => tempCanvas.toBlob(resolve));
+}
+
 export function getDataURLFromImageData(imageData) {
   if (!imageData) {
     return null;

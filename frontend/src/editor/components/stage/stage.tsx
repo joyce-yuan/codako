@@ -444,9 +444,7 @@ export const Stage = ({
       ? stage.background.includes("/Layer0_2.png")
         ? `url(${new URL(`/src/editor/img/backgrounds/Layer0_2.png`, import.meta.url).href})`
         : stage.background
-      : stage.background?.url
-        ? `url(${stage.background.url})`
-        : "";
+      : "";
 
   const backgroundCSS = `url('/src/editor/img/board-grid.png') top left / 40px,
     ${backgroundValue}${backgroundValue?.includes("url(") ? " 50% 50% / cover" : ""}`;

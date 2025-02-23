@@ -18,7 +18,12 @@ import { changeCharacter } from "../../actions/characters-actions";
 import { paintCharacterAppearance } from "../../actions/ui-actions";
 
 import CreatePixelImageData from "./create-pixel-image-data";
-import { getDataURLFromImageData, getFlattenedImageData, getImageDataFromDataURL } from "./helpers";
+import {
+  getBlobFromImageData,
+  getDataURLFromImageData,
+  getFlattenedImageData,
+  getImageDataFromDataURL,
+} from "./helpers";
 import PixelCanvas from "./pixel-canvas";
 import PixelColorPicker, { ColorOptions } from "./pixel-color-picker";
 import PixelToolbar from "./pixel-toolbar";
@@ -159,6 +164,26 @@ class Container extends React.Component {
     dispatch(paintCharacterAppearance(null));
   };
 
+  _onClearAll = () => {
+    const empty = this.state.imageData.clone();
+    empty.clearPixelsInRect(0, 0, empty.width, empty.height);
+    this.setStateWithCheckpoint({
+      imageData: empty,
+      selectionOffset: { x: 0, y: 0 },
+      selectionImageData: null,
+    });
+  };
+
+  _onSelectAll = () => {
+    const empty = this.state.imageData.clone();
+    empty.clearPixelsInRect(0, 0, empty.width, empty.height);
+    this.setStateWithCheckpoint({
+      imageData: empty,
+      selectionOffset: { x: 0, y: 0 },
+      selectionImageData: getFlattenedImageData(this.state),
+    });
+  };
+
   _onKeyDown = (event) => {
     if ((event.key === "y" || event.key === "Z") && (event.ctrlKey || event.metaKey)) {
       this._onRedo();
@@ -169,13 +194,7 @@ class Container extends React.Component {
       event.preventDefault();
       event.stopPropagation();
     } else if (event.key === "a" && (event.ctrlKey || event.metaKey)) {
-      const empty = this.state.imageData.clone();
-      empty.clearPixelsInRect(0, 0, empty.width, empty.height);
-      this.setStateWithCheckpoint({
-        imageData: empty,
-        selectionOffset: { x: 0, y: 0 },
-        selectionImageData: getFlattenedImageData(this.state),
-      });
+      this._onSelectAll();
       event.preventDefault();
       event.stopPropagation();
     } else if (event.key === "Escape" || event.key === "Enter") {
@@ -200,32 +219,42 @@ class Container extends React.Component {
     }
   };
 
-  _onGlobalCopy = (event) => {
-    event.clipboardData.setData("dataurl", getDataURLFromImageData(this.state.selectionImageData));
-    event.clipboardData.setData("offset", JSON.stringify(this.state.selectionOffset));
+  _onGlobalCopy = async (event) => {
     event.preventDefault();
+
+    const data = {
+      "image/png": await getBlobFromImageData(this.state.selectionImageData),
+      "text/plain": JSON.stringify(this.state.selectionOffset),
+    };
+
+    const clipboardItem = new ClipboardItem(data);
+    await navigator.clipboard.write([clipboardItem]);
   };
 
   _onGlobalCut = (event) => {
     this._onGlobalCopy(event);
-    this.setStateWithCheckpoint({
-      selectionImageData: null,
-    });
+    this.setStateWithCheckpoint({ selectionImageData: null });
   };
 
-  _onGlobalPaste = (event) => {
-    const items = Array.from(event.clipboardData.items);
+  _onGlobalPaste = async (event) => {
+    const items = await navigator.clipboard.read();
+    const imageItem = items.find((i) => i.types.some((t) => t.includes("image")));
+    const offsetItem = items.find((d) => d.types.includes("text/plain"));
 
-    let dataURL = event.clipboardData.getData("dataurl");
-    const offset = event.clipboardData.getData("offset");
-
-    const imageItem = items && items.find((i) => i.type.includes("image"));
-    if (imageItem) {
-      dataURL = URL.createObjectURL(imageItem.getAsFile());
+    let offset = null;
+    try {
+      offset = offsetItem ? JSON.parse(offsetItem.getType("text/plain")) : undefined;
+    } catch (err) {
+      // not our data
     }
 
-    if (dataURL) {
-      this._onApplyExternalDataURL(dataURL, offset);
+    let image = null;
+    if (imageItem) {
+      image = await imageItem.getType("image/png");
+    }
+
+    if (image) {
+      this._onApplyExternalDataURL(URL.createObjectURL(image), offset);
     }
   };
 
@@ -242,7 +271,7 @@ class Container extends React.Component {
 
         this.setStateWithCheckpoint({
           imageData: getFlattenedImageData(this.state),
-          selectionOffset: JSON.parse(offset || `{"x":0,"y":0}`),
+          selectionOffset: offset || { x: 0, y: 0 },
           selectionImageData: nextSelectionImageData,
           tool: TOOLS.find((t) => t.name === "select"),
         });
@@ -337,15 +366,18 @@ class Container extends React.Component {
   _onDownloadImage = () => {
     const { imageData } = this.state;
     const { characterId, characters, appearanceId } = this.props;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = imageData.width;
     canvas.height = imageData.height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     ctx.putImageData(imageData, 0, 0);
 
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    const fileName = characterId && appearanceId ? `${characters[characterId].name}_${appearanceId}.png` : 'sprite.png';
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    const fileName =
+      characterId && appearanceId
+        ? `${characters[characterId].name}_${appearanceId}.png`
+        : "sprite.png";
     link.download = fileName;
     link.click();
   };
@@ -390,6 +422,32 @@ class Container extends React.Component {
                 <i className="fa fa-ellipsis-v" />
               </DropdownToggle>
               <DropdownMenu right>
+                <DropdownItem onClick={() => this._onSelectAll()}>Select All</DropdownItem>
+                {this.state.selectionImageData ? (
+                  <DropdownItem
+                    onClick={() => this.setStateWithCheckpoint({ selectionImageData: null })}
+                  >
+                    Clear Selection
+                  </DropdownItem>
+                ) : (
+                  <DropdownItem onClick={() => this._onClearAll()}>Clear All</DropdownItem>
+                )}
+                <DropdownItem
+                  disabled={!this.state.selectionImageData}
+                  onClick={(e) => this._onGlobalCut(e.nativeEvent)}
+                >
+                  Cut Selection
+                </DropdownItem>
+                <DropdownItem
+                  disabled={!this.state.selectionImageData}
+                  onClick={(e) => this._onGlobalCopy(e.nativeEvent)}
+                >
+                  Copy Selection
+                </DropdownItem>
+                <DropdownItem onClick={(e) => this._onGlobalPaste(e.nativeEvent)}>
+                  Paste
+                </DropdownItem>
+                <DropdownItem divider />
                 <DropdownItem
                   onClick={() =>
                     this._onApplyCoordinateTransform(({ x, y }) => {
@@ -427,14 +485,10 @@ class Container extends React.Component {
                   Rotate -90º
                 </DropdownItem>
                 <DropdownItem divider />
-                <label htmlFor="hiddenFileInput" className="dropdown-item">
+                <label htmlFor="hiddenFileInput" className="dropdown-item" style={{ margin: 0 }}>
                   Import Image from File...
                 </label>
-                <DropdownItem
-                  onClick={this._onDownloadImage}
-                >
-                  Download Sprite as PNG
-                </DropdownItem>
+                <DropdownItem onClick={this._onDownloadImage}>Download Sprite as PNG</DropdownItem>
               </DropdownMenu>
             </ButtonDropdown>
           </div>
@@ -446,6 +500,9 @@ class Container extends React.Component {
                   onColorChange={(c) => this.setState({ color: c })}
                 />
                 <PixelToolbar tools={TOOLS} tool={tool} onToolChange={this._onChooseTool} />
+                <Button size="sm" style={{ width: 114 }} onClick={this._onClearAll}>
+                  Clear Canvas
+                </Button>
               </div>
               <div className="canvas-and-generator">
                 <PixelCanvas
@@ -455,24 +512,30 @@ class Container extends React.Component {
                   onMouseUp={this._onCanvasMouseUp}
                   {...this.state}
                 />
-                <div className="ai-sprite-generator">
+                <div
+                  className="ai-sprite-generator"
+                  style={{ display: "flex", alignItems: "center", gap: 8 }}
+                >
                   <input
                     type="text"
+                    style={{ flex: 1 }}
                     placeholder="Describe your sprite..."
                     value={this.state.spriteDescription || ""}
                     onChange={(e) => this.setState({ spriteDescription: e.target.value })}
                   />
                   <Button
+                    size="sm"
                     onClick={this._onGenerateSprite}
                     disabled={this.state.isGeneratingSprite}
                   >
                     {this.state.isGeneratingSprite ? (
                       <span>
-                        <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
-                        Generating...
+                        <i className="fa fa-spinner fa-spin" /> Generating...
                       </span>
                     ) : (
-                      "Generate Sprite"
+                      <span>
+                        <i className="fa fa-magic" /> Generate with AI
+                      </span>
                     )}
                   </Button>
                 </div>
