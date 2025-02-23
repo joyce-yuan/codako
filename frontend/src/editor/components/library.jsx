@@ -39,6 +39,7 @@ class LibraryItem extends React.Component {
     labelEditable: PropTypes.bool,
     onChangeLabel: PropTypes.func.isRequired,
     selected: PropTypes.bool,
+    outlined: PropTypes.bool,
     onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
     dragType: PropTypes.string,
@@ -71,8 +72,16 @@ class LibraryItem extends React.Component {
   };
 
   render() {
-    const { selected, onClick, character, label, labelEditable, appearance, onDoubleClick } =
-      this.props;
+    const {
+      selected,
+      outlined,
+      onClick,
+      character,
+      label,
+      labelEditable,
+      appearance,
+      onDoubleClick,
+    } = this.props;
     const { spritesheet } = character;
 
     return (
@@ -84,6 +93,7 @@ class LibraryItem extends React.Component {
         onDoubleClick={onDoubleClick}
       >
         <Sprite
+          className={outlined ? "outlined" : ""}
           spritesheet={spritesheet}
           frame={0}
           appearance={appearance || defaultAppearanceId(spritesheet)}
@@ -146,6 +156,7 @@ class Library extends React.Component {
             character={characters[id]}
             label={characters[id].name}
             labelEditable={ui.selectedToolId === TOOLS.POINTER}
+            outlined={id === ui.selectedCharacterId && !ui.selectedActorPath.actorId}
             selected={id === ui.selectedCharacterId}
             onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
             onClick={(event) => this._onClickCharacter(event, id)}

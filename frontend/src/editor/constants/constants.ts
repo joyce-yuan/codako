@@ -21,6 +21,7 @@ export const SPEED_OPTIONS = {
 
 export enum TOOLS {
   POINTER = "pointer",
+  STAMP = "stamp",
   TRASH = "trash",
   RECORD = "record",
   PAINT = "paint",

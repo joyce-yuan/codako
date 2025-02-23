@@ -15,10 +15,10 @@ $create-account-notice-color: #e6dac1;
   cursor:
     url(../img/cursor_#{$name}.cur) 0 0,
     auto;
-  cursor:
-    -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0,
-    url(../img/cursor_#{$name}.cur) 0 0,
-    auto;
+  // cursor:
+  //   -webkit-image-set(url(../img/cursor_#{$name}.cur) 2x) 0 0,
+  //   url(../img/cursor_#{$name}.cur) 0 0,
+  //   auto;
 }
 
 /*
@@ -53,6 +53,9 @@ $create-account-notice-color: #e6dac1;
 .tool-ignore-square {
   @include cursor("ignored_square");
 }
+.tool-stamp {
+  @include cursor("stamp");
+}
 .tool-pointer {
   cursor: default;
 }
@@ -65,6 +68,25 @@ $create-account-notice-color: #e6dac1;
       drop-shadow(0 -2px 0.5px $outline-color) drop-shadow(0 2px 0.5px $outline-color);
   }
 }
+
+.tool-stamp .sprite.outlined {
+  transition: transform;
+  transition-duration: 300ms;
+  transform: scale(1.1) rotate(-7deg);
+  animation: wiggle 400ms ease-in-out infinite;
+  animation-direction: alternate;
+  animation-delay: 300ms;
+}
+
+@keyframes wiggle {
+  0% {
+    transform: scale(1.1) rotate(-7deg);
+  }
+  100% {
+    transform: scale(1.1) rotate(7deg);
+  }
+}
+
 
 .panel {
   background-color: white;

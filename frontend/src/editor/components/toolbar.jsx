@@ -112,7 +112,7 @@ const Toolbar = ({ selectedToolId, dispatch, metadata, stageName, isInTutorial }
 
       <div style={{ display: "flex", alignItems: "center" }}>
         <div className="button-group">
-          {[TOOLS.POINTER, TOOLS.TRASH, TOOLS.RECORD, TOOLS.PAINT].map(_renderTool)}
+          {[TOOLS.POINTER, TOOLS.STAMP, TOOLS.TRASH, TOOLS.RECORD, TOOLS.PAINT].map(_renderTool)}
         </div>
         <UndoRedoControls />
       </div>

@@ -200,7 +200,7 @@ export type Stage = {
   order: number;
   name: string;
   actors: { [actorId: string]: Actor };
-  background: ImageData;
+  background: ImageData | { url: string };
   height: number;
   startThumbnail: ImageData;
   tutorial_name?: string;
@@ -281,36 +281,38 @@ export type World = WorldMinimal & {
   };
 };
 
+export type UIState = {
+  selectedToolId: TOOLS;
+  selectedCharacterId: string | null;
+  selectedActorPath: ActorPath;
+  tutorial: {
+    stepIndex: number;
+  };
+  playback: {
+    speed: number;
+    running: boolean;
+  };
+  keypicker: {
+    characterId: string | null;
+    initialKeyCode: string | null;
+    ruleId: string | null;
+  };
+  paint: {
+    characterId: string | null;
+    appearanceId: string | null;
+  };
+  modal: {
+    openId: string | null;
+  };
+};
+
 export type EditorState = {
   version: 1;
   characters: Characters;
   world: World;
   undoStack: [];
   redoStack: [];
-  ui: {
-    selectedToolId: TOOLS;
-    selectedCharacterId: string | null;
-    selectedActorPath: ActorPath;
-    tutorial: {
-      stepIndex: number;
-    };
-    playback: {
-      speed: number;
-      running: boolean;
-    };
-    keypicker: {
-      characterId: string | null;
-      initialKeyCode: string | null;
-      ruleId: string | null;
-    };
-    paint: {
-      characterId: string | null;
-      appearanceId: string | null;
-    };
-    modal: {
-      openId: string | null;
-    };
-  };
+  ui: UIState;
   recording: RecordingState;
 };
 

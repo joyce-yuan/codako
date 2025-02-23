@@ -41,6 +41,14 @@ export default function uiReducer(
         selectedCharacterId: action.characterId,
         selectedActorPath: action.actorPath,
       });
+    case Types.DELETE_ACTOR: {
+      if (state.selectedActorPath.actorId === action.actorId) {
+        return Object.assign({}, state, {
+          selectedActorPath: { worldId: null, stageId: null, actorId: null },
+        });
+      }
+      return state;
+    }
     case Types.DELETE_CHARACTER: {
       if (state.selectedCharacterId === action.characterId) {
         return Object.assign({}, state, {
