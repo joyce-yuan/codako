@@ -1,7 +1,5 @@
 /* eslint-disable import/default */
 
-import React from "react";
-
 import Library from "./components/library";
 import Toolbar from "./components/toolbar";
 
@@ -18,31 +16,31 @@ import { StageImagesLoader } from "./components/stage/stage-images-loader";
 
 import "./styles/editor.scss";
 
-export default class RootEditor extends React.Component {
-  render() {
-    return (
-      <div className="editor">
-        <div className="editor-centered-flex">
-          <div className="editor-horizontal-flex">
-            <Toolbar />
-          </div>
-          <div className="editor-horizontal-flex" style={{ flex: "1 1 85vh" }}>
-            <div className="stage-container">
-              <StageContainer />
-              <Library />
-            </div>
-            <InspectorContainer />
-          </div>
-
-          <TutorialContainer />
-          <PaintContainer />
-          <KeypickerContainer />
-          <StagesContainer />
-          <StageImagesLoader />
-          <VideosContainer />
-          <ExploreCharactersContainer />
+const RootEditor = () => {
+  return (
+    <div className="editor">
+      <div className="editor-centered-flex">
+        <div className="editor-horizontal-flex">
+          <Toolbar />
         </div>
+        <div className="editor-horizontal-flex" style={{ flex: "1 1 85vh" }}>
+          <div className="stage-container">
+            <StageContainer />
+            <Library />
+          </div>
+          <InspectorContainer />
+        </div>
+
+        <TutorialContainer />
+        <PaintContainer />
+        <KeypickerContainer />
+        <StagesContainer />
+        <StageImagesLoader />
+        <VideosContainer />
+        <ExploreCharactersContainer />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default RootEditor;

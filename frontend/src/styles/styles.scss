@@ -125,6 +125,12 @@ body {
   height: 100vh;
 }
 
+@supports (height: 100dvh) {
+  .page-container {
+    height: 100dvh;
+  }
+}
+
 .page-content-flex {
   flex: 1;
 }

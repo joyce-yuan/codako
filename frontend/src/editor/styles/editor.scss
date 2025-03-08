@@ -41,6 +41,11 @@ $create-account-notice-color: #e6dac1;
 }
 */
 
+html {
+  overscroll-behavior: none; // prevent bounce scrolling
+  -webkit-touch-callout: none; // prevent tap-to-enlarge sprite image
+}
+
 .tool-trash {
   @include cursor("trashcan");
 }
@@ -113,6 +118,7 @@ $create-account-notice-color: #e6dac1;
   font-size: 14px;
   background: url(../img/background.png) top left;
   padding-top: 6px;
+  touch-action: pan-x pan-y;
 
   .loading {
     margin: auto;
@@ -131,6 +137,7 @@ $create-account-notice-color: #e6dac1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background-clip: padding-box;
     gap: 8px;
   }
   .btn-group-sm > .btn, button.btn-sm {
@@ -177,6 +184,7 @@ $create-account-notice-color: #e6dac1;
 
       button {
         margin-right: 0;
+        background-clip: padding-box;
         border-radius: 0;
         border-right-width: 0;
         outline: 0;

@@ -68,11 +68,25 @@ const LoginPage = ({ dispatch, networkError }) => {
             <form className="card-body" onSubmit={_onSubmit}>
               <div className="form-group">
                 <label htmlFor="username">Username or email address:</label>
-                <input className="form-control" id="username" ref={usernameRef} />
+                <input
+                  className="form-control"
+                  id="username"
+                  ref={usernameRef}
+                  autoFocus
+                  autoComplete="username"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password:</label>
-                <input className="form-control" id="password" ref={passRef} type="password" />
+                <input
+                  className="form-control"
+                  id="password"
+                  ref={passRef}
+                  type="password"
+                  autoComplete="password"
+                />
               </div>
               <Button block color="primary" type="submit">
                 Login

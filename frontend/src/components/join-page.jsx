@@ -81,6 +81,10 @@ const JoinPage = ({ dispatch, networkError }) => {
               <div className={`form-group ${message.includes("username") ? "has-danger" : ""}`}>
                 <label htmlFor="username">Username</label>
                 <input
+                  autoFocus
+                  autoComplete="username"
+                  autoCorrect="off"
+                  autoCapitalize="off"
                   className={`form-control ${message.includes("username") ? "form-control-danger" : ""}`}
                   id="username"
                   ref={usernameRef}
@@ -90,6 +94,10 @@ const JoinPage = ({ dispatch, networkError }) => {
               <div className={`form-group ${message.includes("email") ? "has-danger" : ""}`}>
                 <label htmlFor="email">Email Address</label>
                 <input
+                  autoComplete="email"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  type="email"
                   className={`form-control ${message.includes("email") ? "form-control-danger" : ""}`}
                   id="email"
                   ref={emailRef}
@@ -101,7 +109,15 @@ const JoinPage = ({ dispatch, networkError }) => {
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password</label>
-                <input className="form-control" id="password" ref={passRef} type="password" />
+                <input
+                  autoComplete="password"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  className="form-control"
+                  id="password"
+                  ref={passRef}
+                  type="password"
+                />
                 <small className="form-text text-muted">
                   Remember it - don't tell anyone else!
                 </small>
