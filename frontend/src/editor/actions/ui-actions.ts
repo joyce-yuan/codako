@@ -9,6 +9,12 @@ export function selectToolId(toolId: string): ActionSelectToolId {
     toolId,
   };
 }
+export function selectToolItem(toolItem: EditorState["ui"]["stampToolItem"]): ActionSelectToolItem {
+  return {
+    type: types.SELECT_TOOL_ITEM,
+    toolItem,
+  };
+}
 
 export function selectStageId(worldId: string, stageId: string): ActionSelectStageId {
   return {
@@ -100,6 +106,11 @@ export type ActionSelectToolId = {
   toolId: string;
 };
 
+export type ActionSelectToolItem = {
+  type: "SELECT_TOOL_ITEM";
+  toolItem: EditorState["ui"]["stampToolItem"];
+};
+
 export type ActionSelectStageId = {
   type: "SELECT_STAGE_ID";
   worldId: string;
@@ -147,6 +158,7 @@ export type ActionUpdateTutorialState = {
 
 export type UIActions =
   | ActionSelectToolId
+  | ActionSelectToolItem
   | ActionSelectStageId
   | ActionSelectDefinitionId
   | ActionUpdatePlaybackState

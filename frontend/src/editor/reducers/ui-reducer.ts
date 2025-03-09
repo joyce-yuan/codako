@@ -35,6 +35,11 @@ export default function uiReducer(
     case Types.SELECT_TOOL_ID:
       return Object.assign({}, state, {
         selectedToolId: action.toolId,
+        stampToolItem: null,
+      });
+    case Types.SELECT_TOOL_ITEM:
+      return Object.assign({}, state, {
+        stampToolItem: action.toolItem,
       });
     case Types.SELECT_DEFINITION_ID:
       return Object.assign({}, state, {

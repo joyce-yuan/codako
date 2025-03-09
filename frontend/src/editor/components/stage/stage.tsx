@@ -18,7 +18,12 @@ import {
   recordClickForGameState,
   recordKeyForGameState,
 } from "../../actions/stage-actions";
-import { paintCharacterAppearance, select, selectToolId } from "../../actions/ui-actions";
+import {
+  paintCharacterAppearance,
+  select,
+  selectToolId,
+  selectToolItem,
+} from "../../actions/ui-actions";
 
 import { STAGE_CELL_SIZE, TOOLS } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
@@ -67,13 +72,13 @@ export const Stage = ({
 
   const dispatch = useDispatch();
   const characters = useSelector<EditorState, Characters>((state) => state.characters);
-  const { selectedActorPath, selectedCharacterId, selectedToolId, playback } = useSelector<
+  const { selectedActorPath, selectedToolId, stampToolItem, playback } = useSelector<
     EditorState,
-    Pick<UIState, "selectedActorPath" | "selectedCharacterId" | "selectedToolId" | "playback">
+    Pick<UIState, "selectedActorPath" | "selectedToolId" | "stampToolItem" | "playback">
   >((state) => ({
     selectedActorPath: state.ui.selectedActorPath,
-    selectedCharacterId: state.ui.selectedCharacterId,
     selectedToolId: state.ui.selectedToolId,
+    stampToolItem: state.ui.stampToolItem,
     playback: state.ui.playback,
   }));
 
@@ -284,10 +289,10 @@ export const Stage = ({
   };
 
   const onStampAtPosition = (position: Position) => {
-    if (selectedActorPath && selectedActorPath.actorId) {
-      onDropActorAtPosition({ actorId: selectedActorPath.actorId }, position, true);
-    } else if (selectedCharacterId) {
-      onDropActorAtPosition({ characterId: selectedCharacterId }, position, true);
+    if (stampToolItem && "actorId" in stampToolItem && stampToolItem.actorId) {
+      onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, true);
+    } else if (stampToolItem && "characterId" in stampToolItem) {
+      onDropActorAtPosition({ characterId: stampToolItem.characterId }, position, true);
     }
   };
 
@@ -300,8 +305,8 @@ export const Stage = ({
         handled = true;
         break;
       case TOOLS.STAMP:
-        if (!selectedActorPath) {
-          dispatch(select(actor.characterId, actorPath(actor.id)));
+        if (!stampToolItem) {
+          dispatch(selectToolItem(actorPath(actor.id)));
           handled = true;
         }
         break;
@@ -491,9 +496,13 @@ export const Stage = ({
             Math.abs(lastPosition.y - actor.position.y) > 6;
           lastActorPositions.current[actor.id] = Object.assign({}, actor.position);
 
+          const isToolItem =
+            stampToolItem && "actorId" in stampToolItem && actor.id === stampToolItem.actorId;
+
           return (
             <ActorSprite
               draggable={!readonly && !DRAGGABLE_TOOLS.includes(selectedToolId)}
+              toolItem={!!isToolItem}
               key={`${actor.id}-${didWrap}`}
               selected={actor === selected}
               onClick={(event) => onClickActor(actor, event)}

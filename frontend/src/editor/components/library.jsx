@@ -23,7 +23,13 @@ import {
 
 import { setupRecordingForCharacter } from "../actions/recording-actions";
 
-import { paintCharacterAppearance, select, selectToolId, showModal } from "../actions/ui-actions";
+import {
+  paintCharacterAppearance,
+  select,
+  selectToolId,
+  selectToolItem,
+  showModal,
+} from "../actions/ui-actions";
 
 import Sprite from "./sprites/sprite";
 import TapToEditLabel from "./tap-to-edit-label";
@@ -75,6 +81,7 @@ class LibraryItem extends React.Component {
     const {
       selected,
       outlined,
+      toolItem,
       onClick,
       character,
       label,
@@ -93,7 +100,7 @@ class LibraryItem extends React.Component {
         onDoubleClick={onDoubleClick}
       >
         <Sprite
-          className={outlined ? "outlined" : ""}
+          className={toolItem ? "tool-item" : outlined ? "outlined" : ""}
           spritesheet={spritesheet}
           frame={0}
           appearance={appearance || defaultAppearanceId(spritesheet)}
@@ -124,6 +131,8 @@ class Library extends React.Component {
     const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacter(characterId));
+    } else if (ui.selectedToolId === TOOLS.STAMP) {
+      dispatch(selectToolItem({ characterId }));
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       const character = this.props.characters[characterId];
       dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
@@ -156,10 +165,15 @@ class Library extends React.Component {
             character={characters[id]}
             label={characters[id].name}
             labelEditable={ui.selectedToolId === TOOLS.POINTER}
-            outlined={id === ui.selectedCharacterId && !ui.selectedActorPath.actorId}
-            selected={id === ui.selectedCharacterId}
             onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
             onClick={(event) => this._onClickCharacter(event, id)}
+            selected={id === ui.selectedCharacterId}
+            outlined={id === ui.selectedCharacterId && !ui.selectedActorPath.actorId}
+            toolItem={
+              ui.stampToolItem &&
+              "characterId" in ui.stampToolItem &&
+              ui.stampToolItem.characterId === id
+            }
           />
         ))}
       </div>

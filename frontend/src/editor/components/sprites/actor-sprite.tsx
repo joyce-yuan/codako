@@ -9,13 +9,22 @@ const ActorSprite = (props: {
   character: Character;
   actor: Actor;
   selected: boolean;
+  toolItem: boolean;
   draggable: boolean;
   onClick: (e: React.MouseEvent) => void;
   onDoubleClick: (e: React.MouseEvent) => void;
   transitionDuration: number;
 }) => {
-  const { actor, character, selected, draggable, transitionDuration, onClick, onDoubleClick } =
-    props;
+  const {
+    actor,
+    character,
+    selected,
+    toolItem,
+    draggable,
+    transitionDuration,
+    onClick,
+    onDoubleClick,
+  } = props;
 
   const onDragStart = (event: React.DragEvent) => {
     if (!draggable) {
@@ -76,7 +85,7 @@ const ActorSprite = (props: {
       }}
     >
       <Sprite
-        className={selected ? "outlined" : ""}
+        className={toolItem ? "tool-item" : selected ? "outlined" : ""}
         appearance={actor.appearance}
         transform={actor.transform}
         spritesheet={character.spritesheet}
