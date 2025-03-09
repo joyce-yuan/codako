@@ -1,5 +1,3 @@
-/* eslint-disable import/default */
-
 import Library from "./components/library";
 import Toolbar from "./components/toolbar";
 
@@ -14,6 +12,7 @@ import StagesContainer from "./components/modal-stages/container";
 import VideosContainer from "./components/modal-videos/container";
 import { StageImagesLoader } from "./components/stage/stage-images-loader";
 
+import { StampCursorSupport } from "./components/stamp-cursor-support";
 import "./styles/editor.scss";
 
 const RootEditor = () => {
@@ -35,9 +34,12 @@ const RootEditor = () => {
         <PaintContainer />
         <KeypickerContainer />
         <StagesContainer />
-        <StageImagesLoader />
         <VideosContainer />
         <ExploreCharactersContainer />
+
+        {/**behaviors / hooks / weird stuff */}
+        <StageImagesLoader />
+        <StampCursorSupport />
       </div>
     </div>
   );

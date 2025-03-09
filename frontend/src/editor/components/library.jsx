@@ -34,7 +34,7 @@ import {
 import Sprite from "./sprites/sprite";
 import TapToEditLabel from "./tap-to-edit-label";
 
-function defaultAppearanceId(spritesheet) {
+export function defaultAppearanceId(spritesheet) {
   return Object.keys(spritesheet.appearances)[0];
 }
 
