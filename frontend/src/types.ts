@@ -65,7 +65,7 @@ export type RuleAction =
       to: ActorTransform;
     };
 
-export type ActorTransform = "none" | "flip-x" | "flip-xy";
+export type ActorTransform = "none" | "flip-x" | "flip-y" | "90deg" | "180deg" | "270deg";
 
 export type RuleExtent = {
   xmin: number;
@@ -127,30 +127,21 @@ export type RuleConditionVariable = {
   type: "variable";
   variableId: string;
   comparator: MathComparator;
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleConditionTransform = {
   enabled: boolean;
   type: "transform";
   comparator: "=";
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleConditionAppearance = {
   enabled: boolean;
   type: "appearance";
   comparator: "=";
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleCondition =
@@ -159,10 +150,18 @@ export type RuleCondition =
   | RuleConditionTransform
   | RuleConditionAppearance;
 
+export type RuleValue =
+  | { constant: number | string }
+  | { actorId: string; variableId: string }
+  | { globalId: string }
+  | object;
+
 export type RuleConditionGlobal = {
+  enabled: boolean;
+  type: "global";
   globalId: string;
   comparator: MathComparator;
-  value: { constant: number } | { actorId: string; variableId: string } | { globalId: string };
+  value: RuleValue;
 };
 
 export type RuleConditions = {
@@ -344,7 +343,7 @@ export type RecordingState = {
   ruleId: string | null;
   conditions: RuleConditions;
   extent: RuleExtent;
-  prefs: { [actorId: string]: { [key: string]: string } };
+  prefs: { [actorId: string]: { [key: string]: MathOperation } };
   beforeWorld: WorldMinimal & { id: WORLDS.BEFORE };
   afterWorld: WorldMinimal & { id: WORLDS.AFTER };
 };

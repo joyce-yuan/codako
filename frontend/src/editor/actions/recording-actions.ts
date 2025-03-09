@@ -1,6 +1,14 @@
 import { DeepPartial, Dispatch } from "redux";
 import { Actions } from ".";
-import { Actor, PositionRelativeToRuleExtent, RecordingState, Rule, RuleExtent } from "../../types";
+import {
+  Actor,
+  PositionRelativeToRuleExtent,
+  RecordingState,
+  Rule,
+  RuleCondition,
+  RuleConditionGlobal,
+  RuleExtent,
+} from "../../types";
 import * as types from "../constants/action-types";
 import { stopPlayback } from "./ui-actions";
 
@@ -104,7 +112,7 @@ export type ActionSetRecordingExtent = {
 export function updateRecordingCondition(
   actorId: string,
   key: string,
-  values: DeepPartial<RecordingState["conditions"][""]>,
+  values: DeepPartial<RuleConditionGlobal | RuleCondition>,
 ): ActionUpdateRecordingCondition {
   return {
     type: types.UPDATE_RECORDING_CONDITION,
@@ -118,12 +126,12 @@ export type ActionUpdateRecordingCondition = {
   type: "UPDATE_RECORDING_CONDITION";
   actorId: string;
   key: string;
-  values: DeepPartial<RecordingState["conditions"][""]> & { enabled?: boolean };
+  values: DeepPartial<RuleConditionGlobal | RuleCondition> & { enabled?: boolean };
 };
 
 export function updateRecordingActionPrefs(
   actorId: string,
-  values: DeepPartial<RecordingState["prefs"]>,
+  values: DeepPartial<RecordingState["prefs"]["a"]>,
 ): ActionUpdateRecordingActionPrefs {
   return {
     type: types.UPDATE_RECORDING_ACTION_PREFS,
@@ -135,7 +143,7 @@ export function updateRecordingActionPrefs(
 export type ActionUpdateRecordingActionPrefs = {
   type: "UPDATE_RECORDING_ACTION_PREFS";
   actorId: string;
-  values: DeepPartial<RecordingState["prefs"]>;
+  values: DeepPartial<RecordingState["prefs"]["a"]>;
 };
 
 export function toggleSquareIgnored(

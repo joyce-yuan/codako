@@ -9,9 +9,9 @@ const Sprite = ({
   appearance,
   frame,
 }: {
-  className: string;
   spritesheet: Character["spritesheet"];
   appearance: string;
+  className?: string;
   transform?: string;
   style?: CSSProperties;
   frame?: number;

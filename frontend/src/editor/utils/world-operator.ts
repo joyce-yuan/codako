@@ -70,9 +70,10 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         continue;
       }
 
-      const possibleValueActors = condition.value.actorId
-        ? stageActorsForReferencedActorId(condition.value.actorId)
-        : [ruleActor];
+      const possibleValueActors =
+        "actorId" in condition.value
+          ? stageActorsForReferencedActorId(condition.value.actorId)
+          : [ruleActor];
 
       const matchedValueActor = possibleValueActors.find((valueActor) => {
         let leftValue, rightValue;
@@ -338,7 +339,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         }
         requiredActorIds.push(actorId);
         for (const condition of Object.values(rule.conditions[actorId])) {
-          if (condition && "value" in condition && condition.value.actorId) {
+          if (condition && "value" in condition && "actorId" in condition.value) {
             requiredActorIds.push(condition.value.actorId);
           }
         }
