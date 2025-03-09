@@ -32,14 +32,13 @@ function stateForEditingRule(phase: RECORDING_PHASE, rule: Rule, entireState: Ed
     actorId: rule.mainActorId,
     conditions: u.constant(rule.conditions),
     actions: u.constant(rule.actions),
+    extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
     beforeWorld: u.constant(
       WorldOperator(u({ id: WORLDS.BEFORE }, world) as World, characters).resetForRule(rule, {
         offset,
         applyActions: false,
       }),
     ),
-    extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
-    prefs: u.constant({}),
   };
 }
 
@@ -80,7 +79,6 @@ function recordingReducer(
             ymax: actor.position.y,
             ignored: {},
           }),
-          prefs: u.constant({}),
         },
         nextState,
       );
@@ -132,16 +130,9 @@ function recordingReducer(
       }
       return u({ conditions: { [actorId]: { [key]: u.constant(values) } } }, nextState);
     }
-    case Types.UPDATE_RECORDING_ACTION_PREFS: {
-      const { actorId, values } = action;
-      return u(
-        {
-          prefs: {
-            [actorId]: values,
-          },
-        },
-        nextState,
-      );
+    case Types.UPDATE_RECORDING_ACTIONS: {
+      const { actions } = action;
+      return u({ actions: u.constant(actions) }, nextState);
     }
     case Types.SET_RECORDING_EXTENT: {
       // find the primary actor, make sure the extent still includes it

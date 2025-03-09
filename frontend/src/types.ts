@@ -361,7 +361,6 @@ export type RecordingState = {
   actions: RuleAction[];
   conditions: RuleConditions;
   extent: RuleExtent;
-  prefs: { [actorId: string]: { [key: string]: MathOperation } };
   beforeWorld: WorldMinimal & { id: WORLDS.BEFORE };
   afterWorld: WorldMinimal & { id: WORLDS.AFTER };
 };

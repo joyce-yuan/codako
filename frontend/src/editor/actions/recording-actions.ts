@@ -129,21 +129,18 @@ export type ActionUpdateRecordingCondition = {
   values: DeepPartial<RuleConditionGlobal | RuleCondition> & { enabled?: boolean };
 };
 
-export function updateRecordingActionPrefs(
-  actorId: string,
-  values: DeepPartial<RecordingState["prefs"]["a"]>,
-): ActionUpdateRecordingActionPrefs {
+export function updateRecordingActions(
+  actions: DeepPartial<RecordingState["actions"]>,
+): ActionUpdateRecordingActions {
   return {
-    type: types.UPDATE_RECORDING_ACTION_PREFS,
-    actorId,
-    values,
+    type: types.UPDATE_RECORDING_ACTIONS,
+    actions,
   };
 }
 
-export type ActionUpdateRecordingActionPrefs = {
-  type: "UPDATE_RECORDING_ACTION_PREFS";
-  actorId: string;
-  values: DeepPartial<RecordingState["prefs"]["a"]>;
+export type ActionUpdateRecordingActions = {
+  type: "UPDATE_RECORDING_ACTIONS";
+  actions: DeepPartial<RecordingState["actions"]>;
 };
 
 export function toggleSquareIgnored(
@@ -169,5 +166,5 @@ export type RecordingActions =
   | ActionStartRecording
   | ActionSetRecordingExtent
   | ActionUpdateRecordingCondition
-  | ActionUpdateRecordingActionPrefs
+  | ActionUpdateRecordingActions
   | ActionToggleSquareIgnored;
