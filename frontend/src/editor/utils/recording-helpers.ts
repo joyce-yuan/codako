@@ -1,7 +1,6 @@
 import {
   Actor,
   Character,
-  EditorState,
   Globals,
   MathOperation,
   Position,
@@ -10,7 +9,7 @@ import {
   RuleExtent,
 } from "../../types";
 import { getCurrentStageForWorld } from "./selectors";
-import { getVariableValue, pointIsInside, pointIsOutside } from "./stage-helpers";
+import { getVariableValue, pointIsInside } from "./stage-helpers";
 
 export function defaultOperationForValueChange(
   before: number | string,
@@ -124,108 +123,6 @@ export function actionsForGlobals({
       value: Number(operandForValueChange(before, after, op)),
     });
   }
-  return actions;
-}
-
-export function actionsForRecording(
-  { beforeWorld, afterWorld, extent, prefs, actorId }: RecordingState,
-  { characters }: Pick<EditorState, "characters">,
-) {
-  const beforeStage = getCurrentStageForWorld(beforeWorld);
-  const afterStage = getCurrentStageForWorld(afterWorld);
-
-  if (!beforeStage?.actors || !afterStage?.actors || !actorId) {
-    return [];
-  }
-
-  const beforeMainActor = beforeStage.actors[actorId];
-  if (!beforeMainActor) {
-    throw new Error("Could not find main actor");
-  }
-  const actions: RuleAction[] = [];
-
-  actions.push(
-    ...actionsForGlobals({
-      beforeGlobals: beforeWorld.globals,
-      afterGlobals: afterWorld.globals,
-      prefs: prefs["globals"] || {},
-    }),
-  );
-
-  // If the stage has changed, no other actions can be taken
-  if (beforeWorld.globals.selectedStageId.value !== afterWorld.globals.selectedStageId.value) {
-    return actions;
-  }
-
-  Object.values(beforeStage.actors).forEach((beforeActor) => {
-    if (pointIsOutside(beforeActor.position, extent)) {
-      return;
-    }
-    const { x: bx, y: by } = beforeActor.position;
-    const character = characters[beforeActor.characterId];
-    const afterActor = afterStage.actors[beforeActor.id];
-
-    if (afterActor) {
-      const { x: ax, y: ay } = afterActor.position;
-      if (ax !== bx || ay !== by) {
-        actions.push({
-          actorId: beforeActor.id,
-          type: "move",
-          delta: { x: ax - bx, y: ay - by },
-        });
-      }
-
-      if (beforeActor["transform"] !== afterActor["transform"]) {
-        actions.push({
-          type: "transform",
-          actorId: beforeActor.id,
-          to: afterActor["transform"]!,
-        });
-      }
-      if (beforeActor["appearance"] !== afterActor["appearance"]) {
-        actions.push({
-          type: "appearance",
-          actorId: beforeActor.id,
-          to: afterActor["appearance"]!,
-        });
-      }
-
-      actions.push(
-        ...actionsForVariables({
-          beforeActor,
-          afterActor,
-          character,
-          prefs: prefs[beforeActor.id] || {},
-        }),
-      );
-    } else {
-      actions.push({
-        actorId: beforeActor.id,
-        type: "delete",
-      });
-    }
-  });
-
-  createdActorsForRecording({ beforeWorld, afterWorld, extent }).forEach((actor) => {
-    actions.push({
-      actor: actor,
-      actorId: actor.id,
-      type: "create",
-      offset: {
-        x: actor.position.x - beforeMainActor.position.x,
-        y: actor.position.y - beforeMainActor.position.y,
-      },
-    });
-    actions.push(
-      ...actionsForVariables({
-        beforeActor: null,
-        afterActor: actor,
-        character: characters[actor.characterId],
-        prefs: {},
-      }),
-    );
-  });
-
   return actions;
 }
 

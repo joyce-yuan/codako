@@ -1,12 +1,12 @@
-import { Position, RuleExtent } from "../../../../types";
+import { PositionRelativeToRuleExtent, RuleExtent } from "../../../../types";
 import { SquaresCanvas } from "./squares-canvas";
 
-export const ActorPositionCanvas = ({
+export const ActorOffsetCanvas = ({
   extent,
-  position,
+  offset,
 }: {
   extent: RuleExtent;
-  position: Position;
+  offset: PositionRelativeToRuleExtent;
 }) => {
   return (
     <SquaresCanvas
@@ -16,12 +16,7 @@ export const ActorPositionCanvas = ({
         c.fillStyle = "#fff";
         c.fillRect(0, 0, el.width, el.height);
         c.fillStyle = "#f00";
-        c.fillRect(
-          (position.x - extent.xmin) * squareSize,
-          (position.y - extent.ymin) * squareSize,
-          squareSize,
-          squareSize,
-        );
+        c.fillRect(offset.x * squareSize, offset.y * squareSize, squareSize, squareSize);
 
         c.lineWidth = 1;
         c.strokeStyle = "rgba(0,0,0,0.4)";

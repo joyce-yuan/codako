@@ -427,6 +427,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         position: pointByAdding(actor.position, offset),
       });
     }
+
     for (const cond of Object.values(rule.conditions.globals || {})) {
       if (!globals[cond.globalId]) {
         continue;
@@ -455,6 +456,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       const stageActorsForRuleActorIds = operator.checkRuleScenario(rule);
       if (stageActorsForRuleActorIds) {
         operator.applyRule(rule, stageActorsForRuleActorIds);
+      } else {
+        console.log(rule);
+        console.warn(`Rule was not applied in resetForRule because the scenario check failed.`);
       }
     }
 

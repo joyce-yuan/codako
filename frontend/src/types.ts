@@ -1,4 +1,4 @@
-import { TOOLS, WORLDS } from "./editor/constants/constants";
+import { RECORDING_PHASE, TOOLS, WORLDS } from "./editor/constants/constants";
 
 export type ImageData = string;
 
@@ -57,7 +57,8 @@ export type RuleAction =
   | {
       actorId: string;
       type: "move";
-      delta: { x: number; y: number };
+      delta?: { x: number; y: number };
+      offset?: PositionRelativeToRuleExtent;
     }
   | {
       actorId: string;
@@ -337,10 +338,11 @@ export type Game = {
 };
 
 export type RecordingState = {
-  phase: null;
+  phase: RECORDING_PHASE;
   characterId: string | null;
   actorId: string | null;
   ruleId: string | null;
+  actions: RuleAction[];
   conditions: RuleConditions;
   extent: RuleExtent;
   prefs: { [actorId: string]: { [key: string]: MathOperation } };

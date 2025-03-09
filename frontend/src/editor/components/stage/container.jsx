@@ -65,11 +65,7 @@ class StageContainer extends React.Component {
         actions = (
           <div className="recording-specifics">
             <div
-              style={{
-                position: "absolute",
-                transform: "translate(0, -100%)",
-                paddingBottom: 5,
-              }}
+              style={{ position: "absolute", transform: "translate(0, -100%)", paddingBottom: 5 }}
             >
               <StageRecordingTools />
             </div>
