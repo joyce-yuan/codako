@@ -349,9 +349,11 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     }
 
     function applyRule(rule: Rule, stageActorForId: { [ruleActorId: string]: Actor }) {
+      const origin = deepClone(me.position);
+
       for (const action of rule.actions) {
         if (action.type === "create") {
-          const nextPos = wrappedPosition(pointByAdding(me.position, action.offset));
+          const nextPos = wrappedPosition(pointByAdding(origin, action.offset));
           if (!nextPos) {
             throw new Error(`Action cannot create at this position`);
           }
@@ -379,7 +381,11 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
             );
           }
           if (action.type === "move") {
-            const nextPos = wrappedPosition(pointByAdding(stageActor.position, action.delta));
+            const nextPos = wrappedPosition(
+              "delta" in action
+                ? pointByAdding(stageActor.position, action.delta!)
+                : pointByAdding(origin, action.offset!),
+            );
             if (!nextPos) {
               throw new Error(`Action cannot create at this position`);
             }

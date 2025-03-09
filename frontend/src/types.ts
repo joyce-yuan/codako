@@ -19,6 +19,11 @@ export type PositionRelativeToRuleExtent = {
   y: number;
 };
 
+export type PositionRelativeToMainActor = {
+  x: number;
+  y: number;
+};
+
 export type FrameInput = { keys: { [keyCode: string]: true }; clicks: { [actorId: string]: true } };
 
 export type MathOperation = "add" | "set" | "subtract";
@@ -51,14 +56,14 @@ export type RuleAction =
   | {
       actor: Actor;
       actorId: string;
-      offset: PositionRelativeToRuleExtent;
+      offset: PositionRelativeToMainActor;
       type: "create";
     }
   | {
       actorId: string;
       type: "move";
       delta?: { x: number; y: number };
-      offset?: PositionRelativeToRuleExtent;
+      offset?: PositionRelativeToMainActor;
     }
   | {
       actorId: string;
@@ -175,6 +180,17 @@ export type RuleConditions = {
   };
 };
 
+/**
+ * Within a rule, the main actor is always at "0,0" and the extent
+ * expresses how many squares are within the rule to each side.
+ * [-1, -1, 1, 1] would be one square in each direction.
+ *
+ * Other actors positions are also relative to the main actor.
+ *
+ * Note: Actions also express positions relative to the main actor,
+ * but because the main actor can move they are all relative to the
+ * position of the main actor /at the start/ of rule evaluation.
+ */
 export type Rule = {
   type: "rule";
   mainActorId: string;

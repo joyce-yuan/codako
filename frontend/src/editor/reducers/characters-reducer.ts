@@ -1,11 +1,11 @@
 import u from "updeep";
 
-import { Actor, EditorState, Rule, RuleTreeEventItem, RuleTreeItem } from "../../types";
+import { EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
 import { Actions } from "../actions";
+import { ruleFromRecordingState } from "../components/stage/recording/utils";
 import * as Types from "../constants/action-types";
-import { actionsForRecording, extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
-import { findRule, pointIsInside } from "../utils/stage-helpers";
+import { findRule } from "../utils/stage-helpers";
 import { deepClone } from "../utils/utils";
 import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "../utils/world-constants";
 import initialState from "./initial-state";
@@ -128,35 +128,10 @@ export default function charactersReducer(
       if (!beforeStage) {
         return state;
       }
-      const mainActor = Object.values(beforeStage.actors).find((a) => a.id === recording.actorId);
-      if (!mainActor) {
+      const recordedRule = ruleFromRecordingState(beforeStage, recording);
+      if (!recordedRule) {
         return state;
       }
-
-      const recordingActors: { [actorId: string]: Actor } = {};
-
-      for (const a of Object.values(beforeStage.actors)) {
-        if (pointIsInside(a.position, recording.extent)) {
-          recordingActors[a.id] = Object.assign({}, a, {
-            position: {
-              x: a.position.x - mainActor.position.x,
-              y: a.position.y - mainActor.position.y,
-            },
-          });
-        }
-      }
-
-      const recordedRule: Omit<Rule, "id" | "name"> = {
-        type: "rule" as const,
-        mainActorId: recording.actorId!,
-        conditions: recording.conditions,
-        actors: recordingActors,
-        actions: actionsForRecording(recording, { characters: state }),
-        extent: extentByShiftingExtent(recording.extent, {
-          x: -mainActor.position.x,
-          y: -mainActor.position.y,
-        }),
-      };
 
       if (recording.ruleId) {
         const match = findRule({ rules }, recording.ruleId);

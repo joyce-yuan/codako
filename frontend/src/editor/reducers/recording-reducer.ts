@@ -3,8 +3,20 @@ import * as Types from "../constants/action-types";
 import initialState from "./initial-state";
 import worldReducer from "./world-reducer";
 
-import { EditorState, Rule, World } from "../../types";
+import {
+  Actor,
+  EditorState,
+  RecordingState,
+  Rule,
+  RuleAction,
+  World,
+  WorldMinimal,
+} from "../../types";
 import { Actions } from "../actions";
+import {
+  getAfterWorldForRecording,
+  offsetForEditingRule,
+} from "../components/stage/recording/utils";
 import { RECORDING_PHASE, WORLDS } from "../constants/constants";
 import { extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
@@ -12,31 +24,18 @@ import WorldOperator from "../utils/world-operator";
 
 function stateForEditingRule(phase: RECORDING_PHASE, rule: Rule, entireState: EditorState) {
   const { world, characters } = entireState;
-  const stage = getCurrentStageForWorld(world);
-
-  const ex = rule.extent.xmax - rule.extent.xmin;
-  const ey = rule.extent.ymax - rule.extent.ymin;
-  const offset = {
-    x: Math.round(stage!.width / 2 + ex / 2),
-    y: Math.round(stage!.height / 2 + ey / 2),
-  };
-
+  const offset = offsetForEditingRule(rule.extent, world);
   return {
     ruleId: rule.id,
     characterId: rule.actors[rule.mainActorId].characterId,
     phase: phase,
     actorId: rule.mainActorId,
     conditions: u.constant(rule.conditions),
+    actions: u.constant(rule.actions),
     beforeWorld: u.constant(
       WorldOperator(u({ id: WORLDS.BEFORE }, world) as World, characters).resetForRule(rule, {
         offset,
         applyActions: false,
-      }),
-    ),
-    afterWorld: u.constant(
-      WorldOperator(u({ id: WORLDS.AFTER }, world) as World, characters).resetForRule(rule, {
-        offset,
-        applyActions: true,
       }),
     ),
     extent: u.constant(extentByShiftingExtent(rule.extent, offset)),
@@ -44,7 +43,7 @@ function stateForEditingRule(phase: RECORDING_PHASE, rule: Rule, entireState: Ed
   };
 }
 
-export default function recordingReducer(
+function recordingReducer(
   state = initialState.recording,
   action: Actions,
   entireState: EditorState,
@@ -53,8 +52,14 @@ export default function recordingReducer(
 
   const nextState = Object.assign({}, state, {
     beforeWorld: worldReducer(state.beforeWorld, action, entireState),
-    afterWorld: worldReducer(state.afterWorld, action, entireState),
   });
+
+  if ("worldId" in action && action.worldId && action.worldId === state.afterWorld.id) {
+    const recordingAction = buildActionFromStageActions(state, action);
+    if (recordingAction) {
+      nextState.actions = [...nextState.actions, recordingAction];
+    }
+  }
 
   switch (action.type) {
     case Types.SETUP_RECORDING_FOR_ACTOR: {
@@ -65,9 +70,9 @@ export default function recordingReducer(
           characterId: actor.characterId,
           phase: RECORDING_PHASE.SETUP,
           actorId: actor.id,
+          actions: u.constant([]),
           conditions: u.constant({ [actor.id]: {} }),
           beforeWorld: u.constant(u({ id: WORLDS.BEFORE }, world)),
-          afterWorld: u.constant(u({ id: WORLDS.AFTER }, world)),
           extent: u.constant({
             xmin: actor.position.x,
             xmax: actor.position.x,
@@ -116,7 +121,6 @@ export default function recordingReducer(
       return u(
         {
           phase: RECORDING_PHASE.RECORD,
-          afterWorld: u.constant(u({ id: WORLDS.AFTER }, nextState.beforeWorld)),
         },
         nextState,
       );
@@ -142,7 +146,7 @@ export default function recordingReducer(
     case Types.SET_RECORDING_EXTENT: {
       // find the primary actor, make sure the extent still includes it
       const extent = Object.assign({}, action.extent);
-      for (const world of [nextState.beforeWorld, nextState.afterWorld]) {
+      for (const world of [nextState.beforeWorld]) {
         const stage = getCurrentStageForWorld(world);
         const mainActor = Object.values(stage!.actors || {}).find(
           (a) => a.id === nextState.actorId,
@@ -154,6 +158,7 @@ export default function recordingReducer(
           extent.ymax = Math.max(extent.ymax, mainActor.position.y);
         }
       }
+
       return u({ extent }, nextState);
     }
     case Types.TOGGLE_RECORDING_SQUARE_IGNORED: {
@@ -170,4 +175,100 @@ export default function recordingReducer(
     default:
       return nextState;
   }
+}
+
+function buildActionFromStageActions(
+  { actorId, beforeWorld, afterWorld }: RecordingState,
+  action: Actions,
+): RuleAction | null {
+  const mainActorBeforePosition = getCurrentStageForWorld(beforeWorld)!.actors[actorId!].position;
+
+  switch (action.type) {
+    case Types.UPSERT_ACTOR: {
+      const existing = getCurrentStageForWorld(afterWorld)?.actors[action.actorId];
+      if (!existing) {
+        return {
+          type: "create",
+          actor: action.values as Actor,
+          actorId: action.actorId,
+          offset: {
+            x: action.values.position!.x! - mainActorBeforePosition.x,
+            y: action.values.position!.y! - mainActorBeforePosition.y,
+          },
+        };
+      }
+      if ("position" in action.values) {
+        const pos = action.values.position!;
+        if (pos.x === existing.position.x && pos.y === existing.position.y) {
+          return null;
+        }
+        return {
+          type: "move",
+          actorId: action.actorId,
+          offset: { x: pos.x! - mainActorBeforePosition.x, y: pos.y! - mainActorBeforePosition.y },
+        };
+      }
+      if ("variableValues" in action.values) {
+        const [key, value] = Object.entries(action.values.variableValues || {})[0];
+        if (existing.variableValues[key] === value) {
+          return null;
+        }
+        return {
+          type: "variable",
+          actorId: action.actorId,
+          operation: "set",
+          variable: key,
+          value: value!,
+        };
+      }
+
+      if ("transform" in action.values) {
+        if (existing.transform === action.values.transform) {
+          return null;
+        }
+        return {
+          type: "transform",
+          actorId: action.actorId,
+          to: action.values.transform!,
+        };
+      }
+      if ("appearance" in action.values) {
+        if (existing.appearance === action.values.appearance) {
+          return null;
+        }
+        return {
+          type: "appearance",
+          actorId: action.actorId,
+          to: action.values.appearance!,
+        };
+      }
+      return null;
+    }
+    case Types.DELETE_ACTOR: {
+      return {
+        type: "delete",
+        actorId: action.actorId,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+export default function recordingReducerWithDerivedState(
+  state = initialState.recording,
+  action: Actions,
+  entireState: EditorState,
+) {
+  const nextState = recordingReducer(state, action, entireState) as RecordingState;
+
+  if (nextState.actions !== state.actions || nextState.beforeWorld !== state.beforeWorld) {
+    nextState.afterWorld = getAfterWorldForRecording(
+      nextState.beforeWorld,
+      entireState.characters,
+      nextState,
+    ) as WorldMinimal & { id: WORLDS.AFTER };
+  }
+
+  return nextState;
 }

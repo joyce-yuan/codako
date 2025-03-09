@@ -52,8 +52,11 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
   };
 
   const beforeStage = getCurrentStageForWorld(beforeWorld);
-
   let afterStage = getCurrentStageForWorld(beforeWorld);
+
+  // In a saved rule the main actor is at 0,0, but when recording on the stage
+  // the extent and the position are relative to the "current" game world.
+  const mainActorBeforePosition = beforeStage!.actors[recording.actorId!].position;
 
   const _renderAction = (a: RuleAction, idx: number) => {
     if (!beforeStage || !afterStage) {
@@ -66,7 +69,13 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
             Create a
             <ActorBlock actor={a.actor} character={characters[a.actor.characterId]} />
             at
-            <ActorOffsetCanvas offset={a.offset} extent={extent} />
+            <ActorOffsetCanvas
+              extent={extent}
+              offset={{
+                x: a.offset!.x + mainActorBeforePosition.x - extent.xmin,
+                y: a.offset!.y + mainActorBeforePosition.y - extent.ymin,
+              }}
+            />
           </li>
         );
       }
@@ -82,7 +91,13 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
             {a.delta ? (
               <ActorDeltaCanvas delta={a.delta} />
             ) : (
-              <ActorOffsetCanvas offset={a.offset!} extent={recording.extent} />
+              <ActorOffsetCanvas
+                extent={extent}
+                offset={{
+                  x: a.offset!.x + mainActorBeforePosition.x - extent.xmin,
+                  y: a.offset!.y + mainActorBeforePosition.y - extent.ymin,
+                }}
+              />
             )}
           </li>
         );
