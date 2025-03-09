@@ -85,7 +85,7 @@ const ActorSprite = (props: {
       }}
     >
       <Sprite
-        className={toolItem ? "tool-item" : selected ? "outlined" : ""}
+        className={`${toolItem ? "tool-item" : ""} ${selected ? "outlined" : ""}`}
         appearance={actor.appearance}
         transform={actor.transform}
         spritesheet={character.spritesheet}

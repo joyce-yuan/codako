@@ -100,7 +100,7 @@ class LibraryItem extends React.Component {
         onDoubleClick={onDoubleClick}
       >
         <Sprite
-          className={toolItem ? "tool-item" : outlined ? "outlined" : ""}
+          className={`${toolItem ? "tool-item" : ""} ${outlined ? "outlined" : ""}`}
           spritesheet={spritesheet}
           frame={0}
           appearance={appearance || defaultAppearanceId(spritesheet)}
@@ -131,11 +131,15 @@ class Library extends React.Component {
     const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacter(characterId));
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
     } else if (ui.selectedToolId === TOOLS.STAMP) {
       dispatch(selectToolItem({ characterId }));
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       const character = this.props.characters[characterId];
       dispatch(paintCharacterAppearance(characterId, defaultAppearanceId(character.spritesheet)));
+      dispatch(selectToolId(TOOLS.POINTER));
     } else if (ui.selectedToolId === TOOLS.RECORD) {
       dispatch(setupRecordingForCharacter({ characterId }));
       dispatch(selectToolId(TOOLS.POINTER));
@@ -148,8 +152,12 @@ class Library extends React.Component {
     const { ui, dispatch } = this.props;
     if (ui.selectedToolId === TOOLS.TRASH) {
       dispatch(deleteCharacterAppearance(characterId, appearanceId));
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
     } else if (ui.selectedToolId === TOOLS.PAINT) {
       dispatch(paintCharacterAppearance(characterId, appearanceId));
+      dispatch(selectToolId(TOOLS.POINTER));
     }
   };
 

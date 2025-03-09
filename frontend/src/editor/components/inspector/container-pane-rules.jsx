@@ -132,6 +132,9 @@ export default class ContainerPaneRules extends React.Component {
     const [, parentRule, parentIdx] = findRule({ rules }, ruleId);
     parentRule.rules.splice(parentIdx, 1);
     dispatch(changeCharacter(character.id, { rules }));
+    if (!event.shiftKey) {
+      dispatch(selectToolId(TOOLS.POINTER));
+    }
   };
 
   _onRuleChanged = (ruleId, changes) => {

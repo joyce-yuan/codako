@@ -367,6 +367,11 @@ export const Stage = ({
 
   const onMouseUp = (event: React.MouseEvent) => {
     onMouseMove(event);
+    if (!event.shiftKey) {
+      if (TOOLS.TRASH === selectedToolId || (TOOLS.STAMP === selectedToolId && stampToolItem)) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
+    }
   };
 
   const onRightClickStage = (event: React.MouseEvent) => {

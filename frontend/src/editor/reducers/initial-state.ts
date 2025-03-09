@@ -36,6 +36,7 @@ const InitialState: EditorState = {
   redoStack: [],
   ui: {
     selectedToolId: TOOLS.POINTER,
+    stampToolItem: null,
     selectedCharacterId: null,
     selectedActorPath: nullActorPath(),
     tutorial: {
