@@ -21,7 +21,7 @@ export const RecordingConditions = ({
   const { beforeWorld, conditions, extent } = recording;
   const stage = getCurrentStageForWorld(beforeWorld);
   if (!stage) {
-    return;
+    return <span />;
   }
 
   const rows: React.ReactNode[] = [];

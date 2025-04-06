@@ -34,12 +34,59 @@ import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "./world-constants";
 
 let IDSeed = Date.now();
 
+export type Frame = { actors: { [actorId: string]: Actor }; id: number };
+
+class FrameAccumulator {
+  changes: { [actorId: string]: Actor[] } = {};
+  initial: Frame;
+
+  constructor(actors: { [actorId: string]: Actor }) {
+    this.initial = { actors, id: Date.now() };
+  }
+  push(actor: Actor & { deleted?: boolean }) {
+    this.changes[actor.id] ||= [];
+    this.changes[actor.id].push(deepClone(actor));
+  }
+  getFrames() {
+    // Perform the first action for each actor in the first frame, then the second action
+    // for each actor, etc. until there are no more actions to perform.
+    const frames: Frame[] = [];
+    const remaining = { ...this.changes };
+    const frameCountsByActor = Object.fromEntries(
+      Object.entries(this.changes).map(([id, a]) => [id, a.length]),
+    );
+
+    let current: Frame = deepClone(this.initial);
+
+    while (true) {
+      const changeActorIds = Object.keys(remaining);
+      if (changeActorIds.length === 0) {
+        break;
+      }
+      for (const actorId of changeActorIds) {
+        const actorVersion = remaining[actorId].shift()!;
+        actorVersion.frameCount = frameCountsByActor[actorId];
+        current.actors[actorId] = actorVersion;
+
+        if (remaining[actorId].length === 0) {
+          delete remaining[actorId];
+        }
+      }
+      frames.push(current);
+      current = deepClone(current);
+      current.id += 0.1;
+    }
+    return frames;
+  }
+}
+
 export default function WorldOperator(previousWorld: WorldMinimal, characters: Characters) {
   let stage: Stage;
   let globals: Globals;
   let actors: { [actorId: string]: Actor };
   let input: FrameInput;
   let evaluatedRuleIds: EvaluatedRuleIds = {};
+  let frameAccumulator: FrameAccumulator;
 
   function wrappedPosition({ x, y }: PositionRelativeToWorld) {
     const o = {
@@ -358,11 +405,13 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
             throw new Error(`Action cannot create at this position`);
           }
           const nextID = `a${IDSeed++}`;
-          actors[nextID] = Object.assign(deepClone(action.actor), {
+          const nextActor = Object.assign(deepClone(action.actor), {
             id: nextID,
             position: nextPos,
             variableValues: {},
           });
+          frameAccumulator?.push(nextActor);
+          actors[nextID] = nextActor;
         } else if (action.type === "global") {
           const global = globals[action.global];
           global.value = applyVariableOperation(
@@ -390,12 +439,16 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
               throw new Error(`Action cannot create at this position`);
             }
             stageActor.position = nextPos;
+            frameAccumulator?.push(stageActor);
           } else if (action.type === "delete") {
             delete actors[stageActor.id];
+            frameAccumulator?.push({ ...stageActor, deleted: true });
           } else if (action.type === "appearance") {
             stageActor.appearance = action.to;
+            frameAccumulator?.push(stageActor);
           } else if (action.type === "transform") {
             stageActor.transform = action.to;
+            frameAccumulator?.push(stageActor);
           } else if (action.type === "variable") {
             const current =
               getVariableValue(stageActor, characters[stageActor.characterId], action.variable) ??
@@ -500,6 +553,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     // mutable things
     globals = deepClone(previousWorld.globals);
     actors = deepClone(stage.actors);
+    frameAccumulator = new FrameAccumulator(stage.actors);
     evaluatedRuleIds = {};
 
     Object.values(actors).forEach((actor) => ActorOperator(actor).tickAllRules());
@@ -517,6 +571,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         },
         globals: u.constant(globals),
         evaluatedRuleIds: u.constant(evaluatedRuleIds),
+        evaluatedTickFrames: frameAccumulator.getFrames(),
         history: (values: HistoryItem[]) => [...values.slice(values.length - 20), historyItem],
       },
       previousWorld,
@@ -545,6 +600,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           },
         },
         evaluatedRuleIds: u.constant(historyItem.evaluatedRuleIds),
+        evaluatedTickFrames: [],
         history: history.slice(0, history.length - 1),
       },
       previousWorld,

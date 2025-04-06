@@ -37,14 +37,14 @@ import {
   RuleExtent,
   Stage as StageType,
   UIState,
-  World,
+  WorldMinimal,
 } from "../../../types";
 
 interface StageProps {
-  recordingExtent: RuleExtent;
-  recordingCentered?: boolean;
   stage: StageType;
-  world: World;
+  world: WorldMinimal;
+  recordingExtent?: RuleExtent;
+  recordingCentered?: boolean;
   readonly?: boolean;
   style?: CSSProperties;
 }
@@ -93,6 +93,9 @@ export const Stage = ({
   };
 
   const centerOnExtent = () => {
+    if (!recordingExtent) {
+      return { left: 0, top: 0 };
+    }
     const { xmin, ymin, xmax, ymax } = recordingExtent;
     const xCenter = xmin + 0.5 + (xmax - xmin) / 2.0;
     const yCenter = ymin + 0.5 + (ymax - ymin) / 2.0;
@@ -389,9 +392,12 @@ export const Stage = ({
 
   const renderRecordingExtent = () => {
     const { width, height } = stage;
-    const { xmin, xmax, ymin, ymax } = recordingExtent;
+    if (!recordingExtent) {
+      return [];
+    }
 
     const components = [];
+    const { xmin, xmax, ymin, ymax } = recordingExtent;
 
     // add the dark squares
     components.push(
@@ -512,7 +518,7 @@ export const Stage = ({
               selected={actor === selected}
               onClick={(event) => onClickActor(actor, event)}
               onDoubleClick={() => onSelectActor(actor)}
-              transitionDuration={playback.speed}
+              transitionDuration={playback.speed / (actor.frameCount || 1)}
               character={character}
               actor={actor}
             />

@@ -1,4 +1,5 @@
 import { RECORDING_PHASE, TOOLS, WORLDS } from "./editor/constants/constants";
+import { Frame } from "./editor/utils/world-operator";
 
 export type ImageData = string;
 
@@ -209,6 +210,7 @@ export type Actor = {
   appearance: string;
   position: PositionRelativeToWorld;
   transform?: ActorTransform;
+  frameCount?: number; // used to sync subdivided animation frames to CSS durations
 };
 
 export type Stage = {
@@ -287,6 +289,7 @@ export type WorldMinimal = {
   globals: Globals;
   input: FrameInput;
   evaluatedRuleIds: EvaluatedRuleIds;
+  evaluatedTickFrames?: Frame[];
 };
 
 export type World = WorldMinimal & {
