@@ -21,14 +21,18 @@ import CreatePixelImageData from "./create-pixel-image-data";
 import {
   getBlobFromImageData,
   getDataURLFromImageData,
+  getFilledSquares,
   getFlattenedImageData,
   getImageDataFromDataURL,
+  getImageDataWithNewFrame,
 } from "./helpers";
+
 import PixelCanvas from "./pixel-canvas";
 import PixelColorPicker, { ColorOptions } from "./pixel-color-picker";
 import PixelToolbar from "./pixel-toolbar";
 
 const MAX_UNDO_STEPS = 30;
+
 const TOOLS = [
   new Tools.PixelPenTool(),
   new Tools.PixelLineTool(),
@@ -46,7 +50,8 @@ const TOOLS = [
 const INITIAL_STATE = {
   color: ColorOptions[3],
   tool: TOOLS.find((t) => t.name === "pen"),
-
+  pixelSize: 11,
+  anchorSquare: { x: 0, y: 0 },
   imageData: null,
   selectionImageData: null,
   selectionOffset: {
@@ -98,12 +103,21 @@ class Container extends React.Component {
 
   setImageDataFromProps(props = this.props) {
     const { characterId, characters, appearanceId } = props;
+
     if (characterId) {
-      const { spritesheet } = characters[characterId];
-      const frameDataURL = spritesheet.appearances[appearanceId][0];
+      const { appearances, appearanceInfo } = characters[characterId].spritesheet;
+      const anchorSquare = appearanceInfo?.[appearanceId]?.anchor || { x: 0, y: 0 };
+      const frameDataURL = appearances[appearanceId][0];
+
       getImageDataFromDataURL(frameDataURL, {}, (imageData) => {
         CreatePixelImageData.call(imageData);
-        this.setState(Object.assign({}, INITIAL_STATE, { imageData }));
+        this.setState(
+          Object.assign({}, INITIAL_STATE, {
+            imageData,
+            anchorSquare,
+            pixelSize: pixelSizeToFit(imageData),
+          }),
+        );
       });
     } else {
       this.setState(Object.assign({}, INITIAL_STATE));
@@ -155,10 +169,21 @@ class Container extends React.Component {
 
   _onCloseAndSave = () => {
     const { dispatch, characterId, appearanceId } = this.props;
-    const imageDataURL = getDataURLFromImageData(getFlattenedImageData(this.state));
+    const flattened = getFlattenedImageData(this.state);
+    const imageDataURL = getDataURLFromImageData(flattened);
     dispatch(
       changeCharacter(characterId, {
-        spritesheet: { appearances: { [appearanceId]: [imageDataURL] } },
+        spritesheet: {
+          appearances: { [appearanceId]: [imageDataURL] },
+          appearanceInfo: {
+            [appearanceId]: {
+              anchor: this.state.anchorSquare,
+              filled: getFilledSquares(flattened),
+              width: flattened.width / 40,
+              height: flattened.height / 40,
+            },
+          },
+        },
       }),
     );
     dispatch(paintCharacterAppearance(null));
@@ -323,6 +348,10 @@ class Container extends React.Component {
     });
   };
 
+  _onChooseAnchorSquare = () => {
+    this._onChooseTool(new Tools.ChooseAnchorSquareTool(this.state.tool));
+  };
+
   _onChooseFile = (event) => {
     const reader = new FileReader();
     reader.addEventListener(
@@ -382,6 +411,26 @@ class Container extends React.Component {
     link.click();
   };
 
+  _onCanvasUpdateSize = (dSquaresX, dSquaresY, offsetX, offsetY) => {
+    const imageData = getImageDataWithNewFrame(this.state.imageData, {
+      width: this.state.imageData.width + 40 * dSquaresX,
+      height: this.state.imageData.height + 40 * dSquaresY,
+      offsetX: 40 * offsetX,
+      offsetY: 40 * offsetY,
+    });
+    CreatePixelImageData.call(imageData);
+    this.setStateWithCheckpoint(
+      Object.assign({}, INITIAL_STATE, {
+        pixelSize: pixelSizeToFit(imageData),
+        anchorSquare: {
+          x: this.state.anchorSquare.x + offsetX,
+          y: this.state.anchorSquare.y + offsetY,
+        },
+        imageData,
+      }),
+    );
+  };
+
   render() {
     const { imageData, tool, color, undoStack, redoStack } = this.state;
 
@@ -418,9 +467,6 @@ class Container extends React.Component {
               isOpen={this.state.dropdownOpen}
               toggle={() => this.setState({ dropdownOpen: !this.state.dropdownOpen })}
             >
-              <DropdownToggle className="icon">
-                <i className="fa fa-ellipsis-v" />
-              </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem onClick={() => this._onSelectAll()}>Select All</DropdownItem>
                 {this.state.selectionImageData ? (
@@ -485,15 +531,25 @@ class Container extends React.Component {
                   Rotate -90º
                 </DropdownItem>
                 <DropdownItem divider />
+                <DropdownItem
+                  onClick={this._onChooseAnchorSquare}
+                  disabled={imageData && imageData.width === 40 && imageData.height === 40}
+                >
+                  Choose Anchor Square
+                </DropdownItem>
+                <DropdownItem divider />
                 <label htmlFor="hiddenFileInput" className="dropdown-item" style={{ margin: 0 }}>
                   Import Image from File...
                 </label>
                 <DropdownItem onClick={this._onDownloadImage}>Download Sprite as PNG</DropdownItem>
               </DropdownMenu>
+              <DropdownToggle className="icon">
+                <i className="fa fa-ellipsis-v" />
+              </DropdownToggle>
             </ButtonDropdown>
           </div>
           <ModalBody>
-            <div className="flex-horizontal">
+            <div className="flex-horizontal" style={{ gap: 8 }}>
               <div className="paint-sidebar">
                 <PixelColorPicker
                   color={color}
@@ -504,14 +560,65 @@ class Container extends React.Component {
                   Clear Canvas
                 </Button>
               </div>
-              <div className="canvas-and-generator">
-                <PixelCanvas
-                  pixelSize={11}
-                  onMouseDown={this._onCanvasMouseDown}
-                  onMouseMove={this._onCanvasMouseMove}
-                  onMouseUp={this._onCanvasMouseUp}
-                  {...this.state}
-                />
+              <div className="canvas-arrows-flex">
+                <Button
+                  className="canvas-arrow"
+                  size="sm"
+                  onClick={() => this._onCanvasUpdateSize(0, 1, 0, 1)}
+                >
+                  +
+                </Button>
+                <div className="canvas-arrows-flex" style={{ flexDirection: "row" }}>
+                  <Button
+                    className="canvas-arrow"
+                    size="sm"
+                    onClick={() => this._onCanvasUpdateSize(1, 0, 1, 0)}
+                  >
+                    +
+                  </Button>
+                  <PixelCanvas
+                    onMouseDown={this._onCanvasMouseDown}
+                    onMouseMove={this._onCanvasMouseMove}
+                    onMouseUp={this._onCanvasMouseUp}
+                    {...this.state}
+                  />
+                  <div
+                    style={{
+                      height: "100%",
+                      display: "grid",
+                      gap: 20,
+                      gridTemplateRows: "1fr 22px 1fr",
+                    }}
+                  >
+                    <span />
+                    <Button
+                      size="sm"
+                      className="canvas-arrow"
+                      onClick={() => this._onCanvasUpdateSize(1, 0, 0, 0)}
+                    >
+                      +
+                    </Button>
+                    <div>
+                      <input
+                        type="range"
+                        min={1}
+                        max={11}
+                        style={{ writingMode: "sideways-lr" }}
+                        value={this.state.pixelSize}
+                        onChange={(e) =>
+                          this.setState({ ...this.state, pixelSize: Number(e.currentTarget.value) })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  className="canvas-arrow"
+                  size="sm"
+                  onClick={() => this._onCanvasUpdateSize(0, 1, 0, 0)}
+                >
+                  +
+                </Button>
                 <div
                   className="ai-sprite-generator"
                   style={{ display: "flex", alignItems: "center", gap: 8 }}
@@ -563,6 +670,13 @@ class Container extends React.Component {
 
 function mapStateToProps(state) {
   return Object.assign({}, state.ui.paint, { characters: state.characters });
+}
+
+function pixelSizeToFit(imageData) {
+  return Math.max(
+    1,
+    Math.min(Math.floor(455 / imageData.width), Math.floor(455 / imageData.height)),
+  );
 }
 
 export default connect(mapStateToProps)(Container);
