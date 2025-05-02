@@ -6,7 +6,6 @@ const InitialCharacters: Characters = {
     name: "Flag",
     rules: [],
     spritesheet: {
-      width: 40,
       appearances: {
         ax1: [
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABE0lEQVRYR+2Y2xGEIAxFtbTtZEuxlO1kS2PxgYMZsnkZ5CN+OoQcLpcEnSe/J1VTz9o06kAsYabawMDE6jzqQAhYwMr7YQAh2DCAGNijgBRUve1li9M3+/EFLck/MiwPSsBqBQ+4xpm5CVADdqbelUN23AhoAjtyu5ziO8CgZC4evAN0VdDdg6saalhPD1JtjGNxFw9yEpcxlLJd6yAF3oLt5kEKDr00POFBIeyY98FqERugSx0UKoUe+i51UAub4ZJbL9ZCgbjwoFXIFB40ShgeNAo4hQfNClYTsL4eWwnVgQz66MUMkfAh0YtN8u3BUaitIkahFim4vC+eu8QuH+f/gy3Sf0DUyiTA4k5iAYPgHNAfkPFqKStkGYEAAAAASUVORK5CYII=",
@@ -253,7 +252,6 @@ const InitialCharacters: Characters = {
       },
     ],
     spritesheet: {
-      width: 40,
       appearanceNames: {
         _2220533: "Left",
         1483692402546: "Right",
@@ -274,7 +272,6 @@ const InitialCharacters: Characters = {
     rules: [],
     variables: {},
     spritesheet: {
-      width: 40,
       appearanceNames: {
         idle: "Idle",
       },
@@ -291,7 +288,6 @@ const InitialCharacters: Characters = {
     rules: [],
     variables: {},
     spritesheet: {
-      width: 40,
       appearanceNames: {
         idle: "Idle",
       },
@@ -387,7 +383,6 @@ const InitialCharacters: Characters = {
       },
     ],
     spritesheet: {
-      width: 40,
       appearances: {
         idle: [
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABfklEQVRYR+2XsXXDIBCGjxmyg3dIZ+3g3uk0gAbw8wAagC7pXbpHc3iHzEDeIYERYECCWCqOyjrdf/fdL8STGexgSQGSNcBCKF4QkzHxlaD2PKl+Qeo1ELrRkuFScKrWGphamtij1T02BcwZ1AMUXaf2YGw1fe/rbmmdXbM5+TWCL4nkXAENH48o1PHUw3DrTI7dQAJIvIc50SUAhvtU43Oe6QKLaWCGgKxtGTZJOefeZwBGd/3y1ZdvK8Y5QNuqwNA9BzUZDjDGj78HUIBa6LUQVuTBx4upCf60oS7nufr6M16reLN09ClfoAN47ukCOOWrdRinx8YzZ+whAloNmovo1h4B3aXdwrgFZhyx8113EsApUHegMGCqyhvvE2Cp2eQgOagdUOefcxiXupOjpz2Y41IshxwkB0sdKNVvugdzjq5VgDmFS53T+lWAsea14asD1nLu3xwkQPPHaIMPg5D7tAdL9yQ5+HYHSw/ipfpdPeIQ/K4A6ZgpfSFC+j8LJLz4CwieagAAAABJRU5ErkJggg==",
@@ -412,7 +407,6 @@ const InitialCharacters: Characters = {
     name: "Dirt\n\n",
     rules: [],
     spritesheet: {
-      width: 40,
       appearances: {
         idle: [
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAABT0lEQVRYR+2YwQ3CMAxF6WQswBDs0AVYgE04ckdMVpRKjtw2iX/sxgRUriTO49v+cRhu19N0voyn2s/7ed9s0cRJnctjD6/HONGi1KE58BxMTYxUbB43xJoBrUFr1UfWB9AIGDb0BhkBqQa7BaQabA1IiiDpDWuoFt1qsBaQIH8D0KNJ1gpSCkulFdYMXk3CgRC4mGIvQGoOFO5rgGgXdw8YbcY7xaiC5qtOmlysxr8ArA0mFbr0PaKi6SZBbwWryrMP9jpuuV91SFrXaw4FNarxPYeCbgq2esFJPwBKcc7z9jBjMyBqyNJB2u8hBbXB99jnOlFrgA9AjWobo+51YF0MC9pnZ2mcqp0xc/90mcatkg3t4ZPNbYYrrFG0OeD6LcxLCVHYDTAFita9qQatNiLt/3+jLjVByoJyjZJbu1FQeiamUhIORedF1Dd5A30AM91W0hQ4j6EAAAAASUVORK5CYII=",

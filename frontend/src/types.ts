@@ -245,7 +245,7 @@ export type Character = {
   spritesheet: {
     appearances: { [appearanceId: string]: ImageData[] };
     appearanceNames: { [appearanceId: string]: string };
-    appearanceInfo: {
+    appearanceInfo?: {
       [appearanceId: string]: AppearanceInfo;
     };
   };

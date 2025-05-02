@@ -318,17 +318,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           // make sure the stage actors match the rule actors, and the
           // additional conditions also match.
           for (const s of stageActorsAtPos) {
-            const match = ruleActorsAtPos.find((r) => {
-              const ruleActorRootPos = wrappedPosition(pointByAdding(me.position, r.position));
-              if (!ruleActorRootPos) {
-                return false;
-              }
-              return (
-                actorsMatch(s, r, rule.conditions[r.id] || {}, stageActorsForReferencedActorId) &&
-                ruleActorRootPos.x === s.position.x &&
-                ruleActorRootPos.y === s.position.y
-              );
-            });
+            const match = ruleActorsAtPos.find((r) =>
+              actorsMatch(s, r, rule.conditions[r.id] || {}, stageActorsForReferencedActorId),
+            );
 
             if (match) {
               stageActorsForRuleActorIds[match.id] = s;
