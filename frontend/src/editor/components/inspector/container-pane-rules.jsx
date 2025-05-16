@@ -3,7 +3,7 @@ import React from "react";
 
 import { changeCharacter } from "../../actions/characters-actions";
 import { editRuleRecording } from "../../actions/recording-actions";
-import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
+import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
 import { findRule } from "../../utils/stage-helpers";
 import { deepClone } from "../../utils/utils";
 import RuleList from "./rule-list";
