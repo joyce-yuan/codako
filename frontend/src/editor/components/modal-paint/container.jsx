@@ -170,7 +170,23 @@ class Container extends React.Component {
   _onCloseAndSave = () => {
     const { dispatch, characterId, appearanceId } = this.props;
     const flattened = getFlattenedImageData(this.state);
-    const imageDataURL = getDataURLFromImageData(flattened);
+
+    // Trim inwards from all sides if an entire row / column of tiles is empty.
+    // We want to "auto-shrink" the canvas if the kid goes wild with the + button.
+    const filledTiles = Object.keys(getFilledSquares(flattened)).map((str) => str.split(","));
+    const minXFilled = filledTiles.reduce((min, [x]) => Math.min(min, Number(x)), 100);
+    const minYFilled = filledTiles.reduce((min, [, y]) => Math.min(min, Number(y)), 100);
+    const maxXFilled = filledTiles.reduce((max, [x]) => Math.max(max, Number(x)), 0);
+    const maxYFilled = filledTiles.reduce((max, [, y]) => Math.max(max, Number(y)), 0);
+
+    const trimmed = getImageDataWithNewFrame(flattened, {
+      width: (maxXFilled - minXFilled + 1) * 40,
+      height: (maxYFilled - minYFilled + 1) * 40,
+      offsetX: -minXFilled * 40,
+      offsetY: -minYFilled * 40,
+    });
+
+    const imageDataURL = getDataURLFromImageData(trimmed);
     dispatch(
       changeCharacter(characterId, {
         spritesheet: {
