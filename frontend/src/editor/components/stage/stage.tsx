@@ -328,7 +328,11 @@ export const Stage = ({
         handled = true;
         break;
       case TOOLS.POINTER:
-        dispatch(recordClickForGameState(world.id, actor.id));
+        if (playback.running) {
+          dispatch(recordClickForGameState(world.id, actor.id));
+        } else {
+          onSelectActor(actor);
+        }
         handled = true;
         break;
     }
