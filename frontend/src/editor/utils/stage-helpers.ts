@@ -65,8 +65,6 @@ export function actorFilledPoints(actor: Actor, characters: Characters) {
       }
     }
   }
-  console.log(info);
-  console.log(results);
   return results;
 }
 
@@ -240,14 +238,45 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
 
   Object.values(stage.actors).forEach((actor) => {
     const i = new Image();
-    i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
+    const { appearances, appearanceInfo } = characters[actor.characterId].spritesheet;
+    i.src = appearances[actor.appearance];
+    const info = appearanceInfo?.[actor.appearance] || DEFAULT_APPEARANCE_INFO;
+
+    context.save();
+    context.translate(
+      Math.floor((actor.position.x + 0.5) * pxPerSquare),
+      Math.floor((actor.position.y + 0.5) * pxPerSquare),
+    );
+    switch (actor.transform || "none") {
+      case "180deg":
+        context.rotate((180 * Math.PI) / 180);
+        break;
+      case "90deg":
+        context.rotate((90 * Math.PI) / 180);
+        break;
+      case "270deg":
+        context.rotate((270 * Math.PI) / 180);
+        break;
+      case "flip-x":
+        context.scale(-1, 1);
+        break;
+      case "flip-y":
+        context.scale(1, -1);
+        break;
+      case "none":
+        break;
+      default:
+        throw new Error("Unsupported");
+    }
+
     context.drawImage(
       i,
-      Math.floor(actor.position.x * pxPerSquare),
-      Math.floor(actor.position.y * pxPerSquare),
-      pxPerSquare,
-      pxPerSquare,
+      -(info.anchor.x + 0.5) * pxPerSquare,
+      -(info.anchor.y + 0.5) * pxPerSquare,
+      info.width * pxPerSquare,
+      info.height * pxPerSquare,
     );
+    context.restore();
   });
 
   try {

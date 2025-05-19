@@ -363,7 +363,6 @@ export const Stage = ({
     // If we didn't handle the event, let it bubble up to the stage onClick handler
 
     if (handled) {
-      event.preventDefault();
       event.stopPropagation();
     }
   };
