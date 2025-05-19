@@ -581,6 +581,12 @@ html {
   }
 }
 
+.modal-dialog {
+  .btn-group > .btn, button.btn {
+    background-clip: padding-box;
+  }
+}
+
 .modal-dialog.paint {
   user-select: none;
   min-width: 660px;

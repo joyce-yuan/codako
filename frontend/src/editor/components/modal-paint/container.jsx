@@ -619,7 +619,7 @@ class Container extends React.Component {
                         type="range"
                         min={1}
                         max={11}
-                        style={{ writingMode: "sideways-lr" }}
+                        style={{ writingMode: "vertical-rl", marginLeft: 3 }}
                         value={this.state.pixelSize}
                         onChange={(e) =>
                           this.setState({ ...this.state, pixelSize: Number(e.currentTarget.value) })

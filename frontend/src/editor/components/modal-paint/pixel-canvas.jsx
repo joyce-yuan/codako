@@ -242,9 +242,12 @@ export default class PixelCanvas extends React.Component {
         <div
           style={{
             minHeight: "100%",
+            minWidth: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            width: "fit-content",
+            height: "fit-content",
           }}
         >
           <canvas
