@@ -28,6 +28,7 @@ import {
 import { STAGE_CELL_SIZE, TOOLS } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
 import {
+  actorFilledPoints,
   actorFillsPoint,
   applyAnchorAdjustment,
   buildActorPath,
@@ -242,69 +243,91 @@ export const Stage = ({
   };
 
   const onDropActorAtPosition = (
-    { actorId, characterId }: { actorId?: string; characterId?: string },
+    { actorId }: { actorId: string },
     position: Position,
-    clone = false,
+    mode: "stamp-copy" | "move",
   ) => {
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
       return;
     }
 
-    if (actorId) {
-      const actor = stage.actors[actorId];
-      const character = characters[actor.characterId];
+    const actor = stage.actors[actorId];
+    const character = characters[actor.characterId];
 
-      applyAnchorAdjustment(position, character, actor);
+    applyAnchorAdjustment(position, character, actor);
 
-      if (actor.position.x === position.x && actor.position.y === position.y) {
-        // attempting to drop in the same place we started the drag, don't do anything
-        return;
-      }
-
-      if (clone) {
-        // If there is an exact copy of this actor at this position already, don't drop.
-        // It's probably a mistake, and you can override by dropping elsewhere and then
-        // dragging it to this square.
-        const exact = Object.values(stage.actors).find(
-          (a) =>
-            actorFillsPoint(a, characters, position) &&
-            a.characterId === actor.characterId &&
-            a.appearance === actor.appearance,
-        );
-        if (exact) {
-          return;
-        }
-        const clonedActor = Object.assign({}, actor, { position });
-        dispatch(createActor(stagePath(), character, clonedActor));
-      } else {
-        dispatch(changeActor(actorPath(actorId), { position }));
-      }
-    } else if (characterId) {
-      const character = characters[characterId];
-
-      applyAnchorAdjustment(position, character, { appearance: "default" });
-
-      const exact = Object.values(stage.actors).find(
-        (a) => actorFillsPoint(a, characters, position) && a.characterId === characterId,
-      );
-      if (exact) {
-        return;
-      }
-      dispatch(createActor(stagePath(), character, { position }));
+    if (actor.position.x === position.x && actor.position.y === position.y) {
+      // attempting to drop in the same place we started the drag, don't do anything
+      return;
     }
+
+    if (mode === "stamp-copy") {
+      const clonedActor = Object.assign({}, actor, { position });
+      const clonedActorPoints = actorFilledPoints(clonedActor, characters).map(
+        (p) => `${p.x},${p.y}`,
+      );
+
+      // If there is an exact copy of this actor that overlaps this position already, don't
+      // drop. It's probably a mistake, and you can override by dropping elsewhere and then
+      // dragging it to this square.
+      const positionContainsCloneAlready = Object.values(stage.actors).find(
+        (a) =>
+          a.characterId === actor.characterId &&
+          a.appearance === actor.appearance &&
+          actorFilledPoints(a, characters).some((p) => clonedActorPoints.includes(`${p.x},${p.y}`)),
+      );
+      if (positionContainsCloneAlready) {
+        return;
+      }
+      dispatch(createActor(stagePath(), character, clonedActor));
+    } else if (mode === "move") {
+      dispatch(changeActor(actorPath(actorId), { position }));
+    } else {
+      throw new Error("Invalid mode");
+    }
+  };
+
+  const onDropCharacterAtPosition = (
+    { characterId }: { characterId: string },
+    position: Position,
+  ) => {
+    if (recordingExtent && pointIsOutside(position, recordingExtent)) {
+      return;
+    }
+
+    const character = characters[characterId];
+    const appearance = Object.keys(character.spritesheet.appearances)[0];
+    const newActor = { position, appearance } as Actor;
+    applyAnchorAdjustment(position, character, newActor);
+
+    const newActorPoints = actorFilledPoints(newActor, characters).map((p) => `${p.x},${p.y}`);
+
+    const positionContainsCloneAlready = Object.values(stage.actors).find(
+      (a) =>
+        a.characterId === characterId &&
+        actorFilledPoints(a, characters).some((p) => newActorPoints.includes(`${p.x},${p.y}`)),
+    );
+    if (positionContainsCloneAlready) {
+      return;
+    }
+    dispatch(createActor(stagePath(), character, newActor));
   };
 
   const onDropSprite = (event: React.DragEvent) => {
     const { actorId, characterId } = JSON.parse(event.dataTransfer.getData("sprite"));
     const position = getPositionForEvent(event);
-    onDropActorAtPosition({ actorId, characterId }, position, event.altKey);
+    if (actorId) {
+      onDropActorAtPosition({ actorId }, position, event.altKey ? "stamp-copy" : "move");
+    } else if (characterId) {
+      onDropCharacterAtPosition({ characterId }, position);
+    }
   };
 
   const onStampAtPosition = (position: Position) => {
     if (stampToolItem && "actorId" in stampToolItem && stampToolItem.actorId) {
-      onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, true);
+      onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, "stamp-copy");
     } else if (stampToolItem && "characterId" in stampToolItem) {
-      onDropActorAtPosition({ characterId: stampToolItem.characterId }, position, true);
+      onDropCharacterAtPosition({ characterId: stampToolItem.characterId }, position);
     }
   };
 
