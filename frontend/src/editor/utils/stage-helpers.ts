@@ -1,5 +1,6 @@
 import {
   Actor,
+  ActorTransform,
   Character,
   Characters,
   MathOperation,
@@ -212,6 +213,33 @@ export function prepareCrossoriginImages(stages: Stage[]) {
   bgImages = next;
 }
 
+export function applyActorTransformToContext(
+  context: CanvasRenderingContext2D,
+  transform: ActorTransform,
+) {
+  switch (transform || "none") {
+    case "180deg":
+      context.rotate((180 * Math.PI) / 180);
+      break;
+    case "90deg":
+      context.rotate((90 * Math.PI) / 180);
+      break;
+    case "270deg":
+      context.rotate((270 * Math.PI) / 180);
+      break;
+    case "flip-x":
+      context.scale(-1, 1);
+      break;
+    case "flip-y":
+      context.scale(1, -1);
+      break;
+    case "none":
+      break;
+    default:
+      throw new Error("Unsupported");
+  }
+}
+
 export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
   const { characters } = window.editorStore.getState();
 
@@ -247,28 +275,7 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
       Math.floor((actor.position.x + 0.5) * pxPerSquare),
       Math.floor((actor.position.y + 0.5) * pxPerSquare),
     );
-    switch (actor.transform || "none") {
-      case "180deg":
-        context.rotate((180 * Math.PI) / 180);
-        break;
-      case "90deg":
-        context.rotate((90 * Math.PI) / 180);
-        break;
-      case "270deg":
-        context.rotate((270 * Math.PI) / 180);
-        break;
-      case "flip-x":
-        context.scale(-1, 1);
-        break;
-      case "flip-y":
-        context.scale(1, -1);
-        break;
-      case "none":
-        break;
-      default:
-        throw new Error("Unsupported");
-    }
-
+    applyActorTransformToContext(context, actor.transform ?? "none");
     context.drawImage(
       i,
       -(info.anchor.x + 0.5) * pxPerSquare,
