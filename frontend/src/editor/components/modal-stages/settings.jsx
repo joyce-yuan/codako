@@ -6,6 +6,7 @@ import { makeRequest } from "../../../helpers/api";
 // import PixelColorPicker from '../modal-paint/pixel-color-picker';
 
 const DEFAULT_COLOR = "#005392";
+
 export default class StageSettings extends React.Component {
   static propTypes = {
     stage: PropTypes.object,
@@ -14,13 +15,13 @@ export default class StageSettings extends React.Component {
 
   state = {
     backgroundPrompt: "",
-    isGenerating: false
+    isGenerating: false,
   };
 
   _onGenerateBackground = async () => {
     const { onChange } = this.props;
     const { backgroundPrompt } = this.state;
-    const stageName = this.props.stage.name.replace(/\s+/g, '_'); // Replace spaces with underscores
+    const stageName = this.props.stage.name.replace(/\s+/g, "_"); // Replace spaces with underscores
     const worldId = this.props.stage.worldId;
 
     if (!backgroundPrompt) {
@@ -32,7 +33,9 @@ export default class StageSettings extends React.Component {
     try {
       // First generate the image with OpenAI
       const fileName = `${Date.now()}-${stageName}-background`;
-      const data = await makeRequest(`/generate-background?prompt=${encodeURIComponent(backgroundPrompt)}&filename=${encodeURIComponent(fileName)}`);
+      const data = await makeRequest(
+        `/generate-background?prompt=${encodeURIComponent(backgroundPrompt)}&filename=${encodeURIComponent(fileName)}`,
+      );
       if (data.imageUrl) {
         // onChange({ background: `url(${data.imageUrl})` });
         // Then store it permanently in our system
@@ -44,10 +47,10 @@ export default class StageSettings extends React.Component {
         //     type: 'generated'
         //   }
         // });
-        
+
         // Use the permanent URL from our storage
-        onChange({ 
-          background: `url(${data.imageUrl})` 
+        onChange({
+          background: `url(${data.imageUrl})`,
         });
       } else {
         console.error("Failed to generate background:", data.error);
@@ -207,11 +210,11 @@ export default class StageSettings extends React.Component {
                 >
                   {this.state.isGenerating ? (
                     <span>
-                      <i className="fa fa-spinner fa-spin" style={{ marginRight: '5px' }} />
+                      <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
                       Generating...
                     </span>
                   ) : (
-                    'Generate Background'
+                    "Generate Background"
                   )}
                 </Button>
               </div>

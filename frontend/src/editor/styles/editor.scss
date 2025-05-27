@@ -582,7 +582,8 @@ html {
 }
 
 .modal-dialog {
-  .btn-group > .btn, button.btn {
+  .btn-group > .btn,
+  button.btn {
     background-clip: padding-box;
   }
 }
@@ -619,7 +620,6 @@ html {
 
   .paint-sidebar {
     width: 120px;
-
     .active-swatch {
       width: 114px;
       height: 42px;
@@ -628,8 +628,14 @@ html {
       border: 1px solid rgba(0, 0, 0, 0.2);
     }
 
-    .tools {
-      .tool {
+    .tools,
+    .sizes {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+
+      .tool,
+      .toolsize {
         display: inline-block;
         border: 1px solid rgba(0, 0, 0, 0.2);
         padding: 2px;
@@ -643,7 +649,12 @@ html {
           padding: 2px;
         }
       }
-      .tool.selected {
+      &.disabled {
+        opacity: 0.5;
+      }
+
+      .tool.selected,
+      .toolsize.selected {
         background-color: $tint-color;
         img {
           filter: invert(100%) brightness(130%);
@@ -1154,16 +1165,24 @@ button.btn.selected:active {
 }
 
 .pixel-color-picker {
-  width: 117px;
+  width: 120px;
+  line-height: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
   .color {
-    padding: 3px;
-    margin-right: 2px;
-    margin-bottom: 3px;
-    width: 27px;
-    height: 25px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    width: 12.5px;
+    height: 12.5px;
+    border-left: 0;
+    border-top: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
     outline: 0;
+  }
+
+  &.disabled {
+    opacity: 0.5;
   }
 }
 

@@ -95,6 +95,16 @@ export default function CreatePixelImageData() {
     this.fillPixelRGBA(xx, yy, ...this._fillStyleComponents);
   };
 
+  this.fillToolSize = (x, y, size) => {
+    const xmin = x - Math.round(size / 2);
+    const ymin = y - Math.round(size / 2);
+    for (let x = xmin; x < xmin + size; x++) {
+      for (let y = ymin; y < ymin + size; y++) {
+        this.fillPixel(x, y);
+      }
+    }
+  };
+
   this.fillPixelRGBA = (xx, yy, r, g, b, a) => {
     if (xx < 0 || xx >= this.width) {
       return;

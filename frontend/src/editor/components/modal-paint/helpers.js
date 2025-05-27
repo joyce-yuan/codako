@@ -161,9 +161,7 @@ export function getFlattenedImageData({ imageData, selectionImageData, selection
     selectionImageData.height,
     selectionOffset.x,
     selectionOffset.y,
-    {
-      ignoreClearPixels: true,
-    },
+    { ignoreClearPixels: true },
   );
   return nextImageData;
 }
