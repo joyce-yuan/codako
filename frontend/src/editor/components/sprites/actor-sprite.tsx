@@ -9,22 +9,13 @@ const ActorSprite = (props: {
   character: Character;
   actor: Actor;
   selected: boolean;
-  toolItem: boolean;
   draggable: boolean;
   onClick: (e: React.MouseEvent) => void;
   onDoubleClick: (e: React.MouseEvent) => void;
   transitionDuration: number;
 }) => {
-  const {
-    actor,
-    character,
-    selected,
-    toolItem,
-    draggable,
-    transitionDuration,
-    onClick,
-    onDoubleClick,
-  } = props;
+  const { actor, character, selected, draggable, transitionDuration, onClick, onDoubleClick } =
+    props;
 
   if (!character) {
     return (
@@ -131,7 +122,7 @@ const ActorSprite = (props: {
           }
         }}
         src={data}
-        className={`sprite ${toolItem ? "tool-item" : ""} ${selected ? "outlined" : ""}`}
+        className={`sprite ${selected ? "outlined" : ""}`}
         style={{
           transform: SPRITE_TRANSFORM_CSS[actor.transform ?? "none"],
           transformOrigin: `${((info.anchor.x + 0.5) / info.width) * 100}% ${((info.anchor.y + 0.5) / info.height) * 100}%`,

@@ -548,13 +548,9 @@ export const Stage = ({
             Math.abs(lastPosition.y - actor.position.y) > 6;
           lastActorPositions.current[actor.id] = Object.assign({}, actor.position);
 
-          const isToolItem =
-            stampToolItem && "actorId" in stampToolItem && actor.id === stampToolItem.actorId;
-
           return (
             <ActorSprite
               draggable={!readonly && !DRAGGABLE_TOOLS.includes(selectedToolId)}
-              toolItem={!!isToolItem}
               key={`${actor.id}-${didWrap}`}
               selected={actor === selected}
               onClick={(event) => onClickActor(actor, event)}
