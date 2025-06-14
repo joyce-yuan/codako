@@ -57,8 +57,8 @@ export const StampCursorSupport = () => {
       ctx.restore();
 
       ctx.moveTo(0.5, 0.5);
-      ctx.lineTo(0.5, 5.5);
-      ctx.lineTo(5.5, 0.5);
+      ctx.lineTo(0.5, 10.5);
+      ctx.lineTo(10.5, 0.5);
       ctx.lineTo(0.5, 0.5);
       ctx.strokeStyle = "black";
       ctx.fillStyle = "white";
