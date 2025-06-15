@@ -72,7 +72,14 @@ export type RuleAction =
       to: ActorTransform;
     };
 
-export type ActorTransform = "none" | "flip-x" | "flip-y" | "90deg" | "180deg" | "270deg";
+export type ActorTransform =
+  | "none"
+  | "flip-x"
+  | "flip-y"
+  | "flip-xy"
+  | "90deg"
+  | "180deg"
+  | "270deg";
 
 export type RuleExtent = {
   xmin: number;
@@ -219,14 +226,15 @@ export type Stage = {
   name: string;
   actors: { [actorId: string]: Actor };
   background: ImageData | string;
+  width: number;
   height: number;
+  wrapX: boolean;
+  wrapY: boolean;
+  scale?: number | "fit";
   startThumbnail: ImageData;
   tutorial_name?: string;
   tutorial_step?: number;
   world?: string;
-  width: number;
-  wrapX: boolean;
-  wrapY: boolean;
   startActors: { [actorId: string]: Actor };
 };
 

@@ -102,6 +102,9 @@ export function pointApplyingTransform(
   if (transform === "flip-y") {
     return [x, height - 1 - y];
   }
+  if (transform === "flip-xy") {
+    return [width - 1 - x, height - 1 - y];
+  }
   return [x, y];
 }
 
@@ -233,10 +236,13 @@ export function applyActorTransformToContext(
     case "flip-y":
       context.scale(1, -1);
       break;
+    case "flip-xy":
+      context.scale(-1, -1);
+      break;
     case "none":
       break;
     default:
-      throw new Error("Unsupported");
+      throw new Error(`Unsupported transform ${transform}`);
   }
 }
 
