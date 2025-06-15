@@ -48,7 +48,7 @@ export const StagesContainer = () => {
   };
 
   const _onAddStage = () => {
-    const name = `Stage ${stagesArray.length + 1}`;
+    const name = `Level ${stagesArray.length + 1}`;
     dispatch(createStage(WORLDS.ROOT, name));
   };
 
@@ -75,12 +75,12 @@ export const StagesContainer = () => {
       isOpen={open}
       backdrop="static"
       toggle={() => {}}
-      style={{ minWidth: 700, maxWidth: 700 }}
+      style={{ minWidth: 780, maxWidth: 780 }}
     >
       <div className="modal-header" style={{ display: "flex" }}>
         <h4 style={{ flex: 1 }}>Stages</h4>
       </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "stretch" }}>
         <div className="stage-sidebar">
           <div ref={listEl} className="stage-list">
             {stagesArray.map((s) => (

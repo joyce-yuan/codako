@@ -60,6 +60,8 @@ type MouseStatus = { isDown: boolean; visited: { [posKey: string]: true } };
 
 const DRAGGABLE_TOOLS = [TOOLS.IGNORE_SQUARE, TOOLS.TRASH, TOOLS.STAMP];
 
+export const STAGE_ZOOM_STEPS = [1, 0.88, 0.75, 0.63, 0.5, 0.42, 0.38];
+
 export const Stage = ({
   recordingExtent,
   recordingCentered,
@@ -69,12 +71,43 @@ export const Stage = ({
   style,
 }: StageProps) => {
   const [{ top, left }, setOffset] = useState<Offset>({ top: 0, left: 0 });
+  const [scale, setScale] = useState(
+    stage.scale && typeof stage.scale === "number" ? stage.scale : 1,
+  );
+
   const lastFiredExtent = useRef<string | null>(null);
   const lastActorPositions = useRef<{ [actorId: string]: Position }>({});
 
   const mouse = useRef<MouseStatus>({ isDown: false, visited: {} });
   const scrollEl = useRef<HTMLDivElement | null>();
   const el = useRef<HTMLDivElement | null>();
+
+  useEffect(() => {
+    const autofit = () => {
+      const _scrollEl = scrollEl.current;
+      const _el = el.current;
+      if (!_scrollEl || !_el) {
+        return;
+      }
+      if (recordingCentered) {
+        setScale(1);
+      } else if (stage.scale === "fit") {
+        _el.style.zoom = "1"; // this needs to be here for scaling "up" to work
+        const fit = Math.min(
+          _scrollEl.clientWidth / (stage.width * STAGE_CELL_SIZE),
+          _scrollEl.clientHeight / (stage.height * STAGE_CELL_SIZE),
+        );
+        const best = STAGE_ZOOM_STEPS.find((z) => z <= fit) || fit;
+        _el.style.zoom = `${best}`;
+        setScale(best);
+      } else {
+        setScale(stage.scale ?? 1);
+      }
+    };
+    window.addEventListener("resize", autofit);
+    autofit();
+    return () => window.removeEventListener("resize", autofit);
+  }, [stage.height, stage.scale, stage.width, recordingCentered]);
 
   const dispatch = useDispatch();
   const characters = useSelector<EditorState, Characters>((state) => state.characters);
@@ -223,8 +256,8 @@ export const Stage = ({
     };
     const { dragLeft, dragTop } = dragOffset ? JSON.parse(dragOffset) : halfOffset;
     return {
-      x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
-      y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
+      x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE / scale),
+      y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE / scale),
     };
   };
 
@@ -515,6 +548,7 @@ export const Stage = ({
           width: stage.width * STAGE_CELL_SIZE,
           height: stage.height * STAGE_CELL_SIZE,
           overflow: recordingExtent ? "visible" : "hidden",
+          zoom: scale,
         }}
         className="stage"
         onDragOver={onDragOver}

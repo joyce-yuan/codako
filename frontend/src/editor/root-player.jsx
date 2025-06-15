@@ -1,14 +1,14 @@
 /* eslint-disable import/default */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Provider } from "react-redux";
 import u from "updeep";
 
-import configureStore from "./store/configureStore";
+import { restoreInitialGameState } from "./actions/stage-actions";
 import StageContainer from "./components/stage/container";
 import initialState from "./reducers/initial-state";
-import { restoreInitialGameState } from "./actions/stage-actions";
+import configureStore from "./store/configureStore";
 
 import "./styles/editor.scss";
 
@@ -36,7 +36,7 @@ export default class RootPlayer extends React.Component {
   render() {
     return (
       <Provider store={this._editorStore}>
-        <div className="stage-container" style={{ height: 585 }}>
+        <div className="stage-container">
           <StageContainer readonly />
         </div>
       </Provider>

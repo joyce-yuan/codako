@@ -2,6 +2,8 @@ import { useState } from "react";
 import Button from "reactstrap/lib/Button";
 import { makeRequest } from "../../../helpers/api";
 import { Stage } from "../../../types";
+import { STAGE_CELL_SIZE } from "../../constants/constants";
+import { STAGE_ZOOM_STEPS } from "../stage/stage";
 
 const DEFAULT_COLOR = "#005392";
 
@@ -58,7 +60,7 @@ export const StageSettings = ({
     }
   };
 
-  const { width, height, wrapX, wrapY, name, background } = stage;
+  const { width, height, scale, wrapX, wrapY, name, background } = stage;
 
   const backgroundAsURL = (/url\((.*)\)/.exec(background) || [])[1];
   const backgroundAsColor = backgroundAsURL ? null : background;
@@ -75,18 +77,12 @@ export const StageSettings = ({
           onBlur={(e) => onChange({ name: e.target.value })}
         />
       </fieldset>
-      <fieldset className="form-group">
+      <fieldset className="form-group" style={{ marginTop: 32 }}>
         <legend className="col-form-legend">Size</legend>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
           <input
             className="form-control"
-            type="numbeir"
+            type="number"
             defaultValue={width}
             onBlur={(e) => onChange({ width: Number(e.target.value) })}
           />
@@ -97,10 +93,22 @@ export const StageSettings = ({
             defaultValue={height}
             onBlur={(e) => onChange({ height: Number(e.target.value) })}
           />
+          <span style={{ paddingLeft: 20, paddingRight: 10 }}>Tiles:</span>
+          <select
+            className="form-control"
+            value={scale ?? 1}
+            onChange={(e) =>
+              onChange({ scale: e.target.value === "fit" ? "fit" : Number(e.target.value) })
+            }
+          >
+            <option value={"fit"}>Fit Screen</option>
+            {STAGE_ZOOM_STEPS.map((s) => (
+              <option value={s} key={s}>{`${Math.round(STAGE_CELL_SIZE * s)}px`}</option>
+            ))}
+          </select>
         </div>
       </fieldset>
       <fieldset className="form-group">
-        <legend className="col-form-legend">Wrapping</legend>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div className="form-check" style={{ flex: 1 }}>
             <label className="form-check-label" htmlFor="wrapX">
@@ -115,7 +123,7 @@ export const StageSettings = ({
               Wrap Horizontally
             </label>
           </div>
-          <div className="form-check" style={{ flex: 1 }}>
+          <div className="form-check" style={{ flex: 1, marginLeft: 10 }}>
             <label className="form-check-label" htmlFor="wrapY">
               <input
                 className="form-check-input"
@@ -127,12 +135,13 @@ export const StageSettings = ({
               Wrap Vertically
             </label>
           </div>
+          <div className="form-check" style={{ flex: 1 }}></div>
         </div>
       </fieldset>
-      <fieldset className="form-group">
+      <fieldset className="form-group" style={{ marginTop: 32 }}>
         <legend className="col-form-legend">Background</legend>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 0.35 }}>
             <div className="form-check">
               <label className="form-check-label">
                 <input
@@ -174,8 +183,12 @@ export const StageSettings = ({
                 />
                 Image
               </label>
+              <br />
               <input
                 type="text"
+                className="form-control"
+                placeholder="Paste an image URL..."
+                style={{ width: "100%" }}
                 defaultValue={backgroundAsURL}
                 onBlur={(e) => {
                   if (e.target.value) {
@@ -183,30 +196,29 @@ export const StageSettings = ({
                   }
                 }}
               />
-            </div>
-            <div style={{ marginTop: 10 }}>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Describe your background..."
-                value={backgroundPrompt}
-                onChange={(e) => setBackgroundPrompt(e.target.value)}
-                style={{ marginBottom: 5 }}
-              />
-              <Button
-                className="btn btn-primary"
-                onClick={_onGenerateBackground}
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <span>
-                    <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
-                    Generating...
-                  </span>
-                ) : (
-                  "Generate Background"
-                )}
-              </Button>
+              <div style={{ marginTop: 10, display: "flex", gap: 4 }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Describe a new background..."
+                  value={backgroundPrompt}
+                  onChange={(e) => setBackgroundPrompt(e.target.value)}
+                />
+                <Button
+                  className="btn btn-primary btn-sm"
+                  onClick={_onGenerateBackground}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? (
+                    <span>
+                      <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
+                      Generating...
+                    </span>
+                  ) : (
+                    "Generate"
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

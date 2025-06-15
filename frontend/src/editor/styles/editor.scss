@@ -66,8 +66,6 @@ html {
 }
 
 .sprite {
-  image-rendering: pixelated;
-
   &.outlined {
     filter: drop-shadow(2px 0 0.5px $outline-color) drop-shadow(-2px 0 0.5px $outline-color)
       drop-shadow(0 -2px 0.5px $outline-color) drop-shadow(0 2px 0.5px $outline-color);
@@ -93,13 +91,22 @@ html {
   }
 }
 
+.editor-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
 .editor {
   width: 100%;
+  height: 100%;
   flex: 1;
   font-size: 14px;
   background: url(../img/background.png) top left;
-  padding-top: 6px;
+  padding: 10px;
   touch-action: pan-x pan-y;
+  position: relative;
 
   .loading {
     margin: auto;
@@ -126,16 +133,6 @@ html {
   button.btn-sm {
     gap: 4px;
     padding: 0.15rem 0.5rem;
-  }
-
-  .editor-centered-flex {
-    max-width: 1210px;
-    max-height: 804px;
-    margin: auto;
-
-    display: flex;
-    flex-direction: column;
-    height: 100%;
   }
 
   .editor-horizontal-flex {
@@ -239,21 +236,22 @@ html {
 
 .stage-container {
   order: 1;
-  flex: 1;
+  min-height: 0;
 
   display: flex;
   flex-direction: column;
   min-width: 600px;
 
   .panel.stages {
-    flex: 1;
     display: flex;
     flex-direction: column;
     user-select: none;
+    min-height: 0;
 
     .stages-horizontal-flex {
       display: flex;
       flex-direction: row;
+      min-height: 0;
       flex: 1;
     }
 
@@ -1087,8 +1085,8 @@ button.btn.selected:active {
 }
 
 .stage-sidebar {
-  max-height: 380px;
-  width: 190px;
+  max-height: 580px;
+  width: 204px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -1113,7 +1111,7 @@ button.btn.selected:active {
   }
 
   .stage-list {
-    overflow-y: auto;
+    overflow-y: scroll;
     position: relative;
     flex: 1;
 

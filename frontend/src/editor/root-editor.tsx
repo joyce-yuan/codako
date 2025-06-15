@@ -1,4 +1,3 @@
-import Library from "./components/library";
 import Toolbar from "./components/toolbar";
 
 import InspectorContainer from "./components/inspector/container";
@@ -18,15 +17,12 @@ import "./styles/editor.scss";
 const RootEditor = () => {
   return (
     <div className="editor">
-      <div className="editor-centered-flex">
+      <div className="editor-wrap">
         <div className="editor-horizontal-flex">
           <Toolbar />
         </div>
-        <div className="editor-horizontal-flex" style={{ flex: "1 1 85vh" }}>
-          <div className="stage-container">
-            <StageContainer />
-            <Library />
-          </div>
+        <div className="editor-horizontal-flex" style={{ flex: 1, minHeight: 0 }}>
+          <StageContainer />
           <InspectorContainer />
         </div>
 
