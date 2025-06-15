@@ -72,7 +72,7 @@ function recordingReducer(
         {
           ruleId: null,
           characterId: actor.characterId,
-          phase: RECORDING_PHASE.SETUP,
+          phase: RECORDING_PHASE.RECORD,
           actorId: actor.id,
           actions: u.constant([]),
           conditions: u.constant({ [actor.id]: {} }),
@@ -109,7 +109,7 @@ function recordingReducer(
           },
         },
       };
-      return u(stateForEditingRule(RECORDING_PHASE.SETUP, initialRule, entireState), nextState);
+      return u(stateForEditingRule(RECORDING_PHASE.RECORD, initialRule, entireState), nextState);
     }
     case Types.EDIT_RULE_RECORDING: {
       return u(stateForEditingRule(RECORDING_PHASE.RECORD, action.rule, entireState), nextState);
@@ -119,14 +119,6 @@ function recordingReducer(
     }
     case Types.CANCEL_RECORDING: {
       return Object.assign({}, initialState.recording);
-    }
-    case Types.START_RECORDING: {
-      return u(
-        {
-          phase: RECORDING_PHASE.RECORD,
-        },
-        nextState,
-      );
     }
     case Types.UPDATE_RECORDING_CONDITION: {
       const { actorId, key, values } = action;

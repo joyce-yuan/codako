@@ -29,6 +29,5 @@ export enum TOOLS {
 }
 
 export enum RECORDING_PHASE {
-  SETUP = "setup",
   RECORD = "record",
 }

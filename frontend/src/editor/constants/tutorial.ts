@@ -276,7 +276,7 @@ const baseTutorialSteps: TutorialStep[] = [
       dispatch(changeActor(baseTutorialCharacterPath, { position: { x: 9, y: 9 } }));
     },
     waitsFor: {
-      stateMatching: (state) => state.recording.phase === RECORDING_PHASE.SETUP,
+      stateMatching: (state) => state.recording.actorId === baseTutorialCharacterPath.actorId,
     },
   },
   {
@@ -308,20 +308,8 @@ const baseTutorialSteps: TutorialStep[] = [
   },
   {
     pose: ["excited", "standing-pointing"],
-    text: `Perfect. Now we're ready to show our hero what to do! Click the Start Recording button.`,
+    text: `Perfect. Now we're ready to show our hero what to do!`,
     soundURL: new URL("../sounds/tutorial/base_21.mp3", import.meta.url).href,
-    annotation: {
-      selectors: ["[data-tutorial-id=record-next-step]"],
-      style: "outline",
-    },
-    waitsFor: {
-      stateMatching: (state) => state.recording.phase === RECORDING_PHASE.RECORD,
-    },
-  },
-  {
-    pose: ["excited"],
-    text: `Okay good!`,
-    soundURL: new URL("../sounds/tutorial/base_22.mp3", import.meta.url).href,
   },
   {
     pose: "sitting-talking",
@@ -555,6 +543,12 @@ const baseTutorialSteps: TutorialStep[] = [
     onEnter: (dispatch) => {
       dispatch(stopPlayback());
     },
+    waitsFor: {
+      stateMatching: (_state, stage) => {
+        const main = Object.values(stage.actors).find((a) => a.characterId === "aamlcui8uxr");
+        return main && main.position.x < 9;
+      },
+    },
   },
   {
     pose: "standing-pointing",
@@ -610,7 +604,7 @@ const baseTutorialSteps: TutorialStep[] = [
       stateMatching: (state) => {
         return (
           state.ui.selectedToolId === TOOLS.RECORD &&
-          state.recording.phase === RECORDING_PHASE.SETUP &&
+          state.recording.phase === RECORDING_PHASE.RECORD &&
           state.recording.characterId === "oou4u6jemi"
         );
       },
@@ -631,18 +625,6 @@ const baseTutorialSteps: TutorialStep[] = [
           state.recording.extent.ymax >= main.position.y
         );
       },
-    },
-  },
-  {
-    pose: "standing-pointing",
-    soundURL: new URL("../sounds/tutorial/base_49.mp3", import.meta.url).href,
-    text: `Perfect. Now we're ready to show the boulder what to do. Click the Start Recording button.`,
-    annotation: {
-      selectors: ["[data-tutorial-id=record-next-step]"],
-      style: "outline",
-    },
-    waitsFor: {
-      stateMatching: (state) => state.recording.phase === RECORDING_PHASE.RECORD,
     },
   },
   {
@@ -724,7 +706,7 @@ const baseTutorialSteps: TutorialStep[] = [
       stateMatching: (state) => {
         return (
           state.ui.selectedToolId === TOOLS.RECORD &&
-          state.recording.phase === RECORDING_PHASE.SETUP &&
+          state.recording.phase === RECORDING_PHASE.RECORD &&
           state.recording.characterId === "oou4u6jemi"
         );
       },
@@ -742,20 +724,8 @@ const baseTutorialSteps: TutorialStep[] = [
     },
   },
   {
-    pose: "standing-pointing",
-    text: `Nice. Now we're ready to show the boulder what to do. Click the Start Recording button.`,
-    soundURL: new URL("../sounds/tutorial/base_59.mp3", import.meta.url).href,
-    annotation: {
-      selectors: ["[data-tutorial-id=record-next-step]"],
-      style: "outline",
-    },
-    waitsFor: {
-      stateMatching: (state) => state.recording.phase === RECORDING_PHASE.RECORD,
-    },
-  },
-  {
     pose: "excited",
-    text: `Okay good!`,
+    text: `Nice. Now we're ready to show the boulder what to do.`,
     soundURL: new URL("../sounds/tutorial/base_60.mp3", import.meta.url).href,
   },
   {

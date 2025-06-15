@@ -31,16 +31,7 @@ const StageContainer = ({ readonly }: { readonly?: boolean }) => {
     controls = (
       <StageRecordingControls characters={characters} dispatch={dispatch} recording={recording} />
     );
-
-    if (recording.phase === RECORDING_PHASE.SETUP) {
-      stageA = (
-        <Stage
-          world={recording.beforeWorld}
-          stage={getCurrentStageForWorld(recording.beforeWorld)!}
-          recordingExtent={recording.extent}
-        />
-      );
-    } else if (recording.phase === RECORDING_PHASE.RECORD) {
+    if (recording.phase === RECORDING_PHASE.RECORD) {
       stageA = (
         <Stage
           style={{ marginRight: 2 }}

@@ -87,16 +87,6 @@ export type ActionFinishRecording = {
   type: "FINISH_RECORDING";
 };
 
-export function startRecording(): ActionStartRecording {
-  return {
-    type: types.START_RECORDING,
-  };
-}
-
-export type ActionStartRecording = {
-  type: "START_RECORDING";
-};
-
 export function setRecordingExtent(extent: RuleExtent): ActionSetRecordingExtent {
   return {
     type: types.SET_RECORDING_EXTENT,
@@ -163,7 +153,6 @@ export type RecordingActions =
   | ActionEditRuleRecording
   | ActionCancelRecording
   | ActionFinishRecording
-  | ActionStartRecording
   | ActionSetRecordingExtent
   | ActionUpdateRecordingCondition
   | ActionUpdateRecordingActions

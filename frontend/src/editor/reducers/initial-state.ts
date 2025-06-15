@@ -60,7 +60,7 @@ const InitialState: EditorState = {
     },
   },
   recording: {
-    phase: RECORDING_PHASE.SETUP,
+    phase: RECORDING_PHASE.RECORD,
     characterId: null,
     actorId: null,
     ruleId: null,

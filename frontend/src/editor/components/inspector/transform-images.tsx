@@ -50,4 +50,5 @@ export const TransformLabels = {
   "270deg": "-90º",
   "flip-x": "Flipped horizontally",
   "flip-y": "Flipped vertically",
+  "flip-xy": "Flipped both",
 };
