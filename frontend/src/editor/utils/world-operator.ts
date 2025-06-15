@@ -339,6 +339,17 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         }
       }
 
+      // If any actions call for offsets that are not valid positions on the stage
+      // (offscreen and stage doesn't wrap), return false.
+      for (const action of rule.actions) {
+        if ("offset" in action && action.offset) {
+          const stagePos = wrappedPosition(pointByAdding(me.position, action.offset));
+          if (stagePos === null) {
+            return false;
+          }
+        }
+      }
+
       // If there are global conditions, check those - they can reference the actor
       // variable values, so we need to do this last.
       for (const condition of Object.values(rule.conditions.globals || {})) {
