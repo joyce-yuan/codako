@@ -1,32 +1,25 @@
-import React from "react";
-import PropTypes from "prop-types";
-
 import { STAGE_CELL_SIZE } from "../../constants/constants";
 import WorldOperator from "../../utils/world-operator";
 import ActorSprite from "../sprites/actor-sprite";
 
+import React from "react";
+import { Rule, WorldMinimal } from "../../../types";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../../utils/selectors";
 import RecordingIgnoredSprite from "../sprites/recording-ignored-sprite";
 
-export default class ScenarioStage extends React.Component {
-  static propTypes = {
-    rule: PropTypes.object,
-    applyActions: PropTypes.bool,
-    maxWidth: PropTypes.number,
-    maxHeight: PropTypes.number,
-  };
-
-  static contextTypes = {
-    characters: PropTypes.object,
-  };
-
-  shouldComponentUpdate(nextProps) {
-    return nextProps.rule !== this.props.rule || nextProps.applyActions !== this.props.applyActions;
-  }
-
-  render() {
-    const { rule, applyActions, maxWidth, maxHeight } = this.props;
+export const ScenarioStage = React.memo(
+  ({
+    rule,
+    applyActions,
+    maxWidth,
+    maxHeight,
+  }: {
+    rule: Rule;
+    applyActions: boolean;
+    maxWidth: number;
+    maxHeight: number;
+  }) => {
     const { world, characters } = window.editorStore.getState();
 
     const { xmin, xmax, ymin, ymax } = rule.extent;
@@ -38,8 +31,10 @@ export default class ScenarioStage extends React.Component {
       applyActions,
       offset: { x: -xmin, y: -ymin },
     });
-    const ruleStage = getCurrentStageForWorld(ruleWorld);
-
+    const ruleStage = getCurrentStageForWorld(ruleWorld as WorldMinimal);
+    if (!ruleStage) {
+      return null;
+    }
     return (
       <div className="scenario-stage" style={{ width, height, zoom }}>
         {Object.keys(ruleStage.actors).map((id) => (
@@ -54,5 +49,5 @@ export default class ScenarioStage extends React.Component {
         ))}
       </div>
     );
-  }
-}
+  },
+);

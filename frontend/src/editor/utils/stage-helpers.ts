@@ -165,9 +165,9 @@ export function applyVariableOperation(
 export function findRule(
   node: { rules: RuleTreeItem[] },
   id: string,
-): [RuleTreeItem, { rules: RuleTreeItem[] }, number] | null {
+): [RuleTreeItem | null, { rules: RuleTreeItem[] }, number] {
   if (!("rules" in node)) {
-    return null;
+    return [null, { rules: [] }, 0] as const;
   }
   for (let idx = 0; idx < node.rules.length; idx++) {
     const n = node.rules[idx];
@@ -175,12 +175,12 @@ export function findRule(
       return [n, node, idx];
     } else if ("rules" in n && n.rules) {
       const rval = findRule(n, id);
-      if (rval) {
+      if (rval[0] !== null) {
         return rval;
       }
     }
   }
-  return null;
+  return [null, { rules: [] }, 0] as const;
 }
 
 let bgImages: { [url: string]: HTMLImageElement } = {};

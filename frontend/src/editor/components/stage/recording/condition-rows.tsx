@@ -109,8 +109,8 @@ interface FreeformConditionRowProps {
   actors: Stage["actors"];
   world: WorldMinimal;
   characters: Characters;
-  onChange: (keep: boolean, condition?: FreeformCondition) => void;
   condition: FreeformCondition;
+  onChange?: (keep: boolean, condition?: FreeformCondition) => void;
 }
 
 export const FreeformConditionRow = (props: FreeformConditionRowProps) => {
@@ -137,7 +137,7 @@ export const FreeformConditionRow = (props: FreeformConditionRowProps) => {
         const value = (
           actorId === actor.id ? {} : globalId ? { globalId } : { actorId, variableId }
         ) as RuleValue;
-        onChange(true, { ...condition, value: value });
+        onChange?.(true, { ...condition, value: value });
         e.stopPropagation();
       }
     }

@@ -8,7 +8,7 @@ import TutorialContainer from "./components/tutorial/container";
 import ExploreCharactersContainer from "./components/modal-explore-characters/container";
 import KeypickerContainer from "./components/modal-keypicker/container";
 import PaintContainer from "./components/modal-paint/container";
-import StagesContainer from "./components/modal-stages/container";
+import { StagesContainer } from "./components/modal-stages/container";
 import VideosContainer from "./components/modal-videos/container";
 import { StageImagesLoader } from "./components/stage/stage-images-loader";
 

@@ -8,11 +8,11 @@ const MISSING_CHARACTER_QUESTION_MARK = `data:image/png;base64,iVBORw0KGgoAAAANS
 const ActorSprite = (props: {
   character: Character;
   actor: Actor;
-  selected: boolean;
-  draggable: boolean;
-  onClick: (e: React.MouseEvent) => void;
-  onDoubleClick: (e: React.MouseEvent) => void;
-  transitionDuration: number;
+  selected?: boolean;
+  draggable?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+  onDoubleClick?: (e: React.MouseEvent) => void;
+  transitionDuration?: number;
 }) => {
   const { actor, character, selected, draggable, transitionDuration, onClick, onDoubleClick } =
     props;
@@ -113,12 +113,12 @@ const ActorSprite = (props: {
         }}
         onClick={(event) => {
           if (isEventInFilledSquare(event)) {
-            onClick(event);
+            onClick?.(event);
           }
         }}
         onDoubleClick={(event) => {
           if (isEventInFilledSquare(event)) {
-            onDoubleClick(event);
+            onDoubleClick?.(event);
           }
         }}
         src={data}

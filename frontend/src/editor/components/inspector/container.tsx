@@ -8,7 +8,7 @@ import NavLink from "reactstrap/lib/NavLink";
 import { getCurrentStageForWorld } from "../../utils/selectors";
 import AddRuleButton from "./add-rule-button";
 import AddVariableButton from "./add-variable-button";
-import ContainerPaneRules from "./container-pane-rules";
+import { ContainerPaneRules } from "./container-pane-rules";
 import ContainerPaneVariables from "./container-pane-variables";
 
 import { Dispatch } from "redux";

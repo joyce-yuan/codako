@@ -114,13 +114,13 @@ export type RuleTreeFlowLoopItem = RuleTreeFlowItemBase & {
   loopCount: { constant: number } | { variableId: string };
 };
 
-export type RuleTreeItem =
-  | RuleTreeEventItem
+export type RuleTreeFlowItem =
   | RuleTreeFlowItemFirst
   | RuleTreeFlowItemRandom
   | RuleTreeFlowItemAll
-  | RuleTreeFlowLoopItem
-  | Rule;
+  | RuleTreeFlowLoopItem;
+
+export type RuleTreeItem = RuleTreeEventItem | RuleTreeFlowItem | Rule;
 
 export type RuleConditionV1 = {
   enabled: boolean;

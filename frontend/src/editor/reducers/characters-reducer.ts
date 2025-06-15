@@ -134,9 +134,8 @@ export default function charactersReducer(
       }
 
       if (recording.ruleId) {
-        const match = findRule({ rules }, recording.ruleId);
-        if (!match) return state;
-        const [existingRule, parentRule, parentIdx] = match;
+        const [existingRule, parentRule, parentIdx] = findRule({ rules }, recording.ruleId);
+        if (!existingRule) return state;
         parentRule.rules[parentIdx] = Object.assign({}, existingRule, recordedRule);
         return u.updateIn(recording.characterId, { rules }, state);
       }
