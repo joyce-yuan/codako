@@ -18,13 +18,16 @@ export const RuleActionsContext = React.createContext<{
   onRuleDeleted: (ruleId: string, event: React.MouseEvent<unknown>) => void;
 }>(new Error() as never);
 
-export const ContainerPaneRules = ({ character }: { character: Character }) => {
+export const ContainerPaneRules = ({ character }: { character: Character | null }) => {
   const dispatch = useDispatch();
   const _scrollContainerEl = useRef<HTMLDivElement>(null);
   const _scrollId = useRef<number>(0);
 
   const prevRulesJSON = useRef<string>();
   useEffect(() => {
+    if (!character) {
+      return;
+    }
     const curRulesJSON = JSON.stringify(character.rules);
     if (prevRulesJSON.current && curRulesJSON !== prevRulesJSON.current) {
       const prevRules = JSON.parse(prevRulesJSON.current);
@@ -41,7 +44,11 @@ export const ContainerPaneRules = ({ character }: { character: Character }) => {
       }
     }
     prevRulesJSON.current = curRulesJSON;
-  }, [character.rules]);
+  }, [character?.rules]);
+
+  if (!character) {
+    return <div className="empty">Please select a character.</div>;
+  }
 
   const _scrollToRuleId = (ruleId: string) => {
     const el = document.querySelector(`[data-rule-id="${ruleId}"]`);
@@ -142,9 +149,6 @@ export const ContainerPaneRules = ({ character }: { character: Character }) => {
     dispatch(pickCharacterRuleEventKey(character.id, ruleId, rule.code ?? null));
   };
 
-  if (!character) {
-    return <div className="empty">Please select a character.</div>;
-  }
   if (!character.rules || character.rules.length === 0) {
     return (
       <div className="empty">
