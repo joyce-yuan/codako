@@ -4,13 +4,13 @@ import {
   Actor,
   Character,
   Characters,
-  MathComparator,
   RuleConditionAppearance,
   RuleConditionGlobal,
   RuleConditionTransform,
   RuleConditionVariable,
   RuleValue,
   Stage,
+  VariableComparator,
   WorldMinimal,
 } from "../../../../types";
 import { getVariableValue } from "../../../utils/stage-helpers";
@@ -61,9 +61,7 @@ export const GlobalConditionRow = (props: GlobalConditionRowProps) => {
           <ComparatorSelect
             type="global"
             value={condition.comparator}
-            onChange={(e) =>
-              onChange(true, { ...condition, comparator: e.currentTarget.value as MathComparator })
-            }
+            onChange={(comparator) => onChange(true, { ...condition, comparator })}
           />
         ) : (
           ` ${condition.comparator} `
@@ -150,19 +148,22 @@ export const FreeformConditionRow = (props: FreeformConditionRowProps) => {
         <ActorBlock character={character} actor={actor} disambiguate={disambiguate} />
         {condition.type === "transform" ? "direction" : condition.type}
         {"variableId" in condition && condition.variableId ? (
-          <VariableBlock name={character.variables[condition.variableId].name} />
-        ) : undefined}
-        {onChange ? (
-          <ComparatorSelect
-            type={condition.type}
-            value={condition.comparator}
-            onChange={(e) =>
-              onChange(true, { ...condition, comparator: e.currentTarget.value as never })
-            }
-          />
+          <>
+            <VariableBlock name={character.variables[condition.variableId].name} />
+            {onChange ? (
+              <ComparatorSelect
+                type={condition.type}
+                value={condition.comparator}
+                onChange={(comparator) => onChange(true, { ...condition, comparator })}
+              />
+            ) : (
+              ` ${condition.comparator} `
+            )}
+          </>
         ) : (
           ` ${condition.comparator} `
         )}
+
         <div
           className={`right dropping-${droppingValue}`}
           title="Drop a variable or appearance here to create an expression linking two variables."
@@ -269,17 +270,25 @@ const FreeformConditionValue = ({
 
 const ComparatorSelect = ({
   type,
+  value,
+  onChange,
   ...rest
-}: React.HTMLProps<HTMLSelectElement> & {
-  type?: "variable" | "transform" | "appearance" | "global";
+}: Omit<React.HTMLProps<HTMLSelectElement>, "value" | "onChange"> & {
+  value: VariableComparator;
+  onChange: (value: VariableComparator) => void;
+  type: "variable" | "transform" | "appearance" | "global";
 }) => (
-  <select {...rest}>
-    <option value="=">=</option>
-    <option value="<=" disabled={type !== "variable"}>
+  <select {...rest} value={value} onChange={(e) => onChange(e.target.value as VariableComparator)}>
+    <option value="=">is</option>
+    <option value="!=">is not</option>
+    <option value="<=" disabled={!["global", "variable"].includes(type)}>
       &lt;=
     </option>
-    <option value=">=" disabled={type !== "variable"}>
+    <option value=">=" disabled={!["global", "variable"].includes(type)}>
       &gt;=
     </option>
+    <option value="contains">contains</option>
+    <option value="starts-with">starts with</option>
+    <option value="ends-with">ends with</option>
   </select>
 );

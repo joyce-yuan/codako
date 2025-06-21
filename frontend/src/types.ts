@@ -29,7 +29,14 @@ export type FrameInput = { keys: { [keyCode: string]: true }; clicks: { [actorId
 
 export type MathOperation = "add" | "set" | "subtract";
 
-export type MathComparator = "=" | ">=" | "<=";
+export type VariableComparator =
+  | "="
+  | "!="
+  | ">="
+  | "<="
+  | "contains"
+  | "starts-with"
+  | "ends-with";
 
 export type RuleAction =
   | {
@@ -133,14 +140,14 @@ export type RuleConditionV1 = {
   enabled: boolean;
   actorId?: string;
   variableId?: string;
-  comparator?: MathComparator;
+  comparator?: VariableComparator;
 };
 
 export type RuleConditionVariable = {
   enabled: boolean;
   type: "variable";
   variableId: string;
-  comparator: MathComparator;
+  comparator: VariableComparator;
   value: RuleValue;
 };
 
@@ -174,7 +181,7 @@ export type RuleConditionGlobal = {
   enabled: boolean;
   type: "global";
   globalId: string;
-  comparator: MathComparator;
+  comparator: VariableComparator;
   value: RuleValue;
 };
 

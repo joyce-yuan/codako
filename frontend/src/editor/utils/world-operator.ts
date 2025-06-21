@@ -7,7 +7,6 @@ import {
   FrameInput,
   Globals,
   HistoryItem,
-  MathComparator,
   Position,
   PositionRelativeToWorld,
   Rule,
@@ -19,6 +18,7 @@ import {
   RuleTreeFlowLoopItem,
   RuleTreeItem,
   Stage,
+  VariableComparator,
   WorldMinimal,
 } from "../../types";
 import { getCurrentStageForWorld } from "./selectors";
@@ -147,21 +147,25 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     return true;
   }
 
-  function comparatorMatches(
-    comparator: MathComparator,
-    a: string | number | null,
-    b: string | number | null,
-  ) {
-    if (comparator === "=" && `${a}` !== `${b}`) {
-      return false;
+  function comparatorMatches(comparator: VariableComparator, a: string | null, b: string | null) {
+    switch (comparator) {
+      case "=":
+        return Number(a) === Number(b);
+      case "!=":
+        return Number(a) != Number(b);
+      case ">=":
+        return Number(a) >= Number(b);
+      case "<=":
+        return Number(a) <= Number(b);
+      case "contains":
+        return `${a}`.includes(`${b}`);
+      case "ends-with":
+        return `${a}`.endsWith(`${b}`);
+      case "starts-with":
+        return `${a}`.startsWith(`${b}`);
+      default:
+        isNever(comparator);
     }
-    if (comparator === ">=" && Number(a) < Number(b)) {
-      return false;
-    }
-    if (comparator === "<=" && Number(a) > Number(b)) {
-      return false;
-    }
-    return true;
   }
 
   function actorsAtPosition(position: Position | null) {
@@ -623,4 +627,8 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     untick,
     resetForRule,
   };
+}
+
+function isNever(val: never) {
+  throw new Error(`Expected var to be never but it is ${val}.`);
 }
