@@ -49,13 +49,13 @@ export const TransformBlock = ({
   appearanceId,
   transform,
 }: {
-  character: Character;
+  character?: Character;
   transform?: ActorTransform;
   appearanceId?: string;
 }) => {
   return (
     <code>
-      {appearanceId && (
+      {appearanceId && character && (
         <Sprite
           spritesheet={character.spritesheet}
           appearance={appearanceId}

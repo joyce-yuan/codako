@@ -27,9 +27,10 @@ import {
   actorIntersectsExtent,
   applyVariableOperation,
   getVariableValue,
+  isNever,
   pointByAdding,
+  resolveRuleValue,
   shuffleArray,
-  toV2Condition,
 } from "./stage-helpers";
 import { deepClone } from "./utils";
 import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "./world-constants";
@@ -101,46 +102,55 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     return o;
   }
 
+  type ActorLookupFn = (referencedActorId: string) => Actor[];
+
   function actorsMatch(
     stageActor: Actor,
     ruleActor: Actor,
-    conditions: { [id: string]: RuleCondition },
-    stageActorsForReferencedActorId: (refActorId: string) => Actor[],
+    conditions: RuleCondition[],
+    stageActorsForId: ActorLookupFn | "avoiding-recursion",
   ) {
     if (ruleActor.characterId !== stageActor.characterId) {
       return false;
     }
 
     const character = characters[stageActor.characterId];
+    const rconditions = conditions.filter(
+      (a) =>
+        (a.enabled && "actorId" in a.left && a.left.actorId === ruleActor.id) ||
+        ("actorId" in a.right && a.right.actorId === ruleActor.id),
+    );
 
-    for (const id of Object.keys(conditions)) {
-      const condition = toV2Condition(id, conditions[id]);
-      if (!condition || !condition.enabled) {
+    for (const { left, right, comparator } of rconditions) {
+      if (("actorId" in left || "actorId" in right) && stageActorsForId === "avoiding-recursion") {
         continue;
       }
 
-      const possibleValueActors =
-        "actorId" in condition.value
-          ? stageActorsForReferencedActorId(condition.value.actorId)
-          : [ruleActor];
+      const leftValue: [string | null, Actor | null][] =
+        "actorId" in left
+          ? (stageActorsForId as ActorLookupFn)(left.actorId).map((actor) => [
+              getVariableValue(actor, character, left.variableId),
+              actor,
+            ])
+          : [[resolveRuleValue(left, globals, characters, actors), null]];
 
-      const matchedValueActor = possibleValueActors.find((valueActor) => {
-        let leftValue, rightValue;
+      const rightValue: [string | null, Actor | null][] =
+        "actorId" in right
+          ? (stageActorsForId as ActorLookupFn)(right.actorId).map((actor) => [
+              getVariableValue(actor, character, right.variableId),
+              actor,
+            ])
+          : [[resolveRuleValue(right, globals, characters, actors), null]];
 
-        if (condition.type === "appearance") {
-          leftValue = stageActor.appearance;
-          rightValue = valueActor.appearance;
-        } else if (condition.type === "transform") {
-          leftValue = stageActor.transform || "none";
-          rightValue = valueActor.transform || "none";
-        } else {
-          leftValue = getVariableValue(stageActor, character, condition.variableId);
-          rightValue = getVariableValue(valueActor, character, condition.variableId);
+      let found = false;
+      for (const leftOpt of leftValue) {
+        for (const rightOpt of rightValue) {
+          if (comparatorMatches(comparator, leftOpt[0], rightOpt[0])) {
+            found = true;
+          }
         }
-        return comparatorMatches(condition.comparator, leftValue, rightValue);
-      });
-
-      if (!matchedValueActor) {
+      }
+      if (!found) {
         return false;
       }
     }
@@ -150,9 +160,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
   function comparatorMatches(comparator: VariableComparator, a: string | null, b: string | null) {
     switch (comparator) {
       case "=":
-        return Number(a) === Number(b);
+        return `${a}` === `${b}`;
       case "!=":
-        return Number(a) != Number(b);
+        return `${a}` != `${b}`;
       case ">=":
         return Number(a) >= Number(b);
       case "<=":
@@ -297,7 +307,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           return [];
         }
         return ocandidates.filter((ostage) =>
-          actorsMatch(ostage, orule, rule.conditions[otherActorId] || {}, () => []),
+          actorsMatch(ostage, orule, rule.conditions, "avoiding-recursion"),
         );
       };
 
@@ -325,7 +335,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           // additional conditions also match.
           for (const s of stageActorsAtPos) {
             const match = ruleActorsAtPos.find((r) =>
-              actorsMatch(s, r, rule.conditions[r.id] || {}, stageActorsForReferencedActorId),
+              actorsMatch(s, r, rule.conditions, stageActorsForReferencedActorId),
             );
 
             if (match) {
@@ -356,58 +366,26 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         }
       }
 
-      // If there are global conditions, check those - they can reference the actor
-      // variable values, so we need to do this last.
-      for (const condition of Object.values(rule.conditions.globals || {})) {
-        const leftValue = globals[condition.globalId].value;
-
-        if ("constant" in condition.value && condition.value.constant !== undefined) {
-          const rightValue = condition.value.constant;
-          if (!comparatorMatches(condition.comparator, leftValue, rightValue)) {
-            return false;
-          }
-        } else if ("actorId" in condition.value && condition.value.actorId) {
-          const { actorId, variableId } = condition.value;
-          const possibleRightActors = stageActorsForReferencedActorId(actorId);
-          const matched = possibleRightActors.some((rightActor) => {
-            const rightValue = getVariableValue(
-              rightActor,
-              characters[rightActor.characterId],
-              variableId,
-            );
-            return comparatorMatches(condition.comparator, leftValue, rightValue);
-          });
-          if (!matched) {
-            return false;
-          }
-        } else {
-          return false;
-        }
-      }
-
       return stageActorsForRuleActorIds;
     }
 
     function getActionAndConditionActorIds(rule: Rule) {
-      const requiredActorIds = [];
+      const requiredActorIds: string[] = [];
       for (const action of rule.actions) {
         if ("actorId" in action && rule.actors[action.actorId]) {
           requiredActorIds.push(action.actorId);
         }
       }
-      for (const actorId of Object.keys(rule.conditions)) {
-        if (actorId === "globals") {
-          continue;
-        }
-        const actor = rule.actors[actorId];
-        if (!actor || !actorIntersectsExtent(actor, characters, rule.extent)) {
-          continue;
-        }
-        requiredActorIds.push(actorId);
-        for (const condition of Object.values(rule.conditions[actorId])) {
-          if (condition && "value" in condition && "actorId" in condition.value) {
-            requiredActorIds.push(condition.value.actorId);
+      for (const { left, right } of rule.conditions) {
+        for (const side of [left, right]) {
+          if (!("actorId" in side)) {
+            continue;
           }
+          const actor = rule.actors[side.actorId];
+          if (!actor || !actorIntersectsExtent(actor, characters, rule.extent)) {
+            continue;
+          }
+          requiredActorIds.push(side.actorId);
         }
       }
 
@@ -502,38 +480,20 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       });
     }
 
-    for (const cond of Object.values(rule.conditions.globals || {})) {
-      if (!globals[cond.globalId]) {
-        continue;
-      }
-      if ("constant" in cond.value && cond.value.constant !== undefined) {
-        globals[cond.globalId].value = cond.value.constant;
-      } else if ("actorId" in cond.value && cond.value.actorId) {
-        const actor = actors[cond.value.actorId];
-        globals[cond.globalId].value =
-          getVariableValue(actor, characters[actor.characterId], cond.value.variableId) ?? "0";
-      }
-    }
-    for (const cond of Object.values(rule.conditions.globals || {})) {
-      if (!globals[cond.globalId]) {
-        continue;
-      }
-      if ("globalId" in cond.value && cond.value.globalId) {
-        globals[cond.globalId].value = globals[cond.value.globalId].value;
+    for (const cond of Object.values(rule.conditions)) {
+      if ("globalId" in cond.left) {
+        const value = resolveRuleValue(cond.right, globals, characters, rule.actors);
+        if (value) {
+          globals[cond.left.globalId].value = value;
+        }
       }
     }
 
     // lay out the before state and apply any rules that apply to
     // the actors currently on the board
-    if (applyActions && rule.actions) {
+    if (applyActions) {
       const operator = ActorOperator(actors[rule.mainActorId]);
-      const stageActorsForRuleActorIds = operator.checkRuleScenario(rule);
-      if (stageActorsForRuleActorIds) {
-        operator.applyRule(rule, stageActorsForRuleActorIds);
-      } else {
-        console.log(rule);
-        console.warn(`Rule was not applied in resetForRule because the scenario check failed.`);
-      }
+      operator.applyRule(rule, actors);
     }
 
     return u(
@@ -627,8 +587,4 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     untick,
     resetForRule,
   };
-}
-
-function isNever(val: never) {
-  throw new Error(`Expected var to be never but it is ${val}.`);
 }

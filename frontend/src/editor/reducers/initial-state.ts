@@ -65,7 +65,7 @@ const InitialState: EditorState = {
     actorId: null,
     ruleId: null,
     actions: [],
-    conditions: {},
+    conditions: [],
     extent: {
       xmin: 0,
       xmax: 0,

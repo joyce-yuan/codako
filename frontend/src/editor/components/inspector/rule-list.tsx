@@ -104,19 +104,11 @@ export const RuleList = ({
   const _onDragStart = (event: React.DragEvent<unknown>, rule: RuleTreeItem) => {
     event.stopPropagation();
     event.dataTransfer.setData("rule-id", rule.id);
-    setDragState({
-      ...dragState,
-      dragIndex: rules.indexOf(rule),
-      dropIndex: -1,
-    });
+    setDragState({ ...dragState, dragIndex: rules.indexOf(rule), dropIndex: -1 });
   };
 
   const _onDragEnd = () => {
-    setDragState({
-      dragIndex: -1,
-      dropIndex: -1,
-      hovering: false,
-    });
+    setDragState({ dragIndex: -1, dropIndex: -1, hovering: false });
   };
 
   const _onDragOver = (event: React.DragEvent<unknown>) => {

@@ -25,7 +25,7 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
 
   const prevRulesJSON = useRef<string>();
   useEffect(() => {
-    if (!character) {
+    if (!character?.rules) {
       return;
     }
     const curRulesJSON = JSON.stringify(character.rules);

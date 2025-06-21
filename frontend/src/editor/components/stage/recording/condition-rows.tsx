@@ -2,194 +2,94 @@ import React, { useState } from "react";
 
 import {
   Actor,
+  ActorTransform,
   Character,
   Characters,
-  RuleConditionAppearance,
-  RuleConditionGlobal,
-  RuleConditionTransform,
-  RuleConditionVariable,
+  RuleCondition,
   RuleValue,
   Stage,
   VariableComparator,
   WorldMinimal,
 } from "../../../../types";
-import { getVariableValue } from "../../../utils/stage-helpers";
+import { AppearanceDropdown, TransformDropdown } from "../../inspector/container-pane-variables";
 import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
 
-interface GlobalConditionRowProps {
-  actors: Stage["actors"];
-  world: WorldMinimal;
-  characters: Characters;
-  onChange: (keep: boolean, condition?: RuleConditionGlobal) => void;
-  condition: RuleConditionGlobal;
-}
-export const GlobalConditionRow = (props: GlobalConditionRowProps) => {
-  const { world, condition, actors, characters, onChange } = props;
-
-  const [droppingValue, setDroppingValue] = useState(false);
-
-  const valueActor =
-    "actorId" in condition.value && condition.value.actorId
-      ? actors[condition.value.actorId]
-      : null;
-  const valueCharacter = valueActor ? characters[valueActor.characterId] : null;
-
-  const onDropValue = (e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes("variable")) {
-      const { actorId, globalId, variableId, type } = JSON.parse(
-        e.dataTransfer.getData("variable"),
-      );
-      if (type === "variable") {
-        onChange(true, {
-          ...condition,
-          value:
-            globalId === condition.globalId
-              ? { constant: world.globals[condition.globalId].value }
-              : { actorId, globalId, variableId },
-        });
-        e.stopPropagation();
-      }
-    }
-    setDroppingValue(false);
-  };
-
-  return (
-    <li className={`enabled-true`}>
-      <div className="left">
-        <VariableBlock name={world.globals[condition.globalId].name} />
-        {onChange ? (
-          <ComparatorSelect
-            type="global"
-            value={condition.comparator}
-            onChange={(comparator) => onChange(true, { ...condition, comparator })}
-          />
-        ) : (
-          ` ${condition.comparator} `
-        )}
-        <div
-          className={`right dropping-${droppingValue}`}
-          title="Drop a variable or appearance here to create an expression linking two variables."
-          onDragOver={(e) => {
-            if (e.dataTransfer.types.includes(`variable-type:variable`)) {
-              setDroppingValue(true);
-              e.preventDefault();
-              e.stopPropagation();
-            }
-          }}
-          onDragLeave={() => {
-            setDroppingValue(false);
-          }}
-          onDrop={onDropValue}
-        >
-          <FreeformConditionValue
-            actor={valueActor}
-            condition={condition}
-            valueActor={valueActor}
-            valueCharacter={valueCharacter}
-            disambiguate={false}
-            onChange={(value) => onChange(true, { ...condition, value })}
-          />
-        </div>
-      </div>
-      {onChange && (
-        <div onClick={() => onChange(false)} className="condition-remove">
-          <div />
-        </div>
-      )}
-    </li>
-  );
-};
-
-type FreeformCondition = RuleConditionVariable | RuleConditionTransform | RuleConditionAppearance;
-
 interface FreeformConditionRowProps {
-  actor: Actor;
   actors: Stage["actors"];
   world: WorldMinimal;
   characters: Characters;
-  condition: FreeformCondition;
-  onChange?: (keep: boolean, condition?: FreeformCondition) => void;
+  condition: RuleCondition;
+  onChange?: (keep: boolean, condition: RuleCondition) => void;
 }
 
-export const FreeformConditionRow = (props: FreeformConditionRowProps) => {
-  const [droppingValue, setDroppingValue] = useState(false);
+type ImpliedDatatype = { type: "transform" } | { type: "appearance"; character: Character } | null;
 
-  const { condition, actor, actors, characters, onChange } = props;
+export const FreeformConditionRow = ({
+  condition,
+  actors,
+  world,
+  characters,
+  onChange,
+}: FreeformConditionRowProps) => {
+  const { left, right, comparator } = condition;
 
-  const character = actor && characters[actor.characterId];
+  const leftActor = "actorId" in left ? actors[left.actorId] : null;
+  const leftCharacter = leftActor && characters[leftActor.characterId];
+  const rightActor = "actorId" in right ? actors[right.actorId] : null;
+  const rightCharacter = rightActor && characters[rightActor.characterId];
 
-  const valueActor =
-    "actorId" in condition.value && condition.value.actorId
-      ? actors[condition.value.actorId]
-      : actor;
-  const valueCharacter = valueActor ? characters[valueActor.characterId] : character;
+  const disambiguate =
+    leftActor && rightActor && leftActor !== rightActor
+      ? leftActor.characterId === rightActor.characterId
+      : false;
 
-  const disambiguate = valueActor !== actor && valueActor.characterId === actor.characterId;
+  const variableIds = [
+    "variableId" in left && left.variableId,
+    "variableId" in right && right.variableId,
+  ];
+  const impliedDatatype: ImpliedDatatype = variableIds.includes("transform")
+    ? { type: "transform" }
+    : variableIds.includes("appearance")
+      ? { type: "appearance", character: leftCharacter! || rightCharacter! }
+      : null;
 
-  const onDropValue = (e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes("variable")) {
-      const { actorId, globalId, variableId, type } = JSON.parse(
-        e.dataTransfer.getData("variable"),
-      );
-      if (type === condition.type) {
-        const value = (
-          actorId === actor.id ? {} : globalId ? { globalId } : { actorId, variableId }
-        ) as RuleValue;
-        onChange?.(true, { ...condition, value: value });
-        e.stopPropagation();
-      }
-    }
-    setDroppingValue(false);
-  };
+  console.log(impliedDatatype);
 
   return (
     <li className={`enabled-true`}>
-      <div className="left">
-        <ActorBlock character={character} actor={actor} disambiguate={disambiguate} />
-        {condition.type === "transform" ? "direction" : condition.type}
-        {"variableId" in condition && condition.variableId ? (
-          <>
-            <VariableBlock name={character.variables[condition.variableId].name} />
-            {onChange ? (
-              <ComparatorSelect
-                type={condition.type}
-                value={condition.comparator}
-                onChange={(comparator) => onChange(true, { ...condition, comparator })}
-              />
-            ) : (
-              ` ${condition.comparator} `
-            )}
-          </>
-        ) : (
-          ` ${condition.comparator} `
-        )}
+      <FreeformConditionValue
+        value={left}
+        actor={leftActor}
+        world={world}
+        character={leftCharacter}
+        disambiguate={disambiguate}
+        onChange={onChange ? (value) => onChange(true, { ...condition, left: value }) : undefined}
+        impliedDatatype={impliedDatatype}
+      />
 
-        <div
-          className={`right dropping-${droppingValue}`}
-          title="Drop a variable or appearance here to create an expression linking two variables."
-          onDragOver={(e) => {
-            if (e.dataTransfer.types.includes(`variable-type:${condition.type}`)) {
-              setDroppingValue(true);
-              e.preventDefault();
-              e.stopPropagation();
-            }
-          }}
-          onDragLeave={() => {
-            setDroppingValue(false);
-          }}
-          onDrop={onDropValue}
-        >
-          <FreeformConditionValue
-            actor={actor}
-            condition={condition}
-            valueActor={valueActor}
-            valueCharacter={valueCharacter}
-            disambiguate={disambiguate}
-          />
-        </div>
-      </div>
+      {onChange ? (
+        <ComparatorSelect
+          value={comparator}
+          onChange={(comparator) => onChange(true, { ...condition, comparator })}
+          impliedDatatype={impliedDatatype}
+        />
+      ) : (
+        ` ${ComparatorLabels[condition.comparator]} `
+      )}
+
+      <FreeformConditionValue
+        value={right}
+        actor={rightActor}
+        world={world}
+        character={rightCharacter}
+        disambiguate={disambiguate}
+        onChange={onChange ? (value) => onChange(true, { ...condition, right: value }) : undefined}
+        impliedDatatype={impliedDatatype}
+      />
+
+      <div style={{ flex: 1 }} />
       {onChange && (
-        <div onClick={() => onChange(false)} className="condition-remove">
+        <div onClick={() => onChange(false, condition)} className="condition-remove">
           <div />
         </div>
       )}
@@ -198,97 +98,152 @@ export const FreeformConditionRow = (props: FreeformConditionRowProps) => {
 };
 
 const FreeformConditionValue = ({
+  value,
   actor,
-  condition,
-  valueActor,
-  valueCharacter,
+  character,
+  world,
   disambiguate,
   onChange,
+  impliedDatatype,
 }: {
+  value: RuleValue;
   actor: Actor | null;
-  condition:
-    | RuleConditionVariable
-    | RuleConditionTransform
-    | RuleConditionAppearance
-    | RuleConditionGlobal;
-  valueActor: Actor | null;
-  valueCharacter: Character | null;
+  character: Character | null;
+  world: WorldMinimal;
   disambiguate: boolean;
-  onChange?: (value: { constant: number }) => void;
+  onChange?: (value: RuleValue) => void;
+  impliedDatatype: ImpliedDatatype;
 }) => {
-  const { value, type } = condition;
+  const [droppingValue, setDroppingValue] = useState(false);
 
-  if (!value) {
-    return <div>Empty</div>;
-  }
-  if (valueActor && valueCharacter) {
-    if (valueActor && valueActor !== actor) {
+  const onDropValue = (e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes("variable")) {
+      const { actorId, globalId, variableId } = JSON.parse(e.dataTransfer.getData("variable"));
+      const value = (globalId ? { globalId } : { actorId, variableId }) as RuleValue;
+      onChange?.(value);
+      e.stopPropagation();
+    }
+    setDroppingValue(false);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Backspace") {
+      onChange?.({ constant: "" });
+    }
+  };
+
+  const inner = () => {
+    if (!value) {
+      return <div>Empty</div>;
+    }
+    if ("actorId" in value && actor && character) {
       return (
-        <span>
-          <ActorBlock character={valueCharacter} actor={valueActor} disambiguate={disambiguate} />
-          {type === "transform" ? "direction" : type}
-          {"variableId" in value ? (
+        <div>
+          <ActorBlock character={character} actor={actor} disambiguate={disambiguate} />
+          {value.variableId === "transform" ? (
+            "direction"
+          ) : value.variableId === "appearance" ? (
+            "appearance"
+          ) : (
             <VariableBlock
-              name={(value.variableId && valueCharacter.variables[value.variableId].name) || ""}
+              name={(value.variableId && character.variables[value.variableId].name) || ""}
             />
-          ) : undefined}
-        </span>
+          )}
+        </div>
       );
     }
-    if (type === "transform") {
-      return <TransformBlock character={valueCharacter} transform={valueActor.transform} />;
-    }
-    if (type === "appearance") {
-      return <AppearanceBlock character={valueCharacter} appearanceId={valueActor.appearance} />;
-    }
-  }
-  if (type === "variable") {
-    if ("variableId" in condition) {
+    if ("constant" in value) {
+      if (impliedDatatype?.type === "transform") {
+        if (onChange) {
+          return (
+            <TransformDropdown
+              value={(value.constant as ActorTransform) ?? ""}
+              onChange={(e) => onChange?.({ constant: e ?? "" })}
+              displayAsLabel
+            />
+          );
+        } else {
+          return <TransformBlock transform={value.constant as ActorTransform} />;
+        }
+      }
+      if (impliedDatatype?.type === "appearance") {
+        if (onChange) {
+          return (
+            <AppearanceDropdown
+              value={value.constant}
+              spritesheet={impliedDatatype.character.spritesheet}
+              onChange={(e) => onChange?.({ constant: e ?? "" })}
+            />
+          );
+        } else {
+          return (
+            <AppearanceBlock character={impliedDatatype.character} appearanceId={value.constant} />
+          );
+        }
+      }
       return (
-        <code>
-          {valueActor && valueCharacter
-            ? getVariableValue(valueActor, valueCharacter, condition.variableId)
-            : "?unsupported?"}
-        </code>
+        <input
+          type="text"
+          value={value.constant}
+          style={{ width: 80 }}
+          onChange={(e) => onChange?.({ constant: e.target.value })}
+        />
       );
-    } else if ("globalId" in condition && "constant" in value) {
-      return (
-        <code>
-          <input
-            type="number"
-            value={Number(value.constant)}
-            onChange={(e) => onChange?.({ constant: Number(e.target.value) })}
-          />
-        </code>
-      );
-    } else {
-      return <code>unknown</code>;
     }
-  }
-  return <span />;
+    if ("globalId" in value) {
+      return world.globals[value.globalId]?.name ?? "Unknown global";
+    }
+
+    return <span />;
+  };
+  return (
+    <div
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      className={`right dropping-${droppingValue}`}
+      title="Drop a variable or appearance here to create an expression linking two variables."
+      onDragOver={(e) => {
+        if (e.dataTransfer.types.includes(`variable`)) {
+          setDroppingValue(true);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
+      onDragLeave={() => {
+        setDroppingValue(false);
+      }}
+      onDrop={onDropValue}
+    >
+      {inner()}
+    </div>
+  );
+};
+
+const ComparatorLabels = {
+  "=": "is",
+  "!=": "is not",
+  "<=": "<=",
+  ">=": ">=",
+  contains: "contains",
+  "starts-with": "starts with",
+  "ends-with": "ends with",
 };
 
 const ComparatorSelect = ({
-  type,
   value,
   onChange,
+  impliedDatatype,
   ...rest
 }: Omit<React.HTMLProps<HTMLSelectElement>, "value" | "onChange"> & {
   value: VariableComparator;
   onChange: (value: VariableComparator) => void;
-  type: "variable" | "transform" | "appearance" | "global";
+  impliedDatatype: ImpliedDatatype;
 }) => (
   <select {...rest} value={value} onChange={(e) => onChange(e.target.value as VariableComparator)}>
-    <option value="=">is</option>
-    <option value="!=">is not</option>
-    <option value="<=" disabled={!["global", "variable"].includes(type)}>
-      &lt;=
-    </option>
-    <option value=">=" disabled={!["global", "variable"].includes(type)}>
-      &gt;=
-    </option>
-    <option value="contains">contains</option>
-    <option value="starts-with">starts with</option>
-    <option value="ends-with">ends with</option>
+    {Object.entries(ComparatorLabels)
+      .filter((t) => (impliedDatatype ? ["=", "!="].includes(t[0]) : true))
+      .map(([key, value]) => (
+        <option value={key}>{value}</option>
+      ))}
   </select>
 );

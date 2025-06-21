@@ -339,13 +339,8 @@ html {
         display: flex;
         flex-direction: row;
         align-items: center;
-        .left {
-          flex: 1;
-          code {
-            background: none;
-            padding: 0;
-          }
-        }
+        gap: 4px;
+        .left,
         .right {
           display: inline-block;
           padding: 2px;
@@ -357,6 +352,11 @@ html {
           }
           input {
             width: 50px;
+          }
+          &:focus,
+          &:focus-within {
+            border: 1px solid rgba(91, 192, 222, 0.6);
+            background: rgba(91, 192, 222, 0.35);
           }
           &.dropping-true {
             border: 1px solid rgba(91, 192, 222, 0.6);
@@ -545,7 +545,7 @@ html {
 .inspector-panel-container {
   order: 2;
   width: 300px;
-  min-width: 260px;
+  min-width: 290px;
 
   display: flex;
   flex-direction: column;
@@ -721,13 +721,18 @@ html {
     .dropdown-item {
       box-sizing: border-box;
     }
-    .dropdown-menu.with-sprites {
-      .dropdown-item {
-        width: 50%;
-        display: inline-block;
-        padding: 5px;
-      }
-    }
+  }
+}
+
+.dropdown-menu.with-sprites {
+  min-width: 102px;
+  width: 102px;
+
+  .dropdown-item {
+    width: 50px;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 5px;
   }
 }
 

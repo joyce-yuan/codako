@@ -143,57 +143,18 @@ export type RuleConditionV1 = {
   comparator?: VariableComparator;
 };
 
-export type RuleConditionVariable = {
+export type RuleCondition = {
+  key: string;
   enabled: boolean;
-  type: "variable";
-  variableId: string;
+  left: RuleValue;
   comparator: VariableComparator;
-  value: RuleValue;
+  right: RuleValue;
 };
-
-export type RuleConditionTransform = {
-  enabled: boolean;
-  type: "transform";
-  comparator: "=";
-  value: RuleValue;
-};
-
-export type RuleConditionAppearance = {
-  enabled: boolean;
-  type: "appearance";
-  comparator: "=";
-  value: RuleValue;
-};
-
-export type RuleCondition =
-  | RuleConditionV1
-  | RuleConditionVariable
-  | RuleConditionTransform
-  | RuleConditionAppearance;
 
 export type RuleValue =
   | { constant: string }
-  | { actorId: string; variableId: string }
-  | { globalId: string }
-  | object;
-
-export type RuleConditionGlobal = {
-  enabled: boolean;
-  type: "global";
-  globalId: string;
-  comparator: VariableComparator;
-  value: RuleValue;
-};
-
-export type RuleConditions = {
-  globals?: {
-    [ruleId: string]: RuleConditionGlobal;
-  };
-} & {
-  [actorIdInRule: string]: {
-    [ruleId: string]: RuleCondition;
-  };
-};
+  | { actorId: string; variableId: string | "apperance" | "transform" }
+  | { globalId: string };
 
 /**
  * Within a rule, the main actor is always at "0,0" and the extent
@@ -209,7 +170,7 @@ export type RuleConditions = {
 export type Rule = {
   type: "rule";
   mainActorId: string;
-  conditions: RuleConditions;
+  conditions: RuleCondition[];
   actors: { [actorIdInRule: string]: Actor };
   actions: RuleAction[];
   extent: RuleExtent;
@@ -384,7 +345,7 @@ export type RecordingState = {
   actorId: string | null;
   ruleId: string | null;
   actions: RuleAction[];
-  conditions: RuleConditions;
+  conditions: RuleCondition[];
   extent: RuleExtent;
   beforeWorld: WorldMinimal & { id: WORLDS.BEFORE };
   afterWorld: WorldMinimal & { id: WORLDS.AFTER };

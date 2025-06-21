@@ -35,20 +35,10 @@ export const VariableGridItem = ({
       "variable",
       JSON.stringify(
         actorId
-          ? {
-              type: "variable",
-              actorId: actorId,
-              variableId: definition.id,
-              value: { constant: displayValue || "" },
-            }
-          : {
-              type: "variable",
-              globalId: definition.id,
-              value: { constant: displayValue || "" },
-            },
+          ? { actorId: actorId, variableId: definition.id, value: displayValue || "" }
+          : { globalId: definition.id, value: displayValue || "" },
       ),
     );
-    event.dataTransfer.setData("variable-type:variable", "true");
   };
 
   let content = null;

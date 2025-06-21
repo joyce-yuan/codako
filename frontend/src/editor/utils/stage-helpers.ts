@@ -3,14 +3,12 @@ import {
   ActorTransform,
   Character,
   Characters,
+  Globals,
   MathOperation,
   Position,
-  RuleCondition,
-  RuleConditionAppearance,
-  RuleConditionTransform,
-  RuleConditionVariable,
   RuleExtent,
   RuleTreeItem,
+  RuleValue,
   Stage,
 } from "../../types";
 import { DEFAULT_APPEARANCE_INFO } from "../components/sprites/sprite";
@@ -118,33 +116,43 @@ export function shuffleArray<T>(d: Array<T>): Array<T> {
   return d;
 }
 
-export function getVariableValue(actor: Actor, character: Character, id: string) {
-  if (actor.variableValues[id] !== undefined) {
-    return actor.variableValues[id];
+export function resolveRuleValue(
+  val: RuleValue,
+  globals: Globals,
+  characters: Characters,
+  actors: Stage["actors"],
+): string | null {
+  if ("constant" in val) {
+    return val.constant;
   }
-  if (character.variables[id] !== undefined) {
-    return character.variables[id].defaultValue;
+  if ("actorId" in val) {
+    return getVariableValue(
+      actors[val.actorId],
+      characters[actors[val.actorId].characterId],
+      val.variableId,
+    );
   }
-  return null;
+  if ("globalId" in val) {
+    return globals[val.globalId]?.value;
+  }
+  isNever(val);
+  return "";
 }
 
-export function toV2Condition(
-  id: string,
-  condition: RuleCondition,
-): RuleConditionVariable | RuleConditionTransform | RuleConditionAppearance | null {
-  if (!condition) {
-    return null;
-  }
-  if ("type" in condition && condition.type) {
-    return condition; // v2 already
-  }
+export function getVariableValue(actor: Actor, character: Character, id: string) {
   if (id === "appearance") {
-    return { ...condition, comparator: "=", value: {}, type: id };
+    return actor.appearance ?? null;
   }
   if (id === "transform") {
-    return { ...condition, comparator: "=", value: {}, type: id };
+    return actor.transform ?? null;
   }
-  return { comparator: "=", ...condition, value: {}, type: "variable", variableId: id };
+  if (actor.variableValues[id] !== undefined) {
+    return actor.variableValues[id] ?? null;
+  }
+  if (character.variables[id] !== undefined) {
+    return character.variables[id].defaultValue ?? null;
+  }
+  return null;
 }
 
 export function applyVariableOperation(existing: string, operation: MathOperation, value: string) {
@@ -294,4 +302,8 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
     console.warn(`getStageScreenshot: ${err}`);
   }
   return null;
+}
+
+export function isNever(val: never) {
+  throw new Error(`Expected var to be never but it is ${val}.`);
 }

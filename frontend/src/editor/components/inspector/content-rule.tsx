@@ -6,7 +6,6 @@ import { RuleStateCircle } from "./rule-state-circle";
 import { ScenarioStage } from "./scenario-stage";
 
 import { Rule } from "../../../types";
-import { toV2Condition } from "../../utils/stage-helpers";
 import { FreeformConditionRow } from "../stage/recording/condition-rows";
 import { isCollapsePersisted, persistCollapsedState } from "./collapse-state-storage";
 import { RuleActionsContext } from "./container-pane-rules";
@@ -22,23 +21,18 @@ export const ContentRule = ({ rule }: { rule: Rule }) => {
   };
 
   const conditions: React.ReactNode[] = [];
-  Object.values(rule.actors).forEach((a) => {
-    const saved = rule.conditions[a.id] || {};
-
-    Object.entries(saved).forEach(([key, value]) => {
-      if (value && value.enabled) {
-        conditions.push(
-          <FreeformConditionRow
-            key={`${a.id}-${key}`}
-            actor={a}
-            actors={rule.actors}
-            world={world}
-            condition={toV2Condition(key, value)!}
-            characters={characters}
-          />,
-        );
-      }
-    });
+  rule.conditions.forEach((condition) => {
+    if (condition.enabled) {
+      conditions.push(
+        <FreeformConditionRow
+          key={condition.key}
+          actors={rule.actors}
+          world={world}
+          condition={condition}
+          characters={characters}
+        />,
+      );
+    }
   });
 
   return (

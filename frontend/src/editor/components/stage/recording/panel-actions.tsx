@@ -1,5 +1,6 @@
 import { getCurrentStageForWorld } from "../../../utils/selectors";
 
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Characters, RecordingState, RuleAction } from "../../../../types";
 import { updateRecordingActions } from "../../../actions/recording-actions";
@@ -152,8 +153,49 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
     throw new Error(`Unknown action type: ${a.type}`);
   };
 
+  const [droppingValue, setDroppingValue] = useState(false);
+
+  const onDropValue = (e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes("variable")) {
+      const { actorId, globalId, variableId, value } = JSON.parse(
+        e.dataTransfer.getData("variable"),
+      );
+      const newAction: RuleAction | null =
+        variableId === "transform"
+          ? { type: "transform", actorId, to: value }
+          : variableId === "appearance"
+            ? { type: "appearance", actorId, to: value }
+            : globalId
+              ? { type: "global", operation: "set", global: globalId, value }
+              : variableId
+                ? { type: "variable", actorId, variable: variableId, operation: "set", value }
+                : null;
+
+      if (newAction) {
+        dispatch(updateRecordingActions([...actions, newAction]));
+      }
+      e.stopPropagation();
+    }
+    setDroppingValue(false);
+  };
+
   return (
-    <div className="panel-actions" style={{ flex: 1, marginLeft: 3 }}>
+    <div
+      className={`panel-actions dropping-${droppingValue}`}
+      style={{ flex: 1, marginLeft: 3 }}
+      tabIndex={0}
+      onDragOver={(e) => {
+        if (e.dataTransfer.types.includes(`variable`)) {
+          setDroppingValue(true);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
+      onDragLeave={() => {
+        setDroppingValue(false);
+      }}
+      onDrop={onDropValue}
+    >
       <h2>It should...</h2>
       <ul>
         {actions.map((a, idx) => {
@@ -166,9 +208,8 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
           );
           return (
             <li key={idx}>
-              <div className="left" style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                {node}
-              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 2 }}>{node}</div>
+              <div style={{ flex: 1 }} />
               <div
                 onClick={() => dispatch(updateRecordingActions(actions.filter((aa) => aa !== a)))}
                 className="condition-remove"

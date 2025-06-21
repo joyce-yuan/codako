@@ -9,6 +9,7 @@ import {
   RecordingState,
   Rule,
   RuleAction,
+  RuleCondition,
   World,
   WorldMinimal,
 } from "../../types";
@@ -75,7 +76,7 @@ function recordingReducer(
           phase: RECORDING_PHASE.RECORD,
           actorId: actor.id,
           actions: u.constant([]),
-          conditions: u.constant({ [actor.id]: {} }),
+          conditions: u.constant([]),
           beforeWorld: u.constant(u({ id: WORLDS.BEFORE }, world)),
           extent: u.constant({
             xmin: actor.position.x - anchor.x,
@@ -97,7 +98,7 @@ function recordingReducer(
         type: "rule",
         id: "",
         name: "Untitled Rule",
-        conditions: { dude: {} },
+        conditions: [],
         extent: { xmin: 0, ymin: 0, xmax: 0, ymax: 0, ignored: {} },
         actors: {
           dude: {
@@ -120,12 +121,24 @@ function recordingReducer(
     case Types.CANCEL_RECORDING: {
       return Object.assign({}, initialState.recording);
     }
-    case Types.UPDATE_RECORDING_CONDITION: {
-      const { actorId, key, values } = action;
-      if ("enabled" in values && values.enabled === false) {
-        return u({ conditions: { [actorId]: u.omit(key) } }, nextState);
+    case Types.UPSERT_RECORDING_CONDITION: {
+      const { condition } = action;
+      if (condition.enabled === false) {
+        return u(
+          { conditions: u.reject((i: RuleCondition) => i.key === condition.key) },
+          nextState,
+        );
       }
-      return u({ conditions: { [actorId]: { [key]: u.constant(values) } } }, nextState);
+      return u(
+        {
+          conditions: u.constant(
+            nextState.conditions.some((c) => c.key === condition.key)
+              ? nextState.conditions.map((c) => (c.key === condition.key ? condition : c))
+              : [...nextState.conditions, condition],
+          ),
+        },
+        nextState,
+      );
     }
     case Types.UPDATE_RECORDING_ACTIONS: {
       const { actions } = action;
