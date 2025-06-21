@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 
-import TapToEditLabel from "../tap-to-edit-label";
+import { TapToEditLabel } from "../tap-to-edit-label";
 import { DisclosureTriangle } from "./disclosure-triangle";
 import { RuleStateCircle } from "./rule-state-circle";
 import { ScenarioStage } from "./scenario-stage";
@@ -17,10 +17,8 @@ export const ContentRule = ({ rule }: { rule: Rule }) => {
   const { characters, world } = useContext(InspectorContext);
   const { onRuleChanged } = useContext(RuleActionsContext);
 
-  const _onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onRuleChanged(rule.id, {
-      name: event.target.value,
-    });
+  const _onNameChange = (name: string) => {
+    onRuleChanged(rule.id, { name });
   };
 
   const conditions: React.ReactNode[] = [];

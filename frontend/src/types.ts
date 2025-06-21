@@ -42,13 +42,13 @@ export type RuleAction =
       type: "variable";
       operation: MathOperation;
       variable: string; // ID
-      value: number;
+      value: string;
     }
   | {
       type: "global";
       operation: MathOperation;
       global: string; // ID
-      value: number;
+      value: string;
     }
   | {
       actorId: string;
@@ -165,7 +165,7 @@ export type RuleCondition =
   | RuleConditionAppearance;
 
 export type RuleValue =
-  | { constant: number | string }
+  | { constant: string }
   | { actorId: string; variableId: string }
   | { globalId: string }
   | object;
@@ -213,7 +213,7 @@ export type Rule = {
 export type Actor = {
   id: string;
   characterId: string;
-  variableValues: Record<string, number>;
+  variableValues: Record<string, string>;
   appearance: string;
   position: PositionRelativeToWorld;
   transform?: ActorTransform;
@@ -262,7 +262,7 @@ export type Character = {
     {
       id: string;
       name: string;
-      defaultValue: number;
+      defaultValue: string;
     }
   >;
 };
@@ -277,8 +277,7 @@ export type Global =
   | {
       id: string;
       name: string;
-      value: number;
-      type: "number";
+      value: string;
     }
   | {
       id: "selectedStageId";

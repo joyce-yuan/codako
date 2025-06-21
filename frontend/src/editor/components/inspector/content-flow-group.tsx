@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import TapToEditLabel from "../tap-to-edit-label";
+import { TapToEditLabel } from "../tap-to-edit-label";
 import { DisclosureTriangle } from "./disclosure-triangle";
 import { RuleList } from "./rule-list";
 import { RuleStateCircle } from "./rule-state-circle";
@@ -19,8 +19,8 @@ export const ContentFlowGroup = ({
   const [collapsed, setCollapsed] = useState(isCollapsePersisted(rule.id));
   const { onRuleChanged } = useContext(RuleActionsContext);
 
-  const _onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onRuleChanged(rule.id, { name: event.target.value });
+  const _onNameChange = (name: string) => {
+    onRuleChanged(rule.id, { name });
   };
 
   const _onBehaviorChanged = (event: React.ChangeEvent<HTMLSelectElement>) => {

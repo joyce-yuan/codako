@@ -126,7 +126,7 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
 
     if (a.type === "global") {
       const declaration = beforeWorld.globals[a.global];
-      if (declaration.type === "stage") {
+      if ("type" in declaration && declaration.type === "stage") {
         return (
           <>
             Set

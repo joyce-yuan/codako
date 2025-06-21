@@ -41,6 +41,13 @@ export const TransformImages = {
       style={{ height: 40, width: 40 }}
     />
   ),
+  "flip-xy": (
+    <img
+      draggable={false}
+      src={new URL(`../../img/transform_flipy.png`, import.meta.url).href}
+      style={{ height: 40, width: 40 }}
+    />
+  ),
 };
 
 export const TransformLabels = {

@@ -32,7 +32,7 @@ import {
 } from "../actions/ui-actions";
 
 import Sprite from "./sprites/sprite";
-import TapToEditLabel from "./tap-to-edit-label";
+import { TapToEditLabel } from "./tap-to-edit-label";
 
 export function defaultAppearanceId(spritesheet) {
   return Object.keys(spritesheet.appearances)[0];
@@ -174,7 +174,7 @@ class Library extends React.Component {
             character={characters[id]}
             label={characters[id].name}
             labelEditable={ui.selectedToolId === TOOLS.POINTER}
-            onChangeLabel={(event) => dispatch(changeCharacter(id, { name: event.target.value }))}
+            onChangeLabel={(name) => dispatch(changeCharacter(id, { name }))}
             onClick={(event) => this._onClickCharacter(event, id)}
             selected={id === ui.selectedCharacterId}
             outlined={id === ui.selectedCharacterId && !ui.selectedActorPath.actorId}

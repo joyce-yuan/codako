@@ -1,6 +1,6 @@
 import u from "updeep";
 
-import { EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
+import { Character, EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
 import { Actions } from "../actions";
 import { ruleFromRecordingState } from "../components/stage/recording/utils";
 import * as Types from "../constants/action-types";
@@ -30,13 +30,12 @@ export default function charactersReducer(
         {
           variables: {
             [action.variableId]: {
-              defaultValue: 0,
+              defaultValue: "0",
               name: "Untitled",
               id: action.variableId,
-              type: "number",
             },
           },
-        },
+        } as Pick<Character, "variables">,
         state,
       );
     }

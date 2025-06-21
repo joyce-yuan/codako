@@ -207,7 +207,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         if ("variableId" in struct.loopCount && struct.loopCount.variableId) {
           const actor = actors[me.id];
           const character = characters[actor.characterId];
-          iterations = getVariableValue(actor, character, struct.loopCount.variableId) ?? 0;
+          iterations = Number(
+            getVariableValue(actor, character, struct.loopCount.variableId) ?? "0",
+          );
         }
       }
 
@@ -427,11 +429,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           actors[nextID] = nextActor;
         } else if (action.type === "global") {
           const global = globals[action.global];
-          global.value = applyVariableOperation(
-            Number(global.value),
-            action.operation,
-            action.value,
-          );
+          global.value = applyVariableOperation(global.value, action.operation, action.value);
         } else if ("actorId" in action && action.actorId) {
           // find the actor on the stage that matches
           const stageActor = stageActorForId[action.actorId];
@@ -465,9 +463,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           } else if (action.type === "variable") {
             const current =
               getVariableValue(stageActor, characters[stageActor.characterId], action.variable) ??
-              0;
+              "0";
             const next = applyVariableOperation(current, action.operation, action.value);
-            stageActor.variableValues[action.variable] = Number(next);
+            stageActor.variableValues[action.variable] = next;
           } else {
             throw new Error(`Not sure how to apply action: ${action}`);
           }
@@ -509,7 +507,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       } else if ("actorId" in cond.value && cond.value.actorId) {
         const actor = actors[cond.value.actorId];
         globals[cond.globalId].value =
-          getVariableValue(actor, characters[actor.characterId], cond.value.variableId) ?? 0;
+          getVariableValue(actor, characters[actor.characterId], cond.value.variableId) ?? "0";
       }
     }
     for (const cond of Object.values(rule.conditions.globals || {})) {

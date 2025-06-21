@@ -120,10 +120,10 @@ export function shuffleArray<T>(d: Array<T>): Array<T> {
 
 export function getVariableValue(actor: Actor, character: Character, id: string) {
   if (actor.variableValues[id] !== undefined) {
-    return Number(actor.variableValues[id]);
+    return actor.variableValues[id];
   }
   if (character.variables[id] !== undefined) {
-    return Number(character.variables[id].defaultValue);
+    return character.variables[id].defaultValue;
   }
   return null;
 }
@@ -147,19 +147,15 @@ export function toV2Condition(
   return { comparator: "=", ...condition, value: {}, type: "variable", variableId: id };
 }
 
-export function applyVariableOperation(
-  existing: number | string,
-  operation: MathOperation,
-  value: number | string,
-) {
+export function applyVariableOperation(existing: string, operation: MathOperation, value: string) {
   if (operation === "add") {
-    return Number(existing) + Number(value);
+    return `${Number(existing) + Number(value)}`;
   }
   if (operation === "subtract") {
-    return Number(existing) - Number(value);
+    return `${Number(existing) - Number(value)}`;
   }
   if (operation === "set") {
-    return value;
+    return `${value}`;
   }
 
   throw new Error(`applyVariableOperation unknown operation ${operation}`);
