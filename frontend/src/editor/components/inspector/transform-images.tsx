@@ -1,26 +1,26 @@
 export const TransformImages = {
-  none: (
+  "0": (
     <img
       draggable={false}
       src={new URL(`../../img/transform_0.png`, import.meta.url).href}
       style={{ height: 40, width: 40 }}
     />
   ),
-  "90deg": (
+  "90": (
     <img
       draggable={false}
       src={new URL(`../../img/transform_90.png`, import.meta.url).href}
       style={{ height: 40, width: 40 }}
     />
   ),
-  "180deg": (
+  "180": (
     <img
       draggable={false}
       src={new URL(`../../img/transform_180.png`, import.meta.url).href}
       style={{ height: 40, width: 40 }}
     />
   ),
-  "270deg": (
+  "270": (
     <img
       draggable={false}
       src={new URL(`../../img/transform_270.png`, import.meta.url).href}
@@ -41,21 +41,13 @@ export const TransformImages = {
       style={{ height: 40, width: 40 }}
     />
   ),
-  "flip-xy": (
-    <img
-      draggable={false}
-      src={new URL(`../../img/transform_flipy.png`, import.meta.url).href}
-      style={{ height: 40, width: 40 }}
-    />
-  ),
 };
 
 export const TransformLabels = {
-  none: "0º",
-  "90deg": "90º",
-  "180deg": "180º",
-  "270deg": "-90º",
+  "0": "0º",
+  "90": "90º",
+  "180": "180º",
+  "270": "-90º",
   "flip-x": "Flipped horizontally",
   "flip-y": "Flipped vertically",
-  "flip-xy": "Flipped both",
 };

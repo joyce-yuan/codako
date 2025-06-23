@@ -85,13 +85,13 @@ export function pointApplyingTransform(
   { width, height }: { width: number; height: number },
   transform: Actor["transform"],
 ) {
-  if (transform === "90deg") {
+  if (transform === "90") {
     return [height - 1 - y, x];
   }
-  if (transform === "270deg") {
+  if (transform === "270") {
     return [width - 1 - x, y];
   }
-  if (transform === "180deg") {
+  if (transform === "180") {
     return [width - 1 - x, height - 1 - y];
   }
   if (transform === "flip-x") {
@@ -99,9 +99,6 @@ export function pointApplyingTransform(
   }
   if (transform === "flip-y") {
     return [x, height - 1 - y];
-  }
-  if (transform === "flip-xy") {
-    return [width - 1 - x, height - 1 - y];
   }
   return [x, y];
 }
@@ -224,14 +221,14 @@ export function applyActorTransformToContext(
   context: CanvasRenderingContext2D,
   transform: ActorTransform,
 ) {
-  switch (transform || "none") {
-    case "180deg":
-      context.rotate((180 * Math.PI) / 180);
-      break;
-    case "90deg":
+  switch (transform || "0") {
+    case "90":
       context.rotate((90 * Math.PI) / 180);
       break;
-    case "270deg":
+    case "180":
+      context.rotate((180 * Math.PI) / 180);
+      break;
+    case "270":
       context.rotate((270 * Math.PI) / 180);
       break;
     case "flip-x":
@@ -240,10 +237,7 @@ export function applyActorTransformToContext(
     case "flip-y":
       context.scale(1, -1);
       break;
-    case "flip-xy":
-      context.scale(-1, -1);
-      break;
-    case "none":
+    case "0":
       break;
     default:
       throw new Error(`Unsupported transform ${transform}`);
@@ -285,7 +279,7 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
       Math.floor((actor.position.x + 0.5) * pxPerSquare),
       Math.floor((actor.position.y + 0.5) * pxPerSquare),
     );
-    applyActorTransformToContext(context, actor.transform ?? "none");
+    applyActorTransformToContext(context, actor.transform ?? "0");
     context.drawImage(
       i,
       -(info.anchor.x + 0.5) * pxPerSquare,
@@ -305,5 +299,5 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
 }
 
 export function isNever(val: never) {
-  throw new Error(`Expected var to be never but it is ${val}.`);
+  throw new Error(`Expected var to be never but it is ${JSON.stringify(val)}.`);
 }

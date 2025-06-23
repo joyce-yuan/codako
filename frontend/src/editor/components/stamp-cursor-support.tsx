@@ -20,20 +20,20 @@ export const StampCursorSupport = () => {
   );
 
   let customCursorImage: string | undefined = undefined;
-  let customCursorTransform: ActorTransform = "none";
+  let customCursorTransform: ActorTransform = "0";
 
   if (selectedToolId == TOOLS.STAMP && stampToolItem) {
     if ("characterId" in stampToolItem) {
       const spritesheet = characters[stampToolItem.characterId]?.spritesheet;
       if (spritesheet) {
         customCursorImage = spritesheet.appearances[defaultAppearanceId(spritesheet)][0];
-        customCursorTransform = "none";
+        customCursorTransform = "0";
       }
     } else if ("actorId" in stampToolItem && stampToolItem.actorId) {
       const actor = stage?.actors[stampToolItem.actorId];
       const spritesheet = actor && characters[actor.characterId]?.spritesheet;
       customCursorImage = actor && spritesheet && spritesheet.appearances[actor.appearance][0];
-      customCursorTransform = actor?.transform ?? "none";
+      customCursorTransform = actor?.transform ?? "0";
     }
   }
 

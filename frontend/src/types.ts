@@ -40,53 +40,46 @@ export type VariableComparator =
 
 export type RuleAction =
   | {
-      actorId: string;
       type: "appearance";
-      to: string;
+      actorId: string;
+      value: RuleValue;
     }
   | {
-      actorId: string;
       type: "variable";
-      operation: MathOperation;
+      actorId: string;
       variable: string; // ID
-      value: string;
+      operation: MathOperation;
+      value: RuleValue;
     }
   | {
       type: "global";
-      operation: MathOperation;
       global: string; // ID
-      value: string;
+      operation: MathOperation;
+      value: RuleValue;
     }
   | {
-      actorId: string;
       type: "delete";
+      actorId: string;
     }
   | {
+      type: "create";
       actor: Actor;
       actorId: string;
       offset: PositionRelativeToMainActor;
-      type: "create";
     }
   | {
-      actorId: string;
       type: "move";
+      actorId: string;
       delta?: { x: number; y: number };
       offset?: PositionRelativeToMainActor;
     }
   | {
-      actorId: string;
       type: "transform";
-      to: ActorTransform;
+      actorId: string;
+      value: RuleValue;
     };
 
-export type ActorTransform =
-  | "none"
-  | "flip-x"
-  | "flip-y"
-  | "flip-xy"
-  | "90deg"
-  | "180deg"
-  | "270deg";
+export type ActorTransform = "0" | "flip-x" | "flip-y" | "90" | "180" | "270";
 
 export type RuleExtent = {
   xmin: number;
@@ -135,13 +128,6 @@ export type RuleTreeFlowItem =
   | RuleTreeFlowLoopItem;
 
 export type RuleTreeItem = RuleTreeEventItem | RuleTreeFlowItem | Rule;
-
-export type RuleConditionV1 = {
-  enabled: boolean;
-  actorId?: string;
-  variableId?: string;
-  comparator?: VariableComparator;
-};
 
 export type RuleCondition = {
   key: string;
@@ -333,10 +319,7 @@ export type Game = {
   thumbnail: string;
   createdAt: string;
   updatedAt: string;
-  data: {
-    world: World;
-    characters: Characters;
-  };
+  data: Partial<EditorState> & Omit<EditorState, "ui" | "recording">;
 };
 
 export type RecordingState = {

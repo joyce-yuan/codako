@@ -1,6 +1,7 @@
 import u from "updeep";
 import {
   Actor,
+  ActorTransform,
   Character,
   Characters,
   EvaluatedRuleIds,
@@ -411,7 +412,11 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           actors[nextID] = nextActor;
         } else if (action.type === "global") {
           const global = globals[action.global];
-          global.value = applyVariableOperation(global.value, action.operation, action.value);
+          global.value = applyVariableOperation(
+            global.value,
+            action.operation,
+            resolveRuleValue(action.value, globals, characters, stageActorForId) ?? "",
+          );
         } else if ("actorId" in action && action.actorId) {
           // find the actor on the stage that matches
           const stageActor = stageActorForId[action.actorId];
@@ -437,16 +442,26 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
             delete actors[stageActor.id];
             frameAccumulator?.push({ ...stageActor, deleted: true });
           } else if (action.type === "appearance") {
-            stageActor.appearance = action.to;
+            stageActor.appearance =
+              resolveRuleValue(action.value, globals, characters, stageActorForId) ?? "";
             frameAccumulator?.push(stageActor);
           } else if (action.type === "transform") {
-            stageActor.transform = action.to;
+            stageActor.transform = resolveRuleValue(
+              action.value,
+              globals,
+              characters,
+              stageActorForId,
+            ) as ActorTransform;
             frameAccumulator?.push(stageActor);
           } else if (action.type === "variable") {
             const current =
               getVariableValue(stageActor, characters[stageActor.characterId], action.variable) ??
               "0";
-            const next = applyVariableOperation(current, action.operation, action.value);
+            const next = applyVariableOperation(
+              current,
+              action.operation,
+              resolveRuleValue(action.value, globals, characters, stageActorForId) ?? "",
+            );
             stageActor.variableValues[action.variable] = next;
           } else {
             throw new Error(`Not sure how to apply action: ${action}`);

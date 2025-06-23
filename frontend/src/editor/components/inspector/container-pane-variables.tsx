@@ -99,14 +99,14 @@ export const TransformDropdown = ({ value, onChange, displayAsLabel }: Transform
   return (
     <ButtonDropdown size="sm" isOpen={open} toggle={() => setOpen(!open)}>
       <DropdownToggle caret>
-        {displayAsLabel ? TransformLabels[value || "none"] : TransformImages[value || "none"]}
+        {(displayAsLabel ? TransformLabels[value || "0"] : TransformImages[value || "0"]) || value}
       </DropdownToggle>
       <DropdownMenu className="with-sprites" container="body">
         {[
-          "none" as const,
-          "90deg" as const,
-          "270deg" as const,
-          "180deg" as const,
+          "0" as const,
+          "90" as const,
+          "270" as const,
+          "180" as const,
           "flip-x" as const,
           "flip-y" as const,
         ].map((option) => (

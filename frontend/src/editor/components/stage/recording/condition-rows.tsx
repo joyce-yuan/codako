@@ -97,7 +97,7 @@ export const FreeformConditionRow = ({
   );
 };
 
-const FreeformConditionValue = ({
+export const FreeformConditionValue = ({
   value,
   actor,
   character,

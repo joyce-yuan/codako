@@ -9,19 +9,18 @@ export const DEFAULT_APPEARANCE_INFO: AppearanceInfo = {
 };
 
 export const SPRITE_TRANSFORM_CSS: { [key: string]: string } = {
-  "90deg": `rotate(90deg)`,
-  "180deg": `rotate(180deg)`,
-  "270deg": `rotate(270deg)`,
+  "0": `rotate(0deg)`,
+  "90": `rotate(90deg)`,
+  "180": `rotate(180deg)`,
+  "270": `rotate(270deg)`,
   "flip-x": `scale(-1, 1)`,
   "flip-y": `scale(1, -1)`,
-  "flip-xy": `scale(-1, -1)`,
-  none: "",
 };
 
 const Sprite = ({
   style,
   className,
-  transform = "none",
+  transform = "0",
   spritesheet,
   appearance,
   frame,

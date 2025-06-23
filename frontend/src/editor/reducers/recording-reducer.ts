@@ -219,7 +219,7 @@ function buildActionFromStageActions(
           actorId: action.actorId,
           operation: "set",
           variable: key,
-          value: value!,
+          value: { constant: value! },
         };
       }
 
@@ -230,7 +230,7 @@ function buildActionFromStageActions(
         return {
           type: "transform",
           actorId: action.actorId,
-          to: action.values.transform!,
+          value: { constant: action.values.transform! },
         };
       }
       if ("appearance" in action.values) {
@@ -240,7 +240,7 @@ function buildActionFromStageActions(
         return {
           type: "appearance",
           actorId: action.actorId,
-          to: action.values.appearance!,
+          value: { constant: action.values.appearance! },
         };
       }
       return null;
