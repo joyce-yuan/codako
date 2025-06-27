@@ -77,7 +77,8 @@ router.get("/generate-background", userFromBasicAuth, async (req, res) => {
   try {
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `A wide landscape game background scene: ${prompt}. Make it suitable for a 2D game background, with good depth and atmosphere.`,
+      // prompt: `A wide landscape game background scene: ${prompt}. Make it suitable for a 2D game background, with good depth and atmosphere.`,
+      prompt: `A wide 2D game background of ${prompt}, with soft, muted colors and layered depth. Stylized and subtle, no text, low contrast, not distracting.`,
       n: 1,
       size: "1792x1024",
     });
