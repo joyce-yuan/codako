@@ -4,7 +4,6 @@ import React from "react";
 import Button from "reactstrap/lib/Button";
 import { cancelRecording, finishRecording, startRecording } from "../../actions/recording-actions";
 import { RECORDING_PHASE } from "../../constants/constants";
-import { actionsForRecording } from "../../utils/recording-helpers";
 
 export default class StageRecordingControls extends React.Component {
   static propTypes = {
@@ -28,7 +27,7 @@ export default class StageRecordingControls extends React.Component {
       dispatch(startRecording());
     }
     if (recording.phase === RECORDING_PHASE.RECORD) {
-      if (actionsForRecording(recording, { characters }).length === 0) {
+      if (recording.actions.length === 0) {
         window.alert(
           "To create a rule, edit the right stage by changing appearances, moving actors, or modifying a variable.",
         );

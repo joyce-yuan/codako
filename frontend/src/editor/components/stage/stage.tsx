@@ -27,7 +27,12 @@ import {
 
 import { STAGE_CELL_SIZE, TOOLS } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
-import { buildActorPath, pointIsOutside } from "../../utils/stage-helpers";
+import {
+  actorFillsPoint,
+  applyAnchorAdjustment,
+  buildActorPath,
+  pointIsOutside,
+} from "../../utils/stage-helpers";
 
 import {
   Actor,
@@ -37,14 +42,14 @@ import {
   RuleExtent,
   Stage as StageType,
   UIState,
-  World,
+  WorldMinimal,
 } from "../../../types";
 
 interface StageProps {
-  recordingExtent: RuleExtent;
-  recordingCentered?: boolean;
   stage: StageType;
-  world: World;
+  world: WorldMinimal;
+  recordingExtent?: RuleExtent;
+  recordingCentered?: boolean;
   readonly?: boolean;
   style?: CSSProperties;
 }
@@ -93,6 +98,9 @@ export const Stage = ({
   };
 
   const centerOnExtent = () => {
+    if (!recordingExtent) {
+      return { left: 0, top: 0 };
+    }
     const { xmin, ymin, xmax, ymax } = recordingExtent;
     const xCenter = xmin + 0.5 + (xmax - xmin) / 2.0;
     const yCenter = ymin + 0.5 + (ymax - ymin) / 2.0;
@@ -226,8 +234,7 @@ export const Stage = ({
       return;
     }
     const actor = Object.values(stage.actors).find(
-      (a) =>
-        a.position.x === position.x && a.position.y === position.y && a.characterId === characterId,
+      (a) => actorFillsPoint(a, characters, position) && a.characterId === characterId,
     );
     if (actor) {
       dispatch(changeActor(actorPath(actor.id), { appearance }));
@@ -243,37 +250,42 @@ export const Stage = ({
       return;
     }
 
-    if (actorId && clone) {
+    if (actorId) {
       const actor = stage.actors[actorId];
+      const character = characters[actor.characterId];
+
+      applyAnchorAdjustment(position, character, actor);
+
       if (actor.position.x === position.x && actor.position.y === position.y) {
         // attempting to drop in the same place we started the drag, don't do anything
         return;
       }
-      // If there is an exact copy of this actor at this position already, don't drop.
-      // It's probably a mistake, and you can override by dropping elsewhere and then
-      // dragging it to this square.
-      const exact = Object.values(stage.actors).find(
-        (a) =>
-          a.position.x === position.x &&
-          a.position.y === position.y &&
-          a.characterId === actor.characterId &&
-          a.appearance === actor.appearance,
-      );
-      if (exact) {
-        return;
+
+      if (clone) {
+        // If there is an exact copy of this actor at this position already, don't drop.
+        // It's probably a mistake, and you can override by dropping elsewhere and then
+        // dragging it to this square.
+        const exact = Object.values(stage.actors).find(
+          (a) =>
+            actorFillsPoint(a, characters, position) &&
+            a.characterId === actor.characterId &&
+            a.appearance === actor.appearance,
+        );
+        if (exact) {
+          return;
+        }
+        const clonedActor = Object.assign({}, actor, { position });
+        dispatch(createActor(stagePath(), character, clonedActor));
+      } else {
+        dispatch(changeActor(actorPath(actorId), { position }));
       }
-      const character = characters[actor.characterId];
-      const clonedActor = Object.assign({}, actor, { position });
-      dispatch(createActor(stagePath(), character, clonedActor));
-    } else if (actorId) {
-      dispatch(changeActor(actorPath(actorId), { position }));
     } else if (characterId) {
       const character = characters[characterId];
+
+      applyAnchorAdjustment(position, character, { appearance: "default" });
+
       const exact = Object.values(stage.actors).find(
-        (a) =>
-          a.position.x === position.x &&
-          a.position.y === position.y &&
-          a.characterId === characterId,
+        (a) => actorFillsPoint(a, characters, position) && a.characterId === characterId,
       );
       if (exact) {
         return;
@@ -358,7 +370,7 @@ export const Stage = ({
     if (selectedToolId === TOOLS.TRASH) {
       const actor = Object.values(stage.actors)
         .reverse()
-        .find((a) => a.position.x === x && a.position.y === y);
+        .find((a) => actorFillsPoint(a, characters, { x, y }));
       if (actor) {
         dispatch(deleteActor(actorPath(actor.id)));
       }
@@ -389,9 +401,12 @@ export const Stage = ({
 
   const renderRecordingExtent = () => {
     const { width, height } = stage;
-    const { xmin, xmax, ymin, ymax } = recordingExtent;
+    if (!recordingExtent) {
+      return [];
+    }
 
     const components = [];
+    const { xmin, xmax, ymin, ymax } = recordingExtent;
 
     // add the dark squares
     components.push(
@@ -470,7 +485,13 @@ export const Stage = ({
     >
       <div
         ref={(e) => (el.current = e)}
-        style={{ top, left }}
+        style={{
+          top,
+          left,
+          width: stage.width * STAGE_CELL_SIZE,
+          height: stage.height * STAGE_CELL_SIZE,
+          overflow: recordingExtent ? "visible" : "hidden",
+        }}
         className="stage"
         onDragOver={onDragOver}
         onDrop={onDrop}
@@ -515,7 +536,7 @@ export const Stage = ({
               selected={actor === selected}
               onClick={(event) => onClickActor(actor, event)}
               onDoubleClick={() => onSelectActor(actor)}
-              transitionDuration={playback.speed}
+              transitionDuration={playback.speed / (actor.frameCount || 1)}
               character={character}
               actor={actor}
             />

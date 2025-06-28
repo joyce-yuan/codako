@@ -1,4 +1,5 @@
-import { TOOLS, WORLDS } from "./editor/constants/constants";
+import { RECORDING_PHASE, TOOLS, WORLDS } from "./editor/constants/constants";
+import { Frame } from "./editor/utils/world-operator";
 
 export type ImageData = string;
 
@@ -15,6 +16,11 @@ export type PositionRelativeToWorld = {
 };
 
 export type PositionRelativeToRuleExtent = {
+  x: number;
+  y: number;
+};
+
+export type PositionRelativeToMainActor = {
   x: number;
   y: number;
 };
@@ -51,13 +57,14 @@ export type RuleAction =
   | {
       actor: Actor;
       actorId: string;
-      offset: PositionRelativeToRuleExtent;
+      offset: PositionRelativeToMainActor;
       type: "create";
     }
   | {
       actorId: string;
       type: "move";
-      delta: { x: number; y: number };
+      delta?: { x: number; y: number };
+      offset?: PositionRelativeToMainActor;
     }
   | {
       actorId: string;
@@ -65,7 +72,7 @@ export type RuleAction =
       to: ActorTransform;
     };
 
-export type ActorTransform = "none" | "flip-x" | "flip-xy";
+export type ActorTransform = "none" | "flip-x" | "flip-y" | "90deg" | "180deg" | "270deg";
 
 export type RuleExtent = {
   xmin: number;
@@ -127,30 +134,21 @@ export type RuleConditionVariable = {
   type: "variable";
   variableId: string;
   comparator: MathComparator;
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleConditionTransform = {
   enabled: boolean;
   type: "transform";
   comparator: "=";
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleConditionAppearance = {
   enabled: boolean;
   type: "appearance";
   comparator: "=";
-  value: {
-    actorId?: string;
-    variableId?: string;
-  };
+  value: RuleValue;
 };
 
 export type RuleCondition =
@@ -159,10 +157,18 @@ export type RuleCondition =
   | RuleConditionTransform
   | RuleConditionAppearance;
 
+export type RuleValue =
+  | { constant: number | string }
+  | { actorId: string; variableId: string }
+  | { globalId: string }
+  | object;
+
 export type RuleConditionGlobal = {
+  enabled: boolean;
+  type: "global";
   globalId: string;
   comparator: MathComparator;
-  value: { constant: number } | { actorId: string; variableId: string } | { globalId: string };
+  value: RuleValue;
 };
 
 export type RuleConditions = {
@@ -175,6 +181,17 @@ export type RuleConditions = {
   };
 };
 
+/**
+ * Within a rule, the main actor is always at "0,0" and the extent
+ * expresses how many squares are within the rule to each side.
+ * [-1, -1, 1, 1] would be one square in each direction.
+ *
+ * Other actors positions are also relative to the main actor.
+ *
+ * Note: Actions also express positions relative to the main actor,
+ * but because the main actor can move they are all relative to the
+ * position of the main actor /at the start/ of rule evaluation.
+ */
 export type Rule = {
   type: "rule";
   mainActorId: string;
@@ -193,6 +210,7 @@ export type Actor = {
   appearance: string;
   position: PositionRelativeToWorld;
   transform?: ActorTransform;
+  frameCount?: number; // used to sync subdivided animation frames to CSS durations
 };
 
 export type Stage = {
@@ -212,6 +230,12 @@ export type Stage = {
   startActors: { [actorId: string]: Actor };
 };
 
+export type AppearanceInfo = {
+  anchor: { x: number; y: number };
+  filled: { [xy: string]: boolean };
+  width: number;
+  height: number;
+};
 export type Characters = { [id: string]: Character };
 
 export type Character = {
@@ -219,9 +243,11 @@ export type Character = {
   name: string;
   rules: RuleTreeItem[];
   spritesheet: {
-    width: number;
     appearances: { [appearanceId: string]: ImageData[] };
     appearanceNames: { [appearanceId: string]: string };
+    appearanceInfo?: {
+      [appearanceId: string]: AppearanceInfo;
+    };
   };
   variables: Record<
     string,
@@ -271,6 +297,7 @@ export type WorldMinimal = {
   globals: Globals;
   input: FrameInput;
   evaluatedRuleIds: EvaluatedRuleIds;
+  evaluatedTickFrames?: Frame[];
 };
 
 export type World = WorldMinimal & {
@@ -338,13 +365,13 @@ export type Game = {
 };
 
 export type RecordingState = {
-  phase: null;
+  phase: RECORDING_PHASE;
   characterId: string | null;
   actorId: string | null;
   ruleId: string | null;
+  actions: RuleAction[];
   conditions: RuleConditions;
   extent: RuleExtent;
-  prefs: { [actorId: string]: { [key: string]: string } };
   beforeWorld: WorldMinimal & { id: WORLDS.BEFORE };
   afterWorld: WorldMinimal & { id: WORLDS.AFTER };
 };

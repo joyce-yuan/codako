@@ -28,7 +28,6 @@ export function createCharacter(newId: string): ActionUpsertCharacter {
       name: "Untitled",
       rules: [],
       spritesheet: {
-        width: 40,
         appearances: {
           idle: [new URL("../img/splat.png", import.meta.url).href],
         },

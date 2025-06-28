@@ -212,7 +212,6 @@ export type EditorState = {
       ymax: 0;
       ignored: {};
     };
-    prefs: {};
     beforeWorld: {
       id: "before";
       stages: {};
