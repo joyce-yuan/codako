@@ -1,12 +1,14 @@
 import { getCurrentStageForWorld } from "../../../utils/selectors";
 
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Characters, RecordingState, RuleAction } from "../../../../types";
 import { updateRecordingActions } from "../../../actions/recording-actions";
 import { deepClone } from "../../../utils/utils";
 import { ActorDeltaCanvas } from "./actor-delta-canvas";
 import { ActorOffsetCanvas } from "./actor-offset-canvas";
-import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
+import { ActorBlock, VariableBlock } from "./blocks";
+import { FreeformConditionValue } from "./condition-rows";
 import { getAfterWorldForRecording } from "./utils";
 import { VariableActionPicker } from "./variable-action-picker";
 
@@ -79,15 +81,27 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
           </>
         );
       }
+
+      const leftActor = "actorId" in a.value ? afterStage.actors[a.value.actorId] : null;
+      const leftCharacter = leftActor && characters[leftActor.characterId];
+
       if (a.type === "variable") {
         return (
           <>
             <VariableActionPicker
-              value={a.value}
               operation={a.operation}
-              onChangeValue={(v) => onChange({ ...a, value: v })}
               onChangeOperation={(operation) => onChange({ ...a, operation })}
             />
+            <FreeformConditionValue
+              value={a.value}
+              actor={leftActor}
+              world={beforeWorld}
+              character={leftCharacter}
+              onChange={(value) => onChange({ ...a, value })}
+              impliedDatatype={null}
+              disambiguate={false}
+            />
+            {{ set: "into", add: "to", subtract: "from" }[a.operation]}
             <VariableBlock name={character.variables[a.variable].name} />
             of
             <ActorBlock character={character} actor={actor} />
@@ -100,10 +114,14 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
             Change appearance of
             <ActorBlock character={character} actor={actor} />
             to
-            <AppearanceBlock
-              character={character}
-              appearanceId={a.to}
-              transform={actor.transform}
+            <FreeformConditionValue
+              value={a.value}
+              actor={leftActor}
+              world={beforeWorld}
+              character={leftCharacter}
+              onChange={(value) => onChange({ ...a, value })}
+              impliedDatatype={{ type: "appearance", character }}
+              disambiguate={false}
             />
           </>
         );
@@ -114,10 +132,14 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
             Turn
             <ActorBlock character={character} actor={actor} />
             to
-            <TransformBlock
-              character={character}
-              appearanceId={actor.appearance}
-              transform={a.to}
+            <FreeformConditionValue
+              value={a.value}
+              actor={leftActor}
+              world={beforeWorld}
+              character={leftCharacter}
+              onChange={(value) => onChange({ ...a, value })}
+              impliedDatatype={{ type: "transform" }}
+              disambiguate={false}
             />
           </>
         );
@@ -125,25 +147,39 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
     }
 
     if (a.type === "global") {
+      const leftActor = "actorId" in a.value ? afterStage.actors[a.value.actorId] : null;
+      const leftCharacter = leftActor && characters[leftActor.characterId];
       const declaration = beforeWorld.globals[a.global];
-      if (declaration.type === "stage") {
+
+      if ("type" in declaration && declaration.type === "stage" && "constant" in a.value) {
         return (
           <>
             Set
             <VariableBlock name={"Current Stage"} />
             to
-            <code>{beforeWorld.stages[a.value] && beforeWorld.stages[a.value].name}</code>
+            <code>
+              {beforeWorld.stages[a.value.constant] && beforeWorld.stages[a.value.constant].name}
+            </code>
           </>
         );
       }
       return (
         <>
           <VariableActionPicker
-            value={a.value}
             operation={a.operation}
-            onChangeValue={(v) => onChange({ ...a, value: v })}
             onChangeOperation={(operation) => onChange({ ...a, operation })}
           />
+          <FreeformConditionValue
+            value={a.value}
+            actor={leftActor}
+            world={beforeWorld}
+            character={leftCharacter}
+            onChange={(value) => onChange({ ...a, value })}
+            impliedDatatype={null}
+            disambiguate={false}
+          />
+          {{ set: "into", add: "to", subtract: "from" }[a.operation]}
+
           <VariableBlock name={declaration.name} />
         </>
       );
@@ -152,23 +188,70 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
     throw new Error(`Unknown action type: ${a.type}`);
   };
 
+  const [droppingValue, setDroppingValue] = useState(false);
+
+  const onDropValue = (e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes("variable")) {
+      const {
+        actorId,
+        globalId,
+        variableId,
+        value: constant,
+      } = JSON.parse(e.dataTransfer.getData("variable"));
+
+      const value = { constant };
+
+      const newAction: RuleAction | null =
+        variableId === "transform"
+          ? { type: "transform", actorId, value }
+          : variableId === "appearance"
+            ? { type: "appearance", actorId, value }
+            : globalId
+              ? { type: "global", operation: "set", global: globalId, value }
+              : variableId
+                ? { type: "variable", actorId, variable: variableId, operation: "set", value }
+                : null;
+
+      if (newAction) {
+        dispatch(updateRecordingActions([...actions, newAction]));
+      }
+      e.stopPropagation();
+    }
+    setDroppingValue(false);
+  };
+
   return (
-    <div className="panel-actions" style={{ flex: 1, marginLeft: 3 }}>
+    <div
+      className={`panel-actions dropping-${droppingValue}`}
+      style={{ flex: 1, marginLeft: 3 }}
+      tabIndex={0}
+      onDragOver={(e) => {
+        if (e.dataTransfer.types.includes(`variable`)) {
+          setDroppingValue(true);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
+      onDragLeave={() => {
+        setDroppingValue(false);
+      }}
+      onDrop={onDropValue}
+    >
       <h2>It should...</h2>
       <ul>
         {actions.map((a, idx) => {
+          afterStage = getCurrentStageForWorld(
+            getAfterWorldForRecording(beforeWorld, characters, recording, idx),
+          );
+
           const node = _renderAction(a, (modified) => {
             dispatch(updateRecordingActions(actions.map((a, i) => (i === idx ? modified : a))));
           });
 
-          afterStage = getCurrentStageForWorld(
-            getAfterWorldForRecording(beforeWorld, characters, recording, idx),
-          );
           return (
             <li key={idx}>
-              <div className="left" style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                {node}
-              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 2 }}>{node}</div>
+              <div style={{ flex: 1 }} />
               <div
                 onClick={() => dispatch(updateRecordingActions(actions.filter((aa) => aa !== a)))}
                 className="condition-remove"

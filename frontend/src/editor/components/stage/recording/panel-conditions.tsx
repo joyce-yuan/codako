@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-import { FreeformConditionRow, GlobalConditionRow } from "./condition-rows";
+import { FreeformConditionRow } from "./condition-rows";
 
 import { useDispatch } from "react-redux";
 import { Characters, RecordingState } from "../../../../types";
-import { updateRecordingCondition } from "../../../actions/recording-actions";
+import { upsertRecordingCondition } from "../../../actions/recording-actions";
 import { getCurrentStageForWorld } from "../../../utils/selectors";
-import { actorIntersectsExtent, toV2Condition } from "../../../utils/stage-helpers";
+import { actorIntersectsExtent } from "../../../utils/stage-helpers";
 
 export const RecordingConditions = ({
   recording,
@@ -26,44 +26,28 @@ export const RecordingConditions = ({
 
   const rows: React.ReactNode[] = [];
 
-  Object.entries(conditions.globals || {}).forEach(([key, value]) => {
-    rows.push(
-      <GlobalConditionRow
-        key={`global-${key}`}
-        actors={stage.actors}
-        world={beforeWorld}
-        condition={value}
-        characters={characters}
-        onChange={(enabled, rest) =>
-          dispatch(updateRecordingCondition("globals", key, { ...(rest || value), enabled }))
-        }
-      />,
-    );
-  });
-
-  Object.values(stage.actors).forEach((a) => {
-    if (!actorIntersectsExtent(a, characters, extent)) {
+  conditions.forEach((condition) => {
+    const a = "actorId" in condition.left ? stage.actors[condition.left.actorId] : null;
+    if (a && !actorIntersectsExtent(a, characters, extent)) {
       return;
     }
-    const saved = conditions[a.id] || {};
+    const b = "actorId" in condition.right ? stage.actors[condition.right.actorId] : null;
+    if (b && !actorIntersectsExtent(b, characters, extent)) {
+      return;
+    }
 
-    Object.entries(saved).forEach(([key, value]) => {
-      if (value.enabled) {
-        rows.push(
-          <FreeformConditionRow
-            key={`${a.id}-${key}`}
-            actor={a}
-            actors={stage.actors}
-            world={beforeWorld}
-            condition={toV2Condition(key, value)!}
-            characters={characters}
-            onChange={(enabled, rest) =>
-              dispatch(updateRecordingCondition(a.id, key, { enabled, ...rest }))
-            }
-          />,
-        );
-      }
-    });
+    if (condition.enabled) {
+      rows.push(
+        <FreeformConditionRow
+          key={condition.key}
+          actors={stage.actors}
+          world={beforeWorld}
+          condition={condition}
+          characters={characters}
+          onChange={(enabled, rest) => dispatch(upsertRecordingCondition({ ...rest, enabled }))}
+        />,
+      );
+    }
   });
 
   return (
@@ -83,45 +67,18 @@ export const RecordingConditions = ({
         setDropping(false);
       }}
       onDrop={(e) => {
-        const { type, value, actorId, variableId, globalId } = JSON.parse(
+        const { value, actorId, variableId, globalId } = JSON.parse(
           e.dataTransfer.getData("variable"),
         );
         setDropping(false);
 
-        if (
-          globalId &&
-          Object.values(conditions.globals || {}).some(
-            (t) => t && t.type === type && t.globalId === globalId,
-          )
-        ) {
-          window.alert(`A condition for this global has already been added to the list.`);
-          return;
-        }
-
-        if (
-          variableId &&
-          conditions[actorId] &&
-          Object.values(conditions[actorId]).some(
-            (t) =>
-              t &&
-              "type" in t &&
-              t.type === type &&
-              "variableId" in t &&
-              t.variableId === variableId,
-          )
-        ) {
-          window.alert(`A condition for this actor ${type} has already been added to the list.`);
-          return;
-        }
-
         dispatch(
-          updateRecordingCondition(globalId ? "globals" : actorId, `v2-${Date.now()}`, {
+          upsertRecordingCondition({
             enabled: true,
-            type: type,
+            key: `v3-${Date.now()}`,
             comparator: "=",
-            variableId: variableId,
-            globalId: globalId,
-            value: value,
+            left: globalId ? { globalId } : { actorId, variableId },
+            right: { constant: value },
           }),
         );
       }}
@@ -130,7 +87,7 @@ export const RecordingConditions = ({
       <ul>{rows}</ul>
       {rows.length < 2 && (
         <div style={{ opacity: 0.5, marginTop: 8 }}>
-          Double-click an actor in the picture above and drag in their variables to add conditions.
+          Click an actor in the picture above and drag in their variables to add conditions.
         </div>
       )}
     </div>

@@ -29,7 +29,21 @@ export default function CreatePixelContext(PixelSize) {
   };
 
   this.fillPixel = (x, y) => {
-    this.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+    if (this.fillStyle === "rgba(0, 0, 0, 0)") {
+      this.clearRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+    } else {
+      this.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+    }
+  };
+
+  this.fillToolSize = (x, y, size) => {
+    const xmin = x - Math.round(size / 2);
+    const ymin = y - Math.round(size / 2);
+    for (let x = xmin; x < xmin + size; x++) {
+      for (let y = ymin; y < ymin + size; y++) {
+        this.fillPixel(x, y);
+      }
+    }
   };
 
   this.clearPixel = (x, y) => {

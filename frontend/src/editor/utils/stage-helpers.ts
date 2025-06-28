@@ -1,15 +1,14 @@
 import {
   Actor,
+  ActorTransform,
   Character,
   Characters,
+  Globals,
   MathOperation,
   Position,
-  RuleCondition,
-  RuleConditionAppearance,
-  RuleConditionTransform,
-  RuleConditionVariable,
   RuleExtent,
   RuleTreeItem,
+  RuleValue,
   Stage,
 } from "../../types";
 import { DEFAULT_APPEARANCE_INFO } from "../components/sprites/sprite";
@@ -65,8 +64,6 @@ export function actorFilledPoints(actor: Actor, characters: Characters) {
       }
     }
   }
-  console.log(info);
-  console.log(results);
   return results;
 }
 
@@ -88,13 +85,13 @@ export function pointApplyingTransform(
   { width, height }: { width: number; height: number },
   transform: Actor["transform"],
 ) {
-  if (transform === "90deg") {
+  if (transform === "90") {
     return [height - 1 - y, x];
   }
-  if (transform === "270deg") {
+  if (transform === "270") {
     return [width - 1 - x, y];
   }
-  if (transform === "180deg") {
+  if (transform === "180") {
     return [width - 1 - x, height - 1 - y];
   }
   if (transform === "flip-x") {
@@ -116,48 +113,54 @@ export function shuffleArray<T>(d: Array<T>): Array<T> {
   return d;
 }
 
+export function resolveRuleValue(
+  val: RuleValue,
+  globals: Globals,
+  characters: Characters,
+  actors: Stage["actors"],
+): string | null {
+  if ("constant" in val) {
+    return val.constant;
+  }
+  if ("actorId" in val) {
+    return getVariableValue(
+      actors[val.actorId],
+      characters[actors[val.actorId].characterId],
+      val.variableId,
+    );
+  }
+  if ("globalId" in val) {
+    return globals[val.globalId]?.value;
+  }
+  isNever(val);
+  return "";
+}
+
 export function getVariableValue(actor: Actor, character: Character, id: string) {
+  if (id === "appearance") {
+    return actor.appearance ?? null;
+  }
+  if (id === "transform") {
+    return actor.transform ?? null;
+  }
   if (actor.variableValues[id] !== undefined) {
-    return Number(actor.variableValues[id]);
+    return actor.variableValues[id] ?? null;
   }
   if (character.variables[id] !== undefined) {
-    return Number(character.variables[id].defaultValue);
+    return character.variables[id].defaultValue ?? null;
   }
   return null;
 }
 
-export function toV2Condition(
-  id: string,
-  condition: RuleCondition,
-): RuleConditionVariable | RuleConditionTransform | RuleConditionAppearance | null {
-  if (!condition) {
-    return null;
-  }
-  if ("type" in condition && condition.type) {
-    return condition; // v2 already
-  }
-  if (id === "appearance") {
-    return { ...condition, comparator: "=", value: {}, type: id };
-  }
-  if (id === "transform") {
-    return { ...condition, comparator: "=", value: {}, type: id };
-  }
-  return { comparator: "=", ...condition, value: {}, type: "variable", variableId: id };
-}
-
-export function applyVariableOperation(
-  existing: number | string,
-  operation: MathOperation,
-  value: number | string,
-) {
+export function applyVariableOperation(existing: string, operation: MathOperation, value: string) {
   if (operation === "add") {
-    return Number(existing) + Number(value);
+    return `${Number(existing) + Number(value)}`;
   }
   if (operation === "subtract") {
-    return Number(existing) - Number(value);
+    return `${Number(existing) - Number(value)}`;
   }
   if (operation === "set") {
-    return value;
+    return `${value}`;
   }
 
   throw new Error(`applyVariableOperation unknown operation ${operation}`);
@@ -166,9 +169,9 @@ export function applyVariableOperation(
 export function findRule(
   node: { rules: RuleTreeItem[] },
   id: string,
-): [RuleTreeItem, { rules: RuleTreeItem[] }, number] | null {
+): [RuleTreeItem | null, { rules: RuleTreeItem[] }, number] {
   if (!("rules" in node)) {
-    return null;
+    return [null, { rules: [] }, 0] as const;
   }
   for (let idx = 0; idx < node.rules.length; idx++) {
     const n = node.rules[idx];
@@ -176,12 +179,12 @@ export function findRule(
       return [n, node, idx];
     } else if ("rules" in n && n.rules) {
       const rval = findRule(n, id);
-      if (rval) {
+      if (rval[0] !== null) {
         return rval;
       }
     }
   }
-  return null;
+  return [null, { rules: [] }, 0] as const;
 }
 
 let bgImages: { [url: string]: HTMLImageElement } = {};
@@ -214,6 +217,33 @@ export function prepareCrossoriginImages(stages: Stage[]) {
   bgImages = next;
 }
 
+export function applyActorTransformToContext(
+  context: CanvasRenderingContext2D,
+  transform: ActorTransform,
+) {
+  switch (transform || "0") {
+    case "90":
+      context.rotate((90 * Math.PI) / 180);
+      break;
+    case "180":
+      context.rotate((180 * Math.PI) / 180);
+      break;
+    case "270":
+      context.rotate((270 * Math.PI) / 180);
+      break;
+    case "flip-x":
+      context.scale(-1, 1);
+      break;
+    case "flip-y":
+      context.scale(1, -1);
+      break;
+    case "0":
+      break;
+    default:
+      throw new Error(`Unsupported transform ${transform}`);
+  }
+}
+
 export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
   const { characters } = window.editorStore.getState();
 
@@ -240,14 +270,24 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
 
   Object.values(stage.actors).forEach((actor) => {
     const i = new Image();
-    i.src = characters[actor.characterId].spritesheet.appearances[actor.appearance];
+    const { appearances, appearanceInfo } = characters[actor.characterId].spritesheet;
+    i.src = appearances[actor.appearance];
+    const info = appearanceInfo?.[actor.appearance] || DEFAULT_APPEARANCE_INFO;
+
+    context.save();
+    context.translate(
+      Math.floor((actor.position.x + 0.5) * pxPerSquare),
+      Math.floor((actor.position.y + 0.5) * pxPerSquare),
+    );
+    applyActorTransformToContext(context, actor.transform ?? "0");
     context.drawImage(
       i,
-      Math.floor(actor.position.x * pxPerSquare),
-      Math.floor(actor.position.y * pxPerSquare),
-      pxPerSquare,
-      pxPerSquare,
+      -(info.anchor.x + 0.5) * pxPerSquare,
+      -(info.anchor.y + 0.5) * pxPerSquare,
+      info.width * pxPerSquare,
+      info.height * pxPerSquare,
     );
+    context.restore();
   });
 
   try {
@@ -256,4 +296,8 @@ export function getStageScreenshot(stage: Stage, { size }: { size: number }) {
     console.warn(`getStageScreenshot: ${err}`);
   }
   return null;
+}
+
+export function isNever(val: never) {
+  throw new Error(`Expected var to be never but it is ${JSON.stringify(val)}.`);
 }

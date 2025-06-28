@@ -2,9 +2,10 @@ import { defaultAppearanceId } from "./library";
 
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Characters, EditorState, Stage } from "../../types";
+import { ActorTransform, Characters, EditorState, Stage } from "../../types";
 import { TOOLS } from "../constants/constants";
 import { getCurrentStage } from "../utils/selectors";
+import { applyActorTransformToContext } from "../utils/stage-helpers";
 
 /** All our normal cursors are done via css ala `tool-stamp`, `tool-record`.
  * The stamp cursor changes once you pick up a character. This adds a temporary
@@ -19,17 +20,20 @@ export const StampCursorSupport = () => {
   );
 
   let customCursorImage: string | undefined = undefined;
+  let customCursorTransform: ActorTransform = "0";
 
   if (selectedToolId == TOOLS.STAMP && stampToolItem) {
     if ("characterId" in stampToolItem) {
       const spritesheet = characters[stampToolItem.characterId]?.spritesheet;
       if (spritesheet) {
         customCursorImage = spritesheet.appearances[defaultAppearanceId(spritesheet)][0];
+        customCursorTransform = "0";
       }
     } else if ("actorId" in stampToolItem && stampToolItem.actorId) {
       const actor = stage?.actors[stampToolItem.actorId];
       const spritesheet = actor && characters[actor.characterId]?.spritesheet;
       customCursorImage = actor && spritesheet && spritesheet.appearances[actor.appearance][0];
+      customCursorTransform = actor?.transform ?? "0";
     }
   }
 
@@ -45,10 +49,16 @@ export const StampCursorSupport = () => {
       canvas.height = img.height;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      ctx.drawImage(img, 0, 0);
+
+      ctx.save();
+      ctx.translate(Math.floor(img.width / 2), Math.floor(img.height / 2));
+      applyActorTransformToContext(ctx, customCursorTransform);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+
       ctx.moveTo(0.5, 0.5);
-      ctx.lineTo(0.5, 5.5);
-      ctx.lineTo(5.5, 0.5);
+      ctx.lineTo(0.5, 10.5);
+      ctx.lineTo(10.5, 0.5);
       ctx.lineTo(0.5, 0.5);
       ctx.strokeStyle = "black";
       ctx.fillStyle = "white";
@@ -60,7 +70,7 @@ export const StampCursorSupport = () => {
     } else {
       styleEl.current.remove();
     }
-  }, [customCursorImage]);
+  }, [customCursorImage, customCursorTransform]);
 
   return <span />;
 };

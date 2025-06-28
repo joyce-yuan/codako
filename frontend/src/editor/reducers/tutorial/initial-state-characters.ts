@@ -21,7 +21,7 @@ const InitialCharacters: Characters = {
     id: "aamlcui8uxr",
     variables: {
       _2045001: {
-        defaultValue: 0,
+        defaultValue: "0",
         name: "Age",
         id: "_2045001",
       },

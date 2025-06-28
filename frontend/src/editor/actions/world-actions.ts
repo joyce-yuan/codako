@@ -29,10 +29,9 @@ export function createGlobal(worldId?: string): ActionUpsertGlobal {
     worldId,
     globalId,
     changes: {
-      type: "number",
       id: globalId,
-      value: 0,
       name: "Untitled",
+      value: "0",
     },
   };
 }
