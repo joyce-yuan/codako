@@ -489,7 +489,7 @@ export const Stage = ({
             width: stage.width * STAGE_CELL_SIZE,
             height: stage.height * STAGE_CELL_SIZE,
             background: backgroundCSS,
-            filter: "brightness(0.8) saturate(0.8)",
+            filter: "brightness(1) saturate(0.8)",
           }}
         />
         {Object.values(stage.actors).map((actor) => {
