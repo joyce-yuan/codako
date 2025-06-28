@@ -9,6 +9,7 @@ import { deepClone } from "../editor/utils/utils";
 import { makeRequest } from "../helpers/api";
 
 import { useParams } from "react-router";
+import { applyDataMigrations } from "../editor/data-migrations";
 import { MainState } from "../reducers/initial-state";
 import { Game } from "../types";
 import PageMessage from "./common/page-message";
@@ -114,7 +115,7 @@ const EditorPage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const loaded = await Adapter.load(me, worldId);
+        const loaded = applyDataMigrations(await Adapter.load(me, worldId));
         try {
           setWorld(loaded);
           setLoaded(true);

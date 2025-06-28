@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import Button from "reactstrap/lib/Button";
-import { cancelRecording, finishRecording, startRecording } from "../../actions/recording-actions";
+import { cancelRecording, finishRecording } from "../../actions/recording-actions";
 import { RECORDING_PHASE } from "../../constants/constants";
 
 export default class StageRecordingControls extends React.Component {
@@ -23,9 +23,6 @@ export default class StageRecordingControls extends React.Component {
   _onNext = () => {
     const { dispatch, recording, characters } = this.props;
 
-    if (recording.phase === RECORDING_PHASE.SETUP) {
-      dispatch(startRecording());
-    }
     if (recording.phase === RECORDING_PHASE.RECORD) {
       if (recording.actions.length === 0) {
         window.alert(
@@ -44,16 +41,11 @@ export default class StageRecordingControls extends React.Component {
     } = this.props;
 
     const message = {
-      [RECORDING_PHASE.SETUP]: `Set the stage! Select the area around the ${characters[characterId].name} you want to record in.`,
-      [RECORDING_PHASE.RECORD]: "Act out what you want to happen in the picture on the right.",
+      [RECORDING_PHASE.RECORD]:
+        "Use the handles to expand the frame and act out what you want to happen in the picture on the right.",
     }[phase];
 
     const next = {
-      [RECORDING_PHASE.SETUP]: (
-        <span>
-          <i className="fa fa-video-camera" /> Start Recording
-        </span>
-      ),
       [RECORDING_PHASE.RECORD]: (
         <span>
           <i className="fa fa-checkmark" /> Save Recording

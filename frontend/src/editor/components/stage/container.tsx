@@ -11,6 +11,7 @@ import * as Types from "../../../types";
 import { Characters, EditorState, World } from "../../../types";
 import { RECORDING_PHASE } from "../../constants/constants";
 import { getCurrentStageForWorld } from "../../utils/selectors";
+import Library from "../library";
 
 const StageContainer = ({ readonly }: { readonly?: boolean }) => {
   const dispatch = useDispatch();
@@ -30,16 +31,7 @@ const StageContainer = ({ readonly }: { readonly?: boolean }) => {
     controls = (
       <StageRecordingControls characters={characters} dispatch={dispatch} recording={recording} />
     );
-
-    if (recording.phase === RECORDING_PHASE.SETUP) {
-      stageA = (
-        <Stage
-          world={recording.beforeWorld}
-          stage={getCurrentStageForWorld(recording.beforeWorld)!}
-          recordingExtent={recording.extent}
-        />
-      );
-    } else if (recording.phase === RECORDING_PHASE.RECORD) {
+    if (recording.phase === RECORDING_PHASE.RECORD) {
       stageA = (
         <Stage
           style={{ marginRight: 2 }}
@@ -114,15 +106,18 @@ const StageContainer = ({ readonly }: { readonly?: boolean }) => {
   }, [playback.running, playback.speed, stage, world.evaluatedTickFrames]);
 
   return (
-    <div className="panel stages">
-      <div className="stages-horizontal-flex">
-        {stageA || <Stage world={world} stage={current.stage} readonly={readonly} />}
-        {stageB || <Stage stage={0 as never} world={0 as never} style={{ flex: 0 }} />}
+    <div className="stage-container">
+      <div className="panel stages">
+        <div className="stages-horizontal-flex">
+          {stageA || <Stage world={world} stage={current.stage} readonly={readonly} />}
+          {stageB || <Stage stage={0 as never} world={0 as never} style={{ flex: 0 }} />}
+        </div>
+        {actions || <div className="recording-specifics" style={{ height: 0 }} />}
+        {controls || (
+          <StageControls {...playback} dispatch={dispatch} world={world} readonly={readonly} />
+        )}
       </div>
-      {actions || <div className="recording-specifics" style={{ height: 0 }} />}
-      {controls || (
-        <StageControls {...playback} dispatch={dispatch} world={world} readonly={readonly} />
-      )}
+      {!readonly && <Library />}
     </div>
   );
 };

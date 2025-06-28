@@ -29,6 +29,7 @@ import {
 
 import PixelCanvas from "./pixel-canvas";
 import PixelColorPicker, { ColorOptions } from "./pixel-color-picker";
+import { PixelToolSize } from "./pixel-tool-size";
 import PixelToolbar from "./pixel-toolbar";
 
 const MAX_UNDO_STEPS = 30;
@@ -50,6 +51,7 @@ const TOOLS = [
 const INITIAL_STATE = {
   color: ColorOptions[3],
   tool: TOOLS.find((t) => t.name === "pen"),
+  toolSize: 1,
   pixelSize: 11,
   anchorSquare: { x: 0, y: 0 },
   imageData: null,
@@ -170,7 +172,23 @@ class Container extends React.Component {
   _onCloseAndSave = () => {
     const { dispatch, characterId, appearanceId } = this.props;
     const flattened = getFlattenedImageData(this.state);
-    const imageDataURL = getDataURLFromImageData(flattened);
+
+    // Trim inwards from all sides if an entire row / column of tiles is empty.
+    // We want to "auto-shrink" the canvas if the kid goes wild with the + button.
+    const filledTiles = Object.keys(getFilledSquares(flattened)).map((str) => str.split(","));
+    const minXFilled = filledTiles.reduce((min, [x]) => Math.min(min, Number(x)), 100);
+    const minYFilled = filledTiles.reduce((min, [, y]) => Math.min(min, Number(y)), 100);
+    const maxXFilled = filledTiles.reduce((max, [x]) => Math.max(max, Number(x)), 0);
+    const maxYFilled = filledTiles.reduce((max, [, y]) => Math.max(max, Number(y)), 0);
+
+    const trimmed = getImageDataWithNewFrame(flattened, {
+      width: (maxXFilled - minXFilled + 1) * 40,
+      height: (maxYFilled - minYFilled + 1) * 40,
+      offsetX: -minXFilled * 40,
+      offsetY: -minYFilled * 40,
+    });
+
+    const imageDataURL = getDataURLFromImageData(trimmed);
     dispatch(
       changeCharacter(characterId, {
         spritesheet: {
@@ -464,7 +482,7 @@ class Container extends React.Component {
   };
 
   render() {
-    const { imageData, tool, color, undoStack, redoStack } = this.state;
+    const { imageData, tool, toolSize, color, undoStack, redoStack } = this.state;
 
     return (
       <Modal isOpen={imageData !== null} backdrop="static" toggle={() => {}} className="paint">
@@ -584,10 +602,17 @@ class Container extends React.Component {
             <div className="flex-horizontal" style={{ gap: 8 }}>
               <div className="paint-sidebar">
                 <PixelColorPicker
+                  tool={tool}
                   color={color}
                   onColorChange={(c) => this.setState({ color: c })}
                 />
                 <PixelToolbar tools={TOOLS} tool={tool} onToolChange={this._onChooseTool} />
+                <PixelToolSize
+                  tool={tool}
+                  size={toolSize}
+                  onSizeChange={(toolSize) => this.setState({ toolSize })}
+                />
+
                 <Button size="sm" style={{ width: 114 }} onClick={this._onClearAll}>
                   Clear Canvas
                 </Button>
@@ -635,7 +660,7 @@ class Container extends React.Component {
                         type="range"
                         min={1}
                         max={11}
-                        style={{ writingMode: "sideways-lr" }}
+                        style={{ writingMode: "vertical-rl", marginLeft: 3 }}
                         value={this.state.pixelSize}
                         onChange={(e) =>
                           this.setState({ ...this.state, pixelSize: Number(e.currentTarget.value) })

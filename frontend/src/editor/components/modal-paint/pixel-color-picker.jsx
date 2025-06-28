@@ -3,22 +3,21 @@ import PropTypes from "prop-types";
 import React from "react";
 import { hsvToRgb } from "./helpers";
 
-export const ColorOptions = [
-  "rgba(255,255,255,255)",
-  "rgba(180,180,180,255)",
-  "rgba(100,100,100,255)",
-  "rgba(0,0,0,255)",
-];
+export const ColorOptions = [];
 
-for (let h = 0; h < 70; h += 10) {
-  let [r, g, b] = hsvToRgb(h / 80.0, 1, 1);
-  ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
-  [r, g, b] = hsvToRgb(h / 80.0, 0.4, 1);
-  ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
-  [r, g, b] = hsvToRgb(h / 80.0, 0.4, 0.75);
-  ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
-  [r, g, b] = hsvToRgb(h / 80.0, 1, 0.5);
-  ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
+ColorOptions.push(`rgba(0,0,0,0)`);
+for (let a = 255; a >= 0; a -= 32) {
+  ColorOptions.push(`rgba(${a},${a},${a},255)`);
+}
+for (let h = 0; h < 72; h += 6) {
+  for (let a = 0.8; a >= 0.2; a -= 0.15) {
+    const [r, g, b] = hsvToRgb(h / 80.0, 1 - a, 1);
+    ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
+  }
+  for (let a = 1; a >= 0.4; a -= 0.14) {
+    const [r, g, b] = hsvToRgb(h / 80.0, 1, a);
+    ColorOptions.push(`rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},255)`);
+  }
 }
 
 function rgbaToHex(rgba) {
@@ -45,26 +44,44 @@ export default class PixelColorPicker extends React.Component {
   };
 
   render() {
-    const { color, onColorChange } = this.props;
+    const { tool, color, onColorChange } = this.props;
+
+    const disabled = !tool.supportsColor();
 
     return (
-      <div className="pixel-color-picker">
-        <input
-          className="active-swatch"
-          type="color"
-          value={rgbaToHex(color)}
-          onChange={(e) => {
-            if (e.target.value) {
-              const newColor = hexToRgba(e.target.value);
-              onColorChange(newColor);
-            }
-          }}
-        />
+      <div className={classNames("pixel-color-picker", disabled && "disabled")}>
+        {color === "rgba(0,0,0,0)" ? (
+          <div
+            className="active-swatch transparent"
+            style={{
+              background: TRANSPARENT_CROSS,
+              backgroundSize: "40%",
+              backgroundPosition: "center",
+            }}
+          />
+        ) : (
+          <input
+            className={"active-swatch"}
+            type="color"
+            disabled={disabled}
+            value={disabled ? "#cccccc" : rgbaToHex(color)}
+            onChange={(e) => {
+              if (e.target.value) {
+                const newColor = hexToRgba(e.target.value);
+                onColorChange(newColor);
+              }
+            }}
+          />
+        )}
         {ColorOptions.map((option) => (
           <button
             key={option}
-            style={{ backgroundColor: option }}
-            className={classNames({ color: true, selected: color === option })}
+            style={{
+              background: option === "rgba(0,0,0,0)" ? TRANSPARENT_CROSS : option,
+              backgroundSize: "contain",
+            }}
+            disabled={disabled}
+            className={classNames({ color: true, selected: !disabled && color === option })}
             onClick={() => onColorChange(option)}
           />
         ))}
@@ -72,3 +89,6 @@ export default class PixelColorPicker extends React.Component {
     );
   }
 }
+
+const TRANSPARENT_CROSS =
+  "linear-gradient(45deg, transparent 0%, transparent 44%, #666 46%, #666 55%, transparent 56%, transparent 100%) no-repeat, linear-gradient(-45deg, white 0%, white 44%, #666 46%, #666 55%, white 56%, white 100%) no-repeat";

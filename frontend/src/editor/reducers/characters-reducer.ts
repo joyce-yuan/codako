@@ -1,6 +1,6 @@
 import u from "updeep";
 
-import { EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
+import { Character, EditorState, RuleTreeEventItem, RuleTreeItem } from "../../types";
 import { Actions } from "../actions";
 import { ruleFromRecordingState } from "../components/stage/recording/utils";
 import * as Types from "../constants/action-types";
@@ -30,13 +30,12 @@ export default function charactersReducer(
         {
           variables: {
             [action.variableId]: {
-              defaultValue: 0,
+              defaultValue: "0",
               name: "Untitled",
               id: action.variableId,
-              type: "number",
             },
           },
-        },
+        } as Pick<Character, "variables">,
         state,
       );
     }
@@ -134,9 +133,8 @@ export default function charactersReducer(
       }
 
       if (recording.ruleId) {
-        const match = findRule({ rules }, recording.ruleId);
-        if (!match) return state;
-        const [existingRule, parentRule, parentIdx] = match;
+        const [existingRule, parentRule, parentIdx] = findRule({ rules }, recording.ruleId);
+        if (!existingRule) return state;
         parentRule.rules[parentIdx] = Object.assign({}, existingRule, recordedRule);
         return u.updateIn(recording.characterId, { rules }, state);
       }

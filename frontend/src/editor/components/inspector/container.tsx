@@ -8,8 +8,8 @@ import NavLink from "reactstrap/lib/NavLink";
 import { getCurrentStageForWorld } from "../../utils/selectors";
 import AddRuleButton from "./add-rule-button";
 import AddVariableButton from "./add-variable-button";
-import ContainerPaneRules from "./container-pane-rules";
-import ContainerPaneVariables from "./container-pane-variables";
+import { ContainerPaneRules } from "./container-pane-rules";
+import { ContainerPaneVariables } from "./container-pane-variables";
 
 import { Dispatch } from "redux";
 import { Actor, ActorPath, Character, Characters, EditorState, WorldMinimal } from "../../../types";
@@ -54,16 +54,8 @@ class Container extends React.Component<
   };
 
   render() {
-    const {
-      character,
-      selectedToolId,
-      characters,
-      world,
-      actor,
-      dispatch,
-      selectedActorPath,
-      isRecording,
-    } = this.props;
+    const { character, selectedToolId, characters, world, actor, selectedActorPath, isRecording } =
+      this.props;
     const { activeTab } = this.state;
 
     const ContentContainer = {
@@ -111,7 +103,6 @@ class Container extends React.Component<
             character={character}
             actor={actor}
             selectedActorPath={selectedActorPath}
-            dispatch={dispatch}
           />
         </div>
       </InspectorContext.Provider>

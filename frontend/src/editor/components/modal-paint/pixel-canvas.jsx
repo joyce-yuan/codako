@@ -109,7 +109,9 @@ export default class PixelCanvas extends React.Component {
       c.drawTransparentPattern();
     }
     if (imageData) {
-      c.applyPixelsFromData(imageData, 0, 0, imageData.width, imageData.height, 0, 0, {});
+      c.applyPixelsFromData(imageData, 0, 0, imageData.width, imageData.height, 0, 0, {
+        ignoreClearPixels: true,
+      });
     }
 
     if (selectionImageData) {
@@ -121,7 +123,9 @@ export default class PixelCanvas extends React.Component {
         selectionImageData.height,
         selectionOffset.x,
         selectionOffset.y,
-        {},
+        {
+          ignoreClearPixels: true,
+        },
       );
     }
 
@@ -242,9 +246,12 @@ export default class PixelCanvas extends React.Component {
         <div
           style={{
             minHeight: "100%",
+            minWidth: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            width: "fit-content",
+            height: "fit-content",
           }}
         >
           <canvas

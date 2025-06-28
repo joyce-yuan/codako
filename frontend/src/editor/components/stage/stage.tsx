@@ -28,6 +28,7 @@ import {
 import { STAGE_CELL_SIZE, TOOLS } from "../../constants/constants";
 import { extentIgnoredPositions } from "../../utils/recording-helpers";
 import {
+  actorFilledPoints,
   actorFillsPoint,
   applyAnchorAdjustment,
   buildActorPath,
@@ -59,6 +60,8 @@ type MouseStatus = { isDown: boolean; visited: { [posKey: string]: true } };
 
 const DRAGGABLE_TOOLS = [TOOLS.IGNORE_SQUARE, TOOLS.TRASH, TOOLS.STAMP];
 
+export const STAGE_ZOOM_STEPS = [1, 0.88, 0.75, 0.63, 0.5, 0.42, 0.38];
+
 export const Stage = ({
   recordingExtent,
   recordingCentered,
@@ -68,12 +71,43 @@ export const Stage = ({
   style,
 }: StageProps) => {
   const [{ top, left }, setOffset] = useState<Offset>({ top: 0, left: 0 });
+  const [scale, setScale] = useState(
+    stage.scale && typeof stage.scale === "number" ? stage.scale : 1,
+  );
+
   const lastFiredExtent = useRef<string | null>(null);
   const lastActorPositions = useRef<{ [actorId: string]: Position }>({});
 
   const mouse = useRef<MouseStatus>({ isDown: false, visited: {} });
   const scrollEl = useRef<HTMLDivElement | null>();
   const el = useRef<HTMLDivElement | null>();
+
+  useEffect(() => {
+    const autofit = () => {
+      const _scrollEl = scrollEl.current;
+      const _el = el.current;
+      if (!_scrollEl || !_el) {
+        return;
+      }
+      if (recordingCentered) {
+        setScale(1);
+      } else if (stage.scale === "fit") {
+        _el.style.zoom = "1"; // this needs to be here for scaling "up" to work
+        const fit = Math.min(
+          _scrollEl.clientWidth / (stage.width * STAGE_CELL_SIZE),
+          _scrollEl.clientHeight / (stage.height * STAGE_CELL_SIZE),
+        );
+        const best = STAGE_ZOOM_STEPS.find((z) => z <= fit) || fit;
+        _el.style.zoom = `${best}`;
+        setScale(best);
+      } else {
+        setScale(stage.scale ?? 1);
+      }
+    };
+    window.addEventListener("resize", autofit);
+    autofit();
+    return () => window.removeEventListener("resize", autofit);
+  }, [stage.height, stage.scale, stage.width, recordingCentered]);
 
   const dispatch = useDispatch();
   const characters = useSelector<EditorState, Characters>((state) => state.characters);
@@ -222,8 +256,8 @@ export const Stage = ({
     };
     const { dragLeft, dragTop } = dragOffset ? JSON.parse(dragOffset) : halfOffset;
     return {
-      x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE),
-      y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE),
+      x: Math.round((event.clientX - dragLeft - stageOffset.left) / STAGE_CELL_SIZE / scale),
+      y: Math.round((event.clientY - dragTop - stageOffset.top) / STAGE_CELL_SIZE / scale),
     };
   };
 
@@ -242,69 +276,91 @@ export const Stage = ({
   };
 
   const onDropActorAtPosition = (
-    { actorId, characterId }: { actorId?: string; characterId?: string },
+    { actorId }: { actorId: string },
     position: Position,
-    clone = false,
+    mode: "stamp-copy" | "move",
   ) => {
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
       return;
     }
 
-    if (actorId) {
-      const actor = stage.actors[actorId];
-      const character = characters[actor.characterId];
+    const actor = stage.actors[actorId];
+    const character = characters[actor.characterId];
 
-      applyAnchorAdjustment(position, character, actor);
+    applyAnchorAdjustment(position, character, actor);
 
-      if (actor.position.x === position.x && actor.position.y === position.y) {
-        // attempting to drop in the same place we started the drag, don't do anything
-        return;
-      }
-
-      if (clone) {
-        // If there is an exact copy of this actor at this position already, don't drop.
-        // It's probably a mistake, and you can override by dropping elsewhere and then
-        // dragging it to this square.
-        const exact = Object.values(stage.actors).find(
-          (a) =>
-            actorFillsPoint(a, characters, position) &&
-            a.characterId === actor.characterId &&
-            a.appearance === actor.appearance,
-        );
-        if (exact) {
-          return;
-        }
-        const clonedActor = Object.assign({}, actor, { position });
-        dispatch(createActor(stagePath(), character, clonedActor));
-      } else {
-        dispatch(changeActor(actorPath(actorId), { position }));
-      }
-    } else if (characterId) {
-      const character = characters[characterId];
-
-      applyAnchorAdjustment(position, character, { appearance: "default" });
-
-      const exact = Object.values(stage.actors).find(
-        (a) => actorFillsPoint(a, characters, position) && a.characterId === characterId,
-      );
-      if (exact) {
-        return;
-      }
-      dispatch(createActor(stagePath(), character, { position }));
+    if (actor.position.x === position.x && actor.position.y === position.y) {
+      // attempting to drop in the same place we started the drag, don't do anything
+      return;
     }
+
+    if (mode === "stamp-copy") {
+      const clonedActor = Object.assign({}, actor, { position });
+      const clonedActorPoints = actorFilledPoints(clonedActor, characters).map(
+        (p) => `${p.x},${p.y}`,
+      );
+
+      // If there is an exact copy of this actor that overlaps this position already, don't
+      // drop. It's probably a mistake, and you can override by dropping elsewhere and then
+      // dragging it to this square.
+      const positionContainsCloneAlready = Object.values(stage.actors).find(
+        (a) =>
+          a.characterId === actor.characterId &&
+          a.appearance === actor.appearance &&
+          actorFilledPoints(a, characters).some((p) => clonedActorPoints.includes(`${p.x},${p.y}`)),
+      );
+      if (positionContainsCloneAlready) {
+        return;
+      }
+      dispatch(createActor(stagePath(), character, clonedActor));
+    } else if (mode === "move") {
+      dispatch(changeActor(actorPath(actorId), { position }));
+    } else {
+      throw new Error("Invalid mode");
+    }
+  };
+
+  const onDropCharacterAtPosition = (
+    { characterId }: { characterId: string },
+    position: Position,
+  ) => {
+    if (recordingExtent && pointIsOutside(position, recordingExtent)) {
+      return;
+    }
+
+    const character = characters[characterId];
+    const appearance = Object.keys(character.spritesheet.appearances)[0];
+    const newActor = { position, appearance } as Actor;
+    applyAnchorAdjustment(position, character, newActor);
+
+    const newActorPoints = actorFilledPoints(newActor, characters).map((p) => `${p.x},${p.y}`);
+
+    const positionContainsCloneAlready = Object.values(stage.actors).find(
+      (a) =>
+        a.characterId === characterId &&
+        actorFilledPoints(a, characters).some((p) => newActorPoints.includes(`${p.x},${p.y}`)),
+    );
+    if (positionContainsCloneAlready) {
+      return;
+    }
+    dispatch(createActor(stagePath(), character, newActor));
   };
 
   const onDropSprite = (event: React.DragEvent) => {
     const { actorId, characterId } = JSON.parse(event.dataTransfer.getData("sprite"));
     const position = getPositionForEvent(event);
-    onDropActorAtPosition({ actorId, characterId }, position, event.altKey);
+    if (actorId) {
+      onDropActorAtPosition({ actorId }, position, event.altKey ? "stamp-copy" : "move");
+    } else if (characterId) {
+      onDropCharacterAtPosition({ characterId }, position);
+    }
   };
 
   const onStampAtPosition = (position: Position) => {
     if (stampToolItem && "actorId" in stampToolItem && stampToolItem.actorId) {
-      onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, true);
+      onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, "stamp-copy");
     } else if (stampToolItem && "characterId" in stampToolItem) {
-      onDropActorAtPosition({ characterId: stampToolItem.characterId }, position, true);
+      onDropCharacterAtPosition({ characterId: stampToolItem.characterId }, position);
     }
   };
 
@@ -328,7 +384,11 @@ export const Stage = ({
         handled = true;
         break;
       case TOOLS.POINTER:
-        dispatch(recordClickForGameState(world.id, actor.id));
+        if (playback.running) {
+          dispatch(recordClickForGameState(world.id, actor.id));
+        } else {
+          onSelectActor(actor);
+        }
         handled = true;
         break;
     }
@@ -336,7 +396,6 @@ export const Stage = ({
     // If we didn't handle the event, let it bubble up to the stage onClick handler
 
     if (handled) {
-      event.preventDefault();
       event.stopPropagation();
     }
   };
@@ -489,6 +548,7 @@ export const Stage = ({
           width: stage.width * STAGE_CELL_SIZE,
           height: stage.height * STAGE_CELL_SIZE,
           overflow: recordingExtent ? "visible" : "hidden",
+          zoom: scale,
         }}
         className="stage"
         onDragOver={onDragOver}
@@ -522,13 +582,9 @@ export const Stage = ({
             Math.abs(lastPosition.y - actor.position.y) > 6;
           lastActorPositions.current[actor.id] = Object.assign({}, actor.position);
 
-          const isToolItem =
-            stampToolItem && "actorId" in stampToolItem && actor.id === stampToolItem.actorId;
-
           return (
             <ActorSprite
               draggable={!readonly && !DRAGGABLE_TOOLS.includes(selectedToolId)}
-              toolItem={!!isToolItem}
               key={`${actor.id}-${didWrap}`}
               selected={actor === selected}
               onClick={(event) => onClickActor(actor, event)}

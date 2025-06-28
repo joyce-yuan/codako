@@ -6,7 +6,6 @@ import {
   RecordingState,
   Rule,
   RuleCondition,
-  RuleConditionGlobal,
   RuleExtent,
 } from "../../types";
 import * as types from "../constants/action-types";
@@ -87,16 +86,6 @@ export type ActionFinishRecording = {
   type: "FINISH_RECORDING";
 };
 
-export function startRecording(): ActionStartRecording {
-  return {
-    type: types.START_RECORDING,
-  };
-}
-
-export type ActionStartRecording = {
-  type: "START_RECORDING";
-};
-
 export function setRecordingExtent(extent: RuleExtent): ActionSetRecordingExtent {
   return {
     type: types.SET_RECORDING_EXTENT,
@@ -109,24 +98,16 @@ export type ActionSetRecordingExtent = {
   extent: RuleExtent;
 };
 
-export function updateRecordingCondition(
-  actorId: string,
-  key: string,
-  values: DeepPartial<RuleConditionGlobal | RuleCondition>,
-): ActionUpdateRecordingCondition {
+export function upsertRecordingCondition(condition: RuleCondition): ActionUpsertRecordingCondition {
   return {
-    type: types.UPDATE_RECORDING_CONDITION,
-    actorId,
-    key,
-    values,
+    type: types.UPSERT_RECORDING_CONDITION,
+    condition,
   };
 }
 
-export type ActionUpdateRecordingCondition = {
-  type: "UPDATE_RECORDING_CONDITION";
-  actorId: string;
-  key: string;
-  values: DeepPartial<RuleConditionGlobal | RuleCondition> & { enabled?: boolean };
+export type ActionUpsertRecordingCondition = {
+  type: "UPSERT_RECORDING_CONDITION";
+  condition: RuleCondition & { enabled?: boolean };
 };
 
 export function updateRecordingActions(
@@ -163,8 +144,7 @@ export type RecordingActions =
   | ActionEditRuleRecording
   | ActionCancelRecording
   | ActionFinishRecording
-  | ActionStartRecording
   | ActionSetRecordingExtent
-  | ActionUpdateRecordingCondition
+  | ActionUpsertRecordingCondition
   | ActionUpdateRecordingActions
   | ActionToggleSquareIgnored;

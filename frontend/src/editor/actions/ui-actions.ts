@@ -79,7 +79,7 @@ export function paintCharacterAppearance(characterId: string, appearanceId: stri
 export function pickCharacterRuleEventKey(
   characterId: string,
   ruleId: string,
-  initialKeyCode: string | null,
+  initialKeyCode: number | null,
 ) {
   return (dispatch: Dispatch<Actions>) => {
     dispatch(stopPlayback());
@@ -148,7 +148,7 @@ export type ActionUpdateKeypickerState = {
   type: "UPDATE_KEYPICKER_STATE";
   characterId: string;
   ruleId: string;
-  initialKeyCode: string | null;
+  initialKeyCode: number | null;
 };
 
 export type ActionUpdateTutorialState = {

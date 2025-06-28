@@ -204,7 +204,7 @@ export type EditorState = {
     characterId: null;
     actorId: null;
     ruleId: null;
-    conditions: {};
+    conditions: [];
     extent: {
       xmin: 0;
       xmax: 0;

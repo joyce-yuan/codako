@@ -38,7 +38,7 @@ export function getAfterWorldForRecording(
     return beforeWorld;
   }
   const recordedRule = ruleFromRecordingState(beforeStage, characters, recording);
-  if (!recordedRule) {
+  if (!recordedRule || !recordedRule.actions?.length) {
     return beforeWorld;
   }
 
@@ -58,7 +58,10 @@ export function getAfterWorldForRecording(
   return WorldOperator(u({ id: WORLDS.AFTER }, beforeWorld) as World, characters).resetForRule(
     {
       ...recordedRule,
-      actions: actionSteps ? recordedRule.actions.slice(0, actionSteps) : recordedRule.actions,
+      actions:
+        actionSteps !== undefined
+          ? recordedRule.actions.slice(0, actionSteps)
+          : recordedRule.actions,
       id: "T",
       name: "T",
     },

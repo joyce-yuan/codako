@@ -13,7 +13,7 @@ import * as actions from "../actions/ui-actions";
 import { updateWorldMetadata } from "../actions/world-actions";
 import { MODALS, TOOLS } from "../constants/constants";
 import { getCurrentStage } from "../utils/selectors";
-import TapToEditLabel from "./tap-to-edit-label";
+import { TapToEditLabel } from "./tap-to-edit-label";
 import UndoRedoControls from "./undo-redo-controls";
 
 import { EditorContext } from "../../components/editor-context";
@@ -49,8 +49,8 @@ const Toolbar = ({ selectedToolId, dispatch, metadata, stageName, isInTutorial }
     );
   };
 
-  const _onNameChange = (e) => {
-    dispatch(updateWorldMetadata("root", { name: e.target.value }));
+  const _onNameChange = (name) => {
+    dispatch(updateWorldMetadata("root", { name }));
   };
 
   const _renderLeft = () => {

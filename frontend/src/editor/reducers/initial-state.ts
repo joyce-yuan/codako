@@ -60,12 +60,12 @@ const InitialState: EditorState = {
     },
   },
   recording: {
-    phase: RECORDING_PHASE.SETUP,
+    phase: RECORDING_PHASE.RECORD,
     characterId: null,
     actorId: null,
     ruleId: null,
     actions: [],
-    conditions: {},
+    conditions: [],
     extent: {
       xmin: 0,
       xmax: 0,

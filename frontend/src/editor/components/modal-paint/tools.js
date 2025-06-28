@@ -39,6 +39,13 @@ export class PixelTool {
     });
   }
 
+  supportsSize() {
+    return false;
+  }
+  supportsColor() {
+    return false;
+  }
+
   render() {
     // no effect
   }
@@ -59,6 +66,10 @@ export class PixelFillRectTool extends PixelTool {
       context.fillPixel(x, y);
     });
   }
+
+  supportsColor() {
+    return true;
+  }
 }
 
 export class PixelPaintbucketTool extends PixelTool {
@@ -75,6 +86,10 @@ export class PixelPaintbucketTool extends PixelTool {
     imageData.getContiguousPixels(interaction.e, (p) => {
       context.fillPixel(p.x, p.y);
     });
+  }
+
+  supportsColor() {
+    return true;
   }
 }
 
@@ -102,6 +117,10 @@ export class PixelFillEllipseTool extends PixelTool {
       }
     });
   }
+
+  supportsColor() {
+    return true;
+  }
 }
 
 export class PixelPenTool extends PixelTool {
@@ -110,16 +129,26 @@ export class PixelPenTool extends PixelTool {
     this.name = "pen";
   }
 
-  render(context, { color, interaction: { points } }) {
+  render(context, { color, toolSize, interaction: { points } }) {
     if (!points || !points.length) {
       return;
     }
     context.fillStyle = color;
     let prev = points[0];
     for (const point of points) {
-      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y));
+      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) =>
+        context.fillToolSize(x, y, toolSize),
+      );
       prev = point;
     }
+  }
+
+  supportsSize() {
+    return true;
+  }
+
+  supportsColor() {
+    return true;
   }
 }
 
@@ -129,13 +158,13 @@ export class PixelLineTool extends PixelTool {
     this.name = "line";
   }
 
-  render(context, { color, pixelSize, interaction }, isPreview) {
+  render(context, { color, pixelSize, interaction, toolSize }, isPreview) {
     const { s, e } = interaction;
     if (!s || !e) {
       return;
     }
     context.fillStyle = color;
-    forEachInLine(s.x, s.y, e.x, e.y, (x, y) => context.fillPixel(x, y));
+    forEachInLine(s.x, s.y, e.x, e.y, (x, y) => context.fillToolSize(x, y, toolSize));
     if (isPreview) {
       context.beginPath();
       context.moveTo((s.x + 0.5) * pixelSize, (s.y + 0.5) * pixelSize);
@@ -151,6 +180,14 @@ export class PixelLineTool extends PixelTool {
       context.closePath();
     }
   }
+
+  supportsSize() {
+    return true;
+  }
+
+  supportsColor() {
+    return true;
+  }
 }
 
 export class PixelEraserTool extends PixelTool {
@@ -159,20 +196,23 @@ export class PixelEraserTool extends PixelTool {
     this.name = "eraser";
   }
 
-  render(context, { color, interaction: { points } }, isPreview) {
+  render(context, { color, toolSize, interaction: { points } }, isPreview) {
     if (!points || !points.length) {
       return;
     }
+
+    context.fillStyle = "rgba(0, 0, 0, 0)";
     let prev = points[0];
     for (const point of points) {
-      if (isPreview) {
-        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.clearPixel(x, y));
-      } else {
-        context.fillStyle = "rgba(0,0,0,0)";
-        forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) => context.fillPixel(x, y));
-      }
+      forEachInLine(prev.x, prev.y, point.x, point.y, (x, y) =>
+        context.fillToolSize(x, y, toolSize),
+      );
       prev = point;
     }
+  }
+
+  supportsSize() {
+    return true;
   }
 }
 
@@ -327,6 +367,10 @@ export class EyedropperTool extends PixelTool {
         points: [],
       },
     });
+  }
+
+  supportsColor() {
+    return true;
   }
 }
 

@@ -4,6 +4,7 @@ import { EditorState } from "../../types";
 import { Actions } from "../actions";
 import * as Types from "../constants/action-types";
 import { WORLDS } from "../constants/constants";
+import { getCurrentStageForWorld } from "../utils/selectors";
 import { buildActorPath, nullActorPath } from "../utils/stage-helpers";
 import initialState from "./initial-state";
 
@@ -13,13 +14,15 @@ export default function uiReducer(
   entireState: EditorState,
 ) {
   switch (action.type) {
-    case Types.START_RECORDING: {
-      const { actorId, characterId } = entireState.recording;
-      const current = entireState.ui.selectedActorPath;
-
+    case Types.SETUP_RECORDING_FOR_ACTOR: {
+      const { actor, characterId } = action;
+      const stage = getCurrentStageForWorld(entireState.world);
+      if (!stage) {
+        return state;
+      }
       return Object.assign({}, state, {
         selectedCharacterId: characterId,
-        selectedActorPath: buildActorPath(WORLDS.AFTER, current.stageId!, actorId!),
+        selectedActorPath: buildActorPath(WORLDS.AFTER, stage.id!, actor.id!),
       });
     }
     case Types.CANCEL_RECORDING: {
