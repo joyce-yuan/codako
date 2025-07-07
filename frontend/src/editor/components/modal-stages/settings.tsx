@@ -212,10 +212,10 @@ export const StageSettings = ({
                   {isGenerating ? (
                     <span>
                       <i className="fa fa-spinner fa-spin" style={{ marginRight: "5px" }} />
-                      Generating...
+                      Drawing...
                     </span>
                   ) : (
-                    "Generate"
+                    "Draw"
                   )}
                 </Button>
               </div>

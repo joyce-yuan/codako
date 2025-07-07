@@ -694,11 +694,11 @@ class Container extends React.Component {
                   >
                     {this.state.isGeneratingSprite ? (
                       <span>
-                        <i className="fa fa-spinner fa-spin" /> Generating...
+                        <i className="fa fa-spinner fa-spin" /> Drawing...
                       </span>
                     ) : (
                       <span>
-                        <i className="fa fa-magic" /> Generate with AI
+                        <i className="fa fa-magic" /> Draw with AI
                       </span>
                     )}
                   </Button>
