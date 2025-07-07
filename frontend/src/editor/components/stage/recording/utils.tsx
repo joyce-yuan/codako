@@ -33,13 +33,15 @@ export function getAfterWorldForRecording(
   recording: RecordingState,
   actionSteps?: number,
 ) {
+  const cloned = u({ id: WORLDS.AFTER }, beforeWorld) as World;
+
   const beforeStage = getCurrentStageForWorld(beforeWorld);
   if (!beforeStage) {
-    return beforeWorld;
+    return cloned;
   }
   const recordedRule = ruleFromRecordingState(beforeStage, characters, recording);
-  if (!recordedRule || !recordedRule.actions?.length) {
-    return beforeWorld;
+  if (!recordedRule) {
+    return cloned;
   }
 
   // Note: When we go from the real stage to the before world, we use the `offset`
@@ -55,7 +57,7 @@ export function getAfterWorldForRecording(
     y: recording.extent.ymin - recordedRule.extent.ymin,
   };
 
-  return WorldOperator(u({ id: WORLDS.AFTER }, beforeWorld) as World, characters).resetForRule(
+  return WorldOperator(cloned, characters).resetForRule(
     {
       ...recordedRule,
       actions:

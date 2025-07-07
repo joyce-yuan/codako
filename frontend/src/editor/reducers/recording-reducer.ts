@@ -78,6 +78,7 @@ function recordingReducer(
           actions: u.constant([]),
           conditions: u.constant([]),
           beforeWorld: u.constant(u({ id: WORLDS.BEFORE }, world)),
+          afterWorld: u.constant(u({ id: WORLDS.AFTER }, world)),
           extent: u.constant({
             xmin: actor.position.x - anchor.x,
             xmax: actor.position.x - anchor.x + width - 1,
@@ -263,7 +264,11 @@ export default function recordingReducerWithDerivedState(
 ) {
   const nextState = recordingReducer(state, action, entireState) as RecordingState;
 
-  if (nextState.actions !== state.actions || nextState.beforeWorld !== state.beforeWorld) {
+  if (
+    !nextState.afterWorld ||
+    nextState.actions !== state.actions ||
+    nextState.beforeWorld !== state.beforeWorld
+  ) {
     nextState.afterWorld = getAfterWorldForRecording(
       nextState.beforeWorld,
       entireState.characters,
