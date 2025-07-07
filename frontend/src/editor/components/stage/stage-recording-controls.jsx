@@ -24,12 +24,6 @@ export default class StageRecordingControls extends React.Component {
     const { dispatch, recording, characters } = this.props;
 
     if (recording.phase === RECORDING_PHASE.RECORD) {
-      if (recording.actions.length === 0) {
-        window.alert(
-          "To create a rule, edit the right stage by changing appearances, moving actors, or modifying a variable.",
-        );
-        return;
-      }
       dispatch(finishRecording());
     }
   };
