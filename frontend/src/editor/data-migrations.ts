@@ -112,7 +112,7 @@ export function applyDataMigrations(game: Game): Game {
     }
     return value;
   });
-  const migrated = JSON.stringify(game);
+  const migrated = JSON.stringify(result);
 
   if (migrated !== nonmigrated) {
     delete result.data.ui;
