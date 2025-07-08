@@ -249,9 +249,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       } else if (rule.type === CONTAINER_TYPES.FLOW) {
         return tickRulesTree(rule);
       }
-      const stageActorsForRuleActorIds = checkRuleScenario(rule);
-      if (stageActorsForRuleActorIds) {
-        applyRule(rule, stageActorsForRuleActorIds);
+      const stageActorForId = checkRuleScenario(rule);
+      if (stageActorForId) {
+        applyRule(rule, { stageActorForId, createActorIds: true });
         return true;
       }
       return false;
@@ -393,8 +393,21 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
       return requiredActorIds;
     }
 
-    function applyRule(rule: Rule, stageActorForId: { [ruleActorId: string]: Actor }) {
+    function applyRule(
+      rule: Rule,
+      opts: {
+        // Mapping between the actors referenced in the rule and the actors present
+        // on the stage in the correct scenario positions. Note: this is mutated.
+        stageActorForId: { [ruleActorId: string]: Actor };
+
+        // Pass true to give actors created by this rule unique IDs. Pass false to
+        // give new actors the IDs that are referenced by the rule actions (to
+        // show the rule editor after state.)
+        createActorIds: boolean;
+      },
+    ) {
       const origin = deepClone(me.position);
+      const { stageActorForId, createActorIds } = opts;
 
       for (const action of rule.actions) {
         if (action.type === "create") {
@@ -402,14 +415,19 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           if (!nextPos) {
             throw new Error(`Action cannot create at this position`);
           }
-          const nextID = `a${IDSeed++}`;
           const nextActor = Object.assign(deepClone(action.actor), {
-            id: nextID,
+            id: createActorIds ? `${IDSeed++}` : action.actorId,
             position: nextPos,
             variableValues: {},
           });
           frameAccumulator?.push(nextActor);
-          actors[nextID] = nextActor;
+          actors[nextActor.id] = nextActor;
+
+          // Note: Allow subsequent lookups to use the actor's real new ID on the stage
+          // OR the actor's ID within the rule. The latter is important if the rule
+          // creates the actor and then moves them, etc.
+          stageActorForId[nextActor.id] = nextActor;
+          stageActorForId[action.actorId] = nextActor;
         } else if (action.type === "global") {
           const global = globals[action.global];
           global.value = applyVariableOperation(
@@ -424,7 +442,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
             throw new Error(
               `Action ${JSON.stringify(action)} references an actor which is not in rule.actors (${
                 action.actorId
-              }`,
+              }. Have: ${JSON.stringify(stageActorForId)}`,
             );
           }
           if (action.type === "move") {
@@ -508,7 +526,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     // the actors currently on the board
     if (applyActions) {
       const operator = ActorOperator(actors[rule.mainActorId]);
-      operator.applyRule(rule, actors);
+      operator.applyRule(rule, { createActorIds: false, stageActorForId: { ...actors } });
     }
 
     return u(
