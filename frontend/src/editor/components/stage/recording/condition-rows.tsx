@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 
+import { useDispatch, useSelector } from "react-redux";
 import {
   Actor,
   ActorTransform,
   Character,
   Characters,
+  EditorState,
   RuleCondition,
   RuleValue,
   Stage,
   VariableComparator,
   WorldMinimal,
 } from "../../../../types";
+import { selectToolId } from "../../../actions/ui-actions";
+import { TOOLS } from "../../../constants/constants";
 import { AppearanceDropdown, TransformDropdown } from "../../inspector/container-pane-variables";
 import { ActorBlock, AppearanceBlock, TransformBlock, VariableBlock } from "./blocks";
 
@@ -32,6 +36,8 @@ export const FreeformConditionRow = ({
   onChange,
 }: FreeformConditionRowProps) => {
   const { left, right, comparator } = condition;
+  const selectedToolId = useSelector<EditorState>((state) => state.ui.selectedToolId);
+  const dispatch = useDispatch();
 
   const leftActor = "actorId" in left ? actors[left.actorId] : null;
   const leftCharacter = leftActor && characters[leftActor.characterId];
@@ -53,10 +59,17 @@ export const FreeformConditionRow = ({
       ? { type: "appearance", character: leftCharacter! || rightCharacter! }
       : null;
 
-  console.log(impliedDatatype);
+  const onToolClick = (e: React.MouseEvent) => {
+    if (selectedToolId === TOOLS.TRASH) {
+      onChange?.(false, condition);
+      if (!e.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
+    }
+  };
 
   return (
-    <li className={`enabled-true`}>
+    <li className={`enabled-true tool-${selectedToolId}`} onClick={onToolClick}>
       <FreeformConditionValue
         value={left}
         actor={leftActor}
@@ -114,6 +127,9 @@ export const FreeformConditionValue = ({
   onChange?: (value: RuleValue) => void;
   impliedDatatype: ImpliedDatatype;
 }) => {
+  const selectedToolId = useSelector<EditorState>((state) => state.ui.selectedToolId);
+  const dispatch = useDispatch();
+
   const [droppingValue, setDroppingValue] = useState(false);
 
   const onDropValue = (e: React.DragEvent) => {
@@ -124,12 +140,6 @@ export const FreeformConditionValue = ({
       e.stopPropagation();
     }
     setDroppingValue(false);
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Backspace") {
-      onChange?.({ constant: "" });
-    }
   };
 
   const inner = () => {
@@ -196,11 +206,41 @@ export const FreeformConditionValue = ({
 
     return <span />;
   };
+
+  const onDeleteValue = () => {
+    if (impliedDatatype?.type === "appearance") {
+      const appearanceIds = Object.keys(impliedDatatype.character.spritesheet.appearances);
+      onChange?.({ constant: appearanceIds[0] });
+    } else if (impliedDatatype?.type === "transform") {
+      onChange?.({ constant: "0" });
+    } else {
+      onChange?.({ constant: "" });
+    }
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Backspace") {
+      onDeleteValue();
+    }
+  };
+
+  const onToolClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (selectedToolId === TOOLS.TRASH) {
+      onDeleteValue();
+      if (!e.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
+    }
+  };
+
   return (
     <div
       tabIndex={0}
       onKeyDown={onKeyDown}
-      className={`right dropping-${droppingValue}`}
+      onClick={onToolClick}
+      className={`right tool-${selectedToolId} dropping-${droppingValue}`}
       title="Drop a variable or appearance here to create an expression linking two variables."
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes(`variable`)) {
@@ -214,7 +254,7 @@ export const FreeformConditionValue = ({
       }}
       onDrop={onDropValue}
     >
-      {inner()}
+      <div style={selectedToolId !== TOOLS.POINTER ? { pointerEvents: "none" } : {}}>{inner()}</div>
     </div>
   );
 };

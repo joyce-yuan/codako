@@ -362,6 +362,13 @@ html {
             border: 1px solid rgba(91, 192, 222, 0.6);
             background: rgba(91, 192, 222, 0.35);
           }
+          &.tool-trash:hover {
+            background-color: $trash-hover-color;
+            color: white;
+            code {
+              color: white;
+            }
+          }
         }
         .sprite {
           zoom: 0.6;
@@ -389,18 +396,26 @@ html {
             background: url(../img/x.png) 50%;
           }
         }
-      }
-      li.enabled-false {
-        .left {
-          opacity: 0.4;
-        }
-        .condition-remove {
-          opacity: 0.4;
-          &:hover {
-            opacity: 0.8;
+
+        &.tool-trash:hover:not(:has(*:hover)) {
+          background-color: $trash-hover-color;
+          color: white;
+          code {
+            color: white;
           }
-          div {
-            background: url(../img/visible.png) top right no-repeat;
+        }
+        &.enabled-false {
+          .left {
+            opacity: 0.4;
+          }
+          .condition-remove {
+            opacity: 0.4;
+            &:hover {
+              opacity: 0.8;
+            }
+            div {
+              background: url(../img/visible.png) top right no-repeat;
+            }
           }
         }
       }
