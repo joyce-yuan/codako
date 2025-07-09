@@ -76,7 +76,15 @@ function recordingReducer(
           phase: RECORDING_PHASE.RECORD,
           actorId: actor.id,
           actions: u.constant([]),
-          conditions: u.constant([]),
+          conditions: u.constant([
+            {
+              left: { actorId: actor.id, variableId: "appearance" },
+              right: { constant: actor.appearance },
+              enabled: true,
+              comparator: "=",
+              key: "main-actor-appearance",
+            },
+          ] satisfies RuleCondition[]),
           beforeWorld: u.constant(u({ id: WORLDS.BEFORE }, world)),
           afterWorld: u.constant(u({ id: WORLDS.AFTER }, world)),
           extent: u.constant({
