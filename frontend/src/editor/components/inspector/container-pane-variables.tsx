@@ -8,7 +8,7 @@ import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import { useDispatch } from "react-redux";
 import { DeepPartial } from "redux";
 import { Actor, ActorPath, Character, Global, WorldMinimal } from "../../../types";
-import { changeCharacter, deleteCharacterVariable } from "../../actions/characters-actions";
+import { deleteCharacterVariable, upsertCharacter } from "../../actions/characters-actions";
 import { changeActor } from "../../actions/stage-actions";
 import { selectToolId } from "../../actions/ui-actions";
 import { deleteGlobal, upsertGlobal } from "../../actions/world-actions";
@@ -146,7 +146,7 @@ export const ContainerPaneVariables = ({
 
   const _onChangeVarDefinition = (id: string, changes: Partial<Character["variables"][0]>) => {
     dispatch(
-      changeCharacter(character.id, {
+      upsertCharacter(character.id, {
         variables: {
           [id]: changes,
         },

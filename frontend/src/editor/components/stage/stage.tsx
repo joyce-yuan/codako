@@ -45,6 +45,7 @@ import {
   UIState,
   WorldMinimal,
 } from "../../../types";
+import { defaultAppearanceId } from "../../utils/character-helpers";
 
 interface StageProps {
   stage: StageType;
@@ -321,7 +322,7 @@ export const Stage = ({
   };
 
   const onDropCharacterAtPosition = (
-    { characterId }: { characterId: string },
+    { characterId, appearanceId }: { characterId: string; appearanceId?: string },
     position: Position,
   ) => {
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
@@ -329,7 +330,7 @@ export const Stage = ({
     }
 
     const character = characters[characterId];
-    const appearance = Object.keys(character.spritesheet.appearances)[0];
+    const appearance = appearanceId ?? defaultAppearanceId(character.spritesheet);
     const newActor = { position, appearance } as Actor;
     applyAnchorAdjustment(position, character, newActor);
 
@@ -360,7 +361,7 @@ export const Stage = ({
     if (stampToolItem && "actorId" in stampToolItem && stampToolItem.actorId) {
       onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, "stamp-copy");
     } else if (stampToolItem && "characterId" in stampToolItem) {
-      onDropCharacterAtPosition({ characterId: stampToolItem.characterId }, position);
+      onDropCharacterAtPosition(stampToolItem, position);
     }
   };
 

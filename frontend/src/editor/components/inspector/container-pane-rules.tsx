@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
-import { useDispatch } from "react-redux";
-import { Character, Rule, RuleTreeItem } from "../../../types";
-import { changeCharacter } from "../../actions/characters-actions";
+import { useDispatch, useSelector } from "react-redux";
+import { Character, EditorState, Rule, RuleTreeItem, UIState } from "../../../types";
+import { upsertCharacter } from "../../actions/characters-actions";
 import { editRuleRecording } from "../../actions/recording-actions";
 import { pickCharacterRuleEventKey, selectToolId } from "../../actions/ui-actions";
 import { TOOLS } from "../../constants/constants";
@@ -11,7 +11,8 @@ import { deepClone } from "../../utils/utils";
 import { RuleList } from "./rule-list";
 
 export const RuleActionsContext = React.createContext<{
-  onRuleMoved: (movingRuleId: string, newParentId: string, newParentIdx: number) => void;
+  onRuleMoved: (movingRuleId: string, newParentId: string | null, newParentIdx: number) => void;
+  onRuleStamped: (movingRuleId: string, newParentId: string | null, newParentIdx: number) => void;
   onRuleReRecord: (rule: Rule) => void;
   onRulePickKey: (ruleId: string) => void;
   onRuleChanged: (ruleId: string, changes: Partial<RuleTreeItem>) => void;
@@ -20,6 +21,7 @@ export const RuleActionsContext = React.createContext<{
 
 export const ContainerPaneRules = ({ character }: { character: Character | null }) => {
   const dispatch = useDispatch();
+  const { selectedToolId, stampToolItem } = useSelector<EditorState, UIState>((state) => state.ui);
   const _scrollContainerEl = useRef<HTMLDivElement>(null);
   const _scrollId = useRef<number>(0);
 
@@ -91,7 +93,7 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
     );
   };
 
-  const _onRuleMoved = (movingRuleId: string, newParentId: string, newParentIdx: number) => {
+  const _onRuleMoved = (movingRuleId: string, newParentId: string | null, newParentIdx: number) => {
     const rules = deepClone(character.rules);
     const root = { rules };
 
@@ -111,7 +113,7 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
     // check that the rule isn't moving down into itself, which causes it to be detached
     if (
       "rules" in movingRule &&
-      (movingRuleId === newParentId || findRule(movingRule, newParentId)[0])
+      (movingRuleId === newParentId || (newParentId && findRule(movingRule, newParentId)[0]))
     ) {
       return;
     }
@@ -122,14 +124,14 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
     }
     oldParentRule.rules.splice(oldIdx, 1);
     newParentRule.rules.splice(newIdx, 0, movingRule);
-    dispatch(changeCharacter(character.id, root));
+    dispatch(upsertCharacter(character.id, root));
   };
 
   const _onRuleDeleted = (ruleId: string, event: React.MouseEvent<unknown>) => {
     const rules = deepClone(character.rules);
     const [, parentRule, parentIdx] = findRule({ rules }, ruleId);
     parentRule.rules.splice(parentIdx, 1);
-    dispatch(changeCharacter(character.id, { rules }));
+    dispatch(upsertCharacter(character.id, { rules }));
     if (!event.shiftKey) {
       dispatch(selectToolId(TOOLS.POINTER));
     }
@@ -140,7 +142,36 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
     const [rule] = findRule({ rules }, ruleId);
     if (!rule) return;
     Object.assign(rule, changes);
-    dispatch(changeCharacter(character.id, { rules }));
+    dispatch(upsertCharacter(character.id, { rules }));
+  };
+
+  const _onRuleStamped = (
+    sourceRuleId: string,
+    newParentId: string | null,
+    newParentIdx: number,
+  ) => {
+    const rules = deepClone(character.rules);
+    const root = { rules };
+
+    const [sourceRule] = findRule(root, sourceRuleId);
+    if (!sourceRule) {
+      throw new Error(`Couldn't find moving rule ID: ${sourceRuleId}`);
+    }
+    const [newParentRule] = newParentId ? findRule(root, newParentId) : [root];
+    if (!newParentRule) {
+      throw new Error(`Couldn't find new parent rule ID: ${newParentId}`);
+    }
+
+    if (!("rules" in newParentRule)) {
+      throw new Error(`Parent rules are not rule containers`);
+    }
+
+    const copyOfRule = { ...sourceRule, id: `${Date.now()}` };
+    if ("name" in copyOfRule) {
+      copyOfRule.name = `${copyOfRule.name} Copy`;
+    }
+    newParentRule.rules.splice(newParentIdx, 0, copyOfRule);
+    dispatch(upsertCharacter(character.id, root));
   };
 
   const _onRulePickKey = (ruleId: string) => {
@@ -157,6 +188,16 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
       </div>
     );
   }
+
+  const onClickBackground = (e: React.MouseEvent) => {
+    if (selectedToolId === TOOLS.STAMP && stampToolItem && "ruleId" in stampToolItem) {
+      _onRuleStamped(stampToolItem.ruleId, null, character.rules.length);
+      if (!e.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
+    }
+  };
+
   return (
     <RuleActionsContext.Provider
       value={{
@@ -165,11 +206,17 @@ export const ContainerPaneRules = ({ character }: { character: Character | null 
         onRuleMoved: _onRuleMoved,
         onRulePickKey: _onRulePickKey,
         onRuleDeleted: _onRuleDeleted,
+        onRuleStamped: _onRuleStamped,
       }}
     >
-      <div className="scroll-container" ref={_scrollContainerEl}>
+      <div className="scroll-container" ref={_scrollContainerEl} onClick={onClickBackground}>
         <div className="scroll-container-contents">
-          <RuleList character={character} rules={character.rules} collapsed={false} />
+          <RuleList
+            character={character}
+            rules={character.rules}
+            collapsed={false}
+            parentId={null}
+          />
         </div>
       </div>
     </RuleActionsContext.Provider>

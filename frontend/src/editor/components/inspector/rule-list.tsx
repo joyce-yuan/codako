@@ -4,7 +4,9 @@ import { ContentEventGroup } from "./content-event-group";
 import { ContentFlowGroup } from "./content-flow-group";
 import { ContentRule } from "./content-rule";
 
-import { Character, RuleTreeItem } from "../../../types";
+import { useDispatch, useSelector } from "react-redux";
+import { Character, EditorState, RuleTreeItem, UIState } from "../../../types";
+import { selectToolId, selectToolItem } from "../../actions/ui-actions";
 import { TOOLS } from "../../constants/constants";
 import { CONTAINER_TYPES } from "../../utils/world-constants";
 import { RuleActionsContext } from "./container-pane-rules";
@@ -25,13 +27,19 @@ export const RuleList = ({
   character,
   collapsed,
 }: {
-  parentId?: string;
+  parentId: string | null;
   rules: RuleTreeItem[];
   character: Character;
   collapsed: boolean;
 }) => {
-  const { onRuleMoved, onRuleReRecord, onRuleDeleted } = useContext(RuleActionsContext);
+  const { onRuleMoved, onRuleReRecord, onRuleDeleted, onRuleStamped } =
+    useContext(RuleActionsContext);
   const { selectedToolId } = useContext(InspectorContext);
+  const stampToolItem = useSelector<EditorState, UIState["stampToolItem"]>(
+    (s) => s.ui.stampToolItem,
+  );
+
+  const dispatch = useDispatch();
 
   const [dragState, setDragState] = useState<{
     dragIndex: number;
@@ -57,8 +65,9 @@ export const RuleList = ({
     clearTimeout(_leaveTimeout.current);
   }, []);
 
-  const _dropIndexForRuleDragEvent = (event: React.DragEvent<unknown>) => {
-    const hasRuleId = event.dataTransfer?.types.includes("rule-id");
+  const _dropIndexForEvent = (event: React.DragEvent<unknown> | React.MouseEvent<unknown>) => {
+    const hasRuleId =
+      "dataTransfer" in event ? event.dataTransfer?.types.includes("rule-id") : true;
     if (!hasRuleId) {
       return DROP_INDEX_NA;
     }
@@ -87,9 +96,13 @@ export const RuleList = ({
   };
 
   const _onRuleClicked = (event: React.MouseEvent<unknown>, rule: RuleTreeItem) => {
-    event.stopPropagation();
     if (selectedToolId === TOOLS.TRASH) {
+      event.stopPropagation();
       onRuleDeleted(rule.id, event);
+    }
+    if (selectedToolId === TOOLS.STAMP && !stampToolItem) {
+      event.stopPropagation();
+      dispatch(selectToolItem({ ruleId: rule.id }));
     }
   };
 
@@ -114,7 +127,7 @@ export const RuleList = ({
   const _onDragOver = (event: React.DragEvent<unknown>) => {
     clearTimeout(_leaveTimeout.current);
 
-    const dropIndex = _dropIndexForRuleDragEvent(event);
+    const dropIndex = _dropIndexForEvent(event);
     if (dropIndex === undefined || dropIndex === DROP_INDEX_NA) {
       return;
     }
@@ -136,17 +149,35 @@ export const RuleList = ({
 
   const _onDrop = (event: React.DragEvent<unknown>) => {
     const ruleId = event.dataTransfer.getData("rule-id");
-    const dropIndex = _dropIndexForRuleDragEvent(event);
+    const dropIndex = _dropIndexForEvent(event);
 
     event.stopPropagation();
     event.preventDefault();
 
-    if (!ruleId || dropIndex === -1 || parentId === undefined || dropIndex === undefined) {
+    if (!ruleId || dropIndex === -1 || dropIndex === undefined) {
       return;
     }
 
-    onRuleMoved(ruleId, parentId, dropIndex);
+    if (event.altKey) {
+      onRuleStamped(ruleId, parentId, dropIndex);
+    } else {
+      onRuleMoved(ruleId, parentId, dropIndex);
+    }
+
     setDragState({ ...dragState, dragIndex: -1, dropIndex: -1 });
+  };
+
+  const _onListClick = (event: React.MouseEvent<unknown>) => {
+    if (selectedToolId === TOOLS.STAMP && stampToolItem && "ruleId" in stampToolItem) {
+      const dropIndex = _dropIndexForEvent(event);
+      if (dropIndex === undefined || dropIndex === -1) {
+        return;
+      }
+      onRuleStamped(stampToolItem.ruleId, parentId, dropIndex);
+      if (!event.shiftKey) {
+        dispatch(selectToolId(TOOLS.POINTER));
+      }
+    }
   };
 
   const _onMouseOver = (event: React.MouseEvent<unknown>, rule: RuleTreeItem) => {
@@ -204,6 +235,7 @@ export const RuleList = ({
       onDragOver={_onDragOver}
       onDragLeave={_onDragLeave}
       onDrop={_onDrop}
+      onClick={_onListClick}
     >
       {items}
     </ul>

@@ -14,7 +14,7 @@ import { makeRequest } from "../../../helpers/api";
 
 import * as Tools from "./tools";
 
-import { changeCharacter } from "../../actions/characters-actions";
+import { upsertCharacter } from "../../actions/characters-actions";
 import { paintCharacterAppearance } from "../../actions/ui-actions";
 
 import CreatePixelImageData from "./create-pixel-image-data";
@@ -222,7 +222,7 @@ class Container extends React.Component {
     // Then update character data after a small delay to prevent modal reopening
     setTimeout(() => {
       dispatch(
-        changeCharacter(characterId, {
+        upsertCharacter(characterId, {
           spritesheet: {
             appearances: { [appearanceId]: [imageDataURL] },
             appearanceInfo: {

@@ -20,6 +20,7 @@ import {
   offsetForEditingRule,
 } from "../components/stage/recording/utils";
 import { RECORDING_PHASE, WORLDS } from "../constants/constants";
+import { defaultAppearanceId } from "../utils/character-helpers";
 import { extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import WorldOperator from "../utils/world-operator";
@@ -113,7 +114,7 @@ function recordingReducer(
           dude: {
             id: "dude",
             variableValues: {},
-            appearance: Object.keys(character.spritesheet.appearances)[0],
+            appearance: defaultAppearanceId(character.spritesheet),
             characterId: action.characterId,
             position: { x: 0, y: 0 },
           },

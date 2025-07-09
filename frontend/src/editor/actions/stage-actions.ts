@@ -3,6 +3,7 @@ import { Actor, ActorPath, Character, Stage } from "../../types";
 import * as types from "../constants/action-types";
 
 import { Actions } from ".";
+import { defaultAppearanceId } from "../utils/character-helpers";
 import { selectStageId } from "./ui-actions";
 
 // stage collection actions
@@ -161,7 +162,7 @@ export function createActor(
   const newActor: DeepPartial<Actor> = Object.assign(
     {
       variableValues: {},
-      appearance: Object.keys(character.spritesheet.appearances)[0],
+      appearance: defaultAppearanceId(character.spritesheet),
     },
     initialValues,
     {

@@ -966,6 +966,9 @@ html {
         box-sizing: content-box;
         vertical-align: middle;
         overflow: hidden;
+        * {
+          pointer-events: none !important;
+        }
       }
 
       i {
