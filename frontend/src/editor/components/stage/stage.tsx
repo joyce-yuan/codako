@@ -364,7 +364,7 @@ export const Stage = ({
     }
   };
 
-  const onClickActor = (actor: Actor, event: React.MouseEvent) => {
+  const onMouseUpActor = (actor: Actor, event: React.MouseEvent) => {
     let handled = false;
 
     switch (selectedToolId) {
@@ -439,7 +439,7 @@ export const Stage = ({
   const onMouseUp = (event: React.MouseEvent) => {
     onMouseMove(event);
     if (!event.shiftKey) {
-      if (TOOLS.TRASH === selectedToolId || (TOOLS.STAMP === selectedToolId && stampToolItem)) {
+      if (TOOLS.TRASH === selectedToolId || TOOLS.STAMP === selectedToolId) {
         dispatch(selectToolId(TOOLS.POINTER));
       }
     }
@@ -590,7 +590,7 @@ export const Stage = ({
               draggable={!readonly && !DRAGGABLE_TOOLS.includes(selectedToolId)}
               key={`${actor.id}-${didWrap}`}
               selected={actor === selected}
-              onClick={(event) => onClickActor(actor, event)}
+              onMouseUp={(event) => onMouseUpActor(actor, event)}
               onDoubleClick={() => onSelectActor(actor)}
               transitionDuration={playback.speed / (actor.frameCount || 1)}
               character={character}
