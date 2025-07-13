@@ -3,7 +3,7 @@ import u from "updeep";
 import { EditorState } from "../../types";
 import { Actions } from "../actions";
 import * as Types from "../constants/action-types";
-import { WORLDS } from "../constants/constants";
+import { TOOLS, WORLDS } from "../constants/constants";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import { buildActorPath, nullActorPath } from "../utils/stage-helpers";
 import initialState from "./initial-state";
@@ -32,6 +32,7 @@ export default function uiReducer(
     }
     case Types.FINISH_RECORDING: {
       return Object.assign({}, state, {
+        selectedToolId: TOOLS.POINTER,
         selectedActorPath: nullActorPath(),
       });
     }
