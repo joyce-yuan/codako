@@ -33,7 +33,7 @@ export function applyDataMigrations(game: Game): Game {
               delete action.to;
             }
             if ("transform" in action && !action.value) {
-              action.value = { constant: "none" };
+              action.value = { constant: "0" };
             }
             if ("value" in action && action.value === null) {
               action.value = { constant: "0" };

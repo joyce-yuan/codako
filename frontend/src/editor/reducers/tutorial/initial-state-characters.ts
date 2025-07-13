@@ -131,7 +131,7 @@ const InitialCharacters: Characters = {
                 type: "transform",
                 actorId: "1483668698770",
                 value: {
-                  constant: "none",
+                  constant: "0",
                 },
               },
             ],
@@ -330,7 +330,7 @@ const InitialCharacters: Characters = {
                 type: "transform",
                 actorId: "1483668698770",
                 value: {
-                  constant: "none",
+                  constant: "0",
                 },
               },
             ],
