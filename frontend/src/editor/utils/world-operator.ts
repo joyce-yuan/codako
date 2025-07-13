@@ -565,6 +565,9 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
     evaluatedRuleIds = {};
 
     Object.values(actors).forEach((actor) => ActorOperator(actor).tickAllRules());
+    const evaluatedSomeRule = Object.values(evaluatedRuleIds).some((actorRuleIds) =>
+      Object.values(actorRuleIds).includes(true),
+    );
 
     return u(
       {
@@ -580,7 +583,8 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         globals: u.constant(globals),
         evaluatedRuleIds: u.constant(evaluatedRuleIds),
         evaluatedTickFrames: frameAccumulator.getFrames(),
-        history: (values: HistoryItem[]) => [...values.slice(values.length - 20), historyItem],
+        history: (values: HistoryItem[]) =>
+          evaluatedSomeRule ? [...values.slice(values.length - 20), historyItem] : values,
       },
       previousWorld,
     );
