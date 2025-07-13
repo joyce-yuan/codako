@@ -979,6 +979,14 @@ html {
   }
 }
 
+.tool-stamp {
+  .rules-list .rule-container {
+    .name {
+      pointer-events: none;
+    }
+  }
+}
+
 .tool-pointer {
   .rules-list .rule-container {
     &.group-event {
