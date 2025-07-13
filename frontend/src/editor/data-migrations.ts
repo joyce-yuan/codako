@@ -2,6 +2,19 @@
 
 import { Game } from "../types";
 
+export function applyValueChanges(value: any) {
+  if (value === "none") {
+    return "0";
+  }
+  if (`${value}`.endsWith("deg")) {
+    return `${value}`.replace("deg", "");
+  }
+  if (value === "flip-xy") {
+    return "180";
+  }
+  return value;
+}
+
 export function applyDataMigrations(game: Game): Game {
   // Update old-style rules
   let conditionKey = Date.now();
@@ -9,14 +22,8 @@ export function applyDataMigrations(game: Game): Game {
   const nonmigrated = JSON.stringify(game);
   const result = JSON.parse(JSON.stringify(game), (key, value) => {
     try {
-      if (key === "transform" && value === "none") {
-        return "0";
-      }
-      if (key === "transform" && `${value}`.endsWith("deg")) {
-        return `${value}`.replace("deg", "");
-      }
-      if (value === "flip-xy") {
-        return "180";
+      if (key === "transform") {
+        return applyValueChanges(value);
       }
 
       // Note this runs on each layer of the rules tree, character.rules and rule-flow-item.rules
@@ -26,6 +33,9 @@ export function applyDataMigrations(game: Game): Game {
           // action.value is now a RuleValue.
           if (!rule.actions) {
             rule.actions = [];
+          }
+          if (!rule.conditions) {
+            rule.conditions = [];
           }
           for (const action of rule.actions) {
             if ("to" in action) {
@@ -39,7 +49,7 @@ export function applyDataMigrations(game: Game): Game {
               action.value = { constant: "0" };
             }
             if ("value" in action && typeof action.value !== "object") {
-              action.value = { constant: action.value };
+              action.value = { constant: `${applyValueChanges(action.value)}` };
             }
           }
 
@@ -77,7 +87,6 @@ export function applyDataMigrations(game: Game): Game {
                       };
                     }
                     if (condition.type === "appearance") {
-                      console.log(condition, rule.actors);
                       condition.left = { variableId: "appearance", actorId: actorIdOrGlobal };
                       condition.right ||= { constant: rule.actors[actorIdOrGlobal].appearance };
                     }
@@ -87,7 +96,7 @@ export function applyDataMigrations(game: Game): Game {
                         actorId: actorIdOrGlobal,
                       };
                       condition.right ||= {
-                        constant: rule.actors[actorIdOrGlobal].variableValues[condition.variableId],
+                        constant: `${rule.actors[actorIdOrGlobal].variableValues[condition.variableId] || "0"}`,
                       };
                     }
                     if (condition.enabled === undefined) {
@@ -121,6 +130,7 @@ export function applyDataMigrations(game: Game): Game {
   if (migrated !== nonmigrated) {
     delete result.data.ui;
     delete result.data.recording;
+    console.log(result);
   }
 
   return result;

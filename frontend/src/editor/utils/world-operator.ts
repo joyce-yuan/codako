@@ -298,8 +298,8 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         if (stageActorsForRuleActorIds[otherActorId]) {
           return [stageActorsForRuleActorIds[otherActorId]];
         }
-        const orule = rule.actors[otherActorId];
-        const stagePosition = wrappedPosition(pointByAdding(me.position, orule.position));
+        const oactor = rule.actors[otherActorId];
+        const stagePosition = wrappedPosition(pointByAdding(me.position, oactor.position));
         if (!stagePosition) {
           return [];
         }
@@ -308,7 +308,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
           return [];
         }
         return ocandidates.filter((ostage) =>
-          actorsMatch(ostage, orule, rule.conditions, "avoiding-recursion"),
+          actorsMatch(ostage, oactor, rule.conditions, "avoiding-recursion"),
         );
       };
 
