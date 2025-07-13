@@ -38,16 +38,17 @@ import { CONTAINER_TYPES, FLOW_BEHAVIORS } from "./world-constants";
 
 let IDSeed = Date.now();
 
-export type Frame = { actors: { [actorId: string]: Actor }; id: number };
+export type FrameActor = Actor & { deleted?: boolean };
+export type Frame = { actors: { [actorId: string]: FrameActor }; id: number };
 
 class FrameAccumulator {
-  changes: { [actorId: string]: Actor[] } = {};
+  changes: { [actorId: string]: FrameActor[] } = {};
   initial: Frame;
 
-  constructor(actors: { [actorId: string]: Actor }) {
+  constructor(actors: { [actorId: string]: FrameActor }) {
     this.initial = { actors, id: Date.now() };
   }
-  push(actor: Actor & { deleted?: boolean }) {
+  push(actor: FrameActor) {
     this.changes[actor.id] ||= [];
     this.changes[actor.id].push(deepClone(actor));
   }
@@ -70,8 +71,11 @@ class FrameAccumulator {
       for (const actorId of changeActorIds) {
         const actorVersion = remaining[actorId].shift()!;
         actorVersion.frameCount = frameCountsByActor[actorId];
-        current.actors[actorId] = actorVersion;
-
+        if (actorVersion.deleted) {
+          delete current.actors[actorId];
+        } else {
+          current.actors[actorId] = actorVersion;
+        }
         if (remaining[actorId].length === 0) {
           delete remaining[actorId];
         }
@@ -316,12 +320,18 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
         for (let y = rule.extent.ymin; y <= rule.extent.ymax; y++) {
           const ignoreExtraActors = rule.extent.ignored[`${x},${y}`];
 
-          const stagePos = wrappedPosition(pointByAdding(me.position, { x, y }));
-          if (stagePos === null) {
+          // Ben Note: `actorFillsPoint` is not "wrapping-aware". If adding the x,y offset
+          // causes wrapping, we need to consider actors extending into the offscreen
+          // (non-existent) tile and actors at the wrapped tile position.
+          const unwrappedStagePos = pointByAdding(me.position, { x, y });
+          const wrappedStagePos = wrappedPosition(unwrappedStagePos);
+          if (wrappedStagePos === null) {
             return false; // offscreen?
           }
-          const stageActorsAtPos = Object.values(actors).filter((actor) =>
-            actorFillsPoint(actor, characters, stagePos),
+          const stageActorsAtPos = Object.values(actors).filter(
+            (actor) =>
+              actorFillsPoint(actor, characters, unwrappedStagePos) ||
+              actorFillsPoint(actor, characters, wrappedStagePos),
           );
           const ruleActorsAtPos = Object.values(rule.actors).filter(
             (actor) =>
@@ -341,7 +351,7 @@ export default function WorldOperator(previousWorld: WorldMinimal, characters: C
 
             if (match) {
               stageActorsForRuleActorIds[match.id] = s;
-              ruleActorsUsed.add(`${match.id}-${stagePos.x}-${stagePos.y}`);
+              ruleActorsUsed.add(`${match.id}-${wrappedStagePos.x}-${wrappedStagePos.y}`);
             } else if (!ignoreExtraActors) {
               return false;
             }
