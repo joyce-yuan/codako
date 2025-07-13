@@ -63,9 +63,9 @@ export function applyDataMigrations(game: Game): Game {
                   // Jun 22 2025 - changing from "thing" + "value" to "left" + "right" and encoding both
                   // in the same style.
                   if (!("left" in condition)) {
-                    condition.right = condition.value;
                     if (actorIdOrGlobal === "globals") {
                       condition.left = { globalId: actorIdOrGlobal };
+                      condition.right ||= condition.value;
                     }
                     if (condition.type === "transform") {
                       condition.left = { variableId: "transform", actorId: actorIdOrGlobal };
@@ -77,6 +77,7 @@ export function applyDataMigrations(game: Game): Game {
                       };
                     }
                     if (condition.type === "appearance") {
+                      console.log(condition, rule.actors);
                       condition.left = { variableId: "appearance", actorId: actorIdOrGlobal };
                       condition.right ||= { constant: rule.actors[actorIdOrGlobal].appearance };
                     }

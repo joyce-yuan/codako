@@ -184,10 +184,6 @@ export const ContainerPaneVariables = ({
   };
 
   function _renderCharacterSection() {
-    if (!character) {
-      return <div className="empty">Please select a character.</div>;
-    }
-
     const actorValues = actor ? actor.variableValues : {};
 
     return (
@@ -258,14 +254,18 @@ export const ContainerPaneVariables = ({
   return (
     <div className={`scroll-container`}>
       <div className="scroll-container-contents">
-        <div className="variables-section">
-          <h3>
-            {actor
-              ? `${character.name} at (${actor.position.x},${actor.position.y})`
-              : `${character.name} (Defaults)`}
-          </h3>
-          {_renderCharacterSection()}
-        </div>
+        {character ? (
+          <div className="variables-section">
+            <h3>
+              {actor
+                ? `${character.name} at (${actor.position.x},${actor.position.y})`
+                : `${character.name} (Defaults)`}
+            </h3>
+            {_renderCharacterSection()}
+          </div>
+        ) : (
+          <div className="empty">Please select a character.</div>
+        )}
         <div className="variables-section">
           <h3>World</h3>
           {_renderWorldSection()}
