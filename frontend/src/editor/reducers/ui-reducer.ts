@@ -53,7 +53,7 @@ export default function uiReducer(
     case Types.DELETE_ACTOR: {
       if (state.selectedActorPath.actorId === action.actorId) {
         return Object.assign({}, state, {
-          selectedActorPath: { worldId: null, stageId: null, actorId: null },
+          selectedActorPath: nullActorPath(),
         });
       }
       return state;
@@ -62,7 +62,7 @@ export default function uiReducer(
       if (state.selectedCharacterId === action.characterId) {
         return Object.assign({}, state, {
           selectedCharacterId: null,
-          selectedActorPath: null,
+          selectedActorPath: nullActorPath(),
         });
       }
       return state;

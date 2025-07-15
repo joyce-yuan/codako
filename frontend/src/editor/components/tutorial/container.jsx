@@ -148,7 +148,9 @@ class TutorialContainer extends React.Component {
         this.setState({ playing: false });
         this._advancer.onAudioEnded();
       });
-      this._audio.play();
+      this._audio.play().catch(() => {
+        // Ignore AbortError when play() is interrupted by pause()
+      });
     }
   }
 
@@ -193,7 +195,9 @@ class TutorialContainer extends React.Component {
                   <i
                     className={`fa ${playing ? "fa-pause" : "fa-play"}`}
                     onClick={() =>
-                      this._audio && (playing ? this._audio.pause() : this._audio.play())
+                      this._audio && (playing ? this._audio.pause() : this._audio.play().catch(() => {
+                        // Ignore AbortError when play() is interrupted by pause()
+                      }))
                     }
                   />
                   <i className="fa fa-step-forward" onClick={this._onNextStep} />
