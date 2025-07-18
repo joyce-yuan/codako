@@ -27,6 +27,7 @@ export default function uiReducer(
     }
     case Types.CANCEL_RECORDING: {
       return Object.assign({}, state, {
+        selectedToolId: TOOLS.POINTER,
         selectedActorPath: nullActorPath(),
       });
     }
