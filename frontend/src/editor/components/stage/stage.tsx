@@ -45,6 +45,7 @@ import {
   UIState,
   WorldMinimal,
 } from "../../../types";
+import { defaultAppearanceId } from "../../utils/character-helpers";
 
 interface StageProps {
   stage: StageType;
@@ -321,7 +322,7 @@ export const Stage = ({
   };
 
   const onDropCharacterAtPosition = (
-    { characterId }: { characterId: string },
+    { characterId, appearanceId }: { characterId: string; appearanceId?: string },
     position: Position,
   ) => {
     if (recordingExtent && pointIsOutside(position, recordingExtent)) {
@@ -329,7 +330,7 @@ export const Stage = ({
     }
 
     const character = characters[characterId];
-    const appearance = Object.keys(character.spritesheet.appearances)[0];
+    const appearance = appearanceId ?? defaultAppearanceId(character.spritesheet);
     const newActor = { position, appearance } as Actor;
     applyAnchorAdjustment(position, character, newActor);
 
@@ -360,11 +361,11 @@ export const Stage = ({
     if (stampToolItem && "actorId" in stampToolItem && stampToolItem.actorId) {
       onDropActorAtPosition({ actorId: stampToolItem.actorId }, position, "stamp-copy");
     } else if (stampToolItem && "characterId" in stampToolItem) {
-      onDropCharacterAtPosition({ characterId: stampToolItem.characterId }, position);
+      onDropCharacterAtPosition(stampToolItem, position);
     }
   };
 
-  const onClickActor = (actor: Actor, event: React.MouseEvent) => {
+  const onMouseUpActor = (actor: Actor, event: React.MouseEvent) => {
     let handled = false;
 
     switch (selectedToolId) {
@@ -439,7 +440,7 @@ export const Stage = ({
   const onMouseUp = (event: React.MouseEvent) => {
     onMouseMove(event);
     if (!event.shiftKey) {
-      if (TOOLS.TRASH === selectedToolId || (TOOLS.STAMP === selectedToolId && stampToolItem)) {
+      if (TOOLS.TRASH === selectedToolId || TOOLS.STAMP === selectedToolId) {
         dispatch(selectToolId(TOOLS.POINTER));
       }
     }
@@ -590,7 +591,7 @@ export const Stage = ({
               draggable={!readonly && !DRAGGABLE_TOOLS.includes(selectedToolId)}
               key={`${actor.id}-${didWrap}`}
               selected={actor === selected}
-              onClick={(event) => onClickActor(actor, event)}
+              onMouseUp={(event) => onMouseUpActor(actor, event)}
               onDoubleClick={() => onSelectActor(actor)}
               transitionDuration={playback.speed / (actor.frameCount || 1)}
               character={character}

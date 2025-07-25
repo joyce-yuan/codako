@@ -8,7 +8,7 @@ import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import { useDispatch } from "react-redux";
 import { DeepPartial } from "redux";
 import { Actor, ActorPath, Character, Global, WorldMinimal } from "../../../types";
-import { changeCharacter, deleteCharacterVariable } from "../../actions/characters-actions";
+import { deleteCharacterVariable, upsertCharacter } from "../../actions/characters-actions";
 import { changeActor } from "../../actions/stage-actions";
 import { selectToolId } from "../../actions/ui-actions";
 import { deleteGlobal, upsertGlobal } from "../../actions/world-actions";
@@ -146,7 +146,7 @@ export const ContainerPaneVariables = ({
 
   const _onChangeVarDefinition = (id: string, changes: Partial<Character["variables"][0]>) => {
     dispatch(
-      changeCharacter(character.id, {
+      upsertCharacter(character.id, {
         variables: {
           [id]: changes,
         },
@@ -184,10 +184,6 @@ export const ContainerPaneVariables = ({
   };
 
   function _renderCharacterSection() {
-    if (!character) {
-      return <div className="empty">Please select a character.</div>;
-    }
-
     const actorValues = actor ? actor.variableValues : {};
 
     return (
@@ -258,14 +254,18 @@ export const ContainerPaneVariables = ({
   return (
     <div className={`scroll-container`}>
       <div className="scroll-container-contents">
-        <div className="variables-section">
-          <h3>
-            {actor
-              ? `${character.name} at (${actor.position.x},${actor.position.y})`
-              : `${character.name} (Defaults)`}
-          </h3>
-          {_renderCharacterSection()}
-        </div>
+        {character ? (
+          <div className="variables-section">
+            <h3>
+              {actor
+                ? `${character.name} at (${actor.position.x},${actor.position.y})`
+                : `${character.name} (Defaults)`}
+            </h3>
+            {_renderCharacterSection()}
+          </div>
+        ) : (
+          <div className="empty">Please select a character.</div>
+        )}
         <div className="variables-section">
           <h3>World</h3>
           {_renderWorldSection()}

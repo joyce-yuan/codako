@@ -12,11 +12,20 @@ const ActorSprite = (props: {
   selected?: boolean;
   draggable?: boolean;
   onClick?: (e: React.MouseEvent) => void;
+  onMouseUp?: (e: React.MouseEvent) => void;
   onDoubleClick?: (e: React.MouseEvent) => void;
   transitionDuration?: number;
 }) => {
-  const { actor, character, selected, draggable, transitionDuration, onClick, onDoubleClick } =
-    props;
+  const {
+    actor,
+    character,
+    selected,
+    draggable,
+    transitionDuration,
+    onClick,
+    onMouseUp,
+    onDoubleClick,
+  } = props;
 
   if (!character) {
     return (
@@ -113,6 +122,11 @@ const ActorSprite = (props: {
         onDragStart={(event) => {
           if (isEventInFilledSquare(event)) {
             onDragStart(event);
+          }
+        }}
+        onMouseUp={(event) => {
+          if (isEventInFilledSquare(event)) {
+            onMouseUp?.(event);
           }
         }}
         onClick={(event) => {

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sentry/react": "^9.37.0",
+    "@sentry/vite-plugin": "^3.5.0",
     "bootstrap": "4",
     "classnames": "^2.5.1",
     "core-js": "^3.39.0",

@@ -2,6 +2,19 @@
 
 import { Game } from "../types";
 
+export function applyValueChanges(value: any) {
+  if (value === "none") {
+    return "0";
+  }
+  if (`${value}`.endsWith("deg")) {
+    return `${value}`.replace("deg", "");
+  }
+  if (value === "flip-xy") {
+    return "180";
+  }
+  return value;
+}
+
 export function applyDataMigrations(game: Game): Game {
   // Update old-style rules
   let conditionKey = Date.now();
@@ -9,14 +22,8 @@ export function applyDataMigrations(game: Game): Game {
   const nonmigrated = JSON.stringify(game);
   const result = JSON.parse(JSON.stringify(game), (key, value) => {
     try {
-      if (key === "transform" && value === "none") {
-        return "0";
-      }
-      if (key === "transform" && `${value}`.endsWith("deg")) {
-        return `${value}`.replace("deg", "");
-      }
-      if (value === "flip-xy") {
-        return "180";
+      if (key === "transform") {
+        return applyValueChanges(value);
       }
 
       // Note this runs on each layer of the rules tree, character.rules and rule-flow-item.rules
@@ -27,16 +34,22 @@ export function applyDataMigrations(game: Game): Game {
           if (!rule.actions) {
             rule.actions = [];
           }
+          if (!rule.conditions) {
+            rule.conditions = [];
+          }
           for (const action of rule.actions) {
             if ("to" in action) {
               action.value = action.to;
               delete action.to;
             }
+            if ("transform" in action && !action.value) {
+              action.value = { constant: "0" };
+            }
             if ("value" in action && action.value === null) {
               action.value = { constant: "0" };
             }
             if ("value" in action && typeof action.value !== "object") {
-              action.value = { constant: action.value };
+              action.value = { constant: `${applyValueChanges(action.value)}` };
             }
           }
 
@@ -60,9 +73,9 @@ export function applyDataMigrations(game: Game): Game {
                   // Jun 22 2025 - changing from "thing" + "value" to "left" + "right" and encoding both
                   // in the same style.
                   if (!("left" in condition)) {
-                    condition.right = condition.value;
                     if (actorIdOrGlobal === "globals") {
                       condition.left = { globalId: actorIdOrGlobal };
+                      condition.right ||= condition.value;
                     }
                     if (condition.type === "transform") {
                       condition.left = { variableId: "transform", actorId: actorIdOrGlobal };
@@ -83,7 +96,7 @@ export function applyDataMigrations(game: Game): Game {
                         actorId: actorIdOrGlobal,
                       };
                       condition.right ||= {
-                        constant: rule.actors[actorIdOrGlobal].variableValues[condition.variableId],
+                        constant: `${rule.actors[actorIdOrGlobal].variableValues[condition.variableId] || "0"}`,
                       };
                     }
                     if (condition.enabled === undefined) {
@@ -112,11 +125,12 @@ export function applyDataMigrations(game: Game): Game {
     }
     return value;
   });
-  const migrated = JSON.stringify(game);
+  const migrated = JSON.stringify(result);
 
   if (migrated !== nonmigrated) {
     delete result.data.ui;
     delete result.data.recording;
+    console.log(result);
   }
 
   return result;

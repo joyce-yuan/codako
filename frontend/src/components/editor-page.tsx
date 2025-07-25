@@ -84,6 +84,7 @@ const EditorPage = () => {
   const _mounted = useRef(true);
   const _saveTimeout = useRef<number | null>(null);
   const _savePromise = useRef<Promise<any> | null>(null);
+  const _pendingSave = useRef(false);
   const storeProvider = useRef<StoreProvider | null>(null);
 
   const [loaded, setLoaded] = useState(false);
@@ -146,7 +147,12 @@ const EditorPage = () => {
   }, [me, Adapter, worldId]);
 
   const saveWorld = () => {
-    const json = storeProvider.current!.getWorldSaveData();
+    if (!storeProvider.current) {
+      // Store provider not initialized yet, mark as pending and skip save
+      _pendingSave.current = true;
+      return Promise.resolve();
+    }
+    const json = storeProvider.current.getWorldSaveData();
     if (_saveTimeout.current) {
       clearTimeout(_saveTimeout.current);
       _saveTimeout.current = null;
@@ -207,10 +213,17 @@ const EditorPage = () => {
         <PageMessage text={error ? error : "Loading..."} />
       ) : (
         <StoreProvider
-          ref={(r) => (storeProvider.current = r)}
           key={`${world!.id}${retry}`}
           world={world}
           onWorldChanged={saveWorldSoon}
+          ref={(r) => {
+            storeProvider.current = r;
+            // If we had a pending save, trigger it now that store is ready
+            if (_pendingSave.current && r) {
+              _pendingSave.current = false;
+              saveWorld();
+            }
+          }}
         >
           <RootEditor />
         </StoreProvider>

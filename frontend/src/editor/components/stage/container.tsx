@@ -11,7 +11,7 @@ import * as Types from "../../../types";
 import { Characters, EditorState, World } from "../../../types";
 import { RECORDING_PHASE } from "../../constants/constants";
 import { getCurrentStageForWorld } from "../../utils/selectors";
-import Library from "../library";
+import { Library } from "../library";
 
 const StageContainer = ({ readonly }: { readonly?: boolean }) => {
   const dispatch = useDispatch();

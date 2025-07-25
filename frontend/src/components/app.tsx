@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
@@ -104,7 +105,9 @@ const App = () => {
   return (
     <div className="page-container">
       {!hidesNav && _renderNav()}
-      {content}
+      <Sentry.ErrorBoundary fallback={<div>Something went wrong</div>}>
+        {content}
+      </Sentry.ErrorBoundary>
       {!hidesFooter && _renderFooter()}
       <div className={`network-bar active-${network.pending > 0}`} />
     </div>

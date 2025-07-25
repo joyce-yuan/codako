@@ -119,6 +119,10 @@ export function resolveRuleValue(
   characters: Characters,
   actors: Stage["actors"],
 ): string | null {
+  if (!val) {
+    console.warn(`A rule value is missing?`);
+    return "";
+  }
   if ("constant" in val) {
     return val.constant;
   }

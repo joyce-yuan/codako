@@ -7,7 +7,7 @@ import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
 
 import { makeRequest } from "../../../helpers/api";
-import { changeCharacter } from "../../actions/characters-actions";
+import { upsertCharacter } from "../../actions/characters-actions";
 import { dismissModal } from "../../actions/ui-actions";
 import { MODALS } from "../../constants/constants";
 import Sprite from "../sprites/sprite";
@@ -91,7 +91,7 @@ class Container extends React.Component {
 
   _onAddCharacter = (character) => {
     const id = `${Date.now()}`;
-    this.props.dispatch(changeCharacter(id, Object.assign({}, character, { id })));
+    this.props.dispatch(upsertCharacter(id, Object.assign({}, character, { id })));
   };
 
   render() {

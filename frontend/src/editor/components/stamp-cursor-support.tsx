@@ -1,9 +1,8 @@
-import { defaultAppearanceId } from "./library";
-
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { ActorTransform, Characters, EditorState, Stage } from "../../types";
 import { TOOLS } from "../constants/constants";
+import { defaultAppearanceId } from "../utils/character-helpers";
 import { getCurrentStage } from "../utils/selectors";
 import { applyActorTransformToContext } from "../utils/stage-helpers";
 
@@ -26,7 +25,11 @@ export const StampCursorSupport = () => {
     if ("characterId" in stampToolItem) {
       const spritesheet = characters[stampToolItem.characterId]?.spritesheet;
       if (spritesheet) {
-        customCursorImage = spritesheet.appearances[defaultAppearanceId(spritesheet)][0];
+        const appearanceId =
+          "appearanceId" in stampToolItem
+            ? stampToolItem.appearanceId
+            : defaultAppearanceId(spritesheet);
+        customCursorImage = spritesheet.appearances[appearanceId][0];
         customCursorTransform = "0";
       }
     } else if ("actorId" in stampToolItem && stampToolItem.actorId) {
@@ -34,13 +37,15 @@ export const StampCursorSupport = () => {
       const spritesheet = actor && characters[actor.characterId]?.spritesheet;
       customCursorImage = actor && spritesheet && spritesheet.appearances[actor.appearance][0];
       customCursorTransform = actor?.transform ?? "0";
+    } else if ("ruleId" in stampToolItem) {
+      customCursorImage = new URL("../img/cursor_stamp_rule.png", import.meta.url).href;
     }
   }
 
   const styleEl = useRef<HTMLStyleElement>(document.createElement("style"));
 
   useEffect(() => {
-    if (customCursorImage) {
+    if (customCursorImage && customCursorImage.startsWith("data")) {
       // put a ltitle tick in the top left of the cursor image so it has an anchor point
       const canvas = document.createElement("canvas");
       const img = new Image();
@@ -67,6 +72,10 @@ export const StampCursorSupport = () => {
       const composited = canvas.toDataURL("image/png");
       document.body.append(styleEl.current);
       styleEl.current.textContent = `.tool-stamp { cursor: url(${composited}) 0 0, auto; }`;
+    } else if (customCursorImage) {
+      console.log(customCursorImage);
+      document.body.append(styleEl.current);
+      styleEl.current.textContent = `.tool-stamp { cursor: url(${customCursorImage}) 0 0, auto; }`;
     } else {
       styleEl.current.remove();
     }

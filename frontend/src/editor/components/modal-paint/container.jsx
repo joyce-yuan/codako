@@ -14,7 +14,7 @@ import { makeRequest } from "../../../helpers/api";
 
 import * as Tools from "./tools";
 
-import { changeCharacter } from "../../actions/characters-actions";
+import { upsertCharacter } from "../../actions/characters-actions";
 import { paintCharacterAppearance } from "../../actions/ui-actions";
 
 import CreatePixelImageData from "./create-pixel-image-data";
@@ -202,7 +202,6 @@ class Container extends React.Component {
     const imageDataURL = getDataURLFromImageData(trimmed);
     const character = characters[characterId];
     let { spriteName } = this.state;
-    
     // If spriteName is empty, generate a name from the backend
     if (!spriteName) {
       try {
@@ -229,11 +228,11 @@ class Container extends React.Component {
 
     // Close modal first
     dispatch(paintCharacterAppearance(null));
-    
+
     // Then update character data after a small delay to prevent modal reopening
     setTimeout(() => {
       dispatch(
-        changeCharacter(characterId, {
+        upsertCharacter(characterId, {
           spritesheet: {
             appearances: { [appearanceId]: [imageDataURL] },
             appearanceInfo: {
@@ -311,6 +310,9 @@ class Container extends React.Component {
   };
 
   _onGlobalCopy = async (event) => {
+    if (this.state.imageData === null) {
+      return; // modal closed
+    }
     event.preventDefault();
 
     const data = {
@@ -323,11 +325,17 @@ class Container extends React.Component {
   };
 
   _onGlobalCut = (event) => {
+    if (this.state.imageData === null) {
+      return; // modal closed
+    }
     this._onGlobalCopy(event);
     this.setStateWithCheckpoint({ selectionImageData: null });
   };
 
   _onGlobalPaste = async (event) => {
+    if (this.state.imageData === null) {
+      return; // modal closed
+    }
     const items = await navigator.clipboard.read();
     const imageItem = items.find((i) => i.types.some((t) => t.includes("image")));
     const offsetItem = items.find((d) => d.types.includes("text/plain"));
@@ -382,7 +390,7 @@ class Container extends React.Component {
   _onCanvasMouseDown = (event, pixel) => {
     const tool = this.state.tool;
     if (tool) {
-      console.log(`[Canvas] MouseDown with tool: ${tool.name}, pixel:`, pixel, 'event:', event);
+      console.log(`[Canvas] MouseDown with tool: ${tool.name}, pixel:`, pixel, "event:", event);
       this.setStateWithCheckpoint(tool.mousedown(pixel, this.state, event));
     }
   };
@@ -397,7 +405,7 @@ class Container extends React.Component {
   _onCanvasMouseUp = (event, pixel) => {
     const tool = this.state.tool;
     if (tool) {
-      console.log(`[Canvas] MouseUp with tool: ${tool.name}, pixel:`, pixel, 'event:', event);
+      console.log(`[Canvas] MouseUp with tool: ${tool.name}, pixel:`, pixel, "event:", event);
       this.setState(tool.mouseup(tool.mousemove(pixel, this.state)));
     }
   };
@@ -466,27 +474,28 @@ class Container extends React.Component {
     // Wait for the image to be loaded and state to be updated before applying magic wand
     setTimeout(() => {
       if (this.state.imageData) {
-
         // Step 1: Clear any selection and set tool to magicWand
-        const magicWandTool = TOOLS.find(t => t.name === 'magicWand');
+        const magicWandTool = TOOLS.find((t) => t.name === "magicWand");
 
         this.setState({
           tool: magicWandTool,
           imageData: getFlattenedImageData(this.state),
           selectionImageData: null,
-          shouldDrag: true
+          shouldDrag: true,
         });
 
         // Step 2: Simulate mousedown on (0,0)
         this.setStateWithCheckpoint(
-          magicWandTool.mousedown({x: 0, y: 0}, 
-            this.state, 
+          magicWandTool.mousedown(
+            { x: 0, y: 0 },
+            this.state,
             { altKey: false },
-            { draggingSelection: true }
-          ));
+            { draggingSelection: true },
+          ),
+        );
 
         // Step 3: Simulate mouseup
-        this.setState(magicWandTool.mouseup(magicWandTool.mousemove({x: 0, y: 0}, this.state)));
+        this.setState(magicWandTool.mouseup(magicWandTool.mousemove({ x: 0, y: 0 }, this.state)));
 
         // Step 4: Wait and clear selection to remove background
         this.setStateWithCheckpoint({ selectionImageData: null });
@@ -803,11 +812,11 @@ class Container extends React.Component {
                   >
                     {this.state.isGeneratingSprite ? (
                       <span>
-                        <i className="fa fa-spinner fa-spin" /> Generating...
+                        <i className="fa fa-spinner fa-spin" /> Drawing...
                       </span>
                     ) : (
                       <span>
-                        <i className="fa fa-magic" /> Generate with AI
+                        <i className="fa fa-magic" /> Draw with AI
                       </span>
                     )}
                   </Button>
@@ -823,7 +832,9 @@ class Container extends React.Component {
               color="primary"
               key="save"
               data-tutorial-id="paint-save-and-close"
-              onClick={async () => {await this._onCloseAndSave();}}
+              onClick={async () => {
+                await this._onCloseAndSave();
+              }}
             >
               Save Changes
             </Button>

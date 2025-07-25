@@ -46,9 +46,6 @@ export const TapToEditLabel = ({
       }}
       onClick={(e) => {
         e.stopPropagation();
-      }}
-      onDoubleClick={(e) => {
-        e.stopPropagation();
         if (!editing) {
           setEditing(true);
           e.preventDefault();

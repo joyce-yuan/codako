@@ -2,7 +2,7 @@ import { DeepPartial } from "redux";
 import { Character, RuleTreeEventItem } from "../../types";
 import * as types from "../constants/action-types";
 
-export function changeCharacter(
+export function upsertCharacter(
   characterId: string,
   values: DeepPartial<Character>,
 ): ActionUpsertCharacter {
@@ -129,7 +129,7 @@ export type ActionDeleteCharacterVariable = {
 export function createCharacterAppearance(
   characterId: string,
   newAppearanceId: string,
-  newAppearanceData: string,
+  newAppearanceData: string | null,
 ): ActionUpsertCharacter {
   return {
     type: types.UPSERT_CHARACTER,
@@ -169,7 +169,7 @@ export function changeCharacterAppearanceName(
   appearanceId: string,
   name: string,
 ) {
-  return changeCharacter(characterId, {
+  return upsertCharacter(characterId, {
     spritesheet: {
       appearanceNames: {
         [appearanceId]: name,

@@ -1,9 +1,11 @@
 import { getCurrentStageForWorld } from "../../../utils/selectors";
 
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Characters, RecordingState, RuleAction } from "../../../../types";
+import { useDispatch, useSelector } from "react-redux";
+import { Characters, EditorState, RecordingState, RuleAction } from "../../../../types";
 import { updateRecordingActions } from "../../../actions/recording-actions";
+import { selectToolId } from "../../../actions/ui-actions";
+import { TOOLS } from "../../../constants/constants";
 import { deepClone } from "../../../utils/utils";
 import { ActorDeltaCanvas } from "./actor-delta-canvas";
 import { ActorOffsetCanvas } from "./actor-offset-canvas";
@@ -13,9 +15,10 @@ import { getAfterWorldForRecording } from "./utils";
 import { VariableActionPicker } from "./variable-action-picker";
 
 export const RecordingActions = (props: { characters: Characters; recording: RecordingState }) => {
-  const dispatch = useDispatch();
   const { characters, recording } = props;
   const { beforeWorld, actions, extent } = recording;
+  const selectedToolId = useSelector<EditorState>((state) => state.ui.selectedToolId);
+  const dispatch = useDispatch();
 
   const beforeStage = getCurrentStageForWorld(beforeWorld);
   let afterStage = deepClone(beforeStage);
@@ -220,6 +223,10 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
     setDroppingValue(false);
   };
 
+  const onRemoveAction = (a: RuleAction) => {
+    dispatch(updateRecordingActions(actions.filter((aa) => aa !== a)));
+  };
+
   return (
     <div
       className={`panel-actions dropping-${droppingValue}`}
@@ -249,13 +256,21 @@ export const RecordingActions = (props: { characters: Characters; recording: Rec
           });
 
           return (
-            <li key={idx}>
+            <li
+              key={idx}
+              className={`tool-${selectedToolId}`}
+              onClick={(e) => {
+                if (selectedToolId === TOOLS.TRASH) {
+                  onRemoveAction(a);
+                  if (!e.shiftKey) {
+                    dispatch(selectToolId(TOOLS.POINTER));
+                  }
+                }
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 2 }}>{node}</div>
               <div style={{ flex: 1 }} />
-              <div
-                onClick={() => dispatch(updateRecordingActions(actions.filter((aa) => aa !== a)))}
-                className="condition-remove"
-              >
+              <div onClick={() => onRemoveAction(a)} className="condition-remove">
                 <div />
               </div>
             </li>

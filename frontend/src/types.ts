@@ -277,7 +277,12 @@ export type UIState = {
   selectedToolId: TOOLS;
   selectedCharacterId: string | null;
   selectedActorPath: ActorPath;
-  stampToolItem: ActorPath | { characterId: string } | null;
+  stampToolItem:
+    | ActorPath
+    | { characterId: string }
+    | { characterId: string; appearanceId: string }
+    | { ruleId: string }
+    | null;
   tutorial: {
     stepIndex: number;
   };

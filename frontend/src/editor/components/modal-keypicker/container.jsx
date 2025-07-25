@@ -6,7 +6,7 @@ import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
 
-import { changeCharacter } from "../../actions/characters-actions";
+import { upsertCharacter } from "../../actions/characters-actions";
 import { pickCharacterRuleEventKey } from "../../actions/ui-actions";
 import { findRule } from "../../utils/stage-helpers";
 import { deepClone } from "../../utils/utils";
@@ -50,7 +50,7 @@ class Container extends React.Component {
     rule.code = this.state.keyCode;
 
     dispatch(pickCharacterRuleEventKey(null));
-    dispatch(changeCharacter(characterId, { rules }));
+    dispatch(upsertCharacter(characterId, { rules }));
   };
 
   _onKeyDown = (event) => {

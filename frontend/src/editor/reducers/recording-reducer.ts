@@ -20,6 +20,7 @@ import {
   offsetForEditingRule,
 } from "../components/stage/recording/utils";
 import { RECORDING_PHASE, WORLDS } from "../constants/constants";
+import { defaultAppearanceId } from "../utils/character-helpers";
 import { extentByShiftingExtent } from "../utils/recording-helpers";
 import { getCurrentStageForWorld } from "../utils/selectors";
 import WorldOperator from "../utils/world-operator";
@@ -76,8 +77,17 @@ function recordingReducer(
           phase: RECORDING_PHASE.RECORD,
           actorId: actor.id,
           actions: u.constant([]),
-          conditions: u.constant([]),
+          conditions: u.constant([
+            {
+              left: { actorId: actor.id, variableId: "appearance" },
+              right: { constant: actor.appearance },
+              enabled: true,
+              comparator: "=",
+              key: "main-actor-appearance",
+            },
+          ] satisfies RuleCondition[]),
           beforeWorld: u.constant(u({ id: WORLDS.BEFORE }, world)),
+          afterWorld: u.constant(u({ id: WORLDS.AFTER }, world)),
           extent: u.constant({
             xmin: actor.position.x - anchor.x,
             xmax: actor.position.x - anchor.x + width - 1,
@@ -104,7 +114,7 @@ function recordingReducer(
           dude: {
             id: "dude",
             variableValues: {},
-            appearance: Object.keys(character.spritesheet.appearances)[0],
+            appearance: defaultAppearanceId(character.spritesheet),
             characterId: action.characterId,
             position: { x: 0, y: 0 },
           },
@@ -263,7 +273,11 @@ export default function recordingReducerWithDerivedState(
 ) {
   const nextState = recordingReducer(state, action, entireState) as RecordingState;
 
-  if (nextState.actions !== state.actions || nextState.beforeWorld !== state.beforeWorld) {
+  if (
+    !nextState.afterWorld ||
+    nextState.actions !== state.actions ||
+    nextState.beforeWorld !== state.beforeWorld
+  ) {
     nextState.afterWorld = getAfterWorldForRecording(
       nextState.beforeWorld,
       entireState.characters,

@@ -8,6 +8,9 @@ import { Provider } from "react-redux";
 // Apply various polyfills
 import "core-js";
 
+import { initializeSentry } from "./utils/sentry";
+initializeSentry();
+
 import routes from "./routes";
 import configureStore from "./store/configureStore";
 
